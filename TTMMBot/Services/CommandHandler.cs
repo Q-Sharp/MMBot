@@ -4,16 +4,18 @@ using Discord.WebSocket;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using TTMMBot.Data.Entities;
+using TTMMBot.TypeReaders;
 
 namespace TTMMBot.Services
 {
-    public class CommandHandlingService
+	public class CommandHandler
 	{
 		private readonly DiscordSocketClient _client;
 		private readonly CommandService _commands;
 		private readonly IServiceProvider _services;
 
-		public CommandHandlingService(IServiceProvider services, CommandService commands, DiscordSocketClient client)
+		public CommandHandler(IServiceProvider services, CommandService commands, DiscordSocketClient client)
 		{
 			_commands = commands;
 			_services = services;
@@ -22,6 +24,9 @@ namespace TTMMBot.Services
 
 		public async Task InitializeAsync()
 		{
+			_commands.AddTypeReader(typeof(Member), new MemberTypeReader());
+			_commands.AddTypeReader(typeof(Clan), new ClanTypeReader());
+
 			await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
 			_commands.CommandExecuted += CommandExecutedAsync;
@@ -33,7 +38,7 @@ namespace TTMMBot.Services
 			if (!(arg is SocketUserMessage msg) || msg.Author.Id == _client.CurrentUser.Id || msg.Author.IsBot) return;
 
 			int pos = 0;
-			if (msg.HasCharPrefix('.', ref pos) || msg.HasMentionPrefix(_client.CurrentUser, ref pos))
+			if (msg.HasStringPrefix("m.", ref pos) || msg.HasMentionPrefix(_client.CurrentUser, ref pos))
 			{
 				var context = new SocketCommandContext(_client, msg);
 				var result = await _commands.ExecuteAsync(context, pos, _services);

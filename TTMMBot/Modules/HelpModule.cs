@@ -13,7 +13,7 @@ namespace TTMMBot.Modules
     public class HelpModule : ModuleBase<SocketCommandContext>
     {
         private readonly CommandService _service;
-        private readonly string _prefix = "!";
+        private readonly string _prefix = "m.";
 
         public HelpModule(CommandService service)
         {

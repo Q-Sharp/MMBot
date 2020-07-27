@@ -4,17 +4,17 @@ using Discord;
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using System.Linq;
+using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Modules
 {
-    [Name("Profile")]
-    public class ProfileModule : ModuleBase<SocketCommandContext>
+    [Name("Member")]
+    public class MemberModule : ModuleBase<SocketCommandContext>
     {
         private readonly IDatabaseService _database;
-        public ProfileModule(IDatabaseService database)
+        public MemberModule(IDatabaseService database)
         {
             _database = database;
-            database.Migrate();
         }
 
         [Command("say"), Alias("s")]

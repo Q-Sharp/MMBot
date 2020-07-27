@@ -6,18 +6,14 @@ using System.Text;
 
 namespace TTMMBot.Data.Entities
 {
-    public class Clan
+    public class Vacation
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ClanID { get; set; }
-
-        [MaxLength(3)]
-        public string Tag { get; set; }
-
-        public string Name { get; set; }
-
-        public ICollection<Member> Members { get; set; }
-        public override string ToString() => $"[{Tag}] {Name}";
+        public int VacationID { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public int MemberID { get; set; }
+        public Member Member { get; set; }
     }
 }
