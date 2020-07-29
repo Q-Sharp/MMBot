@@ -3,25 +3,27 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TTMMBot.Data.Entities;
-using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Services
 {
     public class DatabaseService : IDatabaseService
     {
-        private readonly Context _context;
+        public Context Context { get; set; }
+        public DatabaseService(Context context) => Context = context;
+        
+        public async Task<Clan> CreateClanAsync() => (await Context.AddAsync(new Clan())).Entity;
 
-        public IDatabaseClanService ClanService { get; set; }
-        public IDatabaseMemberService MemberService { get; set; }
+        public async Task<Member> CreateMemberAsync() => (await Context.AddAsync(new Member())).Entity;
 
-        public DatabaseService(Context context, IDatabaseClanService clanService, IDatabaseMemberService memberService)
-        {
-            _context = context;
-            ClanService = clanService;
-            MemberService = memberService;
-        }
+        public async Task<IList<Clan>> LoadClansAsync() => await Context.Clan.ToListAsync();
 
-        public async Task Migrate() => await _context?.Database.MigrateAsync();
-        public async Task SaveDataAsync() => await _context?.SaveChangesAsync();
+        public async Task<IList<Member>> LoadMembersAsync() => await Context.Member.ToListAsync();
+
+        public void DeleteClan(Clan c) => Context.Remove(c);
+
+        public void DeleteMember(Member m) => Context.Remove(m);
+
+        public async Task MigrateAsync() => await Context?.Database.MigrateAsync();
+        public async Task SaveDataAsync() => await Context?.SaveChangesAsync();
     }
 }

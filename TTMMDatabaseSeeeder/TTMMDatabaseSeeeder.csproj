@@ -6,18 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200724135308_InitialCreate.cs" />
-    <Compile Remove="Migrations\20200724135308_InitialCreate.Designer.cs" />
-    <Compile Remove="Migrations\20200729185121_InitialCreate.cs" />
-    <Compile Remove="Migrations\20200729185121_InitialCreate.Designer.cs" />
-    <Compile Remove="Migrations\20200729212341_InitialCreate.cs" />
-    <Compile Remove="Migrations\20200729212341_InitialCreate.Designer.cs" />
-    <Compile Remove="Migrations\20200729214020_InitialCreate.cs" />
-    <Compile Remove="Migrations\20200729214020_InitialCreate.Designer.cs" />
+    <None Remove="Members.csv" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="2.2.0" />
+    <EmbeddedResource Include="Members.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="15.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.6">
@@ -25,6 +22,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TTMMBot\TTMMBot.csproj" />
   </ItemGroup>
 
 </Project>

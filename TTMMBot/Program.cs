@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot
 {
@@ -19,7 +18,6 @@ namespace TTMMBot
         private const string dbname = "TTMMBot.db";
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
-        //private readonly IServiceProvider _services;
 
         public static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
 
@@ -27,13 +25,13 @@ namespace TTMMBot
         {
             _client = new DiscordSocketClient(new DiscordSocketConfig
             {
-                LogLevel = LogSeverity.Info,
+                LogLevel = LogSeverity.Debug,
                 MessageCacheSize = 50,
             });
 
             _commands = new CommandService(new CommandServiceConfig
             {
-                LogLevel = LogSeverity.Info,
+                LogLevel = LogSeverity.Debug,
                 CaseSensitiveCommands = false,
             });
 
@@ -60,7 +58,8 @@ namespace TTMMBot
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     break;
             }
-            Console.WriteLine($"{DateTime.Now,-19} [{message.Severity,8}] {message.Source}: {message.Message} {message.Exception}");
+
+            Console.WriteLine($"{DateTime.Now, -19} [{message.Severity, 8}] {message.Source}: {message.Message} {message.Exception}");
             Console.ResetColor();
 
             return Task.CompletedTask;
@@ -71,6 +70,7 @@ namespace TTMMBot
             var services = GetServices();
             var client = services.GetRequiredService<DiscordSocketClient>();
             services.GetRequiredService<CommandService>().Log += LogAsync;
+            
 
             await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("DiscordToken"));
             await client.StartAsync();
@@ -87,8 +87,6 @@ namespace TTMMBot
            .AddSingleton<DiscordSocketClient>()
            .AddSingleton<CommandService>()
            .AddSingleton<CommandHandler>()
-           .AddSingleton<IDatabaseClanService, DatabaseClanService>()
-           .AddSingleton<IDatabaseMemberService, DatabaseMemberService>()
            .AddSingleton<IDatabaseService, DatabaseService>()
            .BuildServiceProvider();
     }

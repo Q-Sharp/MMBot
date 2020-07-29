@@ -8,11 +8,6 @@ namespace TTMMBot.Data.Entities
 {
     public class Clan
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ClanID { get; set; }
-
-        [MaxLength(3)]
         public string Tag { get; set; }
 
         public string Name { get; set; }

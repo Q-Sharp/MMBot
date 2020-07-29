@@ -6,10 +6,15 @@ namespace TTMMBot.Data
 {
     public class Context : DbContext, ITTMMBotContext
     {
-        private const string dbname = "TTMMBot.db";
+        public const string dbname = @"D:\TTMMBot.db";
 
         public Context(DbContextOptions<Context> options) : base(options)
         {
+        }
+
+        public Context()
+        {
+            
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={dbname}");
@@ -19,18 +24,20 @@ namespace TTMMBot.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Clan>()
+                .HasKey(m => m.Tag);
+
+            modelBuilder.Entity<Clan>()
+                .HasMany(rp => rp.Members)
+                .WithOne(c => c.Clan)
+                .HasForeignKey(rp => rp.ClanTag);
+
             modelBuilder.Entity<Member>()
-                .HasOne(p => p.Clan)
-                .WithMany(rp => rp.Members)
-                .HasForeignKey(p => p.ClanID);
+                .HasKey(m => m.MemberID);
 
             modelBuilder.Entity<Member>()
                 .HasIndex(m => m.Name)
                 .IsUnique();
-
-            modelBuilder.Entity<Clan>()
-                .HasIndex("Tag", "Name")
-                .IsUnique(true);
 
             modelBuilder.Entity<Vacation>()
                 .HasOne(v => v.Member)
