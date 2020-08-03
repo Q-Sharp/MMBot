@@ -40,11 +40,28 @@ namespace TTMMDatabaseSeeeder
 
             }
 
-            m.ToList().ForEach(m => m.Clan = c.Clan.FirstOrDefault(d => d.Tag == m.ClanTag));
+            try
+            {
+                m.ToList().ForEach(m => m.Clan = c.Clan.FirstOrDefault(d => d.Tag == m.ClanTag));
+                c.Member.AddRange(m);
 
-            c.Member.AddRange(m);
+                c.SaveChanges();
+            }
+            catch
+            {
+                
+            }
 
-            c.SaveChanges();
+            try
+            {
+                c.Member.ToList().ForEach(m => m.IsActive = true);
+
+                c.SaveChanges();
+            }
+            catch
+            {
+
+            }
         }
     }
 }

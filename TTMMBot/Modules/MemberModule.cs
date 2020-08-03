@@ -23,34 +23,33 @@ namespace TTMMBot.Modules
 
         [Command]
         [Summary("Shows all information of member")]
-        public async Task Member(SocketUser user, string name = null)
+        public async Task Member(string name = null)
         {
             try
-            {             
+            {
                 var m = name != null ? (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == name)
-                    : (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discriminator == user.Discriminator);
+                    : (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discriminator == Context.User.ToString());
 
+                if(m == null)
+                {
+                    await ReplyAsync($"I can't find {name ?? "you"}!");
+                    return;
+                }
+                
                 var builder = new EmbedBuilder
                 {
                     Color = Color.DarkTeal,
-                    Description = "Member",
+                    Description = m.Name,
                 };
 
-                var firstMember = true;
-                foreach (var member in chunk)
+                builder.WithTitle(m.ClanTag);
+
+                builder.AddField(x =>
                 {
-                    if (firstMember)
-                        builder.WithTitle(member.ClanTag);
-
-                    builder.AddField(x =>
-                    {
-                        x.Name = member.Name;
-                        x.Value = member;
-                        x.IsInline = true;
-                    });
-
-                    firstMember = false;
-                }
+                    x.Name = "Name";
+                    x.Value = m;
+                    x.IsInline = true;
+                });
 
                 await ReplyAsync("", false, builder.Build());
 

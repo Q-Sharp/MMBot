@@ -20,48 +20,47 @@ namespace TTMMBot.Modules
 
         public IDatabaseService DatabaseService { get; set; }
 
+        //[Command]
+        //[Summary("Lists all clans")]
+        //public async Task Clan()
+        //{
+        //    try
+        //    {
+        //        var clans = await DatabaseService.LoadClansAsync();
+
+        //        var builder = new EmbedBuilder
+        //        {
+        //            Color = Color.DarkTeal,
+        //            Description = "Clans",
+        //            Title = "Clans"
+        //        };
+
+        //        foreach (var clan in clans)
+        //        {
+        //            builder.AddField(x =>
+        //            {
+        //                x.Name = clan.Tag;
+        //                x.Value = clan.Name;
+        //                x.IsInline = false;
+        //            });
+        //        }
+
+        //        await ReplyAsync("", false, builder.Build());
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        await ReplyAsync($"{e.Message}");
+        //    }
+        //}
+
         [Command]
-        [Summary("Lists all clans")]
-        public async Task Clan()
-        {
-            try
-            {
-                var clans = await DatabaseService.LoadClansAsync();
-
-                var builder = new EmbedBuilder
-                {
-                    Color = Color.DarkTeal,
-                    Description = "Clans",
-                    Title = "Clans"
-                };
-
-                foreach (var clan in clans)
-                {
-                    builder.AddField(x =>
-                    {
-                        x.Name = clan.Tag;
-                        x.Value = clan.Name;
-                        x.IsInline = true;
-                    });
-                }
-
-                await ReplyAsync("", false, builder.Build());
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}");
-            }
-        }
-
-        [Command("Member")]
-        [Alias("member", "m", "M")]
         [Summary("Lists all members")]
         public async Task Member(string clanTag = null)
         {
             try
             {
                 var m = await DatabaseService.LoadMembersAsync();
-                m = m.Where(x => x.IsActive).ToList();
+                //m = m.Where(x => x.IsActive).ToList();
 
                 foreach (var chunk in m.GroupBy(x => x.ClanTag).OrderBy(x => x.Key).Where(x => x.Key == clanTag || clanTag == null))
                 {

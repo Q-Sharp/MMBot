@@ -9,9 +9,9 @@ namespace TTMMBot.Data
     {
         private string dbname = $"{Path.Combine(Directory.GetCurrentDirectory(), "TTMMBot.db")}";
 
-        public Context(DbContextOptions<Context> options = null) : base(options)
-        {
-        }
+        //public Context(DbContextOptions<Context> options = null) : base(options ?? new DbContextOptions<Context>())
+        //{
+        //}
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={dbname}");
 
