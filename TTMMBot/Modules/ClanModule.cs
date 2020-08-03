@@ -3,6 +3,7 @@ using Discord.Commands;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using TTMMBot.Data.Entities;
 using TTMMBot.Services;
 
 namespace TTMMBot.Modules
@@ -13,6 +14,10 @@ namespace TTMMBot.Modules
     [RequireUserPermission(ChannelPermission.ManageRoles)]
     public class ClanModule : ModuleBase<SocketCommandContext>
     {
+        private readonly string[] header = { "Name", "Clan", "AHigh", "SHigh", "Role" };
+        private readonly int[] pad = { 16, 4, 5, 5, 8 };
+        private readonly string[] fields = { "Name", "ClanTag", "AllTimeHigh", "SeasonHighest", "Role" };
+
         public IDatabaseService DatabaseService { get; set; }
 
         [Command]
@@ -46,6 +51,76 @@ namespace TTMMBot.Modules
             {
                 await ReplyAsync($"{e.Message}");
             }
+        }
+
+        [Command("Member")]
+        [Alias("member", "m", "M")]
+        [Summary("Lists all members")]
+        public async Task Member(string clanTag = null)
+        {
+            try
+            {
+                var m = await DatabaseService.LoadMembersAsync();
+                m = m.Where(x => x.IsActive).ToList();
+
+                foreach (var chunk in m.GroupBy(x => x.ClanTag).OrderBy(x => x.Key).Where(x => x.Key == clanTag || clanTag == null))
+                {
+                    var table = $"```{Environment.NewLine}";
+                    table += getHeader(header);
+                    table += getLimiter(header);
+
+                    foreach (var member in chunk.OrderByDescending(x => x.AllTimeHigh))
+                        table += getValues(member, fields);
+
+                    table += $"{Environment.NewLine}```";
+                    await ReplyAsync(table);
+                }
+            }
+            catch (Exception e)
+            {
+                await ReplyAsync($"{e.Message}");
+            }
+        }
+
+        private string getLimiter(string[] header)
+        {
+            var ac = header.Length;
+
+            var l = "";
+            for (var i = 0; i < ac; i++)
+                l += $"{"-".PadRight(pad[i], '-')}-";
+            l += $"{Environment.NewLine}";
+            return l;
+        }
+
+        private string getHeader(string[] header)
+        {
+            var ac = header.Length;
+
+            var l = "";
+            for (var i = 0; i < ac; i++)
+                l += $"{header[i].PadRight(pad[i])}|";
+
+            l = l.TrimEnd('|');
+            l += $"{Environment.NewLine}";
+            return l;
+        }
+
+        private string getValues(Member m, string[] header)
+        {
+            var l = "";
+            var ac = header.Length;
+            var props = m.GetType().GetProperties().Where(s => header.Contains(s.Name)).ToArray();
+
+            for (var i = 0; i < ac; i++)
+            {
+                var p = props.FirstOrDefault(p => p.Name == header[i]);
+                l += $"{p.GetValue(m).ToString().PadRight(pad[i])}|";
+            }
+
+            l = l.TrimEnd('|');
+            l += $"{Environment.NewLine}";
+            return l;
         }
 
         [Command("Delete")]

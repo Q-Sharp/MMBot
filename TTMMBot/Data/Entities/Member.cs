@@ -34,6 +34,6 @@ namespace TTMMBot.Data.Entities
 
         public DateTime? LastUpdated { get; set; }
 
-        public override string ToString() => $"{Name}";
+        public override string ToString() => $"[{ClanTag}] {Name}";
     }
 }

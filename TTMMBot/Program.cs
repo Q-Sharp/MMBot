@@ -15,7 +15,6 @@ namespace TTMMBot
 {
     public class Program
     {
-        private const string dbname = "TTMMBot.db";
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
 
@@ -83,7 +82,7 @@ namespace TTMMBot
 
         public IServiceProvider GetServices() => new ServiceCollection()
            .AddLogging()
-           .AddDbContext<Context>(options => options.UseSqlite($"Data Source={dbname}"))
+           .AddDbContext<Context>()
            .AddSingleton<DiscordSocketClient>()
            .AddSingleton<CommandService>()
            .AddSingleton<CommandHandler>()

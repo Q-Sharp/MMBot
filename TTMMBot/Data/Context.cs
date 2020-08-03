@@ -1,20 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
+using System.IO;
 using TTMMBot.Data.Entities;
 
 namespace TTMMBot.Data
 {
     public class Context : DbContext, ITTMMBotContext
     {
-        public const string dbname = @"D:\TTMMBot.db";
+        private string dbname = $"{Path.Combine(Directory.GetCurrentDirectory(), "TTMMBot.db")}";
 
-        public Context(DbContextOptions<Context> options) : base(options)
+        public Context(DbContextOptions<Context> options = null) : base(options)
         {
-        }
-
-        public Context()
-        {
-            
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={dbname}");
