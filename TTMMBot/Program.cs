@@ -15,10 +15,8 @@ namespace TTMMBot
 {
     public class Program
     {
-        private const string dbname = "TTMMBot.db"; 
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
-        //private readonly IServiceProvider _services;
 
         public static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
 
@@ -26,13 +24,13 @@ namespace TTMMBot
         {
             _client = new DiscordSocketClient(new DiscordSocketConfig
             {
-                LogLevel = LogSeverity.Info,
+                LogLevel = LogSeverity.Debug,
                 MessageCacheSize = 50,
             });
 
             _commands = new CommandService(new CommandServiceConfig
             {
-                LogLevel = LogSeverity.Info,
+                LogLevel = LogSeverity.Debug,
                 CaseSensitiveCommands = false,
             });
 
@@ -59,6 +57,7 @@ namespace TTMMBot
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     break;
             }
+
             Console.WriteLine($"{DateTime.Now, -19} [{message.Severity, 8}] {message.Source}: {message.Message} {message.Exception}");
             Console.ResetColor();
 
@@ -70,23 +69,24 @@ namespace TTMMBot
             var services = GetServices();
             var client = services.GetRequiredService<DiscordSocketClient>();
             services.GetRequiredService<CommandService>().Log += LogAsync;
+            
 
-            await client.LoginAsync(TokenType.Bot, /*Environment.GetEnvironmentVariable("DiscordToken")*/"NjY3OTkwMzcwMDA0NzYyNjM0.XiKwgg.DaT6K25l0jzwDwxV8Faf9SrP_J4");
+            await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("DiscordToken"));
             await client.StartAsync();
 
             // Here we initialize the logic required to register our commands.
-            await services.GetRequiredService<CommandHandlingService>().InitializeAsync();
+            await services.GetRequiredService<CommandHandler>().InitializeAsync();
 
             await Task.Delay(Timeout.Infinite);
         }
 
-         public IServiceProvider GetServices() => new ServiceCollection()
-            .AddLogging()
-            .AddDbContext<Context>(options => options.UseSqlite($"Data Source={dbname}"))
-            .AddSingleton<DiscordSocketClient>()
-            .AddSingleton<CommandService>()
-            .AddSingleton<CommandHandlingService>()
-            .AddSingleton<IDatabaseService, DatabaseService>()
-            .BuildServiceProvider();
+        public IServiceProvider GetServices() => new ServiceCollection()
+           .AddLogging()
+           .AddDbContext<Context>()
+           .AddSingleton<DiscordSocketClient>()
+           .AddSingleton<CommandService>()
+           .AddSingleton<CommandHandler>()
+           .AddSingleton<IDatabaseService, DatabaseService>()
+           .BuildServiceProvider();
     }
 }

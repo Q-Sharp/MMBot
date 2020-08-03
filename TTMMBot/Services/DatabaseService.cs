@@ -8,17 +8,22 @@ namespace TTMMBot.Services
 {
     public class DatabaseService : IDatabaseService
     {
-        private readonly Context _context;
-        public DatabaseService(Context context)
-        {
-            _context = context;
-        }
-        public async Task Migrate() => await _context?.Database.MigrateAsync();
-        public async Task SaveData() => await _context?.SaveChangesAsync();
+        public Context Context { get; set; }
+        public DatabaseService(Context context) => Context = context;
+        
+        public async Task<Clan> CreateClanAsync() => (await Context.AddAsync(new Clan())).Entity;
 
-        public Task<Member> LoadAllMemberData()
-        {
-            throw new System.NotImplementedException();
-        }
+        public async Task<Member> CreateMemberAsync() => (await Context.AddAsync(new Member())).Entity;
+
+        public async Task<IList<Clan>> LoadClansAsync() => await Context.Clan.ToListAsync();
+
+        public async Task<IList<Member>> LoadMembersAsync() => await Context.Member.ToListAsync();
+
+        public void DeleteClan(Clan c) => Context.Remove(c);
+
+        public void DeleteMember(Member m) => Context.Remove(m);
+
+        public async Task MigrateAsync() => await Context?.Database.MigrateAsync();
+        public async Task SaveDataAsync() => await Context?.SaveChangesAsync();
     }
 }
