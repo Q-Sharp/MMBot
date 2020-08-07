@@ -14,10 +14,25 @@
     <Compile Remove="Migrations\20200729212341_InitialCreate.Designer.cs" />
     <Compile Remove="Migrations\20200729214020_InitialCreate.cs" />
     <Compile Remove="Migrations\20200729214020_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20200729214521_InitialCreate.cs" />
+    <Compile Remove="Migrations\20200729214521_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20200805183230_firstUpdate.cs" />
+    <Compile Remove="Migrations\20200805183230_firstUpdate.Designer.cs" />
+    <Compile Remove="Migrations\20200805183410_InitialCreate.cs" />
+    <Compile Remove="Migrations\20200805183410_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20200805184022_InitialCreate.cs" />
+    <Compile Remove="Migrations\20200805184022_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20200805210611_InitialCreate.cs" />
+    <Compile Remove="Migrations\20200805210611_InitialCreate.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="TTMMBot.db" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="ConsoleTables" Version="2.4.2" />
+    <PackageReference Include="CsvHelper" Version="15.0.5" />
     <PackageReference Include="Discord.Net" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.6" />
@@ -26,6 +41,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="TTMMBot.db">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

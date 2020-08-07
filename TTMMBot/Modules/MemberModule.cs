@@ -28,7 +28,7 @@ namespace TTMMBot.Modules
             try
             {
                 var m = name != null ? (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == name)
-                    : (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discriminator == Context.User.ToString());
+                    : (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discord == Context.User.ToString());
 
                 if(m == null)
                 {
@@ -42,7 +42,7 @@ namespace TTMMBot.Modules
                     Description = m.Name,
                 };
 
-                builder.WithTitle(m.ClanTag);
+                builder.WithTitle(m?.Clan?.Tag);
 
                 builder.AddField(x =>
                 {

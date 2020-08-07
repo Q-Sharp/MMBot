@@ -18,13 +18,20 @@ namespace TTMMBot.Migrations
 
             modelBuilder.Entity("TTMMBot.Data.Entities.Clan", b =>
                 {
-                    b.Property<string>("Tag")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("ClanID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Tag");
+                    b.Property<string>("Tag")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ClanID");
+
+                    b.HasIndex("Tag")
+                        .IsUnique();
 
                     b.ToTable("Clan");
                 });
@@ -35,19 +42,16 @@ namespace TTMMBot.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AllTimeHigh")
+                    b.Property<int?>("AllTimeHigh")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ClanTag")
-                        .HasColumnType("TEXT");
-
-                    b.Property<ulong>("DiscordID")
+                    b.Property<int?>("ClanID")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Discriminator")
+                    b.Property<string>("Discord")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Donations")
+                    b.Property<int?>("Donations")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsActive")
@@ -62,12 +66,12 @@ namespace TTMMBot.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("SeasonHighest")
+                    b.Property<int?>("SeasonHighest")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("MemberID");
 
-                    b.HasIndex("ClanTag");
+                    b.HasIndex("ClanID");
 
                     b.HasIndex("Name")
                         .IsUnique();
@@ -102,7 +106,7 @@ namespace TTMMBot.Migrations
                 {
                     b.HasOne("TTMMBot.Data.Entities.Clan", "Clan")
                         .WithMany("Members")
-                        .HasForeignKey("ClanTag");
+                        .HasForeignKey("ClanID");
                 });
 
             modelBuilder.Entity("TTMMBot.Data.Entities.Vacation", b =>

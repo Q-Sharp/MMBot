@@ -11,12 +11,14 @@ namespace TTMMBot.Migrations
                 name: "Clan",
                 columns: table => new
                 {
-                    Tag = table.Column<string>(nullable: false),
+                    ClanID = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Tag = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Clan", x => x.Tag);
+                    table.PrimaryKey("PK_Clan", x => x.ClanID);
                 });
 
             migrationBuilder.CreateTable(
@@ -25,25 +27,24 @@ namespace TTMMBot.Migrations
                 {
                     MemberID = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    DiscordID = table.Column<ulong>(nullable: false),
-                    Discriminator = table.Column<string>(nullable: true),
+                    Discord = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
-                    AllTimeHigh = table.Column<int>(nullable: false),
-                    SeasonHighest = table.Column<int>(nullable: false),
-                    Donations = table.Column<int>(nullable: false),
+                    AllTimeHigh = table.Column<int>(nullable: true),
+                    SeasonHighest = table.Column<int>(nullable: true),
+                    Donations = table.Column<int>(nullable: true),
                     Role = table.Column<int>(nullable: false),
                     IsActive = table.Column<bool>(nullable: false),
-                    ClanTag = table.Column<string>(nullable: true),
+                    ClanID = table.Column<int>(nullable: true),
                     LastUpdated = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Member", x => x.MemberID);
                     table.ForeignKey(
-                        name: "FK_Member_Clan_ClanTag",
-                        column: x => x.ClanTag,
+                        name: "FK_Member_Clan_ClanID",
+                        column: x => x.ClanID,
                         principalTable: "Clan",
-                        principalColumn: "Tag",
+                        principalColumn: "ClanID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -69,9 +70,15 @@ namespace TTMMBot.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Member_ClanTag",
+                name: "IX_Clan_Tag",
+                table: "Clan",
+                column: "Tag",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Member_ClanID",
                 table: "Member",
-                column: "ClanTag");
+                column: "ClanID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Member_Name",

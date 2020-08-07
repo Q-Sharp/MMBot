@@ -1,18 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using System.IO;
+using System.Reflection;
 using TTMMBot.Data.Entities;
 
 namespace TTMMBot.Data
 {
     public class Context : DbContext, ITTMMBotContext
     {
-        private string dbname = $"{Path.Combine(Directory.GetCurrentDirectory(), "TTMMBot.db")}";
-
-        //public Context(DbContextOptions<Context> options = null) : base(options ?? new DbContextOptions<Context>())
-        //{
-        //}
-
+        private readonly string dbname = $"{Path.Combine(Directory.GetCurrentDirectory(), "TTMMBot.db")}";
         protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={dbname}");
 
         public DbSet<Member> Member { get; set; }
@@ -21,12 +17,16 @@ namespace TTMMBot.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Clan>()
-                .HasKey(m => m.Tag);
+                .HasKey(m => m.ClanID);
 
             modelBuilder.Entity<Clan>()
                 .HasMany(rp => rp.Members)
                 .WithOne(c => c.Clan)
-                .HasForeignKey(rp => rp.ClanTag);
+                .HasForeignKey(rp => rp.ClanID);
+
+            modelBuilder.Entity<Clan>()
+                .HasIndex(c => c.Tag)
+                .IsUnique();
 
             modelBuilder.Entity<Member>()
                 .HasKey(m => m.MemberID);

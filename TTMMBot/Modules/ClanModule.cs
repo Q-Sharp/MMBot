@@ -1,9 +1,15 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using TTMMBot.Data.Entities;
+using TTMMBot.Helpers;
 using TTMMBot.Services;
 
 namespace TTMMBot.Modules
@@ -15,13 +21,13 @@ namespace TTMMBot.Modules
     public class ClanModule : ModuleBase<SocketCommandContext>
     {
         private readonly string[] header = { "Name", "Clan", "AHigh", "SHigh", "Role" };
-        private readonly int[] pad = { 16, 4, 5, 5, 8 };
-        private readonly string[] fields = { "Name", "ClanTag", "AllTimeHigh", "SeasonHighest", "Role" };
+        private readonly int[] pad = { 16, 4, 5, 5, 7 };
+        private readonly string[] fields = { "Name", "Clan.Tag", "AllTimeHigh", "SeasonHighest", "Role" };
 
         public IDatabaseService DatabaseService { get; set; }
 
-        //[Command]
-        //[Summary("Lists all clans")]
+        public CommandHandler CommandHandler { get; set; }
+
         //public async Task Clan()
         //{
         //    try
@@ -55,24 +61,19 @@ namespace TTMMBot.Modules
 
         [Command]
         [Summary("Lists all members")]
-        public async Task Member(string clanTag = null)
+        public async Task Member()
         {
             try
             {
                 var m = await DatabaseService.LoadMembersAsync();
-                //m = m.Where(x => x.IsActive).ToList();
 
-                foreach (var chunk in m.GroupBy(x => x.ClanTag).OrderBy(x => x.Key).Where(x => x.Key == clanTag || clanTag == null))
+                foreach (var gM in m.GroupBy(x => x.ClanID, (x, y) => new { Clan = x, Members = y }).OrderBy(x => x.Clan))
                 {
-                    var table = $"```{Environment.NewLine}";
-                    table += getHeader(header);
-                    table += getLimiter(header);
-
-                    foreach (var member in chunk.OrderByDescending(x => x.AllTimeHigh))
-                        table += getValues(member, fields);
-
-                    table += $"{Environment.NewLine}```";
-                    await ReplyAsync(table);
+                    if(gM.Clan.HasValue && (gM.Members.FirstOrDefault().Clan.Tag != null))
+                    {
+                        var table = GetTable(gM.Members.ToList());
+                        await ReplyAsync(table);
+                    }
                 }
             }
             catch (Exception e)
@@ -81,13 +82,71 @@ namespace TTMMBot.Modules
             }
         }
 
+        
+
+        [Command("Sort")]
+        [Summary("Lists all members")]
+        [Alias("sort", "s", "S")]
+        public async Task Sort()
+        {
+            try
+            {
+                var m = await DatabaseService.LoadMembersAsync();
+
+                int page = 1;
+                var table = GetSortedMembers(m, page);
+
+                var message = await ReplyAsync(table);
+
+                var back = new Emoji("◀️");
+                var next = new Emoji("▶️");
+                var t = message.AddReactionsAsync(new Emoji[] { back, next });
+
+                await CommandHandler.AddToReactionListAsync(message, async r =>
+                {
+                    if(r.Name == back.Name && page > 1)
+                        await (message as SocketUserMessage).ModifyAsync(me => me.Content = GetSortedMembers(m, --page));
+                    else if(r.Name == next.Name && page < 5)
+                        await (message as SocketUserMessage).ModifyAsync(me => me.Content = GetSortedMembers(m, ++page));
+                });
+            }
+            catch (Exception e)
+            {
+                await ReplyAsync($"{e.Message}");
+            }
+        }
+
+        private string GetSortedMembers(IList<Member> m, int pageNo)
+        {
+            var chunk = m.OrderByDescending(x => x.SeasonHighest).ToList().ChunkBy(20)[pageNo - 1];
+            return GetTable(chunk, pageNo);
+        }
+
+        private string GetTable(IList<Member> members, int? pageNo = null)
+        {
+            var table = $"```{Environment.NewLine}";
+
+            if (pageNo.HasValue)
+                table += $"[Page {pageNo.Value}";
+
+            table += getHeader(header);
+            table += getLimiter(header);
+
+            foreach (var member in members.OrderByDescending(x => x.AllTimeHigh))
+                table += getValues(member, fields);
+
+            table += $"{Environment.NewLine}```";
+
+            return table;
+        }
+
         private string getLimiter(string[] header)
         {
             var ac = header.Length;
 
             var l = "";
             for (var i = 0; i < ac; i++)
-                l += $"{"-".PadRight(pad[i], '-')}-";
+                l += $"{"-"?.PadRight(pad[i], '-')}-";
             l += $"{Environment.NewLine}";
             return l;
         }
@@ -98,7 +157,7 @@ namespace TTMMBot.Modules
 
             var l = "";
             for (var i = 0; i < ac; i++)
-                l += $"{header[i].PadRight(pad[i])}|";
+                l += $"{header[i]?.PadRight(pad[i])}|";
 
             l = l.TrimEnd('|');
             l += $"{Environment.NewLine}";
@@ -109,13 +168,12 @@ namespace TTMMBot.Modules
         {
             var l = "";
             var ac = header.Length;
-            var props = m.GetType().GetProperties().Where(s => header.Contains(s.Name)).ToArray();
+
+            if (m == null || header == null)
+                return string.Empty;
 
             for (var i = 0; i < ac; i++)
-            {
-                var p = props.FirstOrDefault(p => p.Name == header[i]);
-                l += $"{p.GetValue(m).ToString().PadRight(pad[i])}|";
-            }
+                l += $"{m.GetPropertyValue(header[i])?.ToString()?.PadRight(pad[i])}|";
 
             l = l.TrimEnd('|');
             l += $"{Environment.NewLine}";
@@ -208,7 +266,7 @@ namespace TTMMBot.Modules
                     var c = (await DatabaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
                     var m = (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == memberName);
 
-                    m.ClanTag = c.Tag;
+                    m.Clan.Tag = c.Tag;
 
                     await DatabaseService.SaveDataAsync();
                     await ReplyAsync($"The member {m} is now member of {c}.");

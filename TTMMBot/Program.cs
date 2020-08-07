@@ -69,7 +69,8 @@ namespace TTMMBot
             var services = GetServices();
             var client = services.GetRequiredService<DiscordSocketClient>();
             services.GetRequiredService<CommandService>().Log += LogAsync;
-            
+
+            await services.GetRequiredService<IDatabaseService>().MigrateAsync();
 
             await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("DiscordToken"));
             await client.StartAsync();
@@ -87,6 +88,7 @@ namespace TTMMBot
            .AddSingleton<CommandService>()
            .AddSingleton<CommandHandler>()
            .AddSingleton<IDatabaseService, DatabaseService>()
+           .AddSingleton<NotionCSVImportService>()
            .BuildServiceProvider();
     }
 }

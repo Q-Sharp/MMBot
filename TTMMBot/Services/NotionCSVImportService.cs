@@ -1,32 +1,27 @@
 ﻿using CsvHelper;
-using CsvHelper.Configuration;
-using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
 using System.Text;
-using TTMMBot.Data;
+using System.Threading.Tasks;
 using TTMMBot.Data.Entities;
 using TTMMBot.Data.Enums;
 
-namespace TTMMDatabaseSeeeder
+namespace TTMMBot.Services
 {
-    class Program
+    public class NotionCSVImportService
     {
-        static void Main(string[] args)
+        public IDatabaseService DatabaseService { get; set; }
+        public NotionCSVImportService(IDatabaseService databaseService) => DatabaseService = databaseService;
+
+        public async Task<bool> ImportCSV(byte[] csv)
         {
-            using var c = new Context();
-            c.Database.Migrate();
-
-            var assembly = Assembly.GetExecutingAssembly();
-            using var stream = assembly.GetManifestResourceStream(assembly.GetManifestResourceNames()[0]);
-            using var reader = new StreamReader(stream, Encoding.UTF8);
-
-            var csvReader = new CsvReader(reader, CultureInfo.CurrentCulture);
+            using var mem = new MemoryStream(csv);
+            using var reader = new StreamReader(mem, Encoding.UTF8);
+            using var csvReader = new CsvReader(reader, CultureInfo.CurrentCulture);
 
             csvReader.Configuration.HeaderValidated = null;
             csvReader.Configuration.MissingFieldFound = null;
@@ -35,15 +30,26 @@ namespace TTMMDatabaseSeeeder
 
             try
             {
-                c.Clan.Add(new Clan { Tag = "TT", Name = "The Tavern" });
-                c.Clan.Add(new Clan { Tag = "TT2", Name = "The Tavern 2" });
-                c.Clan.Add(new Clan { Tag = "TT3", Name = "The Tavern 3" });
-                c.Clan.Add(new Clan { Tag = "TT4", Name = "The Tavern 4" });
-                c.SaveChanges();
+                var c = await DatabaseService.CreateClanAsync();
+                c.Tag = "TT";
+                c.Name = "The Tavern";
+                await DatabaseService.SaveDataAsync();
+
+                for(var i = 2; i <= 4; i++)
+                {
+                    var c2 = await DatabaseService.CreateClanAsync();
+                    c2.Tag = $"TT{i}";
+                    c2.Name = $"The Tavern {i}";
+                    await DatabaseService.SaveDataAsync();
+                }
             }
             catch
             {
+                // ignore e
             }
+
+            var clans = await DatabaseService.LoadClansAsync();
+            var members = await DatabaseService.LoadMembersAsync();
 
             try
             {
@@ -57,14 +63,15 @@ namespace TTMMDatabaseSeeeder
                     if (row["Clan"] == DBNull.Value)
                         continue;
 
-                    var clanid = c.Clan.FirstOrDefault(x => x.Tag == (string)row["Clan"])?.ClanID;
+                    
+                    var clanid = clans.FirstOrDefault(x => x.Tag == (string)row["Clan"])?.ClanID;
                     if (clanid != null)
                         row["ClanID"] = clanid.ToString();
                 }
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    Member m = c.Member.FirstOrDefault(x => row["IGN"] != DBNull.Value && x.Name == (string)row["IGN"]) ?? new Member();
+                    var m = members.FirstOrDefault(x => row["IGN"] != DBNull.Value && x.Name == (string)row["IGN"]) ?? await DatabaseService.CreateMemberAsync();
 
                     if (row["Discord"] != DBNull.Value)
                         m.Discord = (string)row["Discord"];
@@ -76,7 +83,7 @@ namespace TTMMDatabaseSeeeder
                         m.Role = (Role)er;
 
                     if (row["ClanID"] != DBNull.Value && int.TryParse((string)row["ClanID"], out var cid))
-                        m.AllTimeHigh = cid;
+                        m.ClanID = cid;
 
                     if (row["AT-highest"] != DBNull.Value && int.TryParse((string)row["AT-highest"], out var ath))
                         m.AllTimeHigh = ath;
@@ -87,21 +94,20 @@ namespace TTMMDatabaseSeeeder
                     if (row["Donations"] != DBNull.Value && int.TryParse((string)row["Donations"], out var d))
                         m.Donations = d;
 
-                    m.IsActive = m.ClanID.HasValue ? true : false;
+                    m.IsActive = m.ClanID.HasValue;
                     m.LastUpdated = DateTime.Now;
-
-                    c.Member.Update(m);
-                    Console.WriteLine($"{m} updated!");
                 }
 
                 //m.LastUpdated = DateTime.Parse((string)row["LastUpdate"]);
                 //m.ToList().ForEach(m => m.Clan = c.Clan.FirstOrDefault(d => d.Tag == m.Clan.Tag));
-                c.SaveChanges();
+                await DatabaseService.SaveDataAsync();
             }
-            catch (Exception e)
+            catch
             {
-                Console.WriteLine(e);
+                return false;
             }
+
+            return true;
         }
     }
 }
