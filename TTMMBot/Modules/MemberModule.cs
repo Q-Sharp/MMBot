@@ -1,16 +1,9 @@
-﻿using TTMMBot.Services;
-using Discord.Commands;
-using Discord;
-using System.Threading.Tasks;
-using Discord.WebSocket;
+﻿using System;
 using System.Linq;
-using System;
-using TTMMBot.Helpers;
-using ConsoleTables;
-using System.IO;
-using TTMMBot.Data.Entities;
-using System.Collections;
-using System.Globalization;
+using System.Threading.Tasks;
+using Discord;
+using Discord.Commands;
+using TTMMBot.Services;
 
 namespace TTMMBot.Modules
 {

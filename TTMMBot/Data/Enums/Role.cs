@@ -1,6 +1,4 @@
-﻿using Discord.Commands;
-
-namespace TTMMBot.Data.Enums
+﻿namespace TTMMBot.Data.Enums
 {
     public enum Role
     {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TTMMBot.Helpers
+﻿namespace TTMMBot.Helpers
 {
     public static class PropertyHelpers
     {

@@ -1,7 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
-using System.IO;
-using System.Reflection;
+﻿using System.IO;
+using Microsoft.EntityFrameworkCore;
 using TTMMBot.Data.Entities;
 
 namespace TTMMBot.Data

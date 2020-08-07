@@ -1,7 +1,7 @@
-﻿using TTMMBot.Data;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using TTMMBot.Data;
 using TTMMBot.Data.Entities;
 
 namespace TTMMBot.Services

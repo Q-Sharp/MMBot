@@ -1,6 +1,6 @@
-﻿using TTMMBot.Data.Entities;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Collections.Generic;
+using TTMMBot.Data.Entities;
 
 namespace TTMMBot.Services
 {

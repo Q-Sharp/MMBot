@@ -1,5 +1,5 @@
-﻿using TTMMBot.Data.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using TTMMBot.Data.Entities;
 
 namespace TTMMBot.Data
 {
