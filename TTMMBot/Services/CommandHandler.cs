@@ -68,7 +68,7 @@ namespace TTMMBot.Services
         public Task AddToReactionListAsync(IUserMessage message, Func<IEmote, Task> fT)
         {
             messageIdWithReaction.Add(message.Id, fT);
-            //Task.Run
+            return Task.Run(() => { });
         }
     }
 }
