@@ -9,7 +9,7 @@ using TTMMBot.Data;
 namespace TTMMBot.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20200807200226_InitialCreate")]
+    [Migration("20200808142557_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -107,7 +107,7 @@ namespace TTMMBot.Migrations
             modelBuilder.Entity("TTMMBot.Data.Entities.Member", b =>
                 {
                     b.HasOne("TTMMBot.Data.Entities.Clan", "Clan")
-                        .WithMany("Members")
+                        .WithMany("Member")
                         .HasForeignKey("ClanID");
                 });
 

@@ -18,9 +18,9 @@ namespace TTMMBot.Data
                 .HasKey(m => m.ClanID);
 
             modelBuilder.Entity<Clan>()
-                .HasMany(rp => rp.Members)
+                .HasMany(c => c.Member)
                 .WithOne(c => c.Clan)
-                .HasForeignKey(rp => rp.ClanID);
+                .HasForeignKey(m => m.ClanID);
 
             modelBuilder.Entity<Clan>()
                 .HasIndex(c => c.Tag)

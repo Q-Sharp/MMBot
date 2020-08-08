@@ -105,7 +105,7 @@ namespace TTMMBot.Migrations
             modelBuilder.Entity("TTMMBot.Data.Entities.Member", b =>
                 {
                     b.HasOne("TTMMBot.Data.Entities.Clan", "Clan")
-                        .WithMany("Members")
+                        .WithMany("Member")
                         .HasForeignKey("ClanID");
                 });
 

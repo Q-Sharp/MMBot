@@ -35,8 +35,8 @@ namespace TTMMBot.Services
         {
             return Task.Run(async () =>
             {
-                if (messageIdWithReaction.Keys.Contains(arg1.Value.Id))
-                    await messageIdWithReaction[arg1.Value.Id](arg3.Emote);
+                if (messageIdWithReaction.Keys.Contains(arg3.MessageId) && arg3.UserId != Client.CurrentUser.Id)
+                    await messageIdWithReaction[arg3.MessageId](arg3.Emote);
             });
         }
 
@@ -63,10 +63,14 @@ namespace TTMMBot.Services
             await context.Channel.SendMessageAsync($"error: {result}");
         }
 
-        public Task AddToReactionListAsync(IUserMessage message, Func<IEmote, Task> fT)
+        public void AddToReactionList(IUserMessage message, Func<IEmote, Task> fT)
         {
             messageIdWithReaction.Add(message.Id, fT);
-            return Task.Run(() => { });
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromMinutes(1));
+                messageIdWithReaction.Remove(message.Id);
+            });
         }
     }
 }

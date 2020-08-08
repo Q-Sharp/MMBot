@@ -1,10 +1,15 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using TTMMBot.Data.Enums;
 
 namespace TTMMBot.Data.Entities
 {
+    [Table("Member")]
     public class Member
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int MemberID { get; set; }
 
         public string Discord { get; set; }
@@ -20,6 +25,7 @@ namespace TTMMBot.Data.Entities
         public Role Role { get; set; }
         public bool IsActive { get; set; }
 
+        [ForeignKey("Clan")]
         public int? ClanID { get; set; }
         public Clan Clan { get; set; }
 
