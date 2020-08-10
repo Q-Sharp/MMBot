@@ -25,7 +25,7 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
     - name: .NET Publish
       run: |
-        dotnet publish -c Release -o TTMMBot -r linux-x64 --no-build --output ${{ env.PACKAGE_PATH }}
+        dotnet publish -c Release -o TTMMBot -r ubuntu-x64 --output ${{ env.PACKAGE_PATH }}
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v2.1.1
       env:
