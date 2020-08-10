@@ -25,13 +25,13 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
     - name: .NET Publish
       run: |
-        dotnet publish -c Release -o TTMMBot -r ubuntu-x64 --output ${{ env.PACKAGE_PATH }}
+        dotnet publish -c Release -o TTMMBot -r ubuntu-x64 --output ${{ secrets.PACKAGE_PATH }}
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v2.1.1
       env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltgoDzvO --delete"
-          SOURCE: ${{ env.PACKAGE_PATH }}
+          SOURCE: ${{ secrets.PACKAGE_PATH }}
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
