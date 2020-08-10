@@ -25,13 +25,13 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
     - name: .NET Publish
       run: |
-        dotnet publish -c Release -o TTMMBot -r ubuntu-x64 --output ${{ secrets.PACKAGE_PATH }}
+        dotnet publish -c Release -r linux-x64
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v2.1.1
       env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltgoDzvO --delete-excluded --filter 'protect *.db'"
-          SOURCE: ${{ secrets.PACKAGE_PATH }}
+          SOURCE: /home/runner/work/TTMMBot/TTMMBot/bin/Release/netcoreapp3.1/linux-x64/publish/
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
