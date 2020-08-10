@@ -63,13 +63,20 @@ namespace TTMMBot
 
         private async Task MainAsync()
         {
+            string token;
             var services = GetServices();
             var client = services.GetRequiredService<DiscordSocketClient>();
             services.GetRequiredService<CommandService>().Log += LogAsync;
 
             await services.GetRequiredService<IDatabaseService>().MigrateAsync();
 
-            await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("DiscordToken"));
+            #if DEBUG
+                token = "DiscordTokenDev";
+            #else
+                token = "DiscordToken";
+            #endif
+
+            await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable(token));
             await client.StartAsync();
 
             // Here we initialize the logic required to register our commands.

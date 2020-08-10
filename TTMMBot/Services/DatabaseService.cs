@@ -25,5 +25,18 @@ namespace TTMMBot.Services
 
         public async Task MigrateAsync() => await Context?.Database.MigrateAsync();
         public async Task SaveDataAsync() => await Context?.SaveChangesAsync();
+
+        public async Task CleanDBAsync()
+        {
+            
+            var m = await Context.Member.ToListAsync();
+            var c = await Context.Member.ToListAsync();
+
+            if (m.Count > 0)
+                Context?.RemoveRange(m);
+
+            if (c.Count > 0)
+                Context?.RemoveRange(c);
+        }
     }
 }

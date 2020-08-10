@@ -9,7 +9,7 @@ using TTMMBot.Data;
 namespace TTMMBot.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20200808142557_InitialCreate")]
+    [Migration("20200810145052_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,6 +28,7 @@ namespace TTMMBot.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Tag")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("ClanID");
@@ -63,6 +64,7 @@ namespace TTMMBot.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Role")

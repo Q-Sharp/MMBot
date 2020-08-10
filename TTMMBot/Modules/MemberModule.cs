@@ -58,22 +58,20 @@ namespace TTMMBot.Modules
                 var m = (await DatabaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
 
                 int page = 1;
-                var table = GetSortedMembers(m, page);
+                
 
-                var message = await ReplyAsync(table);
+                var message = await ReplyAsync(GetSortedMembersTable(m, page));
 
                 var back = new Emoji("◀️");
                 var next = new Emoji("▶️");
-                var t = message.AddReactionsAsync(new Emoji[] { back, next });
+                await message.AddReactionsAsync(new Emoji[] { back, next });
 
                 CommandHandler.AddToReactionList(message, async r =>
                 {
-                    await t;
-
                     if (r.Name == back.Name && page > 1)
-                        await message.ModifyAsync(me => me.Content = GetSortedMembers(m, --page));
+                        await message.ModifyAsync(async me => me.Content = await Task.Run(() => GetSortedMembersTable(m, page)));
                     else if (r.Name == next.Name && page < 5)
-                        await message.ModifyAsync(me => me.Content = GetSortedMembers(m, ++page));
+                        await message.ModifyAsync(async me => me.Content = await Task.Run(() => GetSortedMembersTable(m, page)));
                 });
             }
             catch (Exception e)
@@ -82,18 +80,52 @@ namespace TTMMBot.Modules
             }
         }
 
-        private string GetSortedMembers(IList<Member> m, int pageNo)
+        [Command("Changes")]
+        [Summary("Lists member changes")]
+        [Alias("changes", "c", "C")]
+        public async Task Changes()
         {
-            var chunk = m.OrderByDescending(x => x.SeasonHighest).ToList().ChunkBy(20)[pageNo - 1];
-            return GetTable(chunk, pageNo);
+            try
+            {
+                var m = (await DatabaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
+
+                int page = 1;
+                var table = await Task.Run(() => GetSortedMembersTable(m, page));
+
+                var message = await ReplyAsync(table);
+
+                var back = new Emoji("◀️");
+                var next = new Emoji("▶️");
+                await message.AddReactionsAsync(new Emoji[] { back, next });
+
+                CommandHandler.AddToReactionList(message, async r =>
+                {
+                    if (r.Name == back.Name && page > 1)
+                        await message.ModifyAsync(async me => me.Content = await Task.Run(() => GetSortedMembersTable(m, page)));
+                    else if (r.Name == next.Name && page < 5)
+                        await message.ModifyAsync(async me => me.Content = await Task.Run(() => GetSortedMembersTable(m, page)));
+                });
+            }
+            catch (Exception e)
+            {
+                await ReplyAsync($"{e.Message}");
+            }
         }
 
-        private string GetTable(IList<Member> members, int? pageNo = null)
+        private IList<Member> GetSortedMembers(IList<Member> m, int pageNo) => m.OrderByDescending(x => x.TotalScore).ToList().ChunkBy(20)[pageNo - 1].ToList();
+
+        private string GetSortedMembersTable(IList<Member> m, int pageNo)
+        {
+            var sortedm = GetSortedMembers(m, pageNo);
+            return GetTable(sortedm);
+        }
+
+        private string GetTable(IList<Member> members, int? clanNo = null)
         {
             var table = $"```{Environment.NewLine}";
 
-            if (pageNo.HasValue)
-                table += $"[Page {pageNo.Value}]{Environment.NewLine}";
+            if (clanNo.HasValue)
+                table += $"[TT {clanNo.Value}]{Environment.NewLine}";
 
             table += getHeader(header);
             table += getLimiter(header);

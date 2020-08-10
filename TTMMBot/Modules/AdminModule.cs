@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -30,12 +31,25 @@ namespace TTMMBot.Modules
                 var csv = myWebClient.DownloadData(csvFile.Url);
                 var result = await CSVImportService?.ImportCSV(csv);
 
-                await ReplyAsync(result ? "CSV file import was successfull" : "ERROR");
+                await ReplyAsync(result == null ? "CSV file import was successfull" : $"ERROR: {result.Message}");
             }
             catch (Exception e)
             {
                 await ReplyAsync($"{e.Message}");
             }
+        }
+
+        [RequireOwner]
+        [Command("Restart")]
+        [Alias("restart")]
+        [Summary("Restarts the bot")]
+        public async Task Restart()
+        {
+            await Task.Run(() =>
+            {
+                Process.Start(AppDomain.CurrentDomain.FriendlyName);
+                Environment.Exit(0);
+            });
         }
     }
 }

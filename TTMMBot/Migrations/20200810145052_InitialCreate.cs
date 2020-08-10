@@ -13,7 +13,7 @@ namespace TTMMBot.Migrations
                 {
                     ClanID = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Tag = table.Column<string>(nullable: true),
+                    Tag = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -28,7 +28,7 @@ namespace TTMMBot.Migrations
                     MemberID = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Discord = table.Column<string>(nullable: true),
-                    Name = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: false),
                     AllTimeHigh = table.Column<int>(nullable: true),
                     SeasonHighest = table.Column<int>(nullable: true),
                     Donations = table.Column<int>(nullable: true),

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TTMMBot.Data.Entities
 {
@@ -11,6 +12,7 @@ namespace TTMMBot.Data.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ClanID { get; set; }
 
+        [Required]
         public string Tag { get; set; }
 
         public string Name { get; set; }

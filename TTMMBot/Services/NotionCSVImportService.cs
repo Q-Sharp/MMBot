@@ -15,8 +15,11 @@ namespace TTMMBot.Services
         public IDatabaseService DatabaseService { get; set; }
         public NotionCSVImportService(IDatabaseService databaseService) => DatabaseService = databaseService;
 
-        public async Task<bool> ImportCSV(byte[] csv)
+        public async Task<Exception> ImportCSV(byte[] csv)
         {
+            await DatabaseService.CleanDBAsync();
+            await DatabaseService.SaveDataAsync();
+
             using var mem = new MemoryStream(csv);
             using var reader = new StreamReader(mem, Encoding.UTF8);
             using var csvReader = new CsvReader(reader, CultureInfo.CurrentCulture);
@@ -100,12 +103,12 @@ namespace TTMMBot.Services
                 //m.ToList().ForEach(m => m.Clan = c.Clan.FirstOrDefault(d => d.Tag == m.Clan.Tag));
                 await DatabaseService.SaveDataAsync();
             }
-            catch
+            catch(Exception e)
             {
-                return false;
+                return e;
             }
 
-            return true;
+            return null;
         }
     }
 }

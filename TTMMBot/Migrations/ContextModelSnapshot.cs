@@ -26,6 +26,7 @@ namespace TTMMBot.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Tag")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("ClanID");
@@ -61,6 +62,7 @@ namespace TTMMBot.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Role")

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CsvHelper.Configuration.Attributes;
 using TTMMBot.Data.Enums;
 
 namespace TTMMBot.Data.Entities
@@ -14,6 +16,7 @@ namespace TTMMBot.Data.Entities
 
         public string Discord { get; set; }
 
+        [Required]
         public string Name { get; set; }
 
         public int? AllTimeHigh { get; set; }
@@ -21,6 +24,8 @@ namespace TTMMBot.Data.Entities
         public int? SeasonHighest { get; set; }
 
         public int? Donations { get; set; }
+
+        public int? TotalScore => (5 * SeasonHighest + 2 * AllTimeHigh + 1 * Donations) / 3;
 
         public Role Role { get; set; }
         public bool IsActive { get; set; }
