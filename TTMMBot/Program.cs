@@ -67,8 +67,21 @@ namespace TTMMBot
             var services = GetServices();
             var client = services.GetRequiredService<DiscordSocketClient>();
             services.GetRequiredService<CommandService>().Log += LogAsync;
+            var dbs = services.GetRequiredService<IDatabaseService>();
 
-            await services.GetRequiredService<IDatabaseService>().MigrateAsync();
+            try
+            {
+                await dbs.MigrateAsync();
+            }
+            catch(Exception e)
+            {
+                var lm = new LogMessage(LogSeverity.Error, "DatabaseService", "Migration failed", e);
+                await LogAsync(lm);
+                await dbs.DropTablesAsync();
+
+                await dbs.MigrateAsync();
+            }
+            
 
             #if DEBUG
                 token = "DiscordTokenDev";

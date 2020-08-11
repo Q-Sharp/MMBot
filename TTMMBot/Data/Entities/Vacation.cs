@@ -15,6 +15,6 @@ namespace TTMMBot.Data.Entities
 
         [ForeignKey("Member")]
         public int MemberID { get; set; }
-        public Member Member { get; set; }
+        public virtual Member Member { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using TTMMBot.Data;
 using TTMMBot.Data.Entities;
 
@@ -26,17 +27,6 @@ namespace TTMMBot.Services
         public async Task MigrateAsync() => await Context?.Database.MigrateAsync();
         public async Task SaveDataAsync() => await Context?.SaveChangesAsync();
 
-        public async Task CleanDBAsync()
-        {
-            
-            var m = await Context.Member.ToListAsync();
-            var c = await Context.Member.ToListAsync();
-
-            if (m.Count > 0)
-                Context?.RemoveRange(m);
-
-            if (c.Count > 0)
-                Context?.RemoveRange(c);
-        }
+        public async Task DropTablesAsync() => await Context.Database.ExecuteSqlRawAsync("drop table Vacation; drop table Member; drop table Clan;");
     }
 }

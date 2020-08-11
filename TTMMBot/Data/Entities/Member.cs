@@ -32,7 +32,7 @@ namespace TTMMBot.Data.Entities
 
         [ForeignKey("Clan")]
         public int? ClanID { get; set; }
-        public Clan Clan { get; set; }
+        public virtual Clan Clan { get; set; }
 
         public Vacation Vacation { get; set; }
 

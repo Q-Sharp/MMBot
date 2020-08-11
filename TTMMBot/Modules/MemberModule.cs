@@ -58,8 +58,6 @@ namespace TTMMBot.Modules
                 var m = (await DatabaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
 
                 int page = 1;
-                
-
                 var message = await ReplyAsync(GetSortedMembersTable(m, page));
 
                 var back = new Emoji("◀️");

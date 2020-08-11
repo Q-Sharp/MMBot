@@ -9,7 +9,7 @@ using TTMMBot.Data;
 namespace TTMMBot.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20200810145052_InitialCreate")]
+    [Migration("20200811113426_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

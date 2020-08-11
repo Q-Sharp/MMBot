@@ -6,20 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
+using TTMMBot.Data;
+using TTMMBot.Data.Entities;
 using TTMMBot.Data.Enums;
 
 namespace TTMMBot.Services
 {
     public class NotionCSVImportService
     {
-        public IDatabaseService DatabaseService { get; set; }
-        public NotionCSVImportService(IDatabaseService databaseService) => DatabaseService = databaseService;
+        public Context Context { get; set; }
+        public NotionCSVImportService(Context context) => Context = context;
 
         public async Task<Exception> ImportCSV(byte[] csv)
-        {
-            await DatabaseService.CleanDBAsync();
-            await DatabaseService.SaveDataAsync();
-
+        {                
             using var mem = new MemoryStream(csv);
             using var reader = new StreamReader(mem, Encoding.UTF8);
             using var csvReader = new CsvReader(reader, CultureInfo.CurrentCulture);
@@ -29,28 +28,37 @@ namespace TTMMBot.Services
             csvReader.Configuration.BadDataFound = null;
             csvReader.Configuration.Delimiter = ",";
 
+            var c = Context.Clan;
+            var m = Context.Member;
+
             try
             {
-                var c = await DatabaseService.CreateClanAsync();
-                c.Tag = "TT";
-                c.Name = "The Tavern";
-                await DatabaseService.SaveDataAsync();
-
-                for(var i = 2; i <= 4; i++)
+                if (c.Count() == 0)
                 {
-                    var c2 = await DatabaseService.CreateClanAsync();
-                    c2.Tag = $"TT{i}";
-                    c2.Name = $"The Tavern {i}";
-                    await DatabaseService.SaveDataAsync();
+                    var nc = new Clan
+                    {
+                        Tag = "TT",
+                        Name = "The Tavern"
+                    };
+                    await Context.AddAsync(nc);
+
+                    for (var i = 2; i <= 4; i++)
+                    {
+                        var c2 = new Clan
+                        {
+                            Tag = $"TT{i}",
+                            Name = $"The Tavern {i}"
+                        };
+                        await Context.AddAsync(c2);
+                    }
+
+                    await Context.SaveChangesAsync();
                 }
             }
             catch
             {
                 // ignore e
             }
-
-            var clans = await DatabaseService.LoadClansAsync();
-            var members = await DatabaseService.LoadMembersAsync();
 
             try
             {
@@ -61,49 +69,42 @@ namespace TTMMBot.Services
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    if (row["Clan"] == DBNull.Value)
-                        continue;
+                    var me = m.FirstOrDefault(x => row["IGN"] != DBNull.Value && x.Name == (string)row["IGN"]) ?? new Member();
 
-                    
-                    var clanid = clans.FirstOrDefault(x => x.Tag == (string)row["Clan"])?.ClanID;
-                    if (clanid != null)
-                        row["ClanID"] = clanid.ToString();
-                }
-
-                foreach (DataRow row in dt.Rows)
-                {
-                    var m = members.FirstOrDefault(x => row["IGN"] != DBNull.Value && x.Name == (string)row["IGN"]) ?? await DatabaseService.CreateMemberAsync();
+                    if (row["Clan"] != DBNull.Value && !string.IsNullOrEmpty((string)row["Clan"]))
+                    { 
+                        var clanid = c.FirstOrDefault(x => x.Tag == (string)row["Clan"])?.ClanID;
+                        me.ClanID = clanid;
+                    }
 
                     if (row["Discord"] != DBNull.Value)
-                        m.Discord = (string)row["Discord"];
+                        me.Discord = (string)row["Discord"];
 
                     if (row["IGN"] != DBNull.Value)
-                        m.Name = (string)row["IGN"];
+                        me.Name = (string)row["IGN"];
 
                     if (row["Role"] != DBNull.Value && Enum.TryParse(typeof(Role), ((string)row["Role"]).Replace("-", ""), out var er))
-                        m.Role = (Role)er;
+                        me.Role = (Role)er;
 
                     if (row["ClanID"] != DBNull.Value && int.TryParse((string)row["ClanID"], out var cid))
-                        m.ClanID = cid;
+                        me.ClanID = cid;
 
                     if (row["AT-highest"] != DBNull.Value && int.TryParse((string)row["AT-highest"], out var ath))
-                        m.AllTimeHigh = ath;
+                        me.AllTimeHigh = ath;
 
                     if (row["S-highest"] != DBNull.Value && int.TryParse((string)row["S-highest"], out var sh))
-                        m.SeasonHighest = sh;
+                        me.SeasonHighest = sh;
 
                     if (row["Donations"] != DBNull.Value && int.TryParse((string)row["Donations"], out var d))
-                        m.Donations = d;
+                        me.Donations = d;
 
-                    m.IsActive = m.ClanID.HasValue;
-                    m.LastUpdated = DateTime.Now;
+                    me.IsActive = me.ClanID.HasValue && me.SeasonHighest.HasValue;
+                    me.LastUpdated = DateTime.Now;
+
+                    await Context.SaveChangesAsync();
                 }
-
-                //m.LastUpdated = DateTime.Parse((string)row["LastUpdate"]);
-                //m.ToList().ForEach(m => m.Clan = c.Clan.FirstOrDefault(d => d.Tag == m.Clan.Tag));
-                await DatabaseService.SaveDataAsync();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return e;
             }
