@@ -26,7 +26,5 @@ namespace TTMMBot.Services
 
         public async Task MigrateAsync() => await Context?.Database.MigrateAsync();
         public async Task SaveDataAsync() => await Context?.SaveChangesAsync();
-
-        public async Task DropTablesAsync() => await Context.Database.ExecuteSqlRawAsync("drop table Vacation; drop table Member; drop table Clan;");
     }
 }

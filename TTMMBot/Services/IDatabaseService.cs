@@ -14,6 +14,5 @@ namespace TTMMBot.Services
         void DeleteMember(Member m);
         Task SaveDataAsync();
         Task MigrateAsync();
-        Task DropTablesAsync();
     }
 }

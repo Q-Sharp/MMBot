@@ -77,11 +77,8 @@ namespace TTMMBot
             {
                 var lm = new LogMessage(LogSeverity.Error, "DatabaseService", "Migration failed", e);
                 await LogAsync(lm);
-                await dbs.DropTablesAsync();
-
-                await dbs.MigrateAsync();
+                return;
             }
-            
 
             #if DEBUG
                 token = "DiscordTokenDev";

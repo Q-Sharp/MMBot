@@ -45,10 +45,11 @@ namespace TTMMBot.Modules
         [Summary("Restarts the bot")]
         public async Task Restart()
         {
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 Process.Start(AppDomain.CurrentDomain.FriendlyName);
                 Environment.Exit(0);
+                await ReplyAsync($"Bot service restarted!");
             });
         }
     }
