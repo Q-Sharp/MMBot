@@ -48,8 +48,8 @@ namespace TTMMBot.Modules
             await Task.Run(async () =>
             {
                 Process.Start(AppDomain.CurrentDomain.FriendlyName);
-                Environment.Exit(0);
                 await ReplyAsync($"Bot service restarted!");
+                Environment.Exit(0);
             });
         }
     }
