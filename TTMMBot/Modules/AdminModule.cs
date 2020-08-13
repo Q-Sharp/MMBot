@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -47,7 +48,20 @@ namespace TTMMBot.Modules
         {
             Process.Start(AppDomain.CurrentDomain.FriendlyName);
             await ReplyAsync($"Bot service restarted!");
+            
             Environment.Exit(0);
         }
+
+        [RequireOwner]
+        [Command("DeleteDB")]
+        [Alias("deletedb")]
+        [Summary("Deletes sqlite db file")]
+        public async Task DeleteDB() => await Task.Run(async () =>
+        {
+            var db = $"{Path.Combine(Directory.GetCurrentDirectory(), "TTMMBot.db")}";
+            File.Delete(db);
+            await ReplyAsync($"{db} has been deleted.");
+            await Restart();
+        });
     }
 }

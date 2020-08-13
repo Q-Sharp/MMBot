@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200811113426_InitialCreate.cs" />
+    <Compile Remove="Migrations\20200811113426_InitialCreate.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="TTMMBot.db" />
   </ItemGroup>
 
@@ -13,6 +18,7 @@
     <PackageReference Include="CsvHelper" Version="15.0.5" />
     <PackageReference Include="Discord.Net" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="3.1.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.7">
       <PrivateAssets>all</PrivateAssets>

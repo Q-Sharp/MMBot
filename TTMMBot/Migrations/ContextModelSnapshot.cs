@@ -14,7 +14,7 @@ namespace TTMMBot.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.6");
+                .HasAnnotation("ProductVersion", "3.1.7");
 
             modelBuilder.Entity("TTMMBot.Data.Entities.Clan", b =>
                 {
@@ -98,8 +98,7 @@ namespace TTMMBot.Migrations
 
                     b.HasKey("VacationID");
 
-                    b.HasIndex("MemberID")
-                        .IsUnique();
+                    b.HasIndex("MemberID");
 
                     b.ToTable("Vacation");
                 });
@@ -114,8 +113,8 @@ namespace TTMMBot.Migrations
             modelBuilder.Entity("TTMMBot.Data.Entities.Vacation", b =>
                 {
                     b.HasOne("TTMMBot.Data.Entities.Member", "Member")
-                        .WithOne("Vacation")
-                        .HasForeignKey("TTMMBot.Data.Entities.Vacation", "MemberID")
+                        .WithMany("Vacation")
+                        .HasForeignKey("MemberID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

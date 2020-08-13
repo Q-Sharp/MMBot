@@ -89,8 +89,7 @@ namespace TTMMBot.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Vacation_MemberID",
                 table: "Vacation",
-                column: "MemberID",
-                unique: true);
+                column: "MemberID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

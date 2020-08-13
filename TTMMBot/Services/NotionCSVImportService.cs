@@ -64,7 +64,6 @@ namespace TTMMBot.Services
             {
                 using var dr = new CsvDataReader(csvReader);
                 var dt = new DataTable();
-                dt.Columns.Add("ClanID", typeof(string));
                 dt.Load(dr);
 
                 foreach (DataRow row in dt.Rows)
@@ -86,9 +85,6 @@ namespace TTMMBot.Services
                     if (row["Role"] != DBNull.Value && Enum.TryParse(typeof(Role), ((string)row["Role"]).Replace("-", ""), out var er))
                         me.Role = (Role)er;
 
-                    if (row["ClanID"] != DBNull.Value && int.TryParse((string)row["ClanID"], out var cid))
-                        me.ClanID = cid;
-
                     if (row["AT-highest"] != DBNull.Value && int.TryParse((string)row["AT-highest"], out var ath))
                         me.AllTimeHigh = ath;
 
@@ -100,6 +96,9 @@ namespace TTMMBot.Services
 
                     me.IsActive = me.ClanID.HasValue && me.SeasonHighest.HasValue;
                     me.LastUpdated = DateTime.Now;
+
+                    if(me.MemberID == 0)
+                        Context.Member.Add(me);
 
                     await Context.SaveChangesAsync();
                 }

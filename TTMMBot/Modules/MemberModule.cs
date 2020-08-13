@@ -55,7 +55,7 @@ namespace TTMMBot.Modules
         {
             try
             {
-                var m = (await DatabaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
+                var m = (await DatabaseService.LoadMembersAsync());
 
                 int page = 1;
                 var message = await ReplyAsync(GetSortedMembersTable(m, page));
