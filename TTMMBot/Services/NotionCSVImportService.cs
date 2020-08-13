@@ -14,8 +14,13 @@ namespace TTMMBot.Services
 {
     public class NotionCSVImportService
     {
-        public Context Context { get; set; }
-        public NotionCSVImportService(Context context) => Context = context;
+        private Context _context { get; set; }
+        private GlobalSettings _settings { get; set; }
+        public NotionCSVImportService(Context context, GlobalSettings settings)
+        {
+            _context = context;
+            _settings = settings;
+        }
 
         public async Task<Exception> ImportCSV(byte[] csv)
         {                
@@ -28,8 +33,8 @@ namespace TTMMBot.Services
             csvReader.Configuration.BadDataFound = null;
             csvReader.Configuration.Delimiter = ",";
 
-            var c = Context.Clan;
-            var m = Context.Member;
+            var c = _context.Clan;
+            var m = _context.Member;
 
             try
             {
@@ -40,7 +45,7 @@ namespace TTMMBot.Services
                         Tag = "TT",
                         Name = "The Tavern"
                     };
-                    await Context.AddAsync(nc);
+                    await _context.AddAsync(nc);
 
                     for (var i = 2; i <= 4; i++)
                     {
@@ -49,10 +54,10 @@ namespace TTMMBot.Services
                             Tag = $"TT{i}",
                             Name = $"The Tavern {i}"
                         };
-                        await Context.AddAsync(c2);
+                        await _context.AddAsync(c2);
                     }
 
-                    await Context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
                 }
             }
             catch
@@ -62,6 +67,8 @@ namespace TTMMBot.Services
 
             try
             {
+                _settings.UseTriggers = false;
+
                 using var dr = new CsvDataReader(csvReader);
                 var dt = new DataTable();
                 dt.Load(dr);
@@ -94,14 +101,18 @@ namespace TTMMBot.Services
                     if (row["Donations"] != DBNull.Value && int.TryParse((string)row["Donations"], out var d))
                         me.Donations = d;
 
+                    if (row["Join Date"] != DBNull.Value && int.TryParse((string)row["Join Date"], out var jd))
+                        me.JoinOrder = jd;
+
                     me.IsActive = me.ClanID.HasValue && me.SeasonHighest.HasValue;
                     me.LastUpdated = DateTime.Now;
 
                     if(me.MemberID == 0)
-                        Context.Member.Add(me);
-
-                    await Context.SaveChangesAsync();
+                        _context.Member.Add(me);
                 }
+
+                await _context.SaveChangesAsync();
+                _settings.UseTriggers = true;
             }
             catch (Exception e)
             {

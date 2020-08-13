@@ -16,9 +16,9 @@ namespace TTMMBot.Modules
     [Alias("member", "m", "M", "Members", "members")]
     public class MemberModule : ModuleBase<SocketCommandContext>
     {
-        private readonly string[] header = { "Name", "Clan", "AHigh", "SHigh", "Role" };
-        private readonly int[] pad = { 16, 4, 5, 5, 7 };
-        private readonly string[] fields = { "Name", "Clan.Tag", "AllTimeHigh", "SeasonHighest", "Role" };
+        private readonly string[] header = { "Name", "Clan", "Join", "SHigh", "Role" };
+        private readonly int[] pad = { 16, 4, 4, 5, 7 };
+        private readonly string[] fields = { "Name", "Clan.Tag", "JoinOrder", "SeasonHighest", "Role" };
 
         public IDatabaseService DatabaseService { get; set; }
         public CommandHandler CommandHandler { get; set; }
@@ -67,9 +67,9 @@ namespace TTMMBot.Modules
                 CommandHandler.AddToReactionList(message, async r =>
                 {
                     if (r.Name == back.Name && page > 1)
-                        await message.ModifyAsync(async me => me.Content = await Task.Run(() => GetSortedMembersTable(m, page)));
+                        await message.ModifyAsync(me => me.Content = GetSortedMembersTable(m, --page));
                     else if (r.Name == next.Name && page < 5)
-                        await message.ModifyAsync(async me => me.Content = await Task.Run(() => GetSortedMembersTable(m, page)));
+                        await message.ModifyAsync(me => me.Content = GetSortedMembersTable(m, ++page));
                 });
             }
             catch (Exception e)
@@ -115,7 +115,7 @@ namespace TTMMBot.Modules
         private string GetSortedMembersTable(IList<Member> m, int pageNo)
         {
             var sortedm = GetSortedMembers(m, pageNo);
-            return GetTable(sortedm);
+            return GetTable(sortedm, pageNo);
         }
 
         private string GetTable(IList<Member> members, int? clanNo = null)

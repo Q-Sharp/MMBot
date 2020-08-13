@@ -1,14 +1,12 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
+using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.VisualBasic;
 using TTMMBot.Data.Entities;
 
 namespace TTMMBot.Data
 {
-    public class Context : DbContext, ITTMMBotContext
+    public class Context : DbContextWithTriggers, ITTMMBotContext
     {
         private readonly string dbname = $"{Path.Combine(Directory.GetCurrentDirectory(), "TTMMBot.db")}";
         protected override void OnConfiguring(DbContextOptionsBuilder options) => options
@@ -16,6 +14,7 @@ namespace TTMMBot.Data
             .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
             .UseLazyLoadingProxies();
 
+        public bool UseTriggers { get; set; } = true;
         public DbSet<Member> Member { get; set; }
         public DbSet<Clan> Clan { get; set; }
         public DbSet<Vacation> Vacation { get; set; }
@@ -29,6 +28,10 @@ namespace TTMMBot.Data
             modelBuilder.Entity<Member>()
                 .HasIndex(m => m.Name)
                 .IsUnique();
+
+            //modelBuilder.Entity<Member>()
+            //    .HasIndex(m => new { m.JoinOrder, m.ClanID })
+            //    .IsUnique();
 
             modelBuilder.Entity<Member>()
                 .HasOne(m => m.Clan)

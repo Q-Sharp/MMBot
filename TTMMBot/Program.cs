@@ -1,10 +1,7 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Discord;
+﻿using Discord;
 using Discord.Commands;
-using Discord.Net.Rest;
 using Discord.WebSocket;
+using EntityFrameworkCore.Triggers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TTMMBot.Data;
@@ -39,7 +36,12 @@ namespace TTMMBot
 
                    services.AddHostedService<DiscordWorker>()
                        .AddLogging()
+                       .AddSingleton<GlobalSettings>()
                        .AddDbContext<Context>()
+                       .AddTriggers()
+                       .AddSingleton(typeof(ITriggers<,>), typeof(Triggers<,>))
+                       .AddSingleton(typeof(ITriggers<>), typeof(Triggers<>))
+                       .AddSingleton(typeof(ITriggers), typeof(Triggers))
                        .AddSingleton(dsc)
                        .AddSingleton(cs)
                        .AddSingleton<CommandHandler>()

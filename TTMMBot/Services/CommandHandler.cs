@@ -31,13 +31,10 @@ namespace TTMMBot.Services
             Client.ReactionAdded += Client_ReactionAdded;
         }
 
-        private Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
+        private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
         {
-            return Task.Run(async () =>
-            {
-                if (messageIdWithReaction.Keys.Contains(arg3.MessageId) && arg3.UserId != Client.CurrentUser.Id)
-                    await messageIdWithReaction[arg3.MessageId](arg3.Emote);
-            });
+            if (messageIdWithReaction.Keys.Contains(arg3.MessageId) && arg3.UserId != Client.CurrentUser.Id)
+                await messageIdWithReaction[arg3.MessageId](arg3.Emote);
         }
 
         public async Task HandleCommandAsync(SocketMessage arg)
