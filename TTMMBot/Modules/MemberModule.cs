@@ -7,6 +7,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using TTMMBot.Data.Entities;
 using TTMMBot.Helpers;
+using TTMMBot.Modules.Enums;
 using TTMMBot.Services;
 
 namespace TTMMBot.Modules
@@ -29,18 +30,8 @@ namespace TTMMBot.Modules
         {
             try
             {
-                var m = await DatabaseService.LoadMembersAsync();
-
-                foreach (var gM in m.Where(x => x.IsActive)
-                    .GroupBy(x => x.ClanID, (x, y) => new { Clan = x, Members = y })
-                    .OrderBy(x => x.Clan))
-                {
-                    if (gM.Clan.HasValue && (gM?.Members?.FirstOrDefault()?.Clan?.Tag != null))
-                    {
-                        var table = GetTable(gM.Members.ToList());
-                        await ReplyAsync(table);
-                    }
-                }
+                var m = (await DatabaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
+                await ShowMembers(m, SortType.ByClan);
             }
             catch (Exception e)
             {
@@ -55,27 +46,49 @@ namespace TTMMBot.Modules
         {
             try
             {
-                var m = (await DatabaseService.LoadMembersAsync());
-
-                int page = 1;
-                var message = await ReplyAsync(GetSortedMembersTable(m, page));
-
-                var back = new Emoji("◀️");
-                var next = new Emoji("▶️");
-                await message.AddReactionsAsync(new Emoji[] { back, next });
-
-                CommandHandler.AddToReactionList(message, async r =>
-                {
-                    if (r.Name == back.Name && page > 1)
-                        await message.ModifyAsync(me => me.Content = GetSortedMembersTable(m, --page));
-                    else if (r.Name == next.Name && page < 5)
-                        await message.ModifyAsync(me => me.Content = GetSortedMembersTable(m, ++page));
-                });
+                var m = (await DatabaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
+                await ShowMembers(m, SortType.BySeasonHigh);
             }
             catch (Exception e)
             {
                 await ReplyAsync($"{e.Message}");
             }
+        }
+
+        private async Task ShowMembers(IList<Member> m, SortType sortedBy)
+        {
+            int? chunkSize = null;
+
+            switch(sortedBy)
+            {
+                case SortType.ByClan:
+                    m = m.OrderBy(x => x.Clan?.Tag).ToList();
+                    break;
+
+                case SortType.BySeasonHigh:
+                    m = m.OrderByDescending(x => x.SeasonHighest).ToList();
+                    chunkSize = 20;
+                    break;
+
+                case SortType.Unsorted:
+
+                    break;
+            }
+
+            var page = 1;
+            var message = await ReplyAsync(GetSortedMembersTable(m, page, chunkSize));
+
+            var back = new Emoji("◀️");
+            var next = new Emoji("▶️");
+            await message.AddReactionsAsync(new Emoji[] { back, next });
+
+            CommandHandler.AddToReactionList(message, async r =>
+            {
+                if (r.Name == back.Name && page > 1)
+                    await message.ModifyAsync(me => me.Content = GetSortedMembersTable(m, --page, chunkSize));
+                else if (r.Name == next.Name && page < 5)
+                    await message.ModifyAsync(me => me.Content = GetSortedMembersTable(m, ++page, chunkSize));
+            });
         }
 
         [Command("Changes")]
@@ -87,7 +100,7 @@ namespace TTMMBot.Modules
             {
                 var m = (await DatabaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
 
-                int page = 1;
+                var page = 1;
                 var table = await Task.Run(() => GetSortedMembersTable(m, page));
 
                 var message = await ReplyAsync(table);
@@ -110,11 +123,21 @@ namespace TTMMBot.Modules
             }
         }
 
-        private IList<Member> GetSortedMembers(IList<Member> m, int pageNo) => m.OrderByDescending(x => x.TotalScore).ToList().ChunkBy(20)[pageNo - 1].ToList();
-
-        private string GetSortedMembersTable(IList<Member> m, int pageNo)
+        private string GetSortedMembersTable(IList<Member> m, int pageNo, int? chunkSize = 20)
         {
-            var sortedm = GetSortedMembers(m, pageNo);
+            IList<Member> sortedm = null;
+
+            if(!chunkSize.HasValue)
+            {
+                sortedm = m.GroupBy(x => x.ClanID, (x, y) => new { Clan = x, Members = y })
+                    .OrderBy(x => x.Clan)
+                    .Select(x => x.Members.Select(v => v).ToList() as IList<Member>)
+                    .ToArray()[pageNo - 1]
+                    .ToList();
+            }
+            else
+                sortedm = m.ChunkBy(chunkSize.Value)[pageNo - 1].ToList();
+
             return GetTable(sortedm, pageNo);
         }
 
@@ -123,7 +146,7 @@ namespace TTMMBot.Modules
             var table = $"```{Environment.NewLine}";
 
             if (clanNo.HasValue)
-                table += $"[TT {clanNo.Value}]{Environment.NewLine}";
+                table += $"[TT{clanNo.Value}] Members: {members.Count()}{Environment.NewLine}";
 
             table += getHeader(header);
             table += getLimiter(header);

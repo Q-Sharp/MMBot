@@ -7,26 +7,27 @@ using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using TTMMBot.Services;
 
 namespace TTMMBot
 {
     public class DiscordWorker : BackgroundService
     {
-        private static ILogger<DiscordWorker> _logger;
         private readonly IServiceProvider _sp;
+        private readonly Microsoft.Extensions.Logging.ILogger _logger;
 
-        public DiscordWorker(ILogger<DiscordWorker> logger, IServiceProvider sp)
+        public DiscordWorker(IServiceProvider sp, ILogger<DiscordWorker> logger)
         {
-            _logger = logger;
             _sp = sp;
+            _logger = logger;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                _logger.LogInformation("Worker running at: {time}", DateTime.Now);
                 await InitilizeAsync();
                 await Task.Delay(Timeout.Infinite);
             }
@@ -34,10 +35,7 @@ namespace TTMMBot
 
         public override async Task StartAsync(CancellationToken cancellationToken) => await base.StartAsync(cancellationToken);
 
-        public override async Task StopAsync(CancellationToken cancellationToken)
-        {
-            await Task.Run(() => Dispose());
-        }
+        public override async Task StopAsync(CancellationToken cancellationToken) => await Task.Run(() => Dispose());
 
         public async Task InitilizeAsync()
         {
@@ -48,8 +46,7 @@ namespace TTMMBot
             }
             catch (Exception e)
             {
-                var lm = new LogMessage(LogSeverity.Error, "DatabaseService", "Migration failed", e);
-                await LogAsync(lm);
+                _logger.LogError(e, "Migration failed");
                 return;
             }
 
@@ -62,6 +59,8 @@ namespace TTMMBot
 #endif
             var client = _sp.GetRequiredService<DiscordSocketClient>();
             _sp.GetRequiredService<CommandService>().Log += LogAsync;
+            client.Log += LogAsync;
+
             await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable(token));
             await client.StartAsync();
 
@@ -75,26 +74,19 @@ namespace TTMMBot
             {
                 case LogSeverity.Critical:
                 case LogSeverity.Error:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    _logger.LogError(message.Message);
+                    Log.Error(message.Message);
                     break;
                 case LogSeverity.Warning:
-                    _logger.LogWarning(message.Message);
-                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Log.Warning(message.Message);
                     break;
                 case LogSeverity.Info:
-                    _logger.LogInformation(message.Message);
-                    Console.ForegroundColor = ConsoleColor.White;
+                    Log.Information(message.Message);
                     break;
                 case LogSeverity.Verbose:
                 case LogSeverity.Debug:
-                    _logger.LogDebug(message.Message);
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Log.Verbose(message.Message);
                     break;
             }
-
-            Console.WriteLine($"{DateTime.Now,-19} [{message.Severity,8}] {message.Source}: {message.Message} {message.Exception}");
-            Console.ResetColor();
 
             return Task.CompletedTask;
         }

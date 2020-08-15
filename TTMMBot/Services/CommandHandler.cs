@@ -16,11 +16,14 @@ namespace TTMMBot.Services
         public CommandService Commands { get; set; }
         public IServiceProvider Services { get; set; }
 
-        public CommandHandler(IServiceProvider services, CommandService commands, DiscordSocketClient client)
+        public GlobalSettings GS { get; set; }
+
+        public CommandHandler(IServiceProvider services, CommandService commands, DiscordSocketClient client, GlobalSettings gs)
         {
             Commands = commands;
             Services = services;
             Client = client;
+            GS = gs;
         }
 
         public async Task InitializeAsync()
@@ -65,7 +68,7 @@ namespace TTMMBot.Services
             messageIdWithReaction.Add(message.Id, fT);
             Task.Run(async () =>
             {
-                await Task.Delay(TimeSpan.FromMinutes(1));
+                await Task.Delay(GS.WaitForReaction);
                 messageIdWithReaction.Remove(message.Id);
             });
         }
