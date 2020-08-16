@@ -13,7 +13,6 @@ namespace TTMMBot.Modules
     [Name("Admin")]
     [Group("Admin")]
     [Alias("admin", "a", "A")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
     public class AdminModule : ModuleBase<SocketCommandContext>
     {
         public IDatabaseService DatabaseService { get; set; }
@@ -23,6 +22,7 @@ namespace TTMMBot.Modules
         [Command("ImportCSV")]
         [Alias("import")]
         [Summary("Imports a notion csv export to update db")]
+        [RequireOwner]
         public async Task ImportCSV()
         {
             try

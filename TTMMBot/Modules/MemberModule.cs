@@ -100,22 +100,27 @@ namespace TTMMBot.Modules
             {
                 var m = (await DatabaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
 
-                var page = 1;
-                var table = await Task.Run(() => GetSortedMembersTable(m, page));
+                var mcurrent = m.OrderBy(x => x.Clan?.Tag)
+                    .GroupBy(x => x.ClanID, (x, y) => new { Clan = x, Members = y })
+                    .Select(x => x.Members.ToList() as IList<Member>)
+                    .ToList();
 
-                var message = await ReplyAsync(table);
+                var mfuture = m.OrderByDescending(x => x.SeasonHighest)
+                    .ToList()
+                    .ChunkBy(20);
 
-                var back = new Emoji("◀️");
-                var next = new Emoji("▶️");
-                await message.AddReactionsAsync(new Emoji[] { back, next });
+                if (mcurrent.Count() != mfuture.Count())
+                    return;
 
-                CommandHandler.AddToReactionList(message, async r =>
+                var r = $"Exchange these member: {Environment.NewLine}";
+                for (var i = 1; i <= mcurrent.Count(); i++)
                 {
-                    if (r.Name == back.Name && page > 1)
-                        await message.ModifyAsync(async me => me.Content = await Task.Run(() => GetSortedMembersTable(m, page)));
-                    else if (r.Name == next.Name && page < 5)
-                        await message.ModifyAsync(async me => me.Content = await Task.Run(() => GetSortedMembersTable(m, page)));
-                });
+                    var dif = mfuture[i - 1].Where(x => !mcurrent[i - 1].Contains(x)).ToList();
+                    r += GetTable(dif, i);
+                    r += Environment.NewLine;
+                }
+
+                await ReplyAsync(r);
             }
             catch (Exception e)
             {

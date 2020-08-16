@@ -44,9 +44,6 @@ namespace TTMMBot.Data.Entities
 
         public int? Donations { get; set; }
 
-        [NotMapped]
-        public int? TotalScore => (5 * SeasonHighest + 2 * AllTimeHigh + 1 * Donations) / 3;
-
         public Role Role { get; set; }
         public bool IsActive { get; set; }
 
@@ -69,6 +66,7 @@ namespace TTMMBot.Data.Entities
                 .Select((m, i) => new { i, m })
                 .ToList()
                 .ForEach(mi => mi.m.JoinOrder = mi.i);
+
             e.Context.SaveChanges();
 
             if (ce != null)
@@ -76,6 +74,7 @@ namespace TTMMBot.Data.Entities
                 ce.JoinOrder = ce.Clan.Member.AsQueryable()
                     .Where(m => m.JoinOrder > 0)
                     .Max(x => x.JoinOrder) + 1;
+
                 e.Context.SaveChanges();
             }
         }

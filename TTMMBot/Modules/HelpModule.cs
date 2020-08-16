@@ -2,19 +2,19 @@
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace TTMMBot.Modules
 {
     [Name("Help")]
     public class HelpModule : ModuleBase<SocketCommandContext>
     {
-        private readonly CommandService _service;
-        private readonly string _prefix = "m.";
+        public GlobalSettings GM { get; set; }
 
-        public HelpModule(CommandService service)
-        {
-            _service = service;
-        }
+
+        private readonly CommandService _service;
+
+        public HelpModule(CommandService service) => _service = service;
 
         [Command("help")]
         public async Task HelpAsync()
@@ -28,11 +28,11 @@ namespace TTMMBot.Modules
             foreach (var module in _service.Modules)
             {
                 string description = null;
-                foreach (var cmd in module.Commands)
+                foreach (var cmd in module.Commands.Where(x => !x.Preconditions.Any(x => x.GetType() == typeof(RequireOwnerAttribute))))
                 {
                     var result = await cmd.CheckPreconditionsAsync(Context);
                     if (result.IsSuccess)
-                        description += $"{_prefix}{cmd.Aliases.First()}\n";
+                        description += $"{GM.Prefix}{cmd.Aliases.First()}\n";
                 }
 
                 if (!string.IsNullOrWhiteSpace(description))
