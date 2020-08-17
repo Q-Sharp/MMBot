@@ -4,7 +4,6 @@ using Discord.WebSocket;
 using EntityFrameworkCore.Triggers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using TTMMBot.Data;
@@ -54,6 +53,7 @@ namespace TTMMBot
                          .AddSingleton<CommandHandler>()
                          .AddSingleton<IDatabaseService, DatabaseService>()
                          .AddSingleton<NotionCSVImportService>()
+                         .AddSingleton<AdminService>()
                          .BuildServiceProvider();
                 });
     }

@@ -19,6 +19,8 @@ namespace TTMMBot.Modules
 
         public NotionCSVImportService CSVImportService { get; set; }
 
+        public AdminService AdminService { get; set; }
+
         [Command("ImportCSV")]
         [Alias("import")]
         [Summary("Imports a notion csv export to update db")]
@@ -33,6 +35,23 @@ namespace TTMMBot.Modules
                 var result = await CSVImportService?.ImportCSV(csv);
 
                 await ReplyAsync(result == null ? "CSV file import was successfull" : $"ERROR: {result.Message}");
+            }
+            catch (Exception e)
+            {
+                await ReplyAsync($"{e.Message}");
+            }
+        }
+
+        [Command("Reorder")]
+        [Alias("reorder")]
+        [Summary("Reorders member in db")]
+        [RequireOwner]
+        public async Task ReorderJoin()
+        {
+            try
+            {
+                await Task.Run(() => AdminService.Reorder());
+                await ReplyAsync("Members join order updated!");
             }
             catch (Exception e)
             {
