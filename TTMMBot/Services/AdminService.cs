@@ -19,15 +19,15 @@ namespace TTMMBot.Services
         public void Reorder()
         {
             _context.Member.AsEnumerable()
-                .OrderBy(x => x.JoinOrder)
-                .ThenBy(x => x.SeasonHighest)
+                .OrderBy(x => x.Join)
+                .ThenBy(x => x.SHigh)
                 .GroupBy(x => x.ClanID, (x, y) => new { Clan = x, Members = y })
                 .Select(x => x.Members.ToList() as IList<Member>)
                 .ToList()
                 .ForEach(x =>
                 {
                     var i = 1;
-                    x.ToList().ForEach(m => m.JoinOrder = i++);
+                    x.ToList().ForEach(m => m.Join = i++);
                 });
 
             _context?.SaveChanges();

@@ -38,9 +38,9 @@ namespace TTMMBot.Data.Entities
         [Required]
         public string Name { get; set; }
 
-        public int? AllTimeHigh { get; set; }
+        public int? AHigh { get; set; }
 
-        public int? SeasonHighest { get; set; }
+        public int? SHigh { get; set; }
 
         public int? Donations { get; set; }
 
@@ -54,7 +54,7 @@ namespace TTMMBot.Data.Entities
 
         public DateTime? LastUpdated { get; set; }
 
-        public int JoinOrder { get; set; }
+        public int Join { get; set; }
 
         public override string ToString() => Clan?.Tag != null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
 
@@ -62,18 +62,18 @@ namespace TTMMBot.Data.Entities
         {
             e.Context.Member.AsQueryable()
                 .Where(x => x.ClanID == e.Entity.ClanID)
-                .OrderBy(x => x.JoinOrder)
+                .OrderBy(x => x.Join)
                 .Select((m, i) => new { i, m })
                 .ToList()
-                .ForEach(mi => mi.m.JoinOrder = mi.i);
+                .ForEach(mi => mi.m.Join = mi.i);
 
             e.Context.SaveChanges();
 
             if (ce != null)
             {
-                ce.JoinOrder = ce.Clan.Member.AsQueryable()
-                    .Where(m => m.JoinOrder > 0)
-                    .Max(x => x.JoinOrder) + 1;
+                ce.Join = ce.Clan.Member.AsQueryable()
+                    .Where(m => m.Join > 0)
+                    .Max(x => x.Join) + 1;
 
                 e.Context.SaveChanges();
             }

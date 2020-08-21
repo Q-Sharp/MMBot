@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
 using TTMMBot.Data.Entities;
 using TTMMBot.Helpers;
 using TTMMBot.Modules.Enums;
 using TTMMBot.Services;
+using System.Reflection;
 
 namespace TTMMBot.Modules
 {
@@ -17,9 +17,9 @@ namespace TTMMBot.Modules
     [Alias("member", "m", "M", "Members", "members")]
     public class MemberModule : ModuleBase<SocketCommandContext>
     {
-        private readonly string[] header = { "Name", "Clan", "Join", "SHigh", "Role" };
-        private readonly int[] pad = { 16, 4, 4, 5, 7 };
-        private readonly string[] fields = { "Name", "Clan.Tag", "JoinOrder", "SeasonHighest", "Role" };
+        private readonly string[] _header = { "Name", "Clan", "Join", "SHigh", "Role" };
+        private readonly int[] _pad = { 16, 4, 4, 5, 7 };
+        private readonly string[] _fields = { "Name", "Clan.Tag", "Join", "SHigh", "Role" };
 
         public IDatabaseService DatabaseService { get; set; }
         public CommandHandler CommandHandler { get; set; }
@@ -66,7 +66,7 @@ namespace TTMMBot.Modules
                     break;
 
                 case SortType.BySeasonHigh:
-                    m = m.OrderByDescending(x => x.SeasonHighest).ToList();
+                    m = m.OrderByDescending(x => x.SHigh).ToList();
                     chunkSize = 20;
                     break;
 
@@ -80,7 +80,7 @@ namespace TTMMBot.Modules
 
             var back = new Emoji("◀️");
             var next = new Emoji("▶️");
-            await message.AddReactionsAsync(new Emoji[] { back, next });
+            await message.AddReactionsAsync(new IEmote[] { back, next });
 
             CommandHandler.AddToReactionList(message, async r =>
             {
@@ -100,22 +100,22 @@ namespace TTMMBot.Modules
             {
                 var m = (await DatabaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
 
-                var mcurrent = m.OrderBy(x => x.Clan?.Tag)
+                var current = m.OrderBy(x => x.Clan?.Tag)
                     .GroupBy(x => x.ClanID, (x, y) => new { Clan = x, Members = y })
                     .Select(x => x.Members.ToList() as IList<Member>)
                     .ToList();
 
-                var mfuture = m.OrderByDescending(x => x.SeasonHighest)
+                var future = m.OrderByDescending(x => x.SHigh)
                     .ToList()
                     .ChunkBy(20);
 
-                if (mcurrent.Count() != mfuture.Count())
+                if (current.Count() != future.Count())
                     return;
 
                 var r = $"Exchange these member: {Environment.NewLine}";
-                for (var i = 1; i <= mcurrent.Count(); i++)
+                for (var i = 1; i <= current.Count(); i++)
                 {
-                    var dif = mfuture[i - 1].Where(x => !mcurrent[i - 1].Contains(x)).ToList();
+                    var dif = future[i - 1].Where(x => !current[i - 1].Contains(x)).ToList();
                     r += GetTable(dif, i);
                     r += Environment.NewLine;
                 }
@@ -130,20 +130,20 @@ namespace TTMMBot.Modules
 
         private string GetSortedMembersTable(IList<Member> m, int pageNo, int? chunkSize = 20)
         {
-            IList<Member> sortedm = null;
+            IList<Member> sorted;
 
             if(!chunkSize.HasValue)
             {
-                sortedm = m.GroupBy(x => x.ClanID, (x, y) => new { Clan = x, Members = y })
+                sorted = m.GroupBy(x => x.ClanID, (x, y) => new { Clan = x, Members = y })
                     .OrderBy(x => x.Clan)
                     .Select(x => x.Members.Select(v => v).ToList() as IList<Member>)
                     .ToArray()[pageNo - 1]
                     .ToList();
             }
             else
-                sortedm = m.ChunkBy(chunkSize.Value)[pageNo - 1].ToList();
+                sorted = m.ChunkBy(chunkSize.Value)[pageNo - 1].ToList();
 
-            return GetTable(sortedm, pageNo);
+            return GetTable(sorted, pageNo);
         }
 
         private string GetTable(IList<Member> members, int? clanNo = null)
@@ -153,51 +153,51 @@ namespace TTMMBot.Modules
             if (clanNo.HasValue)
                 table += $"[TT{clanNo.Value}] Members: {members.Count()}{Environment.NewLine}";
 
-            table += getHeader(header);
-            table += getLimiter(header);
+            table += GetHeader(_header);
+            table += GetLimiter(_header);
 
-            foreach (var member in members.OrderByDescending(x => x.AllTimeHigh))
-                table += getValues(member, fields);
+            foreach (var member in members.OrderByDescending(x => x.AHigh))
+                table += GetValues(member, _fields);
 
             table += $"{Environment.NewLine}```";
 
             return table;
         }
 
-        private string getLimiter(string[] header)
+        private string GetLimiter(IReadOnlyCollection<string> header)
         {
-            var ac = header.Length;
+            var ac = header.Count;
 
             var l = "";
             for (var i = 0; i < ac; i++)
-                l += $"{"-"?.PadRight(pad[i], '-')}-";
+                l += $"{"-".PadRight(_pad[i], '-')}-";
             l += $"{Environment.NewLine}";
             return l;
         }
 
-        private string getHeader(string[] header)
+        private string GetHeader(IReadOnlyList<string> header)
         {
-            var ac = header.Length;
+            var ac = header.Count;
 
             var l = "";
             for (var i = 0; i < ac; i++)
-                l += $"{header[i]?.PadRight(pad[i])}|";
+                l += $"{header[i]?.PadRight(_pad[i])}|";
 
             l = l.TrimEnd('|');
             l += $"{Environment.NewLine}";
             return l;
         }
 
-        private string getValues(Member m, string[] header)
+        private string GetValues(Member m, IReadOnlyList<string> header)
         {
             var l = "";
-            var ac = header.Length;
+            var ac = header.Count;
 
-            if (m == null || header == null)
+            if (m == null)
                 return string.Empty;
 
             for (var i = 0; i < ac; i++)
-                l += $"{m.GetPropertyValue(header[i])?.ToString()?.PadRight(pad[i])}|";
+                l += $"{m.GetPropertyValue(header[i])?.ToString()?.PadRight(_pad[i])}|";
 
             l = l.TrimEnd('|');
             l += $"{Environment.NewLine}";
@@ -225,7 +225,7 @@ namespace TTMMBot.Modules
                     Description = m.Name,
                 };
 
-                builder.WithTitle(m?.Clan?.Tag);
+                builder.WithTitle(m.Clan?.Tag);
 
                 builder.AddField(x =>
                 {
@@ -269,30 +269,38 @@ namespace TTMMBot.Modules
         public class Set : ModuleBase<SocketCommandContext>
         {
             public IDatabaseService DatabaseService { get; set; }
-
             public Set(IDatabaseService databaseService) => DatabaseService = databaseService;
 
-            [Command("Tag")]
-            [Alias("tag", "t", "T")]
-            [Summary("... Tag")]
-            public async Task Tag(string tag, string newTag)
+            [Command]
+            [Summary(".... Name")]
+            public async Task SetCommand(string name, string propertyName, [Remainder] string newName)
             {
-                var c = (await DatabaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
-                c.Tag = newTag;
+                var m = (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == name);
+                await ChangeProperty(m, propertyName, newName);
                 await DatabaseService.SaveDataAsync();
-                await ReplyAsync($"The {c} now uses {c.Tag} instead of {tag}.");
             }
 
-            [Command("Name")]
-            [Alias("name", "n", "N")]
-            [Summary(".... Name")]
-            public async Task Name(string tag, [Remainder] string newName)
+            private async Task ChangeProperty(Member m, string propertyName, string newValue)
             {
-                var c = (await DatabaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
-                var oldName = c.Name;
-                c.Name = newName;
-                await DatabaseService.SaveDataAsync();
-                await ReplyAsync($"The {c} now uses {c.Name} instead of {oldName}.");
+                try
+                {
+                    var pr = m.GetType().GetRuntimeProperty(propertyName);
+                    if (pr is { })
+                    {
+                        var t = Nullable.GetUnderlyingType(pr.PropertyType) ?? pr.PropertyType;
+                        var safeValue = (newValue == null) ? null : Convert.ChangeType(newValue, t);
+                        var val = Convert.ChangeType(safeValue, t);
+
+                        var oldPropValue = m.GetType().GetProperty(propertyName)?.GetValue(m, null);
+                        m.GetType().GetProperty(propertyName)?.SetValue(m, val);
+                        var newPropValue = m.GetType().GetProperty(propertyName)?.GetValue(m, null);
+                        await ReplyAsync($"The member {m} now uses {oldPropValue} instead of {newPropValue} as {propertyName}.");
+                    }
+                }
+                catch(Exception e)
+                {
+                    await ReplyAsync(e.Message);
+                }
             }
         }
 

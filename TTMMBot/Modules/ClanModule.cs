@@ -89,7 +89,7 @@ namespace TTMMBot.Modules
                 var c = (await DatabaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
                 c.Tag = newTag;
                 await DatabaseService.SaveDataAsync();
-                await ReplyAsync($"The {c} now uses {c.Tag} instead of {tag}.");
+                await ReplyAsync($"The clan {c} now uses {c.Tag} instead of {tag}.");
             }
 
             [Command("Name")]
@@ -101,7 +101,7 @@ namespace TTMMBot.Modules
                 var oldName = c.Name;
                 c.Name = newName;
                 await DatabaseService.SaveDataAsync();
-                await ReplyAsync($"The {c} now uses {c.Name} instead of {oldName}.");
+                await ReplyAsync($"The clan {c} now uses {c.Name} instead of {oldName}.");
             }
         }
 

@@ -9,9 +9,11 @@ namespace TTMMBot.Services
         Task<Clan> CreateClanAsync();
         Task<IList<Clan>> LoadClansAsync();
         void DeleteClan(Clan c);
+
         Task<Member> CreateMemberAsync();
         Task<IList<Member>> LoadMembersAsync();
         void DeleteMember(Member m);
+
         Task SaveDataAsync();
         Task MigrateAsync();
     }

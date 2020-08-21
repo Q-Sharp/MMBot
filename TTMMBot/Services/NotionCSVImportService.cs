@@ -93,22 +93,22 @@ namespace TTMMBot.Services
                         me.Role = (Role)er;
 
                     if (row["AT-highest"] != DBNull.Value && int.TryParse((string)row["AT-highest"], out var ath))
-                        me.AllTimeHigh = ath;
+                        me.AHigh = ath;
 
                     if (row["S-highest"] != DBNull.Value && int.TryParse((string)row["S-highest"], out var sh))
-                        me.SeasonHighest = sh;
+                        me.SHigh = sh;
 
                     if (row["Donations"] != DBNull.Value && int.TryParse((string)row["Donations"], out var d))
                         me.Donations = d;
 
                     if (row["Join Date"] != DBNull.Value && int.TryParse((string)row["Join Date"], out var jd))
-                        me.JoinOrder = jd;
+                        me.Join = jd;
 
-                    me.IsActive = me.ClanID.HasValue && me.SeasonHighest.HasValue;
+                    me.IsActive = me.ClanID.HasValue && me.SHigh.HasValue;
                     me.LastUpdated = DateTime.Now;
 
                     if(me.MemberID == 0)
-                        _context.Member.Add(me);
+                        await _context.Member.AddAsync(me);
                 }
 
                 await _context.SaveChangesAsync();

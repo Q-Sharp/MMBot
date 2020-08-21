@@ -12,15 +12,11 @@ namespace TTMMBot.Services
         public DatabaseService(Context context) => Context = context;
         
         public async Task<Clan> CreateClanAsync() => (await Context.AddAsync(new Clan())).Entity;
-
-        public async Task<Member> CreateMemberAsync() => (await Context.AddAsync(new Member())).Entity;
-
         public async Task<IList<Clan>> LoadClansAsync() => await Context.Clan.ToListAsync();
-
-        public async Task<IList<Member>> LoadMembersAsync() => await Context.Member.ToListAsync();
-
         public void DeleteClan(Clan c) => Context.Remove(c);
 
+        public async Task<Member> CreateMemberAsync() => (await Context.AddAsync(new Member())).Entity;
+        public async Task<IList<Member>> LoadMembersAsync() => await Context.Member.ToListAsync();
         public void DeleteMember(Member m) => Context.Remove(m);
 
         public async Task MigrateAsync() => await Context?.MigrateAsync();
