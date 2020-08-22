@@ -63,15 +63,21 @@ namespace TTMMBot.Modules
             {
                 try
                 {
+                    await ReplyAsync($"Fixing roles of discord members accordingly to their clan member ship....");
+
                     var c = await DatabaseService.LoadClansAsync();
                     var ar = Context.Guild.Roles.Where(x => c.Select(clan => clan.DiscordRole).Contains(x.Name)).ToArray();
 
+                    var clanMessage = await ReplyAsync("");
                     foreach (var clan in c)
                     {
+                        await clanMessage.ModifyAsync(m => m.Content = $"Fixing roles of members of {clan}....");
                         var clanRole = Context.Guild.Roles.FirstOrDefault(x => x.Name == clan.DiscordRole) as IRole;
 
+                        var memberMessage = await ReplyAsync("");
                         foreach (var member in clan.Member)
                         {
+                            await memberMessage.ModifyAsync(m => m.Content = $"Fixing roles of {member}...");
                             var user = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => $"{x.Username}#{x.Discriminator}" == member.Discord));
 
                             if (user is null || member.ClanID is null || clan.DiscordRole is null)
@@ -97,7 +103,7 @@ namespace TTMMBot.Modules
                         }
                     }
 
-                    await ReplyAsync($"All roles have been fixed!").ConfigureAwait(false);
+                    await ReplyAsync($"All roles have been fixed!");
                 }
                 catch (Exception e)
                 {
