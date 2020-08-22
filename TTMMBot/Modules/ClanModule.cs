@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Microsoft.Extensions.Logging;
-using Serilog;
 using TTMMBot.Data.Enums;
 using TTMMBot.Services;
 using static TTMMBot.Data.Entities.SetEntityPropertiesHelper;
@@ -62,14 +61,14 @@ namespace TTMMBot.Modules
         {
             try
             {
-                var c = (await DatabaseService.LoadClansAsync());
-                var ar = Context.Guild.Roles.Where(x => c.Select(x => x.DiscordRole).Contains(x.Name)).ToArray();
+                var c = await DatabaseService.LoadClansAsync();
+                var ar = Context.Guild.Roles.ToAsyncEnumerable().Where(x => c.Select(x => x.DiscordRole).Contains(x.Name)).ToArrayAsync();
 
-                foreach (var clan in c)
+                await foreach (var clan in c.ToAsyncEnumerable())
                 {
-                    var clanRole = await Task.Run(() => Context.Guild.Roles.FirstOrDefault(x => x.Name == clan.DiscordRole) as IRole).ConfigureAwait(false);
-    
-                    foreach (var member in clan.Member.ToList())
+                    var clanRole = await Context.Guild.Roles.ToAsyncEnumerable().FirstOrDefaultAsync(x => x.Name == clan.DiscordRole) as IRole;
+                    
+                    await foreach (var member in clan.Member.ToAsyncEnumerable())
                     {
                         var user = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => $"{x.Username}#{x.Discriminator}" == member.Discord)).ConfigureAwait(false);
 
@@ -80,12 +79,12 @@ namespace TTMMBot.Modules
                         {
                             if (member.Role == Role.CoLeader || member.Role == Role.Leader)
                             {
-                                await user.RemoveRolesAsync(ar).ConfigureAwait(false);
-                                await user.AddRolesAsync(ar).ConfigureAwait(false);
+                                await user.RemoveRolesAsync(await ar).ConfigureAwait(false);
+                                await user.AddRolesAsync(await ar).ConfigureAwait(false);
                             }
                             else
                             {
-                                await user.RemoveRolesAsync(ar).ConfigureAwait(false);
+                                await user.RemoveRolesAsync(await ar).ConfigureAwait(false);
                                 await user.AddRoleAsync(clanRole).ConfigureAwait(false);
                             }
                         }
