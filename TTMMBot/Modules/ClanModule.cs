@@ -57,51 +57,57 @@ namespace TTMMBot.Modules
         [Command("FixRoles")]
         [Alias("FR")]
         [Summary("Checks and fixes discord roles of all clan members.")]
-        public async Task FixRoles()
-        {
-            try
+        public async Task FixRoles() =>
+            await Task.Run(async () =>
             {
-                var c = await DatabaseService.LoadClansAsync();
-                var ar = Context.Guild.Roles.ToAsyncEnumerable().Where(x => c.Select(x => x.DiscordRole).Contains(x.Name)).ToArrayAsync();
-
-                await foreach (var clan in c.ToAsyncEnumerable())
+                try
                 {
-                    var clanRole = await Context.Guild.Roles.ToAsyncEnumerable().FirstOrDefaultAsync(x => x.Name == clan.DiscordRole) as IRole;
-                    
-                    await foreach (var member in clan.Member.ToAsyncEnumerable())
+                    var c = await DatabaseService.LoadClansAsync();
+                    var ar = Context.Guild.Roles.ToAsyncEnumerable()
+                        .Where(x => c.Select(x => x.DiscordRole).Contains(x.Name)).ToArrayAsync();
+
+                    await foreach (var clan in c.ToAsyncEnumerable())
                     {
-                        var user = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => $"{x.Username}#{x.Discriminator}" == member.Discord)).ConfigureAwait(false);
+                        var clanRole = await Context.Guild.Roles.ToAsyncEnumerable()
+                            .FirstOrDefaultAsync(x => x.Name == clan.DiscordRole) as IRole;
 
-                        if (user is null || member.ClanID is null || clan.DiscordRole is null)
-                            continue;
+                        await foreach (var member in clan.Member.ToAsyncEnumerable())
+                        {
+                            var user = await Task.Run(() =>
+                                Context.Guild.Users.FirstOrDefault(x =>
+                                    $"{x.Username}#{x.Discriminator}" == member.Discord)).ConfigureAwait(false);
 
-                        try
-                        {
-                            if (member.Role == Role.CoLeader || member.Role == Role.Leader)
+                            if (user is null || member.ClanID is null || clan.DiscordRole is null)
+                                continue;
+
+                            try
                             {
-                                await user.RemoveRolesAsync(await ar).ConfigureAwait(false);
-                                await user.AddRolesAsync(await ar).ConfigureAwait(false);
+                                if (member.Role == Role.CoLeader || member.Role == Role.Leader)
+                                {
+                                    await user.RemoveRolesAsync(await ar).ConfigureAwait(false);
+                                    await user.AddRolesAsync(await ar).ConfigureAwait(false);
+                                }
+                                else
+                                {
+                                    await user.RemoveRolesAsync(await ar).ConfigureAwait(false);
+                                    await user.AddRoleAsync(clanRole).ConfigureAwait(false);
+                                }
                             }
-                            else
+                            catch (Exception e)
                             {
-                                await user.RemoveRolesAsync(await ar).ConfigureAwait(false);
-                                await user.AddRoleAsync(clanRole).ConfigureAwait(false);
+                                await ReplyAsync($"{member.Name}'s role couldn't be fixed: {e.Message}")
+                                    .ConfigureAwait(false);
                             }
-                        }
-                        catch (Exception e)
-                        {
-                            await ReplyAsync($"{member.Name}'s role couldn't be fixed: {e.Message}").ConfigureAwait(false);
                         }
                     }
-                }
 
-                await ReplyAsync($"All roles have been fixed!").ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}").ConfigureAwait(false);
-            }
-        }
+                    await ReplyAsync($"All roles have been fixed!").ConfigureAwait(false);
+                }
+                catch (Exception e)
+                {
+                    await ReplyAsync($"{e.Message}").ConfigureAwait(false);
+                }
+            });
 
         [Command("Delete")]
         [Alias("d")]
