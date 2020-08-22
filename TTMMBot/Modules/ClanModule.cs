@@ -68,13 +68,13 @@ namespace TTMMBot.Modules
                     var c = await DatabaseService.LoadClansAsync();
                     var ar = Context.Guild.Roles.Where(x => c.Select(clan => clan.DiscordRole).Contains(x.Name)).ToArray();
 
-                    var clanMessage = await ReplyAsync("");
+                    var clanMessage = await ReplyAsync("...");
                     foreach (var clan in c)
                     {
                         await clanMessage.ModifyAsync(m => m.Content = $"Fixing roles of members of {clan}....");
                         var clanRole = Context.Guild.Roles.FirstOrDefault(x => x.Name == clan.DiscordRole) as IRole;
 
-                        var memberMessage = await ReplyAsync("");
+                        var memberMessage = await ReplyAsync("...");
                         foreach (var member in clan.Member)
                         {
                             await memberMessage.ModifyAsync(m => m.Content = $"Fixing roles of {member}...");
