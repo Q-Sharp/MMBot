@@ -23,21 +23,21 @@ namespace TTMMBot
             _logger = logger;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected async override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Worker running at: {time}", DateTime.Now);
-                await InitilizeAsync();
+                await InitAsync();
                 await Task.Delay(Timeout.Infinite);
             }
         }
 
-        public override async Task StartAsync(CancellationToken cancellationToken) => await base.StartAsync(cancellationToken);
+        public async override Task StartAsync(CancellationToken cancellationToken) => await base.StartAsync(cancellationToken);
 
-        public override async Task StopAsync(CancellationToken cancellationToken) => await Task.Run(() => Dispose());
+        public async override Task StopAsync(CancellationToken cancellationToken) => await Task.Run(() => Dispose());
 
-        public async Task InitilizeAsync()
+        public async Task InitAsync()
         {
             var dbs = _sp.GetRequiredService<IDatabaseService>();
             try

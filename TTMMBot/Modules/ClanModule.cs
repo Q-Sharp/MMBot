@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Castle.Core.Logging;
 using Discord;
 using Discord.Commands;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using TTMMBot.Data.Enums;
 using TTMMBot.Services;
 using static TTMMBot.Data.Entities.SetEntityPropertiesHelper;
@@ -67,37 +67,40 @@ namespace TTMMBot.Modules
 
                 foreach (var clan in c)
                 {
-                    var clanRole = Context.Guild.Roles.FirstOrDefault(x => x.Name == clan.DiscordRole) as IRole;
-
-                    foreach (var member in clan.Member)
+                    var clanRole = await Task.Run(() => Context.Guild.Roles.FirstOrDefault(x => x.Name == clan.DiscordRole) as IRole).ConfigureAwait(false);
+    
+                    foreach (var member in clan.Member.ToList())
                     {
-                        var user = Context.Guild.Users.FirstOrDefault(x => $"{x.Username}#{x.Discriminator}" == member.Discord);
+                        var user = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => $"{x.Username}#{x.Discriminator}" == member.Discord)).ConfigureAwait(false);
 
-                        if(user is null)
+                        if (user is null || member.ClanID is null || clan.DiscordRole is null)
                             continue;
-                        
+
                         try
                         {
                             if (member.Role == Role.CoLeader || member.Role == Role.Leader)
-                                ar.Where(x => !user.Roles.Contains(x)).ToList().ForEach(async x => await user.AddRolesAsync(ar));
+                            {
+                                await user.RemoveRolesAsync(ar).ConfigureAwait(false);
+                                await user.AddRolesAsync(ar).ConfigureAwait(false);
+                            }
                             else
                             {
-                                await user.RemoveRolesAsync(ar);
-                                await user.AddRoleAsync(clanRole);
+                                await user.RemoveRolesAsync(ar).ConfigureAwait(false);
+                                await user.AddRoleAsync(clanRole).ConfigureAwait(false);
                             }
                         }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
-                            Logger?.LogError(e.Message, e);
+                            await ReplyAsync($"{member.Name}'s role couldn't be fixed: {e.Message}").ConfigureAwait(false);
                         }
                     }
                 }
 
-                await ReplyAsync($"All roles have been fixed!");
+                await ReplyAsync($"All roles have been fixed!").ConfigureAwait(false);
             }
             catch (Exception e)
             {
-                await ReplyAsync($"{e.Message}");
+                await ReplyAsync($"{e.Message}").ConfigureAwait(false);
             }
         }
 
