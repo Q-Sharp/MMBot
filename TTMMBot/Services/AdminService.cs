@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TTMMBot.Data;
 using TTMMBot.Data.Entities;
@@ -8,17 +7,17 @@ namespace TTMMBot.Services
 {
     public class AdminService
     {
-        private Context _context { get; set; }
-        private GlobalSettings _settings { get; set; }
+        public Context Context { get; set; }
+        public GlobalSettings Settings { get; set; }
         public AdminService(Context context, GlobalSettings settings)
         {
-            _context = context;
-            _settings = settings;
+            Context = context;
+            Settings = settings;
         }
 
         public void Reorder()
         {
-            _context.Member.AsEnumerable()
+            Context.Member.AsEnumerable()
                 .OrderBy(x => x.Join)
                 .ThenBy(x => x.SHigh)
                 .GroupBy(x => x.ClanID, (x, y) => new { Clan = x, Members = y })
@@ -30,7 +29,7 @@ namespace TTMMBot.Services
                     x.ToList().ForEach(m => m.Join = i++);
                 });
 
-            _context?.SaveChanges();
+            Context?.SaveChanges();
         }
     }
 }

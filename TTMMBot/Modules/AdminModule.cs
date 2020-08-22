@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Discord;
 using Discord.Commands;
 using TTMMBot.Services;
 
@@ -17,24 +16,24 @@ namespace TTMMBot.Modules
     {
         public IDatabaseService DatabaseService { get; set; }
 
-        public NotionCSVImportService CSVImportService { get; set; }
+        public NotionCSVImportService CsvImportService { get; set; }
 
         public AdminService AdminService { get; set; }
 
+        [RequireOwner]
         [Command("ImportCSV")]
         [Alias("import")]
         [Summary("Imports a notion csv export to update db")]
-        [RequireOwner]
-        public async Task ImportCSV()
+        public async Task ImportCsv()
         {
             try
             {
                 var csvFile = Context.Message.Attachments.FirstOrDefault();
                 var myWebClient = new WebClient();
                 var csv = myWebClient.DownloadData(csvFile.Url);
-                var result = await CSVImportService?.ImportCSV(csv);
+                var result = await CsvImportService?.ImportCSV(csv);
 
-                await ReplyAsync(result == null ? "CSV file import was successfull" : $"ERROR: {result.Message}");
+                await ReplyAsync(result == null ? "CSV file import was successful" : $"ERROR: {result.Message}");
             }
             catch (Exception e)
             {
@@ -42,10 +41,10 @@ namespace TTMMBot.Modules
             }
         }
 
+        [RequireOwner]
         [Command("Reorder")]
         [Alias("reorder")]
         [Summary("Reorders member in db")]
-        [RequireOwner]
         public async Task ReorderJoin()
         {
             try

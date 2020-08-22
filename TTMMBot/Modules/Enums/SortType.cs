@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TTMMBot.Modules.Enums
+﻿namespace TTMMBot.Modules.Enums
 {
     public enum SortType
     {

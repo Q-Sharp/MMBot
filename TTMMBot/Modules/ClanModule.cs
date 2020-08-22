@@ -1,22 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Castle.Core.Logging;
 using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
-using TTMMBot.Data.Entities;
-using TTMMBot.Helpers;
+using TTMMBot.Data.Enums;
 using TTMMBot.Services;
+using static TTMMBot.Data.Entities.SetEntityPropertiesHelper;
 
 namespace TTMMBot.Modules
 {
     [Name("Clan")]
     [Group("Clan")]
-    [Alias("clan", "c", "C", "clans", "Clans")]
+    [Alias("C", "Clans")]
     [RequireUserPermission(ChannelPermission.ManageRoles)]
     public class ClanModule : ModuleBase<SocketCommandContext>
     {
+        public ILogger Logger { get; set; }
+
         public IDatabaseService DatabaseService { get; set; }
 
         [Command]
@@ -52,10 +53,55 @@ namespace TTMMBot.Modules
             }
         }
 
-        
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
+        [Command("FixRoles")]
+        [Alias("FR")]
+        [Summary("Checks and fixes discord roles of all clan members.")]
+        public async Task FixRoles()
+        {
+            try
+            {
+                var c = (await DatabaseService.LoadClansAsync());
+                var ar = Context.Guild.Roles.Where(x => c.Select(x => x.DiscordRole).Contains(x.Name)).ToArray();
+
+                foreach (var clan in c)
+                {
+                    var clanRole = Context.Guild.Roles.FirstOrDefault(x => x.Name == clan.DiscordRole) as IRole;
+
+                    foreach (var member in clan.Member)
+                    {
+                        var user = Context.Guild.Users.FirstOrDefault(x => $"{x.Username}#{x.Discriminator}" == member.Discord);
+
+                        if(user is null)
+                            continue;
+                        
+                        try
+                        {
+                            if (member.Role == Role.CoLeader || member.Role == Role.Leader)
+                                ar.Where(x => !user.Roles.Contains(x)).ToList().ForEach(async x => await user.AddRolesAsync(ar));
+                            else
+                            {
+                                await user.RemoveRolesAsync(ar);
+                                await user.AddRoleAsync(clanRole);
+                            }
+                        }
+                        catch(Exception e)
+                        {
+                            Logger?.Error(e.Message, e);
+                        }
+                    }
+                }
+
+                await ReplyAsync($"All roles have been fixed!");
+            }
+            catch (Exception e)
+            {
+                await ReplyAsync($"{e.Message}");
+            }
+        }
 
         [Command("Delete")]
-        [Alias("delete", "d", "D")]
+        [Alias("d")]
         [Summary("Deletes clan with given tag.")]
         public async Task Delete(string tag)
         {
@@ -73,40 +119,26 @@ namespace TTMMBot.Modules
         }
 
         [Group("Set")]
-        [Alias("set", "s", "S")]
+        [Alias("S")]
         [Summary("Change...")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
         public class Set : ModuleBase<SocketCommandContext>
         {
             public IDatabaseService DatabaseService { get; set; }
-
             public Set(IDatabaseService databaseService) => DatabaseService = databaseService;
 
-            [Command("Tag")]
-            [Alias("tag", "t", "T")]
-            [Summary("... Tag")]
-            public async Task Tag(string tag, string newTag)
-            {
-                var c = (await DatabaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
-                c.Tag = newTag;
-                await DatabaseService.SaveDataAsync();
-                await ReplyAsync($"The clan {c} now uses {c.Tag} instead of {tag}.");
-            }
-
-            [Command("Name")]
-            [Alias("name", "n", "N")]
+            [Command]
             [Summary(".... Name")]
-            public async Task Name(string tag, [Remainder] string newName)
+            public async Task SetCommand(string propertyName, string tag, [Remainder] string newName)
             {
                 var c = (await DatabaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
-                var oldName = c.Name;
-                c.Name = newName;
+                await ChangeProperty(c, propertyName, newName, x => ReplyAsync(x));
                 await DatabaseService.SaveDataAsync();
-                await ReplyAsync($"The clan {c} now uses {c.Name} instead of {oldName}.");
             }
         }
 
         [Group("Add")]
-        [Alias("add", "a", "A")]
+        [Alias("A")]
         [Summary("Add....")]
         public class Add : ModuleBase<SocketCommandContext>
         {
@@ -131,8 +163,8 @@ namespace TTMMBot.Modules
             }
 
             [Command("Member")]
-            [Alias("member", "m", "m")]
-            [Summary(".... to clan with given tag, member with given membername")]
+            [Alias("M")]
+            [Summary(".... to clan with given tag, member with given member name")]
             public async Task Member(string tag, string memberName)
             {
                 try

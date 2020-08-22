@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TTMMBot.Data.Entities
 {
@@ -13,6 +12,7 @@ namespace TTMMBot.Data.Entities
         public string Tag { get; set; }
 
         public string Name { get; set; }
+        public string DiscordRole { get; set; }
 
         public virtual ICollection<Member> Member { get; set; }
         public override string ToString() => $"[{Tag}]";

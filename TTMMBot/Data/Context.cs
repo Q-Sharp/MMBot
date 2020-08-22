@@ -8,9 +8,9 @@ namespace TTMMBot.Data
 {
     public class Context : DbContextWithTriggers, ITTMMBotContext
     {
-        private readonly string dbname = $"{Path.Combine(Directory.GetCurrentDirectory(), "TTMMBot.db")}";
+        private readonly string _dbname = $"{Path.Combine(Directory.GetCurrentDirectory(), "TTMMBot.db")}";
         protected override void OnConfiguring(DbContextOptionsBuilder options) => options
-            .UseSqlite($"Data Source={dbname}")
+            .UseSqlite($"Data Source={_dbname}")
             .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
             .UseLazyLoadingProxies();
 

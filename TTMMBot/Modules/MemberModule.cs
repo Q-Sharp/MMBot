@@ -8,13 +8,13 @@ using TTMMBot.Data.Entities;
 using TTMMBot.Helpers;
 using TTMMBot.Modules.Enums;
 using TTMMBot.Services;
-using System.Reflection;
+using static TTMMBot.Data.Entities.SetEntityPropertiesHelper;
 
 namespace TTMMBot.Modules
 {
     [Name("Member")]
     [Group("Member")]
-    [Alias("member", "m", "M", "Members", "members")]
+    [Alias("M", "Members")]
     public class MemberModule : ModuleBase<SocketCommandContext>
     {
         private readonly string[] _header = { "Name", "Clan", "Join", "SHigh", "Role" };
@@ -41,7 +41,7 @@ namespace TTMMBot.Modules
 
         [Command("Sort")]
         [Summary("Lists all members")]
-        [Alias("sort", "s", "S")]
+        [Alias("S")]
         public async Task Sort()
         {
             try
@@ -93,7 +93,7 @@ namespace TTMMBot.Modules
 
         [Command("Changes")]
         [Summary("Lists member changes")]
-        [Alias("changes", "c", "C")]
+        [Alias("C")]
         public async Task Changes()
         {
             try
@@ -206,11 +206,12 @@ namespace TTMMBot.Modules
 
         [Command("Me")]
         [Summary("Shows all information of member")]
-        public async Task Member(string name = null)
+        public async Task Member(string name)
         {
             try
             {
-                var m = name != null ? (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == name)
+                var m = name != null
+                    ? (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == name)
                     : (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discord == Context.User.ToString());
 
                 if (m == null)
@@ -244,7 +245,7 @@ namespace TTMMBot.Modules
         }
 
         [Command("Delete")]
-        [Alias("delete", "d", "D")]
+        [Alias("D")]
         [Summary("Deletes member with given name.")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Delete(string name)
@@ -263,7 +264,7 @@ namespace TTMMBot.Modules
         }
 
         [Group("Set")]
-        [Alias("set", "s", "S")]
+        [Alias("S")]
         [Summary("Change...")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public class Set : ModuleBase<SocketCommandContext>
@@ -276,36 +277,13 @@ namespace TTMMBot.Modules
             public async Task SetCommand(string name, string propertyName, [Remainder] string newName)
             {
                 var m = (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == name);
-                await ChangeProperty(m, propertyName, newName);
+                await ChangeProperty(m, propertyName, newName, x => ReplyAsync(x));
                 await DatabaseService.SaveDataAsync();
-            }
-
-            private async Task ChangeProperty(Member m, string propertyName, string newValue)
-            {
-                try
-                {
-                    var pr = m.GetType().GetRuntimeProperty(propertyName);
-                    if (pr is { })
-                    {
-                        var t = Nullable.GetUnderlyingType(pr.PropertyType) ?? pr.PropertyType;
-                        var safeValue = (newValue == null) ? null : Convert.ChangeType(newValue, t);
-                        var val = Convert.ChangeType(safeValue, t);
-
-                        var oldPropValue = m.GetType().GetProperty(propertyName)?.GetValue(m, null);
-                        m.GetType().GetProperty(propertyName)?.SetValue(m, val);
-                        var newPropValue = m.GetType().GetProperty(propertyName)?.GetValue(m, null);
-                        await ReplyAsync($"The member {m} now uses {oldPropValue} instead of {newPropValue} as {propertyName}.");
-                    }
-                }
-                catch(Exception e)
-                {
-                    await ReplyAsync(e.Message);
-                }
             }
         }
 
         [Group("Add")]
-        [Alias("add", "a", "A")]
+        [Alias("A")]
         [Summary("Add....")]
         public class Add : ModuleBase<SocketCommandContext>
         {
@@ -329,7 +307,7 @@ namespace TTMMBot.Modules
             }
 
             //[Command("Member")]
-            //[Alias("member", "m", "m")]
+            //[Alias("M")]
             //[Summary(".... to clan with given tag, member with given membername")]
             //public async Task Member(string tag, string memberName)
             //{
