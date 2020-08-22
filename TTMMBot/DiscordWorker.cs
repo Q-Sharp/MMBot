@@ -29,7 +29,7 @@ namespace TTMMBot
             {
                 _logger.LogInformation("Worker running at: {time}", DateTime.Now);
                 await InitAsync();
-                await Task.Delay(Timeout.Infinite);
+                await Task.Delay(Timeout.Infinite, stoppingToken);
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -54,7 +55,7 @@ namespace TTMMBot.Modules
         }
 
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        [Command("FixRoles")]
+        [Command("FixRoles", RunMode = RunMode.Async)]
         [Alias("FR")]
         [Summary("Checks and fixes discord roles of all clan members.")]
         public async Task FixRoles() =>
@@ -63,19 +64,15 @@ namespace TTMMBot.Modules
                 try
                 {
                     var c = await DatabaseService.LoadClansAsync();
-                    var ar = Context.Guild.Roles.ToAsyncEnumerable()
-                        .Where(x => c.Select(x => x.DiscordRole).Contains(x.Name)).ToArrayAsync();
+                    var ar = Context.Guild.Roles.Where(x => c.Select(clan => clan.DiscordRole).Contains(x.Name)).ToArray();
 
-                    await foreach (var clan in c.ToAsyncEnumerable())
+                    foreach (var clan in c)
                     {
-                        var clanRole = await Context.Guild.Roles.ToAsyncEnumerable()
-                            .FirstOrDefaultAsync(x => x.Name == clan.DiscordRole) as IRole;
+                        var clanRole = Context.Guild.Roles.FirstOrDefault(x => x.Name == clan.DiscordRole) as IRole;
 
-                        await foreach (var member in clan.Member.ToAsyncEnumerable())
+                        foreach (var member in clan.Member)
                         {
-                            var user = await Task.Run(() =>
-                                Context.Guild.Users.FirstOrDefault(x =>
-                                    $"{x.Username}#{x.Discriminator}" == member.Discord)).ConfigureAwait(false);
+                            var user = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => $"{x.Username}#{x.Discriminator}" == member.Discord));
 
                             if (user is null || member.ClanID is null || clan.DiscordRole is null)
                                 continue;
@@ -84,19 +81,18 @@ namespace TTMMBot.Modules
                             {
                                 if (member.Role == Role.CoLeader || member.Role == Role.Leader)
                                 {
-                                    await user.RemoveRolesAsync(await ar).ConfigureAwait(false);
-                                    await user.AddRolesAsync(await ar).ConfigureAwait(false);
+                                    await user.RemoveRolesAsync(ar);
+                                    await user.AddRolesAsync(ar);
                                 }
                                 else
                                 {
-                                    await user.RemoveRolesAsync(await ar).ConfigureAwait(false);
-                                    await user.AddRoleAsync(clanRole).ConfigureAwait(false);
+                                    await user.RemoveRolesAsync(ar);
+                                    await user.AddRoleAsync(clanRole);
                                 }
                             }
                             catch (Exception e)
                             {
-                                await ReplyAsync($"{member.Name}'s role couldn't be fixed: {e.Message}")
-                                    .ConfigureAwait(false);
+                                await ReplyAsync($"{member.Name}'s role couldn't be fixed: {e.Message}");
                             }
                         }
                     }
@@ -105,7 +101,7 @@ namespace TTMMBot.Modules
                 }
                 catch (Exception e)
                 {
-                    await ReplyAsync($"{e.Message}").ConfigureAwait(false);
+                    await ReplyAsync($"{e.Message}");
                 }
             });
 
