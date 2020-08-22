@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Castle.Core.Logging;
 using Discord;
 using Discord.Commands;
+using Microsoft.Extensions.Logging;
 using TTMMBot.Data.Enums;
 using TTMMBot.Services;
 using static TTMMBot.Data.Entities.SetEntityPropertiesHelper;
@@ -16,7 +17,7 @@ namespace TTMMBot.Modules
     [RequireUserPermission(ChannelPermission.ManageRoles)]
     public class ClanModule : ModuleBase<SocketCommandContext>
     {
-        public ILogger Logger { get; set; }
+        public ILogger<ClanModule> Logger { get; set; }
 
         public IDatabaseService DatabaseService { get; set; }
 
@@ -87,7 +88,7 @@ namespace TTMMBot.Modules
                         }
                         catch(Exception e)
                         {
-                            Logger?.Error(e.Message, e);
+                            Logger?.LogError(e.Message, e);
                         }
                     }
                 }
