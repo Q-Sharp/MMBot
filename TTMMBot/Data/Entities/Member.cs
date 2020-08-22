@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.Serialization;
 using EntityFrameworkCore.Triggers;
 using TTMMBot.Data.Enums;
 
@@ -32,18 +33,29 @@ namespace TTMMBot.Data.Entities
         [Key]
         public int MemberID { get; set; }
 
-        public string Discord { get; set; }
-
         [Required]
+        [Display]
         public string Name { get; set; }
 
+        [Display]
+        [IgnoreDataMember]
+        public string ClanTag => Clan?.Tag;
+
+        [Display]
+        public string Discord { get; set; }
+
+        [Display]
         public int? AHigh { get; set; }
 
+        [Display]
         public int? SHigh { get; set; }
 
+        [Display]
         public int? Donations { get; set; }
 
+        [Display]
         public Role Role { get; set; }
+
         public bool IsActive { get; set; }
 
         public int? ClanID { get; set; }
@@ -65,17 +77,16 @@ namespace TTMMBot.Data.Entities
                 .Select((m, i) => new { i, m })
                 .ToList()
                 .ForEach(mi => mi.m.Join = mi.i);
-
             e.Context.SaveChanges();
 
-            if (ce != null)
-            {
-                ce.Join = ce.Clan.Member.AsQueryable()
+            if (ce == null) 
+                return;
+
+            ce.Join = ce.Clan.Member.AsQueryable()
                     .Where(m => m.Join > 0)
                     .Max(x => x.Join) + 1;
 
                 e.Context.SaveChanges();
-            }
         }
     }
 }

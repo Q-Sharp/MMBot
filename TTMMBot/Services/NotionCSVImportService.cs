@@ -14,17 +14,18 @@ namespace TTMMBot.Services
 {
     public class NotionCSVImportService
     {
-        private Context _context { get; set; }
-        private GlobalSettings _settings { get; set; }
+        public Context Context { get; set; }
+        public GlobalSettings Settings { get; set; }
+
         public NotionCSVImportService(Context context, GlobalSettings settings)
         {
-            _context = context;
-            _settings = settings;
+            Context = context;
+            Settings = settings;
         }
 
         public async Task<Exception> ImportCSV(byte[] csv)
-        {                
-            using var mem = new MemoryStream(csv);
+        {
+            await using var mem = new MemoryStream(csv);
             using var reader = new StreamReader(mem, Encoding.UTF8);
             using var csvReader = new CsvReader(reader, CultureInfo.CurrentCulture);
 
@@ -33,19 +34,19 @@ namespace TTMMBot.Services
             csvReader.Configuration.BadDataFound = null;
             csvReader.Configuration.Delimiter = ",";
 
-            var c = _context.Clan;
-            var m = _context.Member;
+            var c = Context.Clan;
+            var m = Context.Member;
 
             try
             {
-                if (c.Count() == 0)
+                if (!c.Any())
                 {
                     var nc = new Clan
                     {
                         Tag = "TT",
                         Name = "The Tavern"
                     };
-                    await _context.AddAsync(nc);
+                    await Context.AddAsync(nc);
 
                     for (var i = 2; i <= 4; i++)
                     {
@@ -54,10 +55,10 @@ namespace TTMMBot.Services
                             Tag = $"TT{i}",
                             Name = $"The Tavern {i}"
                         };
-                        await _context.AddAsync(c2);
+                        await Context.AddAsync(c2);
                     }
 
-                    await _context.SaveChangesAsync();
+                    await Context.SaveChangesAsync();
                 }
             }
             catch
@@ -67,7 +68,7 @@ namespace TTMMBot.Services
 
             try
             {
-                _settings.UseTriggers = false;
+                Settings.UseTriggers = false;
 
                 using var dr = new CsvDataReader(csvReader);
                 var dt = new DataTable();
@@ -78,10 +79,7 @@ namespace TTMMBot.Services
                     var me = m.FirstOrDefault(x => row["IGN"] != DBNull.Value && x.Name == (string)row["IGN"]) ?? new Member();
 
                     if (row["Clan"] != DBNull.Value && !string.IsNullOrEmpty((string)row["Clan"]))
-                    { 
-                        var clanid = c.FirstOrDefault(x => x.Tag == (string)row["Clan"])?.ClanID;
-                        me.ClanID = clanid;
-                    }
+                        me.ClanID = c.FirstOrDefault(x => x.Tag == (string)row["Clan"])?.ClanID;
 
                     if (row["Discord"] != DBNull.Value)
                         me.Discord = (string)row["Discord"];
@@ -108,11 +106,11 @@ namespace TTMMBot.Services
                     me.LastUpdated = DateTime.Now;
 
                     if(me.MemberID == 0)
-                        await _context.Member.AddAsync(me);
+                        await Context.Member.AddAsync(me);
                 }
 
-                await _context.SaveChangesAsync();
-                _settings.UseTriggers = true;
+                await Context.SaveChangesAsync();
+                Settings.UseTriggers = true;
             }
             catch (Exception e)
             {

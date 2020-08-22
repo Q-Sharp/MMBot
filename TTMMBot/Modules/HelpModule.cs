@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -22,17 +23,30 @@ namespace TTMMBot.Modules
             var builder = new EmbedBuilder()
             {
                 Color = new Color(114, 137, 218),
-                Description = "These are the commands you can use"
+                Description = "These are the commands you can use:",
+                Footer = new EmbedFooterBuilder()
+                {
+                    Text = "To get more information for each command add the command name behind the help command!"
+                }
             };
 
             foreach (var module in _service.Modules)
             {
                 string description = null;
-                foreach (var cmd in module.Commands.Where(x => !x.Preconditions.Any(x => x.GetType() == typeof(RequireOwnerAttribute))))
+                foreach (var cmd in module.Commands.Where(x => x.Preconditions.All(attribute => attribute.GetType() != typeof(RequireOwnerAttribute))).Distinct().ToArray())
                 {
                     var result = await cmd.CheckPreconditionsAsync(Context);
-                    if (result.IsSuccess)
-                        description += $"{GM.Prefix}{cmd.Aliases.First()}\n";
+                    if (!result.IsSuccess)
+                        continue;
+
+                    var args = string.Join(" ", cmd?.Parameters?.Select(x => $"[{x.Name}]")?.ToArray() ?? Array.Empty<string>());
+
+                    if (string.Equals(cmd?.Name, module?.Group, StringComparison.InvariantCultureIgnoreCase))
+                        description += $"{GM.Prefix}{module.Group} {args}{Environment.NewLine}";
+                    else if(string.IsNullOrWhiteSpace(module.Group))
+                        description += $"{GM.Prefix}{cmd.Name} {args}{Environment.NewLine}";
+                    else
+                        description += $"{GM.Prefix}{module.Group} {cmd.Name} {args}{Environment.NewLine}";
                 }
 
                 if (!string.IsNullOrWhiteSpace(description))
@@ -50,7 +64,7 @@ namespace TTMMBot.Modules
         }
 
         [Command("help")]
-        public async Task HelpAsync(string command)
+        public async Task HelpAsync([Remainder] string command)
         {
             var result = _service.Search(Context, command);
 

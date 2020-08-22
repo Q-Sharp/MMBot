@@ -8,7 +8,7 @@ using TTMMBot.Data.Entities;
 using TTMMBot.Helpers;
 using TTMMBot.Modules.Enums;
 using TTMMBot.Services;
-using static TTMMBot.Data.Entities.SetEntityPropertiesHelper;
+using static TTMMBot.Data.Entities.EntityHelpers;
 
 namespace TTMMBot.Modules
 {
@@ -25,7 +25,7 @@ namespace TTMMBot.Modules
         public CommandHandler CommandHandler { get; set; }
 
         [Command]
-        [Summary("Lists all members")]
+        [Summary("Lists all members by current clan membership.")]
         public async Task Member()
         {
             try
@@ -40,7 +40,7 @@ namespace TTMMBot.Modules
         }
 
         [Command("Sort")]
-        [Summary("Lists all members")]
+        [Summary("Sort all members by season high.")]
         [Alias("S")]
         public async Task Sort()
         {
@@ -92,7 +92,7 @@ namespace TTMMBot.Modules
         }
 
         [Command("Changes")]
-        [Summary("Lists member changes")]
+        [Summary("Lists the needed changes to clan memberships.")]
         [Alias("C")]
         public async Task Changes()
         {
@@ -204,9 +204,10 @@ namespace TTMMBot.Modules
             return l;
         }
 
-        [Command("Me")]
-        [Summary("Shows all information of member")]
-        public async Task Member(string name)
+        [Command("Show")]
+        [Alias("s")]
+        [Summary("Shows all information of a member.")]
+        public async Task Show(string name = null)
         {
             try
             {
@@ -220,22 +221,9 @@ namespace TTMMBot.Modules
                     return;
                 }
 
-                var builder = new EmbedBuilder
-                {
-                    Color = Color.DarkTeal,
-                    Description = m.Name,
-                };
-
-                builder.WithTitle(m.Clan?.Tag);
-
-                builder.AddField(x =>
-                {
-                    x.Name = "Name";
-                    x.Value = m;
-                    x.IsInline = true;
-                });
-
-                await ReplyAsync("", false, builder.Build());
+                var imageUrl = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => x.GetUserAndDiscriminator() == m.Discord)?.GetAvatarUrl());
+                var e = m.GetEmbedPropertiesWithValues(imageUrl);
+                await ReplyAsync("", false, e as Embed);
 
             }
             catch (Exception e)
@@ -263,69 +251,32 @@ namespace TTMMBot.Modules
             }
         }
 
-        [Group("Set")]
-        [Alias("S")]
-        [Summary("Change...")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public class Set : ModuleBase<SocketCommandContext>
+        [Command("Set")]
+        [Summary("Set [Username] [Property name] [Value]")]
+        public async Task Set(string name, string propertyName, [Remainder] string value)
         {
-            public IDatabaseService DatabaseService { get; set; }
-            public Set(IDatabaseService databaseService) => DatabaseService = databaseService;
-
-            [Command]
-            [Summary(".... Name")]
-            public async Task SetCommand(string name, string propertyName, [Remainder] string newName)
-            {
-                var m = (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == name);
-                await ChangeProperty(m, propertyName, newName, x => ReplyAsync(x));
-                await DatabaseService.SaveDataAsync();
-            }
+            var m = (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == name);
+            var r = m.ChangeProperty(propertyName, value);
+            await DatabaseService.SaveDataAsync();
+            await ReplyAsync(r);
         }
 
-        [Group("Add")]
-        [Alias("A")]
-        [Summary("Add....")]
-        public class Add : ModuleBase<SocketCommandContext>
+        [Command("Create")]
+        [Summary("Creates a new member.")]
+        public async Task Create(string name)
         {
-            public IDatabaseService DatabaseService { get; set; }
-
-            [Command]
-            [Summary("...a new member")]
-            public async Task Member(string name)
+            try
             {
-                try
-                {
-                    var m = await DatabaseService.CreateMemberAsync();
-                    m.Name = name;
-                    await DatabaseService.SaveDataAsync();
-                    await ReplyAsync($"The member {m} was added to database.");
-                }
-                catch (Exception e)
-                {
-                    await ReplyAsync($"{e.Message}");
-                }
+                var m = await DatabaseService.CreateMemberAsync();
+                m.Name = name;
+                await DatabaseService.SaveDataAsync();
+                await ReplyAsync($"The member {m} was added to database.");
             }
-
-            //[Command("Member")]
-            //[Alias("M")]
-            //[Summary(".... to clan with given tag, member with given membername")]
-            //public async Task Member(string tag, string memberName)
-            //{
-            //    try
-            //    {
-            //        var c = (await DatabaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
-            //        var m = (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == memberName);
-
-            //        m.ClanTag = c.Tag;
-
-            //        await DatabaseService.SaveDataAsync();
-            //        await ReplyAsync($"The member {m} is now member of {c}.");
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        await ReplyAsync($"{e.Message}");
-            //    }
-            //}
+            catch (Exception e)
+            {
+                await ReplyAsync($"{e.Message}");
+            }
         }
     }
 }

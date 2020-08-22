@@ -9,8 +9,10 @@ namespace TTMMBot.Data.Entities
         public int ClanID { get; set; }
 
         [Required]
+        [Display]
         public string Tag { get; set; }
 
+        [Display]
         public string Name { get; set; }
         public string DiscordRole { get; set; }
 
