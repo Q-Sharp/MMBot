@@ -6,10 +6,14 @@ namespace TTMMBot
 {
     public class GlobalSettings
     {
+        // Discord
         public string Prefix { get; set; } = "m.";
+        public TimeSpan WaitForReaction { get; set; } = TimeSpan.FromMinutes(5);
 
+        // Database
         public bool UseTriggers { get; set; } = true;
 
-        public TimeSpan WaitForReaction { get; set; } = TimeSpan.FromMinutes(5);
+        // Filesystem
+        public string FileName { get; set; } = "export.csv";
     }
 }

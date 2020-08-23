@@ -44,8 +44,8 @@ namespace TTMMBot.Services
         {
             if (!(arg is SocketUserMessage msg) || msg.Author.Id == Client.CurrentUser.Id || msg.Author.IsBot) return;
 
-            int pos = 0;
-            if (msg.HasStringPrefix("m.", ref pos) || msg.HasMentionPrefix(Client.CurrentUser, ref pos))
+            var pos = 0;
+            if (msg.HasStringPrefix(GS.Prefix, ref pos) || msg.HasMentionPrefix(Client.CurrentUser, ref pos))
             {
                 var context = new SocketCommandContext(Client, msg);
                 var result = await Commands.ExecuteAsync(context, pos, Services);

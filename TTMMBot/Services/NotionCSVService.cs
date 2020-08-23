@@ -12,12 +12,12 @@ using TTMMBot.Data.Enums;
 
 namespace TTMMBot.Services
 {
-    public class NotionCSVImportService
+    public class NotionCSVService
     {
         public Context Context { get; set; }
         public GlobalSettings Settings { get; set; }
 
-        public NotionCSVImportService(Context context, GlobalSettings settings)
+        public NotionCSVService(Context context, GlobalSettings settings)
         {
             Context = context;
             Settings = settings;
@@ -118,6 +118,40 @@ namespace TTMMBot.Services
             }
 
             return null;
+        }
+
+        public async Task<byte[]> ExportCSV()
+        {
+            await using var mem = new MemoryStream();
+            await using var writer = new StreamWriter(mem, Encoding.UTF8);
+            await using var csvWriter = new CsvWriter(writer, CultureInfo.CurrentCulture);
+
+            csvWriter.Configuration.Delimiter = ",";
+
+            var m = Context.Member;
+
+            //var dt = new DataTable();
+            //var dc = new DataColumn[]
+            //{
+            //    new DataColumn("Clan", typeof(string)),
+            //    new DataColumn("Discord", typeof(string)),
+            //    new DataColumn("IGN", typeof(string)),
+            //    new DataColumn("Role", typeof(string)),
+            //    new DataColumn("AT-highest", typeof(string)),
+            //    new DataColumn("S-highest", typeof(string)),
+            //    new DataColumn("Donations", typeof(string)),
+            //    new DataColumn("Join Date", typeof(string)),
+            //};
+            //dt.Columns.AddRange(dc);
+
+            //foreach (var member in m.ToArray())
+            //    dt.Rows.Add(member.ClanTag, member.Discord, member.Name, member.Role.ToString(),
+            //        member.AHigh.ToString(), member.SHigh.ToString(), member.Donations.ToString(),
+            //        member.Join.ToString());
+
+            await csvWriter.WriteRecordsAsync(m.ToArray().AsEnumerable());
+
+            return mem.ToArray();
         }
     }
 }

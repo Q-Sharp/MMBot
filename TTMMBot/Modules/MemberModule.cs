@@ -24,9 +24,9 @@ namespace TTMMBot.Modules
         public IDatabaseService DatabaseService { get; set; }
         public CommandHandler CommandHandler { get; set; }
 
-        [Command]
+        [Command("List")]
         [Summary("Lists all members by current clan membership.")]
-        public async Task Member()
+        public async Task List()
         {
             try
             {

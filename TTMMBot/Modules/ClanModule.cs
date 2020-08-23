@@ -19,9 +19,9 @@ namespace TTMMBot.Modules
 
         public IDatabaseService DatabaseService { get; set; }
 
-        [Command]
+        [Command("List")]
         [Summary("Lists all Clans")]
-        public async Task Clan(string tag = null)
+        public async Task List(string tag = null)
         {
             try
             {
