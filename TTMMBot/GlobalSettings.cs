@@ -15,5 +15,8 @@ namespace TTMMBot
 
         // Filesystem
         public string FileName { get; set; } = "export.csv";
+
+        // InGame
+        public int ClanSize { get; set; } = 20;
     }
 }

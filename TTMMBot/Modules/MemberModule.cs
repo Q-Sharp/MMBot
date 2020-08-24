@@ -23,6 +23,7 @@ namespace TTMMBot.Modules
 
         public IDatabaseService DatabaseService { get; set; }
         public CommandHandler CommandHandler { get; set; }
+        public GlobalSettings GlobalSettings { get; set; }
 
         [Command("List")]
         [Summary("Lists all members by current clan membership.")]
@@ -67,11 +68,7 @@ namespace TTMMBot.Modules
 
                 case SortType.BySeasonHigh:
                     m = m.OrderByDescending(x => x.SHigh).ToList();
-                    chunkSize = 20;
-                    break;
-
-                case SortType.Unsorted:
-
+                    chunkSize = GlobalSettings.ClanSize;
                     break;
             }
 
@@ -103,6 +100,7 @@ namespace TTMMBot.Modules
                 var current = m.OrderBy(x => x.Clan?.Tag)
                     .GroupBy(x => x.ClanID, (x, y) => new { Clan = x, Members = y })
                     .Select(x => x.Members.ToList() as IList<Member>)
+                    .Select(x => x = x.OrderByDescending(y => y.SHigh).ToList())
                     .ToList();
 
                 var future = m.OrderByDescending(x => x.SHigh)
@@ -128,7 +126,7 @@ namespace TTMMBot.Modules
             }
         }
 
-        private string GetSortedMembersTable(IList<Member> m, int pageNo, int? chunkSize = 20)
+        private string GetSortedMembersTable(IList<Member> m, int pageNo, int? chunkSize = null)
         {
             IList<Member> sorted;
 
@@ -156,7 +154,7 @@ namespace TTMMBot.Modules
             table += GetHeader(_header);
             table += GetLimiter(_header);
 
-            foreach (var member in members.OrderByDescending(x => x.AHigh))
+            foreach (var member in members)
                 table += GetValues(member, _fields);
 
             table += $"{Environment.NewLine}```";
