@@ -8,7 +8,6 @@ using TTMMBot.Data.Entities;
 using TTMMBot.Helpers;
 using TTMMBot.Modules.Enums;
 using TTMMBot.Services;
-using static TTMMBot.Data.Entities.EntityHelpers;
 
 namespace TTMMBot.Modules
 {
@@ -100,7 +99,7 @@ namespace TTMMBot.Modules
                 var current = m.OrderBy(x => x.Clan?.Tag)
                     .GroupBy(x => x.ClanID, (x, y) => new { Clan = x, Members = y })
                     .Select(x => x.Members.ToList() as IList<Member>)
-                    .Select(x => x = x.OrderByDescending(y => y.SHigh).ToList())
+                    .Select(x => x.OrderByDescending(y => y.SHigh).ToList())
                     .ToList();
 
                 var future = m.OrderByDescending(x => x.SHigh)

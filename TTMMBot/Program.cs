@@ -53,7 +53,7 @@ namespace TTMMBot
                          .AddSingleton(cs)
                          .AddSingleton<CommandHandler>()
                          .AddSingleton<IDatabaseService, DatabaseService>()
-                         .AddSingleton<NotionCSVService>()
+                         .AddSingleton<NotionCsvService>()
                          .AddSingleton<AdminService>()
                          .BuildServiceProvider();
                 });

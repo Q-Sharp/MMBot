@@ -3,14 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace TTMMBot.Modules
 {
     [Name("Help")]
     public class HelpModule : ModuleBase<SocketCommandContext>
     {
-        public GlobalSettings GM { get; set; }
+        public GlobalSettings Gm { get; set; }
 
 
         private readonly CommandService _service;
@@ -39,14 +38,14 @@ namespace TTMMBot.Modules
                     if (!result.IsSuccess)
                         continue;
 
-                    var args = string.Join(" ", cmd?.Parameters?.Select(x => $"[{x.Name}]")?.ToArray() ?? Array.Empty<string>());
+                    var args = string.Join(" ", cmd.Parameters?.Select(x => $"[{x.Name}]").ToArray() ?? Array.Empty<string>());
 
-                    if (string.Equals(cmd?.Name, module?.Group, StringComparison.InvariantCultureIgnoreCase))
-                        description += $"{GM.Prefix}{module.Group} {args}{Environment.NewLine}";
+                    if (string.Equals(cmd.Name, module.Group, StringComparison.InvariantCultureIgnoreCase))
+                        description += $"{Gm.Prefix}{module.Group} {args}{Environment.NewLine}";
                     else if(string.IsNullOrWhiteSpace(module.Group))
-                        description += $"{GM.Prefix}{cmd.Name} {args}{Environment.NewLine}";
+                        description += $"{Gm.Prefix}{cmd.Name} {args}{Environment.NewLine}";
                     else
-                        description += $"{GM.Prefix}{module.Group} {cmd.Name} {args}{Environment.NewLine}";
+                        description += $"{Gm.Prefix}{module.Group} {cmd.Name} {args}{Environment.NewLine}";
                 }
 
                 if (!string.IsNullOrWhiteSpace(description))

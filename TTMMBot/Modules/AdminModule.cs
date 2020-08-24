@@ -6,7 +6,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using TTMMBot.Data;
 using TTMMBot.Data.Enums;
 using TTMMBot.Services;
 
@@ -17,31 +16,48 @@ namespace TTMMBot.Modules
     [Alias("admin", "a", "A")]
     public class AdminModule : ModuleBase<SocketCommandContext>
     {
-        private static volatile bool _reorderIsRunning;
+        private static volatile bool _commandIsRunning;
 
         public IDatabaseService DatabaseService { get; set; }
-        public NotionCSVService CsvService { get; set; }
+        public NotionCsvService CsvService { get; set; }
         public AdminService AdminService { get; set; }
         public GlobalSettings GlobalSettings { get; set; }
 
         [RequireOwner]
-        [Command("ImportCSV")]
+        [Command("ImportCSV", RunMode = RunMode.Async)]
         [Alias("import")]
         [Summary("Imports a notion csv export to update db")]
         public async Task ImportCsv()
         {
             try
             {
+                if (_commandIsRunning)
+                {
+                    await ReplyAsync($"I can only run a single long running command at a time!");
+                    return;
+                }
+
                 var csvFile = Context.Message.Attachments.FirstOrDefault();
                 var myWebClient = new WebClient();
-                var csv = myWebClient.DownloadData(csvFile.Url);
-                var result = await CsvService?.ImportCSV(csv);
-
-                await ReplyAsync(result == null ? "CSV file import was successful" : $"ERROR: {result.Message}");
+                if (csvFile != null)
+                {
+                    var csv = myWebClient.DownloadData(csvFile.Url);
+                    if (CsvService != null)
+                    {
+                        var result = await CsvService.ImportCsv(csv);
+                        await ReplyAsync(result == null
+                            ? "CSV file import was successful"
+                            : $"ERROR: {result.Message}");
+                    }
+                }
             }
             catch (Exception e)
             {
                 await ReplyAsync($"{e.Message}");
+            }
+            finally
+            {
+                _commandIsRunning = false;
             }
         }
 
@@ -53,8 +69,11 @@ namespace TTMMBot.Modules
         {
             try
             {
-                var result = await CsvService?.ExportCSV();
-                await File.WriteAllBytesAsync(GlobalSettings.FileName, result);
+                if (CsvService != null)
+                {
+                    var result = await CsvService?.ExportCsv();
+                    await File.WriteAllBytesAsync(GlobalSettings.FileName, result);
+                }
 
                 await Context.Channel.SendFileAsync(GlobalSettings.FileName, "Csv db export");
                 File.Delete(GlobalSettings.FileName);
@@ -103,17 +122,18 @@ namespace TTMMBot.Modules
             {
                 try
                 {
-                    if (_reorderIsRunning)
+                    if (_commandIsRunning)
                     {
-                        await ReplyAsync($"I can do this only once at a time!");
+                        await ReplyAsync($"I can only run a single long running command at a time!");
                         return;
                     }
 
-                    _reorderIsRunning = true;
+                    _commandIsRunning = true;
                     await ReplyAsync($"Fixing roles of discord members accordingly to their clan membership....");
 
                     var c = await DatabaseService.LoadClansAsync();
-                    var ar = Context.Guild.Roles.Where(x => c.Select(clan => clan.DiscordRole).Contains(x.Name)).ToArray();
+                    var ar = Context.Guild.Roles.Where(x => c.Select(clan => clan.DiscordRole).Contains(x.Name))
+                        .ToArray();
 
                     var clanMessage = await ReplyAsync("...");
                     foreach (var clan in c)
@@ -125,7 +145,9 @@ namespace TTMMBot.Modules
                         foreach (var member in clan.Member)
                         {
                             await memberMessage.ModifyAsync(m => m.Content = $"Fixing roles of {member}...");
-                            var user = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => $"{x.Username}#{x.Discriminator}" == member.Discord));
+                            var user = await Task.Run(() =>
+                                Context.Guild.Users.FirstOrDefault(x =>
+                                    $"{x.Username}#{x.Discriminator}" == member.Discord));
 
                             if (user is null || member.ClanID is null || clan.DiscordRole is null)
                                 continue;
@@ -151,11 +173,14 @@ namespace TTMMBot.Modules
                     }
 
                     await ReplyAsync($"All roles have been fixed!");
-                    _reorderIsRunning = false;
                 }
                 catch (Exception e)
                 {
                     await ReplyAsync($"{e.Message}");
+                }
+                finally
+                {
+                    _commandIsRunning = false;
                 }
             });
 
@@ -163,7 +188,7 @@ namespace TTMMBot.Modules
         [Command("DeleteDB")]
         [Alias("deletedb")]
         [Summary("Deletes sqlite db file")]
-        public async Task DeleteDB() => await Task.Run(async () =>
+        public async Task DeleteDb() => await Task.Run(async () =>
         {
             var db = $"{Path.Combine(Directory.GetCurrentDirectory(), "TTMMBot.db")}";
             File.Delete(db);

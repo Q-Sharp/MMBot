@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Microsoft.Extensions.Logging;
-using TTMMBot.Data.Enums;
 using TTMMBot.Services;
 using static TTMMBot.Data.Entities.EntityHelpers;
 
@@ -119,10 +118,13 @@ namespace TTMMBot.Modules
                 var c = (await DatabaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
                 var m = (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == memberName);
 
-                m.Clan.Tag = c.Tag;
+                if (m != null && c != null)
+                {
+                    m.Clan.Tag = c.Tag;
 
-                await DatabaseService.SaveDataAsync();
-                await ReplyAsync($"The member {m} is now member of {c}.");
+                    await DatabaseService.SaveDataAsync();
+                    await ReplyAsync($"The member {m} is now member of {c}.");
+                }
             }
             catch (Exception e)
             {

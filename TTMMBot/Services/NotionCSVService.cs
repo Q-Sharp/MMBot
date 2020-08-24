@@ -12,18 +12,18 @@ using TTMMBot.Data.Enums;
 
 namespace TTMMBot.Services
 {
-    public class NotionCSVService
+    public class NotionCsvService
     {
         public Context Context { get; set; }
         public GlobalSettings Settings { get; set; }
 
-        public NotionCSVService(Context context, GlobalSettings settings)
+        public NotionCsvService(Context context, GlobalSettings settings)
         {
             Context = context;
             Settings = settings;
         }
 
-        public async Task<Exception> ImportCSV(byte[] csv)
+        public async Task<Exception> ImportCsv(byte[] csv)
         {
             await using var mem = new MemoryStream(csv);
             using var reader = new StreamReader(mem, Encoding.UTF8);
@@ -79,7 +79,7 @@ namespace TTMMBot.Services
                     var me = m.FirstOrDefault(x => row["IGN"] != DBNull.Value && x.Name == (string)row["IGN"]) ?? new Member();
 
                     if (row["Clan"] != DBNull.Value && !string.IsNullOrEmpty((string)row["Clan"]))
-                        me.ClanID = c.FirstOrDefault(x => x.Tag == (string)row["Clan"])?.ClanID;
+                        me.ClanID = c.FirstOrDefault(x => x.Tag == (string)row["Clan"])?.ClanId;
 
                     if (row["Discord"] != DBNull.Value)
                         me.Discord = (string)row["Discord"];
@@ -107,9 +107,10 @@ namespace TTMMBot.Services
 
                     if(me.MemberID == 0)
                         await Context.Member.AddAsync(me);
+
+                    await Context.SaveChangesAsync();
                 }
 
-                await Context.SaveChangesAsync();
                 Settings.UseTriggers = Context.UseTriggers = true;
             }
             catch (Exception e)
@@ -120,7 +121,7 @@ namespace TTMMBot.Services
             return null;
         }
 
-        public async Task<byte[]> ExportCSV()
+        public async Task<byte[]> ExportCsv()
         {
             await using var mem = new MemoryStream();
             await using var writer = new StreamWriter(mem, Encoding.UTF8);

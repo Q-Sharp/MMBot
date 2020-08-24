@@ -6,7 +6,7 @@ namespace TTMMBot.Data.Entities
     public class Clan
     {
         [Key]
-        public int ClanID { get; set; }
+        public int ClanId { get; set; }
 
         [Required]
         [Display]
