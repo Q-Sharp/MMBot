@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Discord;
 using Microsoft.EntityFrameworkCore.Internal;
+using TTMMBot.Data.Enums;
 
 namespace TTMMBot.Data.Entities
 {
@@ -21,7 +22,7 @@ namespace TTMMBot.Data.Entities
                 if (pr != null)
                 {
                     var t = Nullable.GetUnderlyingType(pr.PropertyType) ?? pr.PropertyType;
-                    var safeValue = (newValue == null) ? null : Convert.ChangeType(newValue, t);
+                    var safeValue = (newValue == null) ? null : Enum.TryParse(newValue.ToString(), out Role eNum) ? eNum : Convert.ChangeType(newValue, t);
                     var val = Convert.ChangeType(safeValue, t);
 
                     var oldPropValue = m.GetType().GetProperty(propertyName)?.GetValue(m, null);
