@@ -61,63 +61,6 @@ namespace TTMMBot.Modules
         }
 
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        [Command("FixRoles", RunMode = RunMode.Async)]
-        [Alias("FR")]
-        [Summary("Checks and fixes discord roles of all clan members.")]
-        public async Task FixRoles() =>
-            await Task.Run(async () =>
-            {
-                try
-                {
-                    await ReplyAsync($"Fixing roles of discord members accordingly to their clan membership....");
-
-                    var c = await DatabaseService.LoadClansAsync();
-                    var ar = Context.Guild.Roles.Where(x => c.Select(clan => clan.DiscordRole).Contains(x.Name)).ToArray();
-
-                    var clanMessage = await ReplyAsync("...");
-                    foreach (var clan in c)
-                    {
-                        await clanMessage.ModifyAsync(m => m.Content = $"Fixing roles of members of {clan}....");
-                        var clanRole = Context.Guild.Roles.FirstOrDefault(x => x.Name == clan.DiscordRole) as IRole;
-
-                        var memberMessage = await ReplyAsync("...");
-                        foreach (var member in clan.Member)
-                        {
-                            await memberMessage.ModifyAsync(m => m.Content = $"Fixing roles of {member}...");
-                            var user = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => $"{x.Username}#{x.Discriminator}" == member.Discord));
-
-                            if (user is null || member.ClanID is null || clan.DiscordRole is null)
-                                continue;
-
-                            try
-                            {
-                                if (member.Role == Role.CoLeader || member.Role == Role.Leader)
-                                {
-                                    await user.RemoveRolesAsync(ar);
-                                    await user.AddRolesAsync(ar);
-                                }
-                                else
-                                {
-                                    await user.RemoveRolesAsync(ar);
-                                    await user.AddRoleAsync(clanRole);
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                await ReplyAsync($"{member.Name}'s role couldn't be fixed: {e.Message}");
-                            }
-                        }
-                    }
-
-                    await ReplyAsync($"All roles have been fixed!");
-                }
-                catch (Exception e)
-                {
-                    await ReplyAsync($"{e.Message}");
-                }
-            });
-
-        [RequireUserPermission(ChannelPermission.ManageRoles)]
         [Command("Delete")]
         [Alias("d")]
         [Summary("Deletes clan with given tag.")]

@@ -34,8 +34,8 @@ namespace TTMMBot.Services
             csvReader.Configuration.BadDataFound = null;
             csvReader.Configuration.Delimiter = ",";
 
-            var c = Context.Clan;
-            var m = Context.Member;
+            var c = Context.Clan.ToArray();
+            var m = Context.Member.ToArray();
 
             try
             {
@@ -68,7 +68,7 @@ namespace TTMMBot.Services
 
             try
             {
-                Settings.UseTriggers = false;
+                Settings.UseTriggers = Context.UseTriggers = false;
 
                 using var dr = new CsvDataReader(csvReader);
                 var dt = new DataTable();
@@ -110,7 +110,7 @@ namespace TTMMBot.Services
                 }
 
                 await Context.SaveChangesAsync();
-                Settings.UseTriggers = true;
+                Settings.UseTriggers = Context.UseTriggers = true;
             }
             catch (Exception e)
             {

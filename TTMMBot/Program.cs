@@ -33,14 +33,15 @@ namespace TTMMBot
                 {
                     var dsc = new DiscordSocketClient(new DiscordSocketConfig
                     {
-                        LogLevel = LogSeverity.Debug,
-                        MessageCacheSize = 100,                       
+                        LogLevel = LogSeverity.Warning,
+                        MessageCacheSize = 300,                       
                     });
 
                     var cs = new CommandService(new CommandServiceConfig
                     {
-                        LogLevel = LogSeverity.Debug,
+                        LogLevel = LogSeverity.Warning,
                         CaseSensitiveCommands = false,
+                        SeparatorChar = ' '
                     });
 
                     services

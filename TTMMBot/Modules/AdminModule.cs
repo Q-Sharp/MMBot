@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using TTMMBot.Data;
+using TTMMBot.Data.Enums;
 using TTMMBot.Services;
 
 namespace TTMMBot.Modules
@@ -16,6 +17,8 @@ namespace TTMMBot.Modules
     [Alias("admin", "a", "A")]
     public class AdminModule : ModuleBase<SocketCommandContext>
     {
+        private static volatile bool _reorderIsRunning;
+
         public IDatabaseService DatabaseService { get; set; }
         public NotionCSVService CsvService { get; set; }
         public AdminService AdminService { get; set; }
@@ -90,6 +93,71 @@ namespace TTMMBot.Modules
             
             Environment.Exit(0);
         }
+
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
+        [Command("FixRoles", RunMode = RunMode.Async)]
+        [Alias("FR")]
+        [Summary("Checks and fixes discord roles of all clan members.")]
+        public async Task FixRoles() =>
+            await Task.Run(async () =>
+            {
+                try
+                {
+                    if (_reorderIsRunning)
+                    {
+                        await ReplyAsync($"I can do this only once at a time!");
+                        return;
+                    }
+
+                    _reorderIsRunning = true;
+                    await ReplyAsync($"Fixing roles of discord members accordingly to their clan membership....");
+
+                    var c = await DatabaseService.LoadClansAsync();
+                    var ar = Context.Guild.Roles.Where(x => c.Select(clan => clan.DiscordRole).Contains(x.Name)).ToArray();
+
+                    var clanMessage = await ReplyAsync("...");
+                    foreach (var clan in c)
+                    {
+                        await clanMessage.ModifyAsync(m => m.Content = $"Fixing roles of members of {clan}....");
+                        var clanRole = Context.Guild.Roles.FirstOrDefault(x => x.Name == clan.DiscordRole) as IRole;
+
+                        var memberMessage = await ReplyAsync("...");
+                        foreach (var member in clan.Member)
+                        {
+                            await memberMessage.ModifyAsync(m => m.Content = $"Fixing roles of {member}...");
+                            var user = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => $"{x.Username}#{x.Discriminator}" == member.Discord));
+
+                            if (user is null || member.ClanID is null || clan.DiscordRole is null)
+                                continue;
+
+                            try
+                            {
+                                if (member.Role == Role.CoLeader || member.Role == Role.Leader)
+                                {
+                                    await user.RemoveRolesAsync(ar);
+                                    await user.AddRolesAsync(ar);
+                                }
+                                else
+                                {
+                                    await user.RemoveRolesAsync(ar);
+                                    await user.AddRoleAsync(clanRole);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                await ReplyAsync($"{member.Name}'s role couldn't be fixed: {e.Message}");
+                            }
+                        }
+                    }
+
+                    await ReplyAsync($"All roles have been fixed!");
+                    _reorderIsRunning = false;
+                }
+                catch (Exception e)
+                {
+                    await ReplyAsync($"{e.Message}");
+                }
+            });
 
         [RequireOwner]
         [Command("DeleteDB")]

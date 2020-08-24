@@ -240,7 +240,7 @@ namespace TTMMBot.Modules
         {
             try
             {
-                var m = (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == name);
+                var m = (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase));
                 DatabaseService.DeleteMember(m);
                 await DatabaseService.SaveDataAsync();
                 await ReplyAsync($"The member {m} was deleted");
@@ -256,7 +256,7 @@ namespace TTMMBot.Modules
         [Summary("Set [Username] [Property name] [Value]")]
         public async Task Set(string name, string propertyName, [Remainder] string value)
         {
-            var m = (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == name);
+            var m = (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase));
             var r = m.ChangeProperty(propertyName, value);
             await DatabaseService.SaveDataAsync();
             await ReplyAsync(r);
