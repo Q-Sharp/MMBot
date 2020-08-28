@@ -36,12 +36,12 @@ namespace TTMMBot.Data
             modelBuilder.Entity<Member>()
                 .HasOne(m => m.Clan)
                 .WithMany(c => c.Member)
-                .HasForeignKey(m => m.ClanID);
+                .HasForeignKey(m => m.ClanId);
 
             modelBuilder.Entity<Vacation>()
                 .HasOne(v => v.Member)
                 .WithMany(m => m.Vacation)
-                .HasForeignKey(v => v.MemberID);
+                .HasForeignKey(v => v.MemberId);
         }
 
         public async Task MigrateAsync() => await Database.MigrateAsync();

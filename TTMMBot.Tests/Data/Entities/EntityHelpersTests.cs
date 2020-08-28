@@ -6,16 +6,17 @@ namespace TTMMBot.Tests.Data.Entities
 {
     public class EntityHelpersTests
     {
-        private static Member M => new Member { MemberID = 1, Name = "ReMember", Role = Role.Member, SHigh = 9999 };
+        private static Member M => new Member { MemberId = 1, Name = "ReMember", Role = Role.Member, SHigh = 9999 };
 
         [Fact]
         public void ChangePropertyEnumTest()
         {
             var m = M;
 
-            m.ChangeProperty(nameof(m.Role), "Leader");
+            var msg = m.ChangeProperty(nameof(m.Role), "Leader");
 
             Assert.Equal(Role.Leader, m.Role);
+            Assert.Equal("The Member ReMember now uses Leader instead of Member as Role.", msg);
         }
 
         [Fact]
@@ -23,9 +24,10 @@ namespace TTMMBot.Tests.Data.Entities
         {
             var m = M;
 
-            m.ChangeProperty(nameof(m.Name), "Member");
+            var msg = m.ChangeProperty(nameof(m.Name), "Member");
 
             Assert.Equal("Member", m.Name);
+            Assert.Equal("The Member Member now uses Member instead of ReMember as Name.", msg);
         }
 
         [Fact]
@@ -33,9 +35,10 @@ namespace TTMMBot.Tests.Data.Entities
         {
             var m = M;
 
-            m.ChangeProperty(nameof(m.SHigh), "1337");
+            var msg = m.ChangeProperty(nameof(m.SHigh), "1337");
 
             Assert.Equal(1337, m.SHigh);
+            Assert.Equal("The Member ReMember now uses 1337 instead of 9999 as SHigh.", msg);
         }
     }
 }

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTMMBot.Data;
 
 namespace TTMMBot.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20200825005128_v4")]
+    partial class v4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,9 +56,6 @@ namespace TTMMBot.Migrations
 
                     b.Property<string>("Discord")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("DiscordStatus")
-                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("Donations")
                         .HasColumnType("INTEGER");

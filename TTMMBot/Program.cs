@@ -22,6 +22,7 @@ namespace TTMMBot
 
             using var h = CreateHostBuilder(args)?.Build();
             h?.Run();
+            Log.CloseAndFlush();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -44,17 +45,16 @@ namespace TTMMBot
                         SeparatorChar = ' '
                     });
 
-                    services
-                         .AddHostedService<DiscordWorker>()    
+                    services.AddHostedService<DiscordWorker>()    
                          .AddSingleton<GlobalSettings>()
                          .AddDbContext<Context>()
                          .AddTriggers()
                          .AddSingleton(dsc)
                          .AddSingleton(cs)
                          .AddSingleton<CommandHandler>()
-                         .AddSingleton<IDatabaseService, DatabaseService>()
-                         .AddSingleton<NotionCsvService>()
-                         .AddSingleton<AdminService>()
+                         .AddTransient<IDatabaseService, DatabaseService>()
+                         .AddTransient<NotionCsvService>()
+                         .AddTransient<AdminService>()
                          .BuildServiceProvider();
                 });
     }

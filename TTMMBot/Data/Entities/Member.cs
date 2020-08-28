@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -17,7 +18,7 @@ namespace TTMMBot.Data.Entities
                 if (!e.Context.UseTriggers)
                     return;
 
-                if (e.Original.ClanID != e.Entity.ClanID)
+                if (e.Original.ClanId != e.Entity.ClanId)
                     ReorderJoin(e);
             };
 
@@ -31,7 +32,7 @@ namespace TTMMBot.Data.Entities
         }
 
         [Key]
-        public int MemberID { get; set; }
+        public int MemberId { get; set; }
 
         [Required]
         [Display]
@@ -56,9 +57,11 @@ namespace TTMMBot.Data.Entities
         [Display]
         public Role Role { get; set; }
 
+        public DiscordStatus DiscordStatus { get; set; } = DiscordStatus.Active;
+
         public bool IsActive { get; set; }
 
-        public int? ClanID { get; set; }
+        public int? ClanId { get; set; }
         public virtual Clan Clan { get; set; }
 
         public virtual ICollection<Vacation> Vacation { get; set; }
@@ -67,12 +70,14 @@ namespace TTMMBot.Data.Entities
 
         public int Join { get; set; }
 
+        public bool IgnoreOnMoveUp { get; set; }
+
         public override string ToString() => Clan?.Tag != null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
 
         private static void ReorderJoin(IEntry<Member, Context> e, Member ce = null)
         {
             e.Context.Member.AsQueryable()
-                .Where(x => x.ClanID == e.Entity.ClanID)
+                .Where(x => x.ClanId == e.Entity.ClanId)
                 .OrderBy(x => x.Join)
                 .Select((m, i) => new { i, m })
                 .ToList()

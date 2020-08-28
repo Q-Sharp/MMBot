@@ -149,7 +149,7 @@ namespace TTMMBot.Modules
                                 Context.Guild.Users.FirstOrDefault(x =>
                                     $"{x.Username}#{x.Discriminator}" == member.Discord));
 
-                            if (user is null || member.ClanID is null || clan.DiscordRole is null)
+                            if (user is null || member.ClanId is null || clan.DiscordRole is null)
                                 continue;
 
                             try

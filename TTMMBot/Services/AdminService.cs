@@ -39,7 +39,7 @@ namespace TTMMBot.Services
             Context.Member.AsEnumerable()
                 .OrderBy(x => x.Join, JoinComparer.Create())
                 .ThenBy(x => x.SHigh)
-                .GroupBy(x => x.ClanID, (x, y) => new { Clan = x, Members = y })
+                .GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
                 .Select(x => x.Members.ToList() as IList<Member>)
                 .ToList()
                 .ForEach(x =>

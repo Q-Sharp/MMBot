@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using TTMMBot.Data;
 using TTMMBot.Data.Entities;
 using TTMMBot.Data.Enums;
@@ -16,11 +18,13 @@ namespace TTMMBot.Services
     {
         public Context Context { get; set; }
         public GlobalSettings Settings { get; set; }
+        public ILogger<NotionCsvService>  Logger { get; set; }
 
-        public NotionCsvService(Context context, GlobalSettings settings)
+        public NotionCsvService(Context context, GlobalSettings settings, ILogger<NotionCsvService> logger)
         {
             Context = context;
             Settings = settings;
+            Logger = logger;
         }
 
         public async Task<Exception> ImportCsv(byte[] csv)
@@ -76,10 +80,11 @@ namespace TTMMBot.Services
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    var me = m.FirstOrDefault(x => row["IGN"] != DBNull.Value && x.Name == (string)row["IGN"]) ?? new Member();
+                    var me = m.FirstOrDefault(x => row["IGN"] != DBNull.Value && x.Name == (string)row["IGN"]) ??
+                             new Member();
 
                     if (row["Clan"] != DBNull.Value && !string.IsNullOrEmpty((string)row["Clan"]))
-                        me.ClanID = c.FirstOrDefault(x => x.Tag == (string)row["Clan"])?.ClanId;
+                        me.ClanId = c.FirstOrDefault(x => x.Tag == (string)row["Clan"])?.ClanId;
 
                     if (row["Discord"] != DBNull.Value)
                         me.Discord = (string)row["Discord"];
@@ -87,7 +92,8 @@ namespace TTMMBot.Services
                     if (row["IGN"] != DBNull.Value)
                         me.Name = (string)row["IGN"];
 
-                    if (row["Role"] != DBNull.Value && Enum.TryParse(typeof(Role), ((string)row["Role"]).Replace("-", ""), out var er))
+                    if (row["Role"] != DBNull.Value &&
+                        Enum.TryParse(typeof(Role), ((string)row["Role"]).Replace("-", ""), out var er))
                         me.Role = (Role)er;
 
                     if (row["AT-highest"] != DBNull.Value && int.TryParse((string)row["AT-highest"], out var ath))
@@ -102,10 +108,17 @@ namespace TTMMBot.Services
                     if (row["Join Date"] != DBNull.Value && int.TryParse((string)row["Join Date"], out var jd))
                         me.Join = jd;
 
-                    me.IsActive = me.ClanID.HasValue && me.SHigh.HasValue;
+                    if (row["Discord Status"] != DBNull.Value && Enum.TryParse(typeof(DiscordStatus),
+                        ((string)row["Discord Status"]).Replace(" ", ""), out var ds))
+                    {
+                        me.ClanId = null;
+                        me.DiscordStatus = (DiscordStatus)ds;
+                    }
+
+                    me.IsActive = me.ClanId.HasValue && me.SHigh.HasValue;
                     me.LastUpdated = DateTime.Now;
 
-                    if(me.MemberID == 0)
+                    if (me.MemberId == 0)
                         await Context.Member.AddAsync(me);
 
                     await Context.SaveChangesAsync();

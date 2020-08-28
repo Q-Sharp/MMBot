@@ -97,7 +97,7 @@ namespace TTMMBot.Modules
                 var m = (await DatabaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
 
                 var current = m.OrderBy(x => x.Clan?.Tag)
-                    .GroupBy(x => x.ClanID, (x, y) => new { Clan = x, Members = y })
+                    .GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
                     .Select(x => x.Members.ToList() as IList<Member>)
                     .Select(x => x.OrderByDescending(y => y.SHigh).ToList())
                     .ToList();
@@ -113,6 +113,7 @@ namespace TTMMBot.Modules
                 for (var i = 1; i <= current.Count(); i++)
                 {
                     var dif = future[i - 1].Where(x => !current[i - 1].Contains(x)).ToList();
+                    //dif.OrderByDescending(x => x.SHigh).Take(3).Where(x => x)
                     r += GetTable(dif, i);
                     r += Environment.NewLine;
                 }
@@ -131,7 +132,7 @@ namespace TTMMBot.Modules
 
             if(!chunkSize.HasValue)
             {
-                sorted = m.GroupBy(x => x.ClanID, (x, y) => new { Clan = x, Members = y })
+                sorted = m.GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
                     .OrderBy(x => x.Clan)
                     .Select(x => x.Members.Select(v => v).ToList() as IList<Member>)
                     .ToArray()[pageNo - 1]

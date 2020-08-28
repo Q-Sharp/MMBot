@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200825005006_v4.cs" />
+    <Compile Remove="Migrations\20200825005006_v4.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="TTMMBot.db" />
   </ItemGroup>
   
