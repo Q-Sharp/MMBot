@@ -14,7 +14,7 @@ using TTMMBot.Data.Enums;
 
 namespace TTMMBot.Services
 {
-    public class NotionCsvService
+    public class NotionCsvService : INotionCsvService
     {
         public Context Context { get; set; }
         public GlobalSettings Settings { get; set; }

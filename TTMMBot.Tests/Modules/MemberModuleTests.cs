@@ -1,36 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Discord;
-using Discord.Commands;
-using TTMMBot.Data.Entities;
-using TTMMBot.Helpers;
-using TTMMBot.Modules.Enums;
-using TTMMBot.Services;
-using Xunit;
 using FakeItEasy;
 using TTMMBot.Modules;
+using TTMMBot.Services;
+using Xunit;
 
 namespace TTMMBot.Tests.Modules
 {
     public class MemberModuleTests
     {
-        private MemberModule getMemberModule()
+        private static MemberModule GetMemberModule()
         {
-            var mm = new MemberModule();
-            mm.GlobalSettings = A.Fake<GlobalSettings>();
-            mm.CommandHandler = A.Fake<CommandHandler>();
-            mm.DatabaseService = A.Fake<DatabaseService>();
-           
+            var mm = A.Fake<MemberModule>();
+            mm.GlobalSettings = A.Fake<IGlobalSettings>();
+            mm.DatabaseService = A.Fake<IDatabaseService>();
+            mm.CommandHandler = A.Fake<ICommandHandler>();
             return mm;
         }
 
 
         [Fact]
-        public async Task ChangesTest()
+        public async Task CreateMemberAsync()
         {
-            var foo = A.Fake<MemberModule>(x => x.WithArgumentsForConstructor(() => new MemberModule()));
+            var mm = GetMemberModule();
+
+            await mm.Create("Member");
+
+            A.CallTo(() => mm.DatabaseService.CreateMemberAsync()).WithAnyArguments().MustHaveHappened();
+            A.CallTo(() => mm.DatabaseService.SaveDataAsync()).WithAnyArguments().MustHaveHappened();
+            A.CallTo(mm).Where(x => x.Method.Name == "ReplyAsync").WithAnyArguments().MustHaveHappened();
         }
     }
 }

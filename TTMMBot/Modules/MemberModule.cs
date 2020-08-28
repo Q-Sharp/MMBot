@@ -14,15 +14,15 @@ namespace TTMMBot.Modules
     [Name("Member")]
     [Group("Member")]
     [Alias("M", "Members")]
-    public class MemberModule : ModuleBase<SocketCommandContext>
+    public class MemberModule : ModuleBase<SocketCommandContext>, IMemberModule
     {
         private readonly string[] _header = { "Name", "Clan", "Join", "SHigh", "Role" };
         private readonly int[] _pad = { 16, 4, 4, 5, 7 };
         private readonly string[] _fields = { "Name", "Clan.Tag", "Join", "SHigh", "Role" };
 
         public IDatabaseService DatabaseService { get; set; }
-        public CommandHandler CommandHandler { get; set; }
-        public GlobalSettings GlobalSettings { get; set; }
+        public ICommandHandler CommandHandler { get; set; }
+        public IGlobalSettings GlobalSettings { get; set; }
 
         [Command("List")]
         [Summary("Lists all members by current clan membership.")]

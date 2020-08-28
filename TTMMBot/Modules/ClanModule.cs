@@ -12,7 +12,7 @@ namespace TTMMBot.Modules
     [Name("Clan")]
     [Group("Clan")]
     [Alias("C", "Clans")]
-    public class ClanModule : ModuleBase<SocketCommandContext>
+    public class ClanModule : ModuleBase<SocketCommandContext>, IClanModule
     {
         public ILogger<ClanModule> Logger { get; set; }
 

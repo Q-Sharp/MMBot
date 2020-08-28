@@ -7,9 +7,9 @@ using Discord.Commands;
 namespace TTMMBot.Modules
 {
     [Name("Help")]
-    public class HelpModule : ModuleBase<SocketCommandContext>
+    public class HelpModule : ModuleBase<SocketCommandContext>, IHelpModule
     {
-        public GlobalSettings Gm { get; set; }
+        public IGlobalSettings Gm { get; set; }
 
 
         private readonly CommandService _service;

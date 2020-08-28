@@ -46,15 +46,15 @@ namespace TTMMBot
                     });
 
                     services.AddHostedService<DiscordWorker>()    
-                         .AddSingleton<GlobalSettings>()
+                         .AddSingleton<IGlobalSettings, GlobalSettings>()
                          .AddDbContext<Context>()
                          .AddTriggers()
                          .AddSingleton(dsc)
                          .AddSingleton(cs)
                          .AddSingleton<CommandHandler>()
                          .AddTransient<IDatabaseService, DatabaseService>()
-                         .AddTransient<NotionCsvService>()
-                         .AddTransient<AdminService>()
+                         .AddTransient<INotionCsvService, NotionCsvService>()
+                         .AddTransient<IAdminService, AdminService>()
                          .BuildServiceProvider();
                 });
     }

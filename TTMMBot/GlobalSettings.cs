@@ -2,7 +2,7 @@
 
 namespace TTMMBot
 {
-    public class GlobalSettings
+    public class GlobalSettings : IGlobalSettings
     {
         // Discord
         public string Prefix { get; set; } = "m.";

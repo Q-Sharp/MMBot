@@ -14,14 +14,14 @@ namespace TTMMBot.Modules
     [Name("Admin")]
     [Group("Admin")]
     [Alias("admin", "a", "A")]
-    public class AdminModule : ModuleBase<SocketCommandContext>
+    public class AdminModule : ModuleBase<SocketCommandContext>, IAdminModule
     {
         private static volatile bool _commandIsRunning;
 
         public IDatabaseService DatabaseService { get; set; }
-        public NotionCsvService CsvService { get; set; }
-        public AdminService AdminService { get; set; }
-        public GlobalSettings GlobalSettings { get; set; }
+        public INotionCsvService CsvService { get; set; }
+        public IAdminService AdminService { get; set; }
+        public IGlobalSettings GlobalSettings { get; set; }
 
         [RequireOwner]
         [Command("ImportCSV", RunMode = RunMode.Async)]

@@ -8,15 +8,15 @@ using Discord.WebSocket;
 
 namespace TTMMBot.Services
 {
-    public class CommandHandler
+    public class CommandHandler : ICommandHandler
     {
-        private volatile IDictionary<ulong, Func<IEmote, Task>> messageIdWithReaction = new Dictionary<ulong, Func<IEmote, Task>>();
+        private volatile IDictionary<ulong, Func<IEmote, Task>> _messageIdWithReaction = new Dictionary<ulong, Func<IEmote, Task>>();
 
         public DiscordSocketClient Client { get; set; }
         public CommandService Commands { get; set; }
         public IServiceProvider Services { get; set; }
 
-        public GlobalSettings GS { get; set; }
+        public IGlobalSettings GS { get; set; }
 
         public CommandHandler(IServiceProvider services, CommandService commands, DiscordSocketClient client, GlobalSettings gs)
         {
@@ -36,8 +36,8 @@ namespace TTMMBot.Services
 
         private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
         {
-            if (messageIdWithReaction.Keys.Contains(arg3.MessageId) && arg3.UserId != Client.CurrentUser.Id)
-                await messageIdWithReaction[arg3.MessageId](arg3.Emote);
+            if (_messageIdWithReaction.Keys.Contains(arg3.MessageId) && arg3.UserId != Client.CurrentUser.Id)
+                await _messageIdWithReaction[arg3.MessageId](arg3.Emote);
         }
 
         public async Task HandleCommandAsync(SocketMessage arg)
@@ -65,11 +65,11 @@ namespace TTMMBot.Services
 
         public void AddToReactionList(IUserMessage message, Func<IEmote, Task> fT)
         {
-            messageIdWithReaction.Add(message.Id, fT);
+            _messageIdWithReaction.Add(message.Id, fT);
             Task.Run(async () =>
             {
                 await Task.Delay(GS.WaitForReaction);
-                messageIdWithReaction.Remove(message.Id);
+                _messageIdWithReaction.Remove(message.Id);
             });
         }
     }

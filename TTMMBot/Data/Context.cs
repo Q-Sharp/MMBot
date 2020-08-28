@@ -6,7 +6,7 @@ using TTMMBot.Data.Entities;
 
 namespace TTMMBot.Data
 {
-    public class Context : DbContextWithTriggers, ITTMMBotContext
+    public class Context : DbContextWithTriggers
     {
         private readonly string _dbname = $"{Path.Combine(Directory.GetCurrentDirectory(), "TTMMBot.db")}";
         protected override void OnConfiguring(DbContextOptionsBuilder options) => options

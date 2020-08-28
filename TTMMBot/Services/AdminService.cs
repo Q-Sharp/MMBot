@@ -5,7 +5,7 @@ using TTMMBot.Data.Entities;
 
 namespace TTMMBot.Services
 {
-    public class AdminService
+    public class AdminService : IAdminService
     {
         public Context Context { get; set; }
         public GlobalSettings Settings { get; set; }
