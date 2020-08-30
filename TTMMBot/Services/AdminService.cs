@@ -8,8 +8,8 @@ namespace TTMMBot.Services
     public class AdminService : IAdminService
     {
         public Context Context { get; set; }
-        public GlobalSettings Settings { get; set; }
-        public AdminService(Context context, GlobalSettings settings)
+        public GlobalSettingsService Settings { get; set; }
+        public AdminService(Context context, GlobalSettingsService settings)
         {
             Context = context;
             Settings = settings;

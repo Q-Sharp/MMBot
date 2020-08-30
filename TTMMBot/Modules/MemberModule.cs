@@ -22,7 +22,7 @@ namespace TTMMBot.Modules
 
         public IDatabaseService DatabaseService { get; set; }
         public CommandHandler CommandHandler { get; set; }
-        public GlobalSettings GlobalSettings { get; set; }
+        public GlobalSettingsService GlobalSettings { get; set; }
 
         [Command("List")]
         [Summary("Lists all members by current clan membership.")]

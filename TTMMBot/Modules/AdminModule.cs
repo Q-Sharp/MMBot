@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using TTMMBot.Data.Entities;
 using TTMMBot.Data.Enums;
 using TTMMBot.Services;
 
@@ -21,7 +22,7 @@ namespace TTMMBot.Modules
         public IDatabaseService DatabaseService { get; set; }
         public INotionCsvService CsvService { get; set; }
         public IAdminService AdminService { get; set; }
-        public GlobalSettings GlobalSettings { get; set; }
+        public GlobalSettingsService GlobalSettings { get; set; }
         public CommandHandler CommandHandler { get; set; }
 
         [RequireOwner]
@@ -108,7 +109,11 @@ namespace TTMMBot.Modules
         [Summary("Restarts the bot")]
         public async Task Restart()
         {
-            await CommandHandler?.SaveRestartInformationAsync(Context.Channel.Name);
+            var r = await DatabaseService?.AddRestart();
+            r.Guild = Context.Guild.Id;
+            r.Channel = Context.Channel.Id;
+            await DatabaseService?.SaveDataAsync();
+
             Process.Start(AppDomain.CurrentDomain.FriendlyName);
             await ReplyAsync($"Bot service is restarting...");
             
@@ -197,5 +202,26 @@ namespace TTMMBot.Modules
             await ReplyAsync($"{db} has been deleted.");
             await Restart();
         });
+
+        [RequireOwner]
+        [Command("Show")]
+        [Summary("Show Global settings")]
+        public async Task Show()
+        {
+            var gs = (await DatabaseService.LoadGlobalSettingsAsync());
+            var e = gs.GetEmbedPropertiesWithValues();
+            await ReplyAsync("", false, e as Embed);
+        }
+
+        [RequireOwner]
+        [Command("Set")]
+        [Summary("Set Global settings")]
+        public async Task Set(string propertyName, [Remainder] string value)
+        {
+            var gs = (await DatabaseService.LoadGlobalSettingsAsync());
+            var r = gs.ChangeProperty(propertyName, value);
+            await DatabaseService.SaveDataAsync();
+            await ReplyAsync(r);
+        }
     }
 }

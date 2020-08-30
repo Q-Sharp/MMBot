@@ -17,6 +17,8 @@ namespace TTMMBot.Data
         public bool UseTriggers { get; set; } = true;
         public DbSet<Member> Member { get; set; }
         public DbSet<Clan> Clan { get; set; }
+        public DbSet<GlobalSettings> GlobalSettings { get; set; }
+        public DbSet<Restart> Restart { get; set; }
         public DbSet<Vacation> Vacation { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

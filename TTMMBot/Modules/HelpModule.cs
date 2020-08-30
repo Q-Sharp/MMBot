@@ -3,14 +3,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using TTMMBot.Services;
 
 namespace TTMMBot.Modules
 {
     [Name("Help")]
     public class HelpModule : ModuleBase<SocketCommandContext>, IHelpModule
     {
-        public GlobalSettings Gm { get; set; }
-
+        public GlobalSettingsService Gm { get; set; }
 
         private readonly CommandService _service;
 

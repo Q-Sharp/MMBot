@@ -16,10 +16,10 @@ namespace TTMMBot.Services
     public class NotionCsvService : INotionCsvService
     {
         public Context Context { get; set; }
-        public GlobalSettings Settings { get; set; }
+        public GlobalSettingsService Settings { get; set; }
         public ILogger<NotionCsvService>  Logger { get; set; }
 
-        public NotionCsvService(Context context, GlobalSettings settings, ILogger<NotionCsvService> logger)
+        public NotionCsvService(Context context, GlobalSettingsService settings, ILogger<NotionCsvService> logger)
         {
             Context = context;
             Settings = settings;
@@ -136,7 +136,7 @@ namespace TTMMBot.Services
                     await Context.SaveChangesAsync();
                 }
 
-                Settings.UseTriggers = Context.UseTriggers = true;
+                Settings.UseTriggers = null;
             }
             catch (Exception e)
             {

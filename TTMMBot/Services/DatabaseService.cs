@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Metadata;
 using TTMMBot.Data;
 using TTMMBot.Data.Entities;
 
@@ -21,5 +23,24 @@ namespace TTMMBot.Services
 
         public async Task MigrateAsync() => await Context?.MigrateAsync();
         public async Task SaveDataAsync() => await Context?.SaveChangesAsync();
+
+        public async Task<GlobalSettings> LoadGlobalSettingsAsync() => await Context.GlobalSettings.FirstOrDefaultAsync();
+
+        public async Task<Restart> AddRestart() => (await Context.AddAsync(new Restart())).Entity;
+        public async Task<Tuple<ulong, ulong>> ConsumeRestart()
+        {
+            try
+            {
+                var r = await Context.Restart.FirstOrDefaultAsync();
+                var t = new Tuple<ulong, ulong>(r.Guild, r.Channel);
+                Context.Restart.Remove(r);
+                await Context.SaveChangesAsync();
+                return t;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
     }
 }

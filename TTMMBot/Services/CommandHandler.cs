@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -18,17 +16,19 @@ namespace TTMMBot.Services
         public DiscordSocketClient Client { get; set; }
         public CommandService Commands { get; set; }
         public IServiceProvider Services { get; set; }
-        public GlobalSettings Gs { get; set; }
+        public GlobalSettingsService Gs { get; set; }
+        public IDatabaseService DatabaseService { get; set; }
 
         public ILogger<CommandHandler> Logger { get; set; }
 
-        public CommandHandler(IServiceProvider services, CommandService commands, DiscordSocketClient client, GlobalSettings gs, ILogger<CommandHandler> logger)
+        public CommandHandler(IServiceProvider services, CommandService commands, DiscordSocketClient client, GlobalSettingsService gs, ILogger<CommandHandler> logger, IDatabaseService databaseService)
         {
             Commands = commands;
             Services = services;
             Client = client;
             Gs = gs;
             Logger = logger;
+            DatabaseService = databaseService;
         }
 
         public async Task InitializeAsync()
@@ -41,16 +41,14 @@ namespace TTMMBot.Services
             Client.MessageReceived += HandleCommandAsync;
             Client.ReactionAdded += Client_ReactionAdded;
 
-            Client.Ready += () =>
+            Client.Ready += async () =>
             {
-                var r = LoadRestartInformationAsync();
+                var r = await DatabaseService.ConsumeRestart();
 
                 if (r is null)
                     Logger.Log(LogLevel.Information, "Bot is connected!");
                 else
-                    Client.GroupChannels.FirstOrDefault(x => x.Name == r)?.SendMessageAsync("Bot service is restarted!");
-
-                return Task.CompletedTask;
+                    await Client.GetGuild(r.Item1).GetTextChannel(r.Item2).SendMessageAsync("Bot service has been restarted!");
             };
         }
 
@@ -91,33 +89,6 @@ namespace TTMMBot.Services
                 await Task.Delay(Gs.WaitForReaction);
                 _messageIdWithReaction.Remove(message.Id);
             });
-        }
-
-        public async Task SaveRestartInformationAsync(string channelOfRestartCommand)
-        {
-            try
-            {
-                await File.WriteAllTextAsync("restart", channelOfRestartCommand);
-            }
-            catch(Exception e)
-            { 
-                Logger.Log(LogLevel.Error, e.Message);
-            }
-        }
-
-        public string LoadRestartInformationAsync()
-        {
-            try
-            {
-                var channel = File.ReadAllText("restart");
-                File.Delete("restart");
-                return channel;
-            }
-            catch(Exception e)
-            { 
-                Logger.Log(LogLevel.Error, e.Message);
-                return null;
-            }
         }
     }
 }

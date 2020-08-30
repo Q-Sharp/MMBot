@@ -70,6 +70,7 @@ namespace TTMMBot.Data.Entities
 
         public int Join { get; set; }
 
+        [Display]
         public bool IgnoreOnMoveUp { get; set; }
 
         public override string ToString() => Clan?.Tag != null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
@@ -91,7 +92,7 @@ namespace TTMMBot.Data.Entities
                     .Where(m => m.Join > 0)
                     .Max(x => x.Join) + 1;
 
-                e.Context.SaveChanges();
+            e.Context.SaveChanges();
         }
     }
 }

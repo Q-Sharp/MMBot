@@ -8,7 +8,7 @@ namespace TTMMBot.Modules
     {
         IDatabaseService DatabaseService { get; set; }
         CommandHandler CommandHandler { get; set; }
-        GlobalSettings GlobalSettings { get; set; }
+        GlobalSettingsService GlobalSettings { get; set; }
         Task List();
         Task Sort();
         Task Changes();

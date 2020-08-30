@@ -5,7 +5,7 @@ namespace TTMMBot.Services
     public interface IAdminService
     {
         Context Context { get; set; }
-        GlobalSettings Settings { get; set; }
+        GlobalSettingsService Settings { get; set; }
         void Reorder();
     }
 }

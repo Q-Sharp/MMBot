@@ -9,7 +9,7 @@ namespace TTMMBot.Modules
         IDatabaseService DatabaseService { get; set; }
         INotionCsvService CsvService { get; set; }
         IAdminService AdminService { get; set; }
-        GlobalSettings GlobalSettings { get; set; }
+        GlobalSettingsService GlobalSettings { get; set; }
         Task ImportCsv();
         Task ExportCsv();
         Task ReorderJoin();

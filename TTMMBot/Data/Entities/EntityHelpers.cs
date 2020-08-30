@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using Discord;
-using Microsoft.EntityFrameworkCore.Internal;
 using TTMMBot.Data.Enums;
+using TTMMBot.Helpers;
 
 namespace TTMMBot.Data.Entities
 {
@@ -65,7 +65,7 @@ namespace TTMMBot.Data.Entities
 
                     builder.AddField(x =>
                     {
-                        x.Name = p.Name;
+                        x.Name = p.Name.ToSentence();
                         x.Value = val?.ToString();
                         x.IsInline = false;
                     });

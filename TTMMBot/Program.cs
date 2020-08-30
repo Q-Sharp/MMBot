@@ -46,9 +46,9 @@ namespace TTMMBot
                     });
 
                     services.AddHostedService<DiscordWorker>()
-                        .AddSingleton<GlobalSettings>()
                         .AddDbContext<Context>()
                         .AddTriggers()
+                        .AddSingleton<GlobalSettingsService>()
                         .AddSingleton(dsc)
                         .AddSingleton(cs)
                         .AddSingleton<CommandHandler>()
