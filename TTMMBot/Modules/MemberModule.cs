@@ -21,8 +21,8 @@ namespace TTMMBot.Modules
         private readonly string[] _fields = { "Name", "Clan.Tag", "Join", "SHigh", "Role" };
 
         public IDatabaseService DatabaseService { get; set; }
-        public ICommandHandler CommandHandler { get; set; }
-        public IGlobalSettings GlobalSettings { get; set; }
+        public CommandHandler CommandHandler { get; set; }
+        public GlobalSettings GlobalSettings { get; set; }
 
         [Command("List")]
         [Summary("Lists all members by current clan membership.")]

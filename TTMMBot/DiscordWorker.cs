@@ -15,7 +15,7 @@ namespace TTMMBot
     public class DiscordWorker : BackgroundService
     {
         private readonly IServiceProvider _sp;
-        private readonly Microsoft.Extensions.Logging.ILogger _logger;
+        private readonly ILogger<DiscordWorker> _logger;
 
         public DiscordWorker(IServiceProvider sp, ILogger<DiscordWorker> logger)
         {
@@ -35,7 +35,7 @@ namespace TTMMBot
 
         public async override Task StartAsync(CancellationToken cancellationToken) => await base.StartAsync(cancellationToken);
 
-        public async override Task StopAsync(CancellationToken cancellationToken) => await Task.Run(() => Dispose());
+        public async override Task StopAsync(CancellationToken cancellationToken) => await Task.Run(() => Dispose(), cancellationToken);
 
         public async Task InitAsync()
         {
@@ -50,13 +50,14 @@ namespace TTMMBot
                 return;
             }
 
-            string token;
-
+            // ReSharper disable once ConvertToConstant.Local
+            var token 
 #if DEBUG
-            token = "DiscordTokenDev";
+            = "DiscordTokenDev";
 #else
-            token = "DiscordToken";
+            = "DiscordToken";
 #endif
+
             var client = _sp.GetRequiredService<DiscordSocketClient>();
             _sp.GetRequiredService<CommandService>().Log += LogAsync;
             client.Log += LogAsync;
@@ -64,7 +65,6 @@ namespace TTMMBot
             await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable(token));
             await client.StartAsync();
 
-            // Here we initialize the logic required to register our commands.
             await _sp.GetRequiredService<CommandHandler>().InitializeAsync();
         }
 

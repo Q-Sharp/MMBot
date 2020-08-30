@@ -21,7 +21,8 @@ namespace TTMMBot.Modules
         public IDatabaseService DatabaseService { get; set; }
         public INotionCsvService CsvService { get; set; }
         public IAdminService AdminService { get; set; }
-        public IGlobalSettings GlobalSettings { get; set; }
+        public GlobalSettings GlobalSettings { get; set; }
+        public CommandHandler CommandHandler { get; set; }
 
         [RequireOwner]
         [Command("ImportCSV", RunMode = RunMode.Async)]
@@ -107,8 +108,9 @@ namespace TTMMBot.Modules
         [Summary("Restarts the bot")]
         public async Task Restart()
         {
+            await CommandHandler?.SaveRestartInformationAsync(Context.Channel.Name);
             Process.Start(AppDomain.CurrentDomain.FriendlyName);
-            await ReplyAsync($"Bot service restarted!");
+            await ReplyAsync($"Bot service is restarting...");
             
             Environment.Exit(0);
         }

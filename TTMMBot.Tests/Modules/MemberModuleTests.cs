@@ -12,9 +12,9 @@ namespace TTMMBot.Tests.Modules
         private static MemberModule GetMemberModule()
         {
             var mm = A.Fake<MemberModule>();
-            mm.GlobalSettings = A.Fake<IGlobalSettings>();
+            mm.GlobalSettings = A.Fake<GlobalSettings>();
             mm.DatabaseService = A.Fake<IDatabaseService>();
-            mm.CommandHandler = A.Fake<ICommandHandler>();
+            mm.CommandHandler = A.Fake<CommandHandler>();
             return mm;
         }
 

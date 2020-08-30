@@ -5,7 +5,7 @@ namespace TTMMBot.Modules
 {
     public interface IHelpModule
     {
-        IGlobalSettings Gm { get; set; }
+        GlobalSettings Gm { get; set; }
         Task HelpAsync();
         Task HelpAsync([Remainder] string command);
     }

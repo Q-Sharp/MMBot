@@ -9,7 +9,7 @@ namespace TTMMBot.Modules
     [Name("Help")]
     public class HelpModule : ModuleBase<SocketCommandContext>, IHelpModule
     {
-        public IGlobalSettings Gm { get; set; }
+        public GlobalSettings Gm { get; set; }
 
 
         private readonly CommandService _service;
