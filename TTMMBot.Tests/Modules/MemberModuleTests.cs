@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using FakeItEasy;
+using TTMMBot.Data;
 using TTMMBot.Modules;
 using TTMMBot.Services;
 using Xunit;
@@ -12,9 +13,10 @@ namespace TTMMBot.Tests.Modules
         private static MemberModule GetMemberModule()
         {
             var mm = A.Fake<MemberModule>();
-            mm.GlobalSettings = A.Fake<GlobalSettingsService>();
+
+            mm.GlobalSettings = A.Fake<IGlobalSettingsService>();
             mm.DatabaseService = A.Fake<IDatabaseService>();
-            mm.CommandHandler = A.Fake<CommandHandler>();
+            mm.CommandHandler = A.Fake<ICommandHandler>();
             return mm;
         }
 

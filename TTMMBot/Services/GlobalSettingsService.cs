@@ -5,16 +5,16 @@ using TTMMBot.Data.Entities;
 
 namespace TTMMBot.Services
 {
-    public class GlobalSettingsService
+    public class GlobalSettingsService : IGlobalSettingsService
     {
-        private readonly Context _dbcontext;
-        private GlobalSettings Gs => _dbcontext?.GlobalSettings.FirstOrDefault();
+        public IContext Dbcontext { get; set; }
+        private GlobalSettings Gs => Dbcontext?.GlobalSettings.FirstOrDefault();
 
-        public GlobalSettingsService(Context dbcontext)
+        public GlobalSettingsService(IContext dbcontext)
         {
-            _dbcontext = dbcontext;
+            Dbcontext = dbcontext;
 
-            if (!dbcontext.GlobalSettings.AsQueryable().Any())
+            if (!Dbcontext?.GlobalSettings?.AsQueryable()?.Any() ?? false)
             {
                 var gs = new GlobalSettings
                 {
@@ -25,8 +25,8 @@ namespace TTMMBot.Services
                     ClanSize = 20
                 };
 
-                dbcontext.GlobalSettings.Add(gs);
-                dbcontext?.SaveChanges();
+                Dbcontext.GlobalSettings.Add(gs);
+                Dbcontext?.SaveChanges();
             }
         }
 

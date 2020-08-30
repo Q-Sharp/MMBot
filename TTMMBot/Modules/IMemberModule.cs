@@ -7,8 +7,8 @@ namespace TTMMBot.Modules
     public interface IMemberModule
     {
         IDatabaseService DatabaseService { get; set; }
-        CommandHandler CommandHandler { get; set; }
-        GlobalSettingsService GlobalSettings { get; set; }
+        ICommandHandler CommandHandler { get; set; }
+        IGlobalSettingsService GlobalSettings { get; set; }
         Task List();
         Task Sort();
         Task Changes();

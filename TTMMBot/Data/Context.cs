@@ -1,12 +1,14 @@
 ﻿using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using TTMMBot.Data.Entities;
 
 namespace TTMMBot.Data
 {
-    public class Context : DbContextWithTriggers
+    public class Context : DbContextWithTriggers, IContext
     {
         private readonly string _dbname = $"{Path.Combine(Directory.GetCurrentDirectory(), "TTMMBot.db")}";
         protected override void OnConfiguring(DbContextOptionsBuilder options) => options
