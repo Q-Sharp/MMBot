@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TTMMBot.Data;
 using TTMMBot.Data.Entities;
@@ -78,38 +77,51 @@ namespace TTMMBot.Services
                 var dt = new DataTable();
                 dt.Load(dr);
 
+                try
+                {
+                    dt.Columns["IGN"].ColumnName = "Name";
+                    dt.Columns["Clan"].ColumnName = "ClanTag";
+                    dt.Columns["AT-highest"].ColumnName = "AHigh";
+                    dt.Columns["S-highest"].ColumnName = "SHigh";
+                    dt.Columns["Join Date"].ColumnName = "Join";
+                    dt.Columns["Discord Status"].ColumnName = "DiscordStatus";
+                }
+                catch
+                {
+                    // ignore
+                }
+                
+
                 foreach (DataRow row in dt.Rows)
                 {
-                    var me = m.FirstOrDefault(x => row["IGN"] != DBNull.Value && x.Name == (string)row["IGN"]) ??
+                    var me = m.FirstOrDefault(x => row["Name"] != DBNull.Value && x.Name == (string)row["Name"]) ??
                              new Member();
 
-                    if (row["Clan"] != DBNull.Value && !string.IsNullOrEmpty((string)row["Clan"]))
-                        me.ClanId = c.FirstOrDefault(x => x.Tag == (string)row["Clan"])?.ClanId;
+                    if (row["ClanTag"] != DBNull.Value && !string.IsNullOrEmpty((string)row["ClanTag"]))
+                        me.ClanId = c.FirstOrDefault(x => x.Tag == (string)row["ClanTag"])?.ClanId;
 
                     if (row["Discord"] != DBNull.Value)
                         me.Discord = (string)row["Discord"];
 
-                    if (row["IGN"] != DBNull.Value)
-                        me.Name = (string)row["IGN"];
+                    if (row["Name"] != DBNull.Value)
+                        me.Name = (string)row["Name"];
 
-                    if (row["Role"] != DBNull.Value &&
-                        Enum.TryParse(typeof(Role), ((string)row["Role"]).Replace("-", ""), out var er))
+                    if (row["Role"] != DBNull.Value && Enum.TryParse(typeof(Role), ((string)row["Role"]).Replace("-", ""), out var er))
                         me.Role = (Role)er;
 
-                    if (row["AT-highest"] != DBNull.Value && int.TryParse((string)row["AT-highest"], out var ath))
+                    if (row["AHigh"] != DBNull.Value && int.TryParse((string)row["AHigh"], out var ath))
                         me.AHigh = ath;
 
-                    if (row["S-highest"] != DBNull.Value && int.TryParse((string)row["S-highest"], out var sh))
+                    if (row["SHigh"] != DBNull.Value && int.TryParse((string)row["SHigh"], out var sh))
                         me.SHigh = sh;
 
                     if (row["Donations"] != DBNull.Value && int.TryParse((string)row["Donations"], out var d))
                         me.Donations = d;
 
-                    if (row["Join Date"] != DBNull.Value && int.TryParse((string)row["Join Date"], out var jd))
+                    if (row["Join"] != DBNull.Value && int.TryParse((string)row["Join"], out var jd))
                         me.Join = jd;
 
-                    if (row["Discord Status"] != DBNull.Value && Enum.TryParse(typeof(DiscordStatus),
-                        ((string)row["Discord Status"]).Replace(" ", ""), out var ds))
+                    if (row["DiscordStatus"] != DBNull.Value && Enum.TryParse(typeof(DiscordStatus), ((string)row["DiscordStatus"]).Replace(" ", ""), out var ds))
                     {
                         me.ClanId = null;
                         me.DiscordStatus = (DiscordStatus)ds;
