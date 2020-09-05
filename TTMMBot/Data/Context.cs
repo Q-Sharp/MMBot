@@ -46,6 +46,10 @@ namespace TTMMBot.Data
                 .HasOne(v => v.Member)
                 .WithMany(m => m.Vacation)
                 .HasForeignKey(v => v.MemberId);
+
+            modelBuilder.Entity<Clan>()
+                .HasIndex(c => c.SortOrder)
+                .IsUnique();
         }
 
         public async Task MigrateAsync() => await Database.MigrateAsync();

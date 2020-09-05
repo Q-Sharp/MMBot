@@ -11,7 +11,7 @@ namespace TTMMBot.Services
 {
     public class CommandHandler : ICommandHandler
     {
-        private IDictionary<ulong, Func<IEmote, Task>> _messageIdWithReaction = new Dictionary<ulong, Func<IEmote, Task>>();
+        private readonly IDictionary<ulong, Func<IEmote, Task>> _messageIdWithReaction = new Dictionary<ulong, Func<IEmote, Task>>();
 
         public DiscordSocketClient Client { get; set; }
         public CommandService Commands { get; set; }
@@ -52,8 +52,8 @@ namespace TTMMBot.Services
             };
         }
 
-        private Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
-            => Task.Run(() =>
+        private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
+            => await Task.Run(() =>
             {
                 lock (_messageIdWithReaction)
                 {
@@ -86,19 +86,20 @@ namespace TTMMBot.Services
         }
 
         public Task AddToReactionList(IUserMessage message, Func<IEmote, Task> fT)
-        =>  Task.Run(async () =>
+        {
+            lock (_messageIdWithReaction)
             {
-                lock (_messageIdWithReaction)
-                {
-                    _messageIdWithReaction.Add(message.Id, fT);
-                }
+                _messageIdWithReaction.Add(message.Id, fT);
+            }
 
-                await Task.Delay(Gs.WaitForReaction);
-
-                lock (_messageIdWithReaction)
+            return Task.Delay(Gs.WaitForReaction)
+                .ContinueWith(x => 
                 {
-                    _messageIdWithReaction.Remove(message.Id);
-                }
-            });
+                    lock (_messageIdWithReaction)
+                    {
+                        _messageIdWithReaction.Remove(message.Id);
+                    }
+                });
+        }
     }
 }

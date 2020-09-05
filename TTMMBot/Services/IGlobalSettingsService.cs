@@ -11,5 +11,6 @@ namespace TTMMBot.Services
         bool? UseTriggers { get; set; }
         string FileName { get; }
         int ClanSize { get; }
+        int MemberMovementQty { get; }
     }
 }

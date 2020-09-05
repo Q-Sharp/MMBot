@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using TTMMBot.Data.Entities;
+using TTMMBot.Data.Enums;
 using TTMMBot.Helpers;
 using TTMMBot.Modules.Enums;
 using TTMMBot.Services;
@@ -24,7 +25,7 @@ namespace TTMMBot.Modules
         public ICommandHandler CommandHandler { get; set; }
         public IGlobalSettingsService GlobalSettings { get; set; }
 
-        [Command("List")]
+        [Command("List", RunMode = RunMode.Async)]
         [Summary("Lists all members by current clan membership.")]
         public async Task List()
         {
@@ -39,7 +40,7 @@ namespace TTMMBot.Modules
             }
         }
 
-        [Command("Sort")]
+        [Command("Sort", RunMode = RunMode.Async)]
         [Summary("Sort all members by season high.")]
         [Alias("S")]
         public async Task Sort()
@@ -106,19 +107,75 @@ namespace TTMMBot.Modules
                     .ToList()
                     .ChunkBy(20);
 
-                if (current.Count() != future.Count())
+                if (current is null || future is null)
                     return;
 
-                var r = $"Exchange these member: {Environment.NewLine}";
-                for (var i = 1; i <= current.Count(); i++)
-                {
-                    var dif = future[i - 1].Where(x => !current[i - 1].Contains(x)).ToList();
-                    //dif.OrderByDescending(x => x.SHigh).Take(3).Where(x => x)
-                    r += GetTable(dif, i);
-                    r += Environment.NewLine;
-                }
 
-                await ReplyAsync(r);
+                int moveQty = GlobalSettings.MemberMovementQty;
+
+                var highLowGroup = current
+                    .Select((x, i) => new 
+                    { 
+                        ClanId = x.FirstOrDefault().ClanId, 
+                        highest = x.OrderByDescending(x => x.SHigh).Where(x => !x.IgnoreOnMoveUp && x.Role < Role.CoLeader).Take(moveQty).ToList(),
+                        lowest = x.OrderBy(x => x.SHigh).Where(x => x.Role < Role.CoLeader).Take(moveQty).ToList()
+                    }).ToList();
+
+                var result = highLowGroup
+                    .Select(x => new
+                    {
+                        Curlow = x.lowest,
+                        Nexthigh = highLowGroup.SkipWhile(y => y.ClanId != x.ClanId).Skip(1).FirstOrDefault()?.highest,
+                        x.ClanId
+                    })
+                    .Select(x => new
+                    {
+                        Curlow = x.Curlow ?? new List<Member>(),
+                        Nexthigh = x.Nexthigh ?? new List<Member>(),
+                        result = (x.Curlow ?? new List<Member>()).Concat(x.Nexthigh ?? new List<Member>()).OrderByDescending(y => y.SHigh).Take(moveQty),
+                        x.ClanId
+                    })
+                    .Select(x => new
+                    {
+                        x.ClanId,
+                        Leave = x.Curlow.Where(y => x.result != null && !x.result.Contains(y)).ToList(),
+                        Join = x.Nexthigh.Where(y => x.result.Contains(y)).ToList()
+                    }).ToList();
+
+
+                var up = new Emoji("⏫");
+                var down = new Emoji("⏬");
+
+                var c = (await DatabaseService.LoadClansAsync()).ToList();
+                var r2 = $"Exchange these member: {Environment.NewLine}";
+                r2 += Environment.NewLine;
+                foreach(var re in result.Where(x => x.Join.Count > 0 && x.Leave.Count > 0))
+                { 
+                    r2 += Environment.NewLine;
+                    var cc = c.FirstOrDefault(x => x.ClanId == re.ClanId);
+
+                    r2 +=  $"Move to {cc}: {Environment.NewLine}";
+                    re.Join.ForEach(x => r2 += $"{up} {x} - {x.SHigh} {Environment.NewLine}");
+                    r2 += Environment.NewLine;
+                    r2 +=  $"Remove from {cc}: {Environment.NewLine}";
+                    re.Leave.ForEach(x => r2 += $"{down} {x} - {x.SHigh} {Environment.NewLine}");
+                    r2 += Environment.NewLine;
+                }
+                await ReplyAsync(r2);
+
+
+                //var r = $"Exchange these member: {Environment.NewLine}";
+                //for (var i = 0; i < current.Count(); i++)
+                //{
+                //    var dif = future[i].Where(x => !x.IgnoreOnMoveUp && x.Role < Role.CoLeader && !current[i].Contains(x))
+                //        .OrderByDescending(x => x.SHigh)
+                //        .ToList();
+                    
+                //    r += GetTable(dif, i+1);
+                //    r += Environment.NewLine;
+                //}
+
+                //await ReplyAsync(r);
             }
             catch (Exception e)
             {
@@ -146,6 +203,9 @@ namespace TTMMBot.Modules
 
         private string GetTable(IList<Member> members, int? clanNo = null)
         {
+            if(members is null || members.Count <= 0)
+                return null;
+
             var table = $"```{Environment.NewLine}";
 
             if (clanNo.HasValue)

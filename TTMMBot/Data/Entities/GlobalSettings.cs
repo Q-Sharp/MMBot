@@ -25,5 +25,6 @@ namespace TTMMBot.Data.Entities
         // InGame
         [Display]
         public int ClanSize { get; set; } = 20;
+        public int MemberMovementQty { get; set; } = 3;
     }
 }

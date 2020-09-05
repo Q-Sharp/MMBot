@@ -8,6 +8,8 @@ namespace TTMMBot.Data.Entities
         [Key]
         public int ClanId { get; set; }
 
+        public int SortOrder { get; set; }
+
         [Required]
         [Display]
         public string Tag { get; set; }

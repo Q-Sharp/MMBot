@@ -44,7 +44,8 @@ namespace TTMMBot.Services
                     var nc = new Clan
                     {
                         Tag = "TT",
-                        Name = "The Tavern"
+                        Name = "The Tavern",
+                        SortOrder = 1
                     };
                     await Context.AddAsync(nc);
 
@@ -53,7 +54,8 @@ namespace TTMMBot.Services
                         var c2 = new Clan
                         {
                             Tag = $"TT{i}",
-                            Name = $"The Tavern {i}"
+                            Name = $"The Tavern {i}",
+                            SortOrder = i
                         };
                         await Context.AddAsync(c2);
                     }

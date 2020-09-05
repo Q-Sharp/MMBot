@@ -47,5 +47,6 @@ namespace TTMMBot.Services
 
         // InGame
         public int ClanSize => Gs.ClanSize;
+        public int MemberMovementQty => Gs.MemberMovementQty;
     }
 }
