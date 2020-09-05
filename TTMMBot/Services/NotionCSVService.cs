@@ -37,12 +37,9 @@ namespace TTMMBot.Services
             csvReader.Configuration.BadDataFound = null;
             csvReader.Configuration.Delimiter = ",";
 
-            var c = Context.Clan.ToArray();
-            var m = Context.Member.ToArray();
-
             try
             {
-                if (!c.Any())
+                if (!Context.Clan.Any())
                 {
                     var nc = new Clan
                     {
@@ -94,11 +91,19 @@ namespace TTMMBot.Services
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    var me = m.FirstOrDefault(x => row["Name"] != DBNull.Value && x.Name == (string)row["Name"]) ??
-                             new Member();
+                    var me = Context.Member.FirstOrDefault(x => row["Name"] != DBNull.Value && x.Name == (string)row["Name"]);
+
+                    if(me == null)
+                    {
+                        me = new Member();
+                        await Context.Member.AddAsync(me);
+                    }
 
                     if (row["ClanTag"] != DBNull.Value && !string.IsNullOrEmpty((string)row["ClanTag"]))
-                        me.ClanId = c.FirstOrDefault(x => x.Tag == (string)row["ClanTag"])?.ClanId;
+                    {
+                        me.Clan = Context.Clan.FirstOrDefault(x => x.Tag == (string)row["ClanTag"]);
+                        me.ClanId =  me.Clan?.ClanId;
+                    }
 
                     if (row["Discord"] != DBNull.Value)
                         me.Discord = (string)row["Discord"];
@@ -123,15 +128,13 @@ namespace TTMMBot.Services
 
                     if (row["DiscordStatus"] != DBNull.Value && Enum.TryParse(typeof(DiscordStatus), ((string)row["DiscordStatus"]).Replace(" ", ""), out var ds))
                     {
-                        me.ClanId = null;
                         me.DiscordStatus = (DiscordStatus)ds;
+                        if(me.DiscordStatus != DiscordStatus.Active)
+                            me.ClanId = null;
                     }
 
                     me.IsActive = me.ClanId.HasValue && me.SHigh.HasValue;
                     me.LastUpdated = DateTime.Now;
-
-                    if (me.MemberId == 0)
-                        await Context.Member.AddAsync(me);
 
                     await Context.SaveChangesAsync();
                 }

@@ -78,7 +78,7 @@ namespace TTMMBot.Modules
             var next = new Emoji("▶️");
             await message.AddReactionsAsync(new IEmote[] { back, next });
 
-            CommandHandler.AddToReactionList(message, async r =>
+            await CommandHandler.AddToReactionList(message, async r =>
             {
                 if (r.Name == back.Name && page > 1)
                     await message.ModifyAsync(me => me.Content = GetSortedMembersTable(m, --page, chunkSize));

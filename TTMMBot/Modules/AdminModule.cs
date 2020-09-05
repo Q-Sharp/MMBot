@@ -23,7 +23,7 @@ namespace TTMMBot.Modules
         public INotionCsvService CsvService { get; set; }
         public IAdminService AdminService { get; set; }
         public GlobalSettingsService GlobalSettings { get; set; }
-        public CommandHandler CommandHandler { get; set; }
+        public ICommandHandler CommandHandler { get; set; }
 
         [RequireOwner]
         [Command("ImportCSV", RunMode = RunMode.Async)]

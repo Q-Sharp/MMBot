@@ -11,12 +11,12 @@ namespace TTMMBot.Services
 {
     public class CommandHandler : ICommandHandler
     {
-        private volatile IDictionary<ulong, Func<IEmote, Task>> _messageIdWithReaction = new Dictionary<ulong, Func<IEmote, Task>>();
+        private IDictionary<ulong, Func<IEmote, Task>> _messageIdWithReaction = new Dictionary<ulong, Func<IEmote, Task>>();
 
         public DiscordSocketClient Client { get; set; }
         public CommandService Commands { get; set; }
         public IServiceProvider Services { get; set; }
-        public GlobalSettingsService Gs { get; set; }
+        public IGlobalSettingsService Gs { get; set; }
         public IDatabaseService DatabaseService { get; set; }
 
         public ILogger<CommandHandler> Logger { get; set; }
@@ -52,11 +52,15 @@ namespace TTMMBot.Services
             };
         }
 
-        private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
-        {
-            if (_messageIdWithReaction.Keys.Contains(arg3.MessageId) && arg3.UserId != Client.CurrentUser.Id)
-                await _messageIdWithReaction[arg3.MessageId](arg3.Emote);
-        }
+        private Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
+            => Task.Run(() =>
+            {
+                lock (_messageIdWithReaction)
+                {
+                    if (_messageIdWithReaction.Keys.Contains(arg3.MessageId) && arg3.UserId != Client.CurrentUser.Id)
+                        _messageIdWithReaction[arg3.MessageId](arg3.Emote);
+                }
+            });
 
         public async Task HandleCommandAsync(SocketMessage arg)
         {
@@ -81,14 +85,20 @@ namespace TTMMBot.Services
             await context.Channel.SendMessageAsync($"error: {result}");
         }
 
-        public void AddToReactionList(IUserMessage message, Func<IEmote, Task> fT)
-        {
-            _messageIdWithReaction.Add(message.Id, fT);
-            Task.Run(async () =>
+        public Task AddToReactionList(IUserMessage message, Func<IEmote, Task> fT)
+        =>  Task.Run(async () =>
             {
+                lock (_messageIdWithReaction)
+                {
+                    _messageIdWithReaction.Add(message.Id, fT);
+                }
+
                 await Task.Delay(Gs.WaitForReaction);
-                _messageIdWithReaction.Remove(message.Id);
+
+                lock (_messageIdWithReaction)
+                {
+                    _messageIdWithReaction.Remove(message.Id);
+                }
             });
-        }
     }
 }

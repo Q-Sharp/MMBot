@@ -10,8 +10,8 @@ namespace TTMMBot.Services
 {
     public class DatabaseService : IDatabaseService
     {
-        public IContext Context { get; set; }
-        public DatabaseService(IContext context) => Context = context;
+        public Context Context { get; set; }
+        public DatabaseService(Context context) => Context = context;
         
         public async Task<Clan> CreateClanAsync() => (await Context.AddAsync(new Clan(), new CancellationToken())).Entity;
         public async Task<IList<Clan>> LoadClansAsync() => await Context.Clan.ToListAsync();

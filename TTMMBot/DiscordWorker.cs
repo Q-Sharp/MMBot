@@ -65,7 +65,7 @@ namespace TTMMBot
             await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable(token));
             await client.StartAsync();
 
-            await _sp.GetRequiredService<CommandHandler>().InitializeAsync();
+            await _sp.GetRequiredService<ICommandHandler>().InitializeAsync();
         }
 
         public static Task LogAsync(LogMessage message)

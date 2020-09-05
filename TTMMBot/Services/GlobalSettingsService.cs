@@ -7,10 +7,10 @@ namespace TTMMBot.Services
 {
     public class GlobalSettingsService : IGlobalSettingsService
     {
-        public IContext Dbcontext { get; set; }
+        public Context Dbcontext { get; set; }
         private GlobalSettings Gs => Dbcontext?.GlobalSettings.FirstOrDefault();
 
-        public GlobalSettingsService(IContext dbcontext)
+        public GlobalSettingsService(Context dbcontext)
         {
             Dbcontext = dbcontext;
 

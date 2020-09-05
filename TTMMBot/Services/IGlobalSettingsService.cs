@@ -5,7 +5,7 @@ namespace TTMMBot.Services
 {
     public interface IGlobalSettingsService
     {
-        IContext Dbcontext { get; set; }
+        Context Dbcontext { get; set; }
         string Prefix { get; }
         TimeSpan WaitForReaction { get; }
         bool? UseTriggers { get; set; }
