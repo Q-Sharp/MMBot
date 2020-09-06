@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Discord;
+using Discord.Commands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using Discord;
-using Discord.Commands;
 using TTMMBot.Data.Entities;
-using TTMMBot.Data.Enums;
 using TTMMBot.Helpers;
-using TTMMBot.Modules.Enums;
 using TTMMBot.Services;
 
 namespace TTMMBot.Modules
@@ -24,6 +23,8 @@ namespace TTMMBot.Modules
         public IDatabaseService DatabaseService { get; set; }
         public ICommandHandler CommandHandler { get; set; }
         public IGlobalSettingsService GlobalSettings { get; set; }
+        public IMemberSortService MemberSortService { get; set; }
+
 
         [Command("List", RunMode = RunMode.Async)]
         [Summary("Lists all members by current clan membership.")]
@@ -31,8 +32,8 @@ namespace TTMMBot.Modules
         {
             try
             {
-                var m = (await DatabaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
-                await ShowMembers(m, SortType.ByClan);
+                var m = await MemberSortService.GetCurrentMemberList();
+                await ShowMembers(m);
             }
             catch (Exception e)
             {
@@ -47,8 +48,8 @@ namespace TTMMBot.Modules
         {
             try
             {
-                var m = (await DatabaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
-                await ShowMembers(m, SortType.BySeasonHigh);
+                var m = (await MemberSortService.GetChanges()).Select(x => x.NewMemberList).ToList();
+                await ShowMembers(m);
             }
             catch (Exception e)
             {
@@ -56,149 +57,80 @@ namespace TTMMBot.Modules
             }
         }
 
-        private async Task ShowMembers(IList<Member> m, SortType sortedBy)
+        private async Task ShowMembers(IList<IList<Member>> mm)
         {
-            int? chunkSize = null;
-
-            switch(sortedBy)
-            {
-                case SortType.ByClan:
-                    m = m.OrderBy(x => x.Clan?.Tag).ToList();
-                    break;
-
-                case SortType.BySeasonHigh:
-                    m = m.OrderByDescending(x => x.SHigh).ToList();
-                    chunkSize = GlobalSettings.ClanSize;
-                    break;
-            }
-
-            var page = 1;
-            var message = await ReplyAsync(GetSortedMembersTable(m, page, chunkSize));
+            var cQty = (await DatabaseService.LoadClansAsync())?.Count();
+            var page = 0;
+            var message = await ReplyAsync(GetTable(mm[page], page + 1));
 
             var back = new Emoji("◀️");
             var next = new Emoji("▶️");
             await message.AddReactionsAsync(new IEmote[] { back, next });
 
-            await CommandHandler.AddToReactionList(message, async r =>
+            await CommandHandler.AddToReactionList(message, async (r, u) =>
             {
-                if (r.Name == back.Name && page > 1)
-                    await message.ModifyAsync(me => me.Content = GetSortedMembersTable(m, --page, chunkSize));
-                else if (r.Name == next.Name && page < 5)
-                    await message.ModifyAsync(me => me.Content = GetSortedMembersTable(m, ++page, chunkSize));
+                if (r.Name == back.Name && page >= 1)
+                    await message.ModifyAsync(me => me.Content = GetTable(mm[--page], page + 1));
+                else if (r.Name == next.Name && page < cQty)
+                    await message.ModifyAsync(me => me.Content = GetTable(mm[++page], page + 1));
+
+                if(u != null)
+                    await message.RemoveReactionAsync(r, u);
             });
         }
 
-        [Command("Changes")]
+        [Command("Changes", RunMode = RunMode.Async)]
         [Summary("Lists the needed changes to clan memberships.")]
         [Alias("C")]
         public async Task Changes()
         {
             try
             {
-                var m = (await DatabaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
-
-                var current = m.OrderBy(x => x.Clan?.Tag)
-                    .GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
-                    .Select(x => x.Members.ToList() as IList<Member>)
-                    .Select(x => x.OrderByDescending(y => y.SHigh).ToList())
-                    .ToList();
-
-                var future = m.OrderByDescending(x => x.SHigh)
-                    .ToList()
-                    .ChunkBy(20);
-
-                if (current is null || future is null)
-                    return;
-
-
-                int moveQty = GlobalSettings.MemberMovementQty;
-
-                var highLowGroup = current
-                    .Select((x, i) => new 
-                    { 
-                        ClanId = x.FirstOrDefault().ClanId, 
-                        highest = x.OrderByDescending(x => x.SHigh).Where(x => !x.IgnoreOnMoveUp && x.Role < Role.CoLeader).Take(moveQty).ToList(),
-                        lowest = x.OrderBy(x => x.SHigh).Where(x => x.Role < Role.CoLeader).Take(moveQty).ToList()
-                    }).ToList();
-
-                var result = highLowGroup
-                    .Select(x => new
-                    {
-                        Curlow = x.lowest,
-                        Nexthigh = highLowGroup.SkipWhile(y => y.ClanId != x.ClanId).Skip(1).FirstOrDefault()?.highest,
-                        x.ClanId
-                    })
-                    .Select(x => new
-                    {
-                        Curlow = x.Curlow ?? new List<Member>(),
-                        Nexthigh = x.Nexthigh ?? new List<Member>(),
-                        result = (x.Curlow ?? new List<Member>()).Concat(x.Nexthigh ?? new List<Member>()).OrderByDescending(y => y.SHigh).Take(moveQty),
-                        x.ClanId
-                    })
-                    .Select(x => new
-                    {
-                        x.ClanId,
-                        Leave = x.Curlow.Where(y => x.result != null && !x.result.Contains(y)).ToList(),
-                        Join = x.Nexthigh.Where(y => x.result.Contains(y)).ToList()
-                    }).ToList();
-
-
+                var result = (await MemberSortService.GetChanges()).Where(x => x.Join.Count > 0 && x.Leave.Count > 0).ToList();
+                var c = await DatabaseService.LoadClansAsync();
+                var cQty = c?.Count();
+               
                 var up = new Emoji("⏫");
                 var down = new Emoji("⏬");
 
-                var c = (await DatabaseService.LoadClansAsync()).ToList();
-                var r2 = $"Exchange these member: {Environment.NewLine}";
-                r2 += Environment.NewLine;
-                foreach(var re in result.Where(x => x.Join.Count > 0 && x.Leave.Count > 0))
-                { 
-                    r2 += Environment.NewLine;
-                    var cc = c.FirstOrDefault(x => x.ClanId == re.ClanId);
+                var getString = new Func<List<MemberChanges>, int, string>((mc, i) =>
+                {
+                    var cc = c.FirstOrDefault(x => x.SortOrder == i+1);
+                    var r =  $"```Incoming changes for {cc}: {Environment.NewLine}";
 
-                    r2 +=  $"Move to {cc}: {Environment.NewLine}";
-                    re.Join.ForEach(x => r2 += $"{up} {x} - {x.SHigh} {Environment.NewLine}");
-                    r2 += Environment.NewLine;
-                    r2 +=  $"Remove from {cc}: {Environment.NewLine}";
-                    re.Leave.ForEach(x => r2 += $"{down} {x} - {x.SHigh} {Environment.NewLine}");
-                    r2 += Environment.NewLine;
-                }
-                await ReplyAsync(r2);
+                    r += $"Leave: {Environment.NewLine}";
+                    mc[i].Leave.ToList().ForEach(x => r += $"{(x.IsUp ? up : down)} {x.Member} - {x.Member.SHigh} {Environment.NewLine}");
+                    r += Environment.NewLine;
+                    r += $"Join: {Environment.NewLine}";
+                    mc[i].Join.ToList().ForEach(x => r += $"{(x.IsUp ? up : down)} {x.Member} - {x.Member.SHigh} {Environment.NewLine}");
+                    r += "```";
 
+                    return r;
+                });
 
-                //var r = $"Exchange these member: {Environment.NewLine}";
-                //for (var i = 0; i < current.Count(); i++)
-                //{
-                //    var dif = future[i].Where(x => !x.IgnoreOnMoveUp && x.Role < Role.CoLeader && !current[i].Contains(x))
-                //        .OrderByDescending(x => x.SHigh)
-                //        .ToList();
+                var page = 0;
+                var message = await ReplyAsync(getString(result, page));
+
+                var back = new Emoji("◀️");
+                var next = new Emoji("▶️");
+                await message.AddReactionsAsync(new IEmote[] { back, next });
                     
-                //    r += GetTable(dif, i+1);
-                //    r += Environment.NewLine;
-                //}
+                await CommandHandler.AddToReactionList(message, async (r, u) =>
+                {
+                   if (r.Name == back.Name && page >= 1)
+                       await message.ModifyAsync(me => me.Content = getString(result, --page));
+                   else if (r.Name == next.Name && page < cQty)
+                       await message.ModifyAsync(me => me.Content = getString(result, ++page));
 
-                //await ReplyAsync(r);
+                   if(u != null)
+                       await message.RemoveReactionAsync(r, u);
+                });
+               
             }
             catch (Exception e)
             {
                 await ReplyAsync($"{e.Message}");
             }
-        }
-
-        private string GetSortedMembersTable(IList<Member> m, int pageNo, int? chunkSize = null)
-        {
-            IList<Member> sorted;
-
-            if(!chunkSize.HasValue)
-            {
-                sorted = m.GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
-                    .OrderBy(x => x.Clan)
-                    .Select(x => x.Members.Select(v => v).ToList() as IList<Member>)
-                    .ToArray()[pageNo - 1]
-                    .ToList();
-            }
-            else
-                sorted = m.ChunkBy(chunkSize.Value)[pageNo - 1].ToList();
-
-            return GetTable(sorted, pageNo);
         }
 
         private string GetTable(IList<Member> members, int? clanNo = null)
@@ -209,7 +141,7 @@ namespace TTMMBot.Modules
             var table = $"```{Environment.NewLine}";
 
             if (clanNo.HasValue)
-                table += $"[TT{clanNo.Value}] Members: {members.Count()}{Environment.NewLine}";
+                table += $"[TT{(clanNo.Value == 0 ? string.Empty : clanNo.Value.ToString())}] Members: {members.Count()}{Environment.NewLine}";
 
             table += GetHeader(_header);
             table += GetLimiter(_header);

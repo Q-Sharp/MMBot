@@ -52,12 +52,12 @@ namespace TTMMBot
                         .AddSingleton<IGlobalSettingsService, GlobalSettingsService>()
                         .AddSingleton(dsc)
                         .AddSingleton(cs)
-                        //.AddSingleton<CommandHandler>()
                         .AddSingleton<ICommandHandler, CommandHandler>()
                         .AddSingleton<IGlobalSettingsService, GlobalSettingsService>()
                         .AddTransient<IDatabaseService, DatabaseService>()
                         .AddTransient<INotionCsvService, NotionCsvService>()
                         .AddTransient<IAdminService, AdminService>()
+                        .AddTransient<IMemberSortService, MemberSortService>()
                         .BuildServiceProvider();
                 });
     }

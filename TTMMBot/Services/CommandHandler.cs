@@ -11,7 +11,7 @@ namespace TTMMBot.Services
 {
     public class CommandHandler : ICommandHandler
     {
-        private readonly IDictionary<ulong, Func<IEmote, Task>> _messageIdWithReaction = new Dictionary<ulong, Func<IEmote, Task>>();
+        private readonly IDictionary<ulong, Func<IEmote, IUser, Task>> _messageIdWithReaction = new Dictionary<ulong, Func<IEmote, IUser, Task>>();
 
         public DiscordSocketClient Client { get; set; }
         public CommandService Commands { get; set; }
@@ -58,7 +58,7 @@ namespace TTMMBot.Services
                 lock (_messageIdWithReaction)
                 {
                     if (_messageIdWithReaction.Keys.Contains(arg3.MessageId) && arg3.UserId != Client.CurrentUser.Id)
-                        _messageIdWithReaction[arg3.MessageId](arg3.Emote);
+                        _messageIdWithReaction[arg3.MessageId](arg3.Emote, arg3.User.IsSpecified ? arg3.User.Value : null);
                 }
             });
 
@@ -85,7 +85,7 @@ namespace TTMMBot.Services
             await context.Channel.SendMessageAsync($"error: {result}");
         }
 
-        public Task AddToReactionList(IUserMessage message, Func<IEmote, Task> fT)
+        public Task AddToReactionList(IUserMessage message, Func<IEmote, IUser, Task> fT)
         {
             lock (_messageIdWithReaction)
             {
