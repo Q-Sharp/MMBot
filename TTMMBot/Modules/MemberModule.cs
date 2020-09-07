@@ -98,11 +98,14 @@ namespace TTMMBot.Modules
                     var cc = c.FirstOrDefault(x => x.SortOrder == i+1);
                     var r =  $"```Incoming changes for {cc}: {Environment.NewLine}";
 
-                    r += $"Leave: {Environment.NewLine}";
-                    mc[i].Leave.ToList().ForEach(x => r += $"{(x.IsUp ? up : down)} {x.Member} - {x.Member.SHigh} {Environment.NewLine}");
-                    r += Environment.NewLine;
                     r += $"Join: {Environment.NewLine}";
                     mc[i].Join.ToList().ForEach(x => r += $"{(x.IsUp ? up : down)} {x.Member} - {x.Member.SHigh} {Environment.NewLine}");
+
+                    r += Environment.NewLine;
+
+                    r += $"Leave: {Environment.NewLine}";
+                    mc[i].Leave.ToList().ForEach(x => r += /*$"{(x.IsUp ? up : down)}*/ $"{x.Member} - {x.Member.SHigh} {Environment.NewLine}");
+
                     r += "```";
 
                     return r;

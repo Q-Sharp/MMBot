@@ -59,8 +59,7 @@ namespace TTMMBot.Services
         }
 
         private async Task<List<MemberChanges>> GetSkipStepsMemberMovement(List<Member> allMembersOrdered, int moveQty, int chunkSize, int clanQty)
-        {
-            return await Task.Run(() =>
+            => await Task.Run(() =>
             {
                 // get all members ordered
                 var mpool = allMembersOrdered;
@@ -85,10 +84,14 @@ namespace TTMMBot.Services
                         var addLeader = current[i - 1].Where(x => x.Role >= Role.CoLeader && mpool.Contains(x));
                         mL.AddRange(addLeader);
                         removed += mpool.RemoveAll(x => mL.Contains(x));
-
-                        var addMissing = current[i - 1].Where(x => mpool.Contains(x)).Take(chunkSize - removed);
+                        
+                        var addMissing = mpool.Where(x => x.Clan.SortOrder <= i).OrderByDescending(x => x.SHigh).Take(chunkSize - removed);
                         mL.AddRange(addMissing);
                         removed += mpool.RemoveAll(x => mL.Contains(x));
+
+                        //var addMissing = current[i - 1].Where(x => mpool.Contains(x)).Take(chunkSize - removed);
+                        //mL.AddRange(addMissing);
+                        //removed += mpool.RemoveAll(x => mL.Contains(x));
                     }
 
                     if(removed != chunkSize && mpool.Count > 0)
@@ -116,7 +119,6 @@ namespace TTMMBot.Services
                 })
                 .ToList();
             });
-        }
 
         private IEnumerable<Member> GetNextMemberForClan(List<Member> allMember, int clanSortNo, int moveQty, int chunkSize)
         {
@@ -129,7 +131,7 @@ namespace TTMMBot.Services
 
                 if(clanSortNo < currentMember.Clan.SortOrder)
                 {
-                    if(clanSortNo < currentMember.Clan.SortOrder && (currentMember.IgnoreOnMoveUp || currentMember.Role >= Role.CoLeader))
+                    if(currentMember.IgnoreOnMoveUp || currentMember.Role >= Role.CoLeader)
                         continue;
                     else
                         movedQty++;
