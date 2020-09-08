@@ -11,7 +11,7 @@ namespace TTMMBot.Modules
         IGlobalSettingsService GlobalSettings { get; set; }
         Task List();
         Task Sort();
-        Task Changes();
+        Task Changes(string compact = null);
         Task Show(string name = null);
         Task Delete(string name);
         Task Set(string name, string propertyName, [Remainder] string value);

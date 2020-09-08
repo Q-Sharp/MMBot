@@ -82,7 +82,7 @@ namespace TTMMBot.Modules
         [Command("Changes", RunMode = RunMode.Async)]
         [Summary("Lists the needed changes to clan memberships.")]
         [Alias("C")]
-        public async Task Changes()
+        public async Task Changes(string compact = null)
         {
             try
             {
@@ -90,50 +90,75 @@ namespace TTMMBot.Modules
                 var c = await DatabaseService.LoadClansAsync();
                 var cQty = c?.Count();
                
-                var up = new Emoji("⏫");
-                var down = new Emoji("⏬");
-
-                var getString = new Func<List<MemberChanges>, int, string>((mc, i) =>
+                if(!string.IsNullOrWhiteSpace(compact))
+                    await ReplyAsync(GetCompactMemberChangesString(result, c));
+                else
                 {
-                    var cc = c.FirstOrDefault(x => x.SortOrder == i+1);
-                    var r =  $"```Incoming changes for {cc}: {Environment.NewLine}";
+                    var page = 0;
+                    var message = await ReplyAsync(GetDetailedMemberChangesString(result, page, c));
 
-                    r += $"Join: {Environment.NewLine}";
-                    mc[i].Join.ToList().ForEach(x => r += $"{(x.IsUp ? up : down)} {x.Member} - {x.Member.SHigh} {Environment.NewLine}");
-
-                    r += Environment.NewLine;
-
-                    r += $"Leave: {Environment.NewLine}";
-                    mc[i].Leave.ToList().ForEach(x => r += /*$"{(x.IsUp ? up : down)}*/ $"{x.Member} - {x.Member.SHigh} {Environment.NewLine}");
-
-                    r += "```";
-
-                    return r;
-                });
-
-                var page = 0;
-                var message = await ReplyAsync(getString(result, page));
-
-                var back = new Emoji("◀️");
-                var next = new Emoji("▶️");
-                await message.AddReactionsAsync(new IEmote[] { back, next });
+                    var back = new Emoji("◀️");
+                    var next = new Emoji("▶️");
+                    await message.AddReactionsAsync(new IEmote[] { back, next });
                     
-                await CommandHandler.AddToReactionList(message, async (r, u) =>
-                {
-                   if (r.Name == back.Name && page >= 1)
-                       await message.ModifyAsync(me => me.Content = getString(result, --page));
-                   else if (r.Name == next.Name && page < cQty)
-                       await message.ModifyAsync(me => me.Content = getString(result, ++page));
+                    await CommandHandler.AddToReactionList(message, async (r, u) =>
+                    {
+                       if (r.Name == back.Name && page >= 1)
+                           await message.ModifyAsync(me => me.Content = GetDetailedMemberChangesString(result, --page, c));
+                       else if (r.Name == next.Name && page < cQty)
+                           await message.ModifyAsync(me => me.Content = GetDetailedMemberChangesString(result, ++page, c));
 
-                   if(u != null)
-                       await message.RemoveReactionAsync(r, u);
-                });
-               
+                       if(u != null)
+                           await message.RemoveReactionAsync(r, u);
+                    });
+                }
             }
             catch (Exception e)
             {
                 await ReplyAsync($"{e.Message}");
             }
+        }
+
+        private string GetCompactMemberChangesString(List<MemberChanges> changes, IList<Clan> clans)
+        {
+            var up = new Emoji("↗️");
+            var down = new Emoji("↘️");
+
+            var r =  $"```🔄 Sorting List 🔀 {Environment.NewLine}";
+            var i = 1;
+
+            foreach(var change in changes)
+            {
+                var c = clans.FirstOrDefault(x => x.SortOrder == i);
+                change.Join.ToList().ForEach(x => r += $"{x.Member} {(x.IsUp ? up : down)} - {c} {Environment.NewLine}");
+                r += Environment.NewLine;
+                i++;
+            }
+            r += "```";
+
+            return r;
+        }
+
+
+        private string GetDetailedMemberChangesString(List<MemberChanges> changes, int index, IList<Clan> clans)
+        {
+            var up = new Emoji("⏫");
+            var down = new Emoji("⏬");
+
+            var c = clans.FirstOrDefault(x => x.SortOrder == index+1);
+            var r =  $"```Incoming changes for {c}: {Environment.NewLine}";
+
+            r += $"Join: {Environment.NewLine}";
+            changes[index].Join.ToList().ForEach(x => r += $"{(x.IsUp ? up : down)} {x.Member} - {x.Member.SHigh} {Environment.NewLine}");
+
+            r += Environment.NewLine;
+
+            r += $"Leave: {Environment.NewLine}";
+            changes[index].Leave.ToList().ForEach(x => r += /*$"{(x.IsUp ? up : down)}*/ $"{x.Member} - {x.Member.SHigh} {Environment.NewLine}");
+
+            r += "```";
+
+            return r;
         }
 
         private string GetTable(IList<Member> members, int? clanNo = null)
