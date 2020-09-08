@@ -125,15 +125,16 @@ namespace TTMMBot.Modules
             var down = new Emoji("↘️");
 
             var r =  $"```🔄 Sorting List 🔀 {Environment.NewLine}";
-            var i = 1;
-
-            foreach(var change in changes)
-            {
-                var c = clans.FirstOrDefault(x => x.SortOrder == i);
-                change.Join.ToList().ForEach(x => r += $"{x.Member} {(x.IsUp ? up : down)} - {c} {Environment.NewLine}");
-                r += Environment.NewLine;
-                i++;
-            }
+            changes.Select((c, i) => new { changes = c, newClan = clans.FirstOrDefault(x => x.SortOrder == (i+1))})
+                .SelectMany(x => x.changes.Join, (x, y) => new { Member = y.Member, IsUp = y.IsUp, NewClan = x.newClan, oldClan = y.Member.Clan })
+                .OrderBy(x => x.oldClan.SortOrder)
+                .GroupBy(x => x.oldClan, (c, m) => m.ToList())
+                .ToList()
+                .ForEach(x =>
+                { 
+                    x.ForEach(x => r += $"{x.Member, -19}     {(x.IsUp ? up : down)}  {x.NewClan}{Environment.NewLine}");
+                    r += Environment.NewLine;
+                });
             r += "```";
 
             return r;
