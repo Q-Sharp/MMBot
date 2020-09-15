@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -12,6 +13,7 @@ namespace TTMMBot.Services
         CommandService Commands { get; set; }
         IServiceProvider Services { get; set; }
         IGlobalSettingsService Gs { get; set; }
+        //IList<IMessage> DeletedMessages { get; }
         Task InitializeAsync();
         Task HandleCommandAsync(SocketMessage arg);
         Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result);

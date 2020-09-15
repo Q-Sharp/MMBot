@@ -8,6 +8,7 @@ using Discord;
 using Discord.Commands;
 using TTMMBot.Data.Entities;
 using TTMMBot.Data.Enums;
+using TTMMBot.Helpers;
 using TTMMBot.Services;
 
 namespace TTMMBot.Modules
@@ -119,6 +120,19 @@ namespace TTMMBot.Modules
             
             Environment.Exit(0);
         }
+
+        //[RequireOwner]
+        //[Command("DeletedMessages")]
+        //[Alias("gdm")]
+        //[Summary("Gets deleted messages")]
+        //public async Task GetDeletedMessages()
+        //{
+        //    await Task.Run(async () => 
+        //    {
+        //        foreach(var m in AdminService.GetDeletedMessages())
+        //            await ReplyAsync(m);
+        //    });
+        //}
 
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         [Command("FixRoles", RunMode = RunMode.Async)]

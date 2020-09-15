@@ -140,7 +140,6 @@ namespace TTMMBot.Modules
             return r;
         }
 
-
         private string GetDetailedMemberChangesString(List<MemberChanges> changes, int index, IList<Clan> clans)
         {
             var up = new Emoji("⏫");
