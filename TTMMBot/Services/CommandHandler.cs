@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using TTMMBot.Modules;
@@ -42,6 +43,7 @@ namespace TTMMBot.Services
             Commands.CommandExecuted += CommandExecutedAsync;
             Client.MessageReceived += HandleCommandAsync;
             Client.ReactionAdded += Client_ReactionAdded;
+            Client.Disconnected += Client_Disconnected;
             //Client.MessageDeleted += Client_MessageDeleted;
 
             Client.Ready += async () =>
@@ -53,6 +55,17 @@ namespace TTMMBot.Services
                 else
                     await Client.GetGuild(r.Item1).GetTextChannel(r.Item2).SendMessageAsync("Bot service has been restarted!");
             };
+        }
+
+        private async Task Client_Disconnected(Exception arg)
+        {
+            Logger.LogError(arg.Message);
+
+            await Task.Run(() =>
+            { 
+                Process.Start(AppDomain.CurrentDomain.FriendlyName);
+                Environment.Exit(0);
+            });
         }
 
         //private async Task Client_MessageDeleted(Cacheable<IMessage, ulong> arg1, ISocketMessageChannel arg2)
