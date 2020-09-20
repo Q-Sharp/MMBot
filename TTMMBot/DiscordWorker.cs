@@ -50,7 +50,6 @@ namespace TTMMBot
                 return;
             }
 
-            // ReSharper disable once ConvertToConstant.Local
             var token 
 #if DEBUG
             = "DiscordTokenDev";

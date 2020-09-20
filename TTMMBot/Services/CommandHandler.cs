@@ -14,7 +14,6 @@ namespace TTMMBot.Services
     public class CommandHandler : ICommandHandler
     {
         private readonly IDictionary<ulong, Func<IEmote, IUser, Task>> _messageIdWithReaction = new Dictionary<ulong, Func<IEmote, IUser, Task>>();
-        //private readonly IList<IMessage> _deletedMessages = new List<IMessage>();
 
         public DiscordSocketClient Client { get; set; }
         public CommandService Commands { get; set; }
@@ -40,21 +39,24 @@ namespace TTMMBot.Services
             await Commands.AddModuleAsync<MemberModule>(Services);
             await Commands.AddModuleAsync<HelpModule>(Services);
             await Commands.AddModuleAsync<AdminModule>(Services);
+
             Commands.CommandExecuted += CommandExecutedAsync;
+
             Client.MessageReceived += HandleCommandAsync;
             Client.ReactionAdded += Client_ReactionAdded;
             Client.Disconnected += Client_Disconnected;
-            //Client.MessageDeleted += Client_MessageDeleted;
 
-            Client.Ready += async () =>
-            {
-                var r = await DatabaseService.ConsumeRestart();
+            Client.Ready += Client_Ready;
+        }
 
-                if (r is null)
-                    Logger.Log(LogLevel.Information, "Bot is connected!");
-                else
-                    await Client.GetGuild(r.Item1).GetTextChannel(r.Item2).SendMessageAsync("Bot service has been restarted!");
-            };
+        private async Task Client_Ready()
+        {
+            var r = await DatabaseService.ConsumeRestart();
+
+            if (r is null)
+                Logger.Log(LogLevel.Information, "Bot is connected!");
+            else
+                await Client.GetGuild(r.Item1).GetTextChannel(r.Item2).SendMessageAsync("Bot service has been restarted!");
         }
 
         private async Task Client_Disconnected(Exception arg)
@@ -67,15 +69,6 @@ namespace TTMMBot.Services
                 Environment.Exit(0);
             });
         }
-
-        //private async Task Client_MessageDeleted(Cacheable<IMessage, ulong> arg1, ISocketMessageChannel arg2)
-        //    => await Task.Run(async () =>
-        //    {
-        //        var m = await arg1.GetOrDownloadAsync();
-
-        //        lock (_deletedMessages)
-        //            _deletedMessages.Add(m);
-        //    });
 
         private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
             => await Task.Run(() =>
@@ -126,14 +119,5 @@ namespace TTMMBot.Services
                     }
                 });
         }
-
-        //public IList<IMessage> DeletedMessages 
-        //{
-        //    get 
-        //    {
-        //        Task.Run(() => _deletedMessages?.Clear());
-        //        return _deletedMessages;
-        //    }
-        //}
     }
 }

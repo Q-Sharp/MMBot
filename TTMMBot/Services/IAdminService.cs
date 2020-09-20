@@ -9,6 +9,5 @@ namespace TTMMBot.Services
         IGlobalSettingsService Settings { get; set; }
         ICommandHandler CommandHandler { get; set; }
         void Reorder();
-        //IEnumerable<string> GetDeletedMessages();
     }
 }

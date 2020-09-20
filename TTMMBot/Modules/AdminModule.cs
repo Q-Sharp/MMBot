@@ -48,6 +48,10 @@ namespace TTMMBot.Modules
                     if (CsvService != null)
                     {
                         var result = await CsvService.ImportCsv(csv);
+
+                        if(result == null)
+                            File.WriteAllBytes(Path.Combine(Environment.CurrentDirectory, "lastImport.csv"), csv);
+
                         await ReplyAsync(result == null
                             ? "CSV file import was successful"
                             : $"ERROR: {result.Message}");
@@ -61,6 +65,36 @@ namespace TTMMBot.Modules
             finally
             {
                 _commandIsRunning = false;
+            }
+        }
+
+        [RequireOwner]
+        [Command("ReImportCSV")]
+        [Alias("Reimport")]
+        [Summary("Reimport last csv file")]
+        public async Task ReImportCSV()
+        {
+            try
+            {
+                if (_commandIsRunning)
+                {
+                    await ReplyAsync($"I can only run a single long running command at a time!");
+                    return;
+                }
+
+                var csv = File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, "lastImport.csv"));
+                if (CsvService != null)
+                {
+                    var result = await CsvService.ImportCsv(csv);
+
+                    await ReplyAsync(result == null
+                        ? "CSV file import was successful"
+                        : $"ERROR: {result.Message}");
+                }
+            }
+            catch (Exception e)
+            {
+                await ReplyAsync($"{e.Message}");
             }
         }
 
@@ -120,19 +154,6 @@ namespace TTMMBot.Modules
             
             Environment.Exit(0);
         }
-
-        //[RequireOwner]
-        //[Command("DeletedMessages")]
-        //[Alias("gdm")]
-        //[Summary("Gets deleted messages")]
-        //public async Task GetDeletedMessages()
-        //{
-        //    await Task.Run(async () => 
-        //    {
-        //        foreach(var m in AdminService.GetDeletedMessages())
-        //            await ReplyAsync(m);
-        //    });
-        //}
 
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         [Command("FixRoles", RunMode = RunMode.Async)]
