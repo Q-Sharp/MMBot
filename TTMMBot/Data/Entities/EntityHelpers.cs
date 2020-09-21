@@ -65,7 +65,7 @@ namespace TTMMBot.Data.Entities
 
                     builder.AddField(x =>
                     {
-                        x.Name = p.Name.ToSentence();
+                        x.Name = p?.Name?.ToSentence();
                         x.Value = val?.ToString();
                         x.IsInline = false;
                     });

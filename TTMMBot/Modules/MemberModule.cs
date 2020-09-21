@@ -132,7 +132,7 @@ namespace TTMMBot.Modules
                 .ToList()
                 .ForEach(x =>
                 { 
-                    x.ForEach(x => r += $"{x.Member, -19}     {(x.IsUp ? up : down)}  {x.NewClan}{Environment.NewLine}");
+                    x.ForEach(x => r += $"{x.Member, -24} {(x.IsUp ? up : down)} {x.NewClan}{Environment.NewLine}");
                     r += Environment.NewLine;
                 });
             r += "```";
