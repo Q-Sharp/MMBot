@@ -17,7 +17,7 @@ namespace TTMMBot.Services
     {
         public Context Context { get; set; }
         public GlobalSettingsService Settings { get; set; }
-        public ILogger<NotionCsvService>  Logger { get; set; }
+        public ILogger<NotionCsvService> Logger { get; set; }
 
         public NotionCsvService(Context context, GlobalSettingsService settings, ILogger<NotionCsvService> logger)
         {
@@ -105,13 +105,16 @@ namespace TTMMBot.Services
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    var me = Context.Member.FirstOrDefault(x => row["Name"] != DBNull.Value && x.Name == (string)row["Name"]);
+                    var me = Context.Member.FirstOrDefault(x => row["Name"] != DBNull.Value && string.CompareOrdinal(x.Name, (string)row["Name"]) == 0);
 
                     if(me == null)
                     {
                         me = new Member();
                         await Context.Member.AddAsync(me);
                     }
+
+                    if (row.Table.Columns.Contains("Name") && row["Name"] != DBNull.Value)
+                        me.Name = (string)row["Name"];
 
                     if (row.Table.Columns.Contains("ClanTag") && row["ClanTag"] != DBNull.Value && !string.IsNullOrEmpty((string)row["ClanTag"]))
                     {
@@ -121,9 +124,6 @@ namespace TTMMBot.Services
 
                     if (row.Table.Columns.Contains("Discord") && row["Discord"] != DBNull.Value)
                         me.Discord = (string)row["Discord"];
-
-                    if (row.Table.Columns.Contains("Name") && row["Name"] != DBNull.Value)
-                        me.Name = (string)row["Name"];
 
                     if (row.Table.Columns.Contains("Role") && row["Role"] != DBNull.Value && Enum.TryParse(typeof(Role), ((string)row["Role"]).Replace("-", ""), out var er))
                         me.Role = (Role)er;
@@ -143,11 +143,19 @@ namespace TTMMBot.Services
                     if (row.Table.Columns.Contains("DiscordStatus") && row["DiscordStatus"] != DBNull.Value && Enum.TryParse(typeof(DiscordStatus), ((string)row["DiscordStatus"]).Replace("No idea", "NoIdea").Replace(" ", ""), out var ds))
                     {
                         me.DiscordStatus = (DiscordStatus)ds;
+
                         if(me.DiscordStatus != DiscordStatus.Active)
+                        {
+                            me.IsActive = false;
                             me.ClanId = null;
+                        }
+                        else
+                            me.IsActive = true;
                     }
 
-                    me.IsActive = me.ClanId.HasValue && me.SHigh.HasValue;
+                    if (row.Table.Columns.Contains("IgnoreOnMoveUp") && row["IgnoreOnMoveUp"] != DBNull.Value  && bool.TryParse((string)row["IgnoreOnMoveUp"], out var iomu))
+                        me.IgnoreOnMoveUp = iomu;
+
                     me.LastUpdated = DateTime.Now;
 
                     await Context.SaveChangesAsync();

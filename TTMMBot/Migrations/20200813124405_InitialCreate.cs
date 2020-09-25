@@ -7,6 +7,8 @@ namespace TTMMBot.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql("PRAGMA encoding = 'UTF-16'");
+
             migrationBuilder.CreateTable(
                 name: "Clan",
                 columns: table => new

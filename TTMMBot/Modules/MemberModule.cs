@@ -3,7 +3,6 @@ using Discord.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using TTMMBot.Data.Entities;
 using TTMMBot.Helpers;
@@ -60,6 +59,13 @@ namespace TTMMBot.Modules
         private async Task ShowMembers(IList<IList<Member>> mm)
         {
             var cQty = (await DatabaseService.LoadClansAsync())?.Count();
+
+            if(!cQty.HasValue)
+            {
+                    await ReplyAsync($"No member data in db.");
+                    return;
+            }
+
             var page = 0;
             var message = await ReplyAsync(GetTable(mm[page], page + 1));
 
@@ -87,6 +93,13 @@ namespace TTMMBot.Modules
             try
             {
                 var result = (await MemberSortService.GetChanges()).Where(x => x.Join.Count > 0 && x.Leave.Count > 0).ToList();
+
+                if(result?.Count() == 0)
+                {
+                    await ReplyAsync($"No member data in db.");
+                    return;
+                }
+
                 var c = await DatabaseService.LoadClansAsync();
                 var cQty = c?.Count();
                

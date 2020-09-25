@@ -94,8 +94,8 @@ namespace TTMMBot.Services
                         //removed += mpool.RemoveAll(x => mL.Contains(x));
                     }
 
-                    if(removed != chunkSize && mpool.Count > 0)
-                        throw new Exception();
+                    //if(removed != chunkSize && mpool.Count > 0)
+                        //throw new Exception();
 
                     ListOfLists.Add(mL);
                 }
