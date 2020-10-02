@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using FakeItEasy;
-using TTMMBot.Data;
 using TTMMBot.Modules;
 using TTMMBot.Services;
+using TTMMBot.Services.Interfaces;
 using Xunit;
 
 namespace TTMMBot.Tests.Modules

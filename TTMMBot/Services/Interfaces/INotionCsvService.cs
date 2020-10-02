@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TTMMBot.Data;
 
-namespace TTMMBot.Services
+namespace TTMMBot.Services.Interfaces
 {
     public interface INotionCsvService
     {

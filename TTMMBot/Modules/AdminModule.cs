@@ -8,8 +8,8 @@ using Discord;
 using Discord.Commands;
 using TTMMBot.Data.Entities;
 using TTMMBot.Data.Enums;
-using TTMMBot.Helpers;
 using TTMMBot.Services;
+using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Modules
 {
@@ -142,12 +142,15 @@ namespace TTMMBot.Modules
         [Command("Restart")]
         [Alias("restart")]
         [Summary("Restarts the bot")]
-        public async Task Restart()
+        public async Task Restart(bool saveRestart = true)
         {
-            var r = await DatabaseService?.AddRestart();
-            r.Guild = Context.Guild.Id;
-            r.Channel = Context.Channel.Id;
-            await DatabaseService?.SaveDataAsync();
+            if(saveRestart)
+            {
+                var r = await DatabaseService?.AddRestart();
+                r.Guild = Context.Guild.Id;
+                r.Channel = Context.Channel.Id;
+                await DatabaseService?.SaveDataAsync();
+            }
 
             Process.Start(AppDomain.CurrentDomain.FriendlyName);
             await ReplyAsync($"Bot service is restarting...");
@@ -235,7 +238,7 @@ namespace TTMMBot.Modules
             var db = $"{Path.Combine(Directory.GetCurrentDirectory(), "TTMMBot.db")}";
             File.Delete(db);
             await ReplyAsync($"{db} has been deleted.");
-            await Restart();
+            await Restart(false);
         });
 
         [RequireOwner]

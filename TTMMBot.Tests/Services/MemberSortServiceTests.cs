@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using FakeItEasy;
+﻿using FakeItEasy;
 using TTMMBot.Services;
+using TTMMBot.Services.Interfaces;
 using Xunit;
 
 namespace TTMMBot.Tests.Services

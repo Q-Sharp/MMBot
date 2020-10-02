@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using TTMMBot.Data;
+﻿using TTMMBot.Data;
 
-namespace TTMMBot.Services
+namespace TTMMBot.Services.Interfaces
 {
     public interface IAdminService
     {

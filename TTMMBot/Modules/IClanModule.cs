@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Microsoft.Extensions.Logging;
 using TTMMBot.Services;
+using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Modules
 {

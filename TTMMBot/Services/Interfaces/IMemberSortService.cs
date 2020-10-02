@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using TTMMBot.Data.Entities;
 using TTMMBot.Enums;
 
-namespace TTMMBot.Services
+namespace TTMMBot.Services.Interfaces
 {
     public class MemberChanges
     {

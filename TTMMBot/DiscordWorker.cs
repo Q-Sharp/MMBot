@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using TTMMBot.Services;
+using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot
 {

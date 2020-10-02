@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Discord.Commands;
 using TTMMBot.Services;
+using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Modules
 {
@@ -13,7 +13,7 @@ namespace TTMMBot.Modules
         Task ImportCsv();
         Task ExportCsv();
         Task ReorderJoin();
-        Task Restart();
+        Task Restart(bool saveRestart = true);
         Task FixRoles();
         Task DeleteDb();
     }

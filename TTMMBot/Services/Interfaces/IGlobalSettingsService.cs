@@ -1,7 +1,7 @@
 ﻿using System;
 using TTMMBot.Data;
 
-namespace TTMMBot.Services
+namespace TTMMBot.Services.Interfaces
 {
     public interface IGlobalSettingsService
     {

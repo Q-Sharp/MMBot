@@ -5,6 +5,7 @@ using Discord;
 using Discord.Commands;
 using Microsoft.Extensions.Logging;
 using TTMMBot.Services;
+using TTMMBot.Services.Interfaces;
 using static TTMMBot.Data.Entities.EntityHelpers;
 
 namespace TTMMBot.Modules

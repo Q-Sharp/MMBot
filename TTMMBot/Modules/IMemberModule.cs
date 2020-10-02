@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Discord.Commands;
 using TTMMBot.Services;
+using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Modules
 {

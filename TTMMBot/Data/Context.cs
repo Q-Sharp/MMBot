@@ -1,9 +1,7 @@
 ﻿using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using TTMMBot.Data.Entities;
 
 namespace TTMMBot.Data

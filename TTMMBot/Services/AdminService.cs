@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TTMMBot.Data;
 using TTMMBot.Data.Entities;
+using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Services
 {
@@ -21,7 +21,10 @@ namespace TTMMBot.Services
 
         public class JoinComparer : IComparer<int>
         {
-            public static JoinComparer Create() => new JoinComparer();
+            private readonly int _maxSize;
+
+            public JoinComparer(int maxSize) => _maxSize = maxSize;
+            public static JoinComparer Create(int maxSize) => new JoinComparer(maxSize);
 
             public int Compare(int x, int y)
             {
@@ -29,10 +32,10 @@ namespace TTMMBot.Services
                 var ny = y;
 
                 if (x == 0)
-                    nx = 21;
+                    nx = _maxSize + 1;
 
                 if (y == 0)
-                    ny = 21;
+                    ny = _maxSize + 1;
 
                 return nx - ny;
             }
@@ -41,7 +44,7 @@ namespace TTMMBot.Services
         public void Reorder()
         {
             Context.Member.AsEnumerable()
-                .OrderBy(x => x.Join, JoinComparer.Create())
+                .OrderBy(x => x.Join, JoinComparer.Create(Settings.ClanSize))
                 .ThenBy(x => x.SHigh)
                 .GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
                 .Select(x => x.Members.ToList() as IList<Member>)
@@ -54,20 +57,5 @@ namespace TTMMBot.Services
 
             Context?.SaveChanges();
         }
-
-        //public string GetDeletedMessages() 
-        //{
-        //    var dm = CommandHandler?.DeletedMessages;
-        //    var dms = dm.Select(x => $"{x.Author} wrote {x.Content} in {x.Channel} on {x.Timestamp}");
-
-        //    return string.Join(Environment.NewLine, dms);
-        //}
-
-        //public IEnumerable<string> GetDeletedMessages()
-        //{
-        //   var dm = CommandHandler?.DeletedMessages;
-        //    foreach(var sdm in dm)
-        //        yield return $"{sdm.Author} wrote {sdm.Content} in {sdm.Channel} on {sdm.Timestamp}";
-        //}
     }
 }
