@@ -103,10 +103,10 @@ namespace TTMMBot.Services
                     // ignore
                 }
                 
-
                 foreach (DataRow row in dt.Rows)
                 {
-                    var me = Context.Member.FirstOrDefault(x => row["Name"] != DBNull.Value && string.CompareOrdinal(x.Name, (string)row["Name"]) == 0);
+                    var me = Context.Member.FirstOrDefault(x => row["Name"] != DBNull.Value 
+                        && x.Name.ToLower() == ((string)row["Name"]).ToLower());
 
                     if(me == null)
                     {
