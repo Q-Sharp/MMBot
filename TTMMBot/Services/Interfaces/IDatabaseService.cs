@@ -20,6 +20,10 @@ namespace TTMMBot.Services.Interfaces
         Task<Restart> AddRestart();
         Task<Tuple<ulong, ulong>> ConsumeRestart();
 
+        Task<Channel> CreateChannelAsync();
+        Task<IList<Channel>> LoadChannelsAsync();
+        void DeleteChannel(Channel c);
+
         Task SaveDataAsync();
         Task MigrateAsync();
     }

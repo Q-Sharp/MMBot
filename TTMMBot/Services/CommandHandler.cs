@@ -5,7 +5,9 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
+using TTMMBot.Helpers;
 using TTMMBot.Modules;
 using TTMMBot.Services.Interfaces;
 
@@ -14,16 +16,18 @@ namespace TTMMBot.Services
     public class CommandHandler : ICommandHandler
     {
         private readonly IDictionary<ulong, Func<IEmote, IUser, Task>> _messageIdWithReaction = new Dictionary<ulong, Func<IEmote, IUser, Task>>();
+        private IList<ISocketMessageChannel> _channelList = new List<ISocketMessageChannel>();
 
         public DiscordSocketClient Client { get; set; }
         public CommandService Commands { get; set; }
         public IServiceProvider Services { get; set; }
         public IGlobalSettingsService Gs { get; set; }
         public IDatabaseService DatabaseService { get; set; }
+        public IGoogleFormsSubmissionService GoogleFormsSubmissionService { get; set; }
 
         public ILogger<CommandHandler> Logger { get; set; }
 
-        public CommandHandler(IServiceProvider services, CommandService commands, DiscordSocketClient client, GlobalSettingsService gs, ILogger<CommandHandler> logger, IDatabaseService databaseService)
+        public CommandHandler(IServiceProvider services, CommandService commands, DiscordSocketClient client, GlobalSettingsService gs, ILogger<CommandHandler> logger, IDatabaseService databaseService, IGoogleFormsSubmissionService gfss)
         {
             Commands = commands;
             Services = services;
@@ -31,6 +35,7 @@ namespace TTMMBot.Services
             Gs = gs;
             Logger = logger;
             DatabaseService = databaseService;
+            GoogleFormsSubmissionService = gfss;
         }
 
         public async Task InitializeAsync()
@@ -57,6 +62,9 @@ namespace TTMMBot.Services
                 Logger.Log(LogLevel.Information, "Bot is connected!");
             else
                 await Client.GetGuild(r.Item1).GetTextChannel(r.Item2).SendMessageAsync("Bot service has been restarted!");
+
+            var channels = (await DatabaseService.LoadChannelsAsync())?.Select(x => Client.GetGuild(x.GuildId).GetTextChannel(x.TextChannelId));
+            channels.ForEach(x => _channelList.Add(x));
         }
 
         private async Task Client_Disconnected(Exception arg)
@@ -82,6 +90,31 @@ namespace TTMMBot.Services
 
         public async Task HandleCommandAsync(SocketMessage arg)
         {
+//            if(_channelList.Contains(arg.Channel))
+//            {
+//                var urls = arg.Content.GetUrl();
+//                urls.ForEach(async x =>
+//                {
+//                    GoogleFormsSubmissionService.SetUrl(x);
+//                    var dict = new Dictionary<string, string>
+//                    {
+//                        { "name", "value" }
+//                    };
+//                    GoogleFormsSubmissionService.SetFieldValues(dict);
+//                    await GoogleFormsSubmissionService.SubmitAsync();
+//                });
+//            }
+
+//#if DEBUG
+//            GoogleFormsSubmissionService.SetUrl("https://docs.google.com/forms/d/e/1FAIpQLSc0psV4YYRqjh3KklYfslXtZlJgzyNeidNoemiPD0CrGn88Qg/viewform");
+//            var dict = new Dictionary<string, string>
+//            {
+//                { "name", "value" }
+//            };
+//            GoogleFormsSubmissionService.SetFieldValues(dict);
+//            await GoogleFormsSubmissionService.SubmitAsync();
+//#endif
+
             if (!(arg is SocketUserMessage msg) || msg.Author.Id == Client.CurrentUser.Id || msg.Author.IsBot) return;
 
             var pos = 0;
@@ -118,6 +151,40 @@ namespace TTMMBot.Services
                         _messageIdWithReaction.Remove(message.Id);
                     }
                 });
+        }
+
+        public Task AddChannelToGoogleFormsWatchList(IGuildChannel channel)
+        {
+            lock (_messageIdWithReaction)
+            {
+                _channelList.Add(channel as ISocketMessageChannel);
+            }
+
+            return Task.Run(async () => 
+            {
+                var c = await DatabaseService.CreateChannelAsync();
+                c.TextChannelId = channel.Id;
+                c.GuildId = channel.GuildId;
+                await DatabaseService.SaveDataAsync();
+            });
+        }
+
+        public Task RemoveChannelFromGoogleFormsWatchList(IGuildChannel channel)
+        {
+            lock (_messageIdWithReaction)
+            {
+                _channelList.Remove(channel as ISocketMessageChannel);
+            }
+
+            return Task.Run(async () => 
+            {
+                var c = (await DatabaseService.LoadChannelsAsync()).FirstOrDefault(x => x.GuildId == channel.GuildId && x.TextChannelId == channel.Id);
+
+                if(c != null)
+                    DatabaseService.DeleteChannel(c);
+
+                await DatabaseService.SaveDataAsync();
+            });
         }
     }
 }

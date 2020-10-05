@@ -20,7 +20,8 @@ namespace TTMMBot.Data
         public DbSet<GlobalSettings> GlobalSettings { get; set; }
         public DbSet<Restart> Restart { get; set; }
         public DbSet<Vacation> Vacation { get; set; }
-
+        public DbSet<Channel> Channel { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Clan>()

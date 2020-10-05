@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace TTMMBot.Helpers
@@ -10,5 +11,7 @@ namespace TTMMBot.Helpers
                      .GroupBy(x => x.Index / chunkSize)
                      .Select(x => x.Select(v => v.Value).ToList() as IList<T>)
                      .ToList();
+
+        public static void ForEach<T>(this IEnumerable<T> n, Action<T> a) => n.ToList().ForEach(a);
     }
 }

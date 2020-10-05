@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using TTMMBot.Data.Entities;
 using TTMMBot.Data.Enums;
 using TTMMBot.Services;
@@ -260,6 +261,24 @@ namespace TTMMBot.Modules
             var r = gs.ChangeProperty(propertyName, value);
             await DatabaseService.SaveDataAsync();
             await ReplyAsync(r);
+        }
+
+        [RequireOwner]
+        [Command("AddChannelToUrlScan")]
+        [Summary("Adds channel to url scan list")]
+        public async Task AddChannelToUrlScan(IGuildChannel channel)
+        {
+            await ReplyAsync("Not implemented!");
+            //await CommandHandler.AddChannelToGoogleFormsWatchList(channel);
+        }
+
+        [RequireOwner]
+        [Command("RemoveChannelFromUrlScan")]
+        [Summary("Removes channel from url scan list")]
+        public async Task RemoveChannelFromUrlScan(IGuildChannel channel)
+        {
+            await ReplyAsync("Not implemented!");
+            //await CommandHandler.RemoveChannelFromGoogleFormsWatchList(channel);
         }
     }
 }

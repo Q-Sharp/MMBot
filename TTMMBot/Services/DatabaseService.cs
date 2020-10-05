@@ -43,5 +43,9 @@ namespace TTMMBot.Services
                 return null;
             }
         }
+
+        public async Task<Channel> CreateChannelAsync() => (await Context.AddAsync(new Channel(), new CancellationToken())).Entity;
+        public async Task<IList<Channel>> LoadChannelsAsync() => await Context.Channel.ToListAsync();
+        public void DeleteChannel(Channel c) => Context.Remove(c);
     }
 }
