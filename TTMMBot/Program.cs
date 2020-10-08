@@ -83,7 +83,7 @@ namespace TTMMBot
                         .AddSingleton<IGlobalSettingsService, GlobalSettingsService>()
                         .AddSingleton(dsc)
                         .AddSingleton(cs)
-                        .AddTransient<IGoogleFormsSubmissionService, GoogleFormsSubmissionService>()
+                        .AddTransient<IGoogleFormsService, GoogleFormsService>()
                         .AddSingleton<ICommandHandler, CommandHandler>()
                         .AddSingleton<IGlobalSettingsService, GlobalSettingsService>()
                         .AddTransient<IDatabaseService, DatabaseService>()

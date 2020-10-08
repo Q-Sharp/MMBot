@@ -72,6 +72,12 @@ namespace TTMMBot.Data.Entities
         [Display]
         public bool IgnoreOnMoveUp { get; set; }
 
+        [Display]
+        public string PlayerTag { get; set; }
+
+        [Display]
+        public bool AutoSignUpForFighNight { get; set; }
+
         public override string ToString() => Clan?.Tag != null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
 
         private static void ReorderJoin(IEntry<Member, Context> e, Member ce = null)

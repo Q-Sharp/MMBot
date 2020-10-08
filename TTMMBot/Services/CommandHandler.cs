@@ -23,11 +23,11 @@ namespace TTMMBot.Services
         public IServiceProvider Services { get; set; }
         public IGlobalSettingsService Gs { get; set; }
         public IDatabaseService DatabaseService { get; set; }
-        public IGoogleFormsSubmissionService GoogleFormsSubmissionService { get; set; }
+        public IGoogleFormsService GoogleFormsSubmissionService { get; set; }
 
         public ILogger<CommandHandler> Logger { get; set; }
 
-        public CommandHandler(IServiceProvider services, CommandService commands, DiscordSocketClient client, GlobalSettingsService gs, ILogger<CommandHandler> logger, IDatabaseService databaseService, IGoogleFormsSubmissionService gfss)
+        public CommandHandler(IServiceProvider services, CommandService commands, DiscordSocketClient client, GlobalSettingsService gs, ILogger<CommandHandler> logger, IDatabaseService databaseService, IGoogleFormsService gfss)
         {
             Commands = commands;
             Services = services;
@@ -65,6 +65,8 @@ namespace TTMMBot.Services
 
             var channels = (await DatabaseService.LoadChannelsAsync())?.Select(x => Client.GetGuild(x.GuildId).GetTextChannel(x.TextChannelId));
             channels.ForEach(x => _channelList.Add(x));
+
+            await GoogleFormsSubmissionService.SubmitAsync("https://docs.google.com/forms/d/e/1FAIpQLSc1Rc_aCu4lEO9EWNCtjOlLF9FQJz47oVmi2ka2ncjs1yzMrg/viewform?usp=sf_link", "");
         }
 
         private async Task Client_Disconnected(Exception arg)
@@ -90,30 +92,14 @@ namespace TTMMBot.Services
 
         public async Task HandleCommandAsync(SocketMessage arg)
         {
-//            if(_channelList.Contains(arg.Channel))
-//            {
-//                var urls = arg.Content.GetUrl();
-//                urls.ForEach(async x =>
-//                {
-//                    GoogleFormsSubmissionService.SetUrl(x);
-//                    var dict = new Dictionary<string, string>
-//                    {
-//                        { "name", "value" }
-//                    };
-//                    GoogleFormsSubmissionService.SetFieldValues(dict);
-//                    await GoogleFormsSubmissionService.SubmitAsync();
-//                });
-//            }
-
-//#if DEBUG
-//            GoogleFormsSubmissionService.SetUrl("https://docs.google.com/forms/d/e/1FAIpQLSc0psV4YYRqjh3KklYfslXtZlJgzyNeidNoemiPD0CrGn88Qg/viewform");
-//            var dict = new Dictionary<string, string>
-//            {
-//                { "name", "value" }
-//            };
-//            GoogleFormsSubmissionService.SetFieldValues(dict);
-//            await GoogleFormsSubmissionService.SubmitAsync();
-//#endif
+            if (_channelList.Contains(arg.Channel))
+            {
+                var urls = arg.Content.GetUrl();
+                urls.ForEach(async x =>
+                {
+                    await GoogleFormsSubmissionService.SubmitAsync(x, "@Tag");
+                });
+            }
 
             if (!(arg is SocketUserMessage msg) || msg.Author.Id == Client.CurrentUser.Id || msg.Author.IsBot) return;
 
