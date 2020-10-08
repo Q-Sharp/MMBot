@@ -1,8 +1,9 @@
 using TTMMBot.Data.Entities;
 using TTMMBot.Data.Enums;
+using TTMMBot.Helpers;
 using Xunit;
 
-namespace TTMMBot.Tests.Data.Entities
+namespace TTMMBot.Tests.Helpers
 {
     public class EntityHelpersTests
     {

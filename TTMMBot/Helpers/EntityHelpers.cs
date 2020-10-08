@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
@@ -6,7 +8,7 @@ using Discord;
 using TTMMBot.Data.Enums;
 using TTMMBot.Helpers;
 
-namespace TTMMBot.Data.Entities
+namespace TTMMBot.Helpers
 {
     public static class EntityHelpers
     {
@@ -44,7 +46,6 @@ namespace TTMMBot.Data.Entities
             where T : class
         {
             var message = string.Empty;
-            var on = typeof(T).ToString().Split('.').LastOrDefault();
 
             try
             {
@@ -72,6 +73,33 @@ namespace TTMMBot.Data.Entities
                 }
 
                 return builder.WithTimestamp(DateTimeOffset.Now).Build();
+            }
+            catch
+            {
+                // ignored
+            }
+
+            return null;
+        }
+
+        public static IEnumerable<T> FilterCollectionByPropertyWithValue<T>(this IEnumerable<T> ml, string propertyName, string value)
+            where T : class
+        {
+            try
+            {
+                return ml.Where(m => 
+                {
+                    var pr = m.GetType().GetRuntimeProperty(propertyName);
+                    
+                    var t = Nullable.GetUnderlyingType(pr.PropertyType) ?? pr.PropertyType;
+                    var safeValue = (value == null) ? null : Enum.TryParse(value.ToString(), out Role eNum) ? eNum : Convert.ChangeType(value, t);
+                    var val = Convert.ChangeType(safeValue, t);
+
+                    var actPropValue = m.GetType().GetProperty(propertyName)?.GetValue(m, null);
+
+                    return Comparer.DefaultInvariant.Compare(actPropValue, val) == 0; 
+                })
+                .ToList();
             }
             catch
             {

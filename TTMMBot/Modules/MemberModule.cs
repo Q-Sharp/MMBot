@@ -63,12 +63,12 @@ namespace TTMMBot.Modules
 
             if(!cQty.HasValue)
             {
-                    await ReplyAsync($"No member data in db.");
-                    return;
+                await ReplyAsync($"No member data in db.");
+                return;
             }
 
             var page = 0;
-            var message = await ReplyAsync(GetTable(mm[page], page + 1));
+            var message = await ReplyAsync(GetTable(mm[page], page));
 
             var back = new Emoji("◀️");
             var next = new Emoji("▶️");
@@ -77,9 +77,9 @@ namespace TTMMBot.Modules
             await CommandHandler.AddToReactionList(message, async (r, u) =>
             {
                 if (r.Name == back.Name && page >= 1)
-                    await message.ModifyAsync(me => me.Content = GetTable(mm[--page], page + 1));
+                    await message.ModifyAsync(me => me.Content = GetTable(mm[--page], page));
                 else if (r.Name == next.Name && page < cQty)
-                    await message.ModifyAsync(me => me.Content = GetTable(mm[++page], page + 1));
+                    await message.ModifyAsync(me => me.Content = GetTable(mm[++page], page));
 
                 if(u != null)
                     await message.RemoveReactionAsync(r, u);
@@ -180,11 +180,13 @@ namespace TTMMBot.Modules
             if(members is null || members.Count <= 0)
                 return null;
 
+            var clans = members.Select(x => new { x.Clan.Tag, x.Clan.Name }).Distinct().OrderBy(x => x.Tag).ThenBy(x => x.Name).ToList();
+
             var table = $"```{Environment.NewLine}";
 
             if (clanNo.HasValue)
-                table += $"[TT{(clanNo.Value == 0 ? string.Empty : clanNo.Value.ToString())}] Members: {members.Count()}{Environment.NewLine}";
-
+                table += $"{clans[clanNo.Value].Tag} Members: {members.Count()}{Environment.NewLine}";
+                
             table += GetHeader(_header);
             table += GetLimiter(_header);
 
@@ -192,7 +194,6 @@ namespace TTMMBot.Modules
                 table += GetValues(member, _fields);
 
             table += $"{Environment.NewLine}```";
-
             return table;
         }
 
@@ -294,6 +295,7 @@ namespace TTMMBot.Modules
             await ReplyAsync(r);
         }
 
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
         [Command("Create")]
         [Summary("Creates a new member.")]
         public async Task Create(string name)
@@ -304,6 +306,24 @@ namespace TTMMBot.Modules
                 m.Name = name;
                 await DatabaseService.SaveDataAsync();
                 await ReplyAsync($"The member {m} was added to database.");
+            }
+            catch (Exception e)
+            {
+                await ReplyAsync($"{e.Message}");
+            }
+        }
+
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
+        [Command("ShowAll")]
+        [Summary("Show all member where propertyName has value")]
+        public async Task ShowAll(string propertyName, [Remainder] string value)
+        {
+            try
+            {
+                var m = await DatabaseService.LoadMembersAsync();
+
+                var fm = m.FilterCollectionByPropertyWithValue(propertyName, value).Select(x => x.Name).ToList();
+                await ReplyAsync($"These members fulfill the given condition ({propertyName} == {value}): {string.Join(',', fm)}"); 
             }
             catch (Exception e)
             {

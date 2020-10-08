@@ -9,6 +9,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using TTMMBot.Data.Entities;
 using TTMMBot.Data.Enums;
+using TTMMBot.Helpers;
 using TTMMBot.Services;
 using TTMMBot.Services.Interfaces;
 
@@ -269,7 +270,7 @@ namespace TTMMBot.Modules
         public async Task AddChannelToUrlScan(IGuildChannel channel)
         {
             await ReplyAsync("Not implemented!");
-            //await CommandHandler.AddChannelToGoogleFormsWatchList(channel);
+            await CommandHandler.AddChannelToGoogleFormsWatchList(channel);
         }
 
         [RequireOwner]
@@ -278,7 +279,7 @@ namespace TTMMBot.Modules
         public async Task RemoveChannelFromUrlScan(IGuildChannel channel)
         {
             await ReplyAsync("Not implemented!");
-            //await CommandHandler.RemoveChannelFromGoogleFormsWatchList(channel);
+            await CommandHandler.RemoveChannelFromGoogleFormsWatchList(channel);
         }
     }
 }
