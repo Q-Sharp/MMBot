@@ -10,6 +10,7 @@ using Discord.WebSocket;
 using TTMMBot.Data.Entities;
 using TTMMBot.Data.Enums;
 using TTMMBot.Helpers;
+using TTMMBot.Modules.Interfaces;
 using TTMMBot.Services;
 using TTMMBot.Services.Interfaces;
 

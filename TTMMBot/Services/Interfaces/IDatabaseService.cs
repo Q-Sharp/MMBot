@@ -26,5 +26,6 @@ namespace TTMMBot.Services.Interfaces
 
         Task SaveDataAsync();
         Task MigrateAsync();
+        Task CleanDB();
     }
 }

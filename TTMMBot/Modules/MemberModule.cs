@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TTMMBot.Data.Entities;
 using TTMMBot.Helpers;
+using TTMMBot.Modules.Interfaces;
 using TTMMBot.Services;
 using TTMMBot.Services.Interfaces;
 
@@ -68,7 +69,7 @@ namespace TTMMBot.Modules
             }
 
             var page = 0;
-            var message = await ReplyAsync(GetTable(mm[page], page));
+            var message = await ReplyAsync(GetTable(mm[page], page + 1));
 
             var back = new Emoji("◀️");
             var next = new Emoji("▶️");
@@ -77,9 +78,9 @@ namespace TTMMBot.Modules
             await CommandHandler.AddToReactionList(message, async (r, u) =>
             {
                 if (r.Name == back.Name && page >= 1)
-                    await message.ModifyAsync(me => me.Content = GetTable(mm[--page], page));
+                    await message.ModifyAsync(me => me.Content = GetTable(mm[--page], page + 1));
                 else if (r.Name == next.Name && page < cQty)
-                    await message.ModifyAsync(me => me.Content = GetTable(mm[++page], page));
+                    await message.ModifyAsync(me => me.Content = GetTable(mm[++page], page + 1));
 
                 if(u != null)
                     await message.RemoveReactionAsync(r, u);
@@ -185,7 +186,7 @@ namespace TTMMBot.Modules
             var table = $"```{Environment.NewLine}";
 
             if (clanNo.HasValue)
-                table += $"{clans[clanNo.Value].Tag} Members: {members.Count()}{Environment.NewLine}";
+                table += $"{clans?.FirstOrDefault()?.Tag} Members: {members.Count()}{Environment.NewLine}";
                 
             table += GetHeader(_header);
             table += GetLimiter(_header);

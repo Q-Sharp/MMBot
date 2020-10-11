@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TTMMBot.Data;
 using TTMMBot.Data.Entities;
+using TTMMBot.Helpers;
 using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Services
@@ -47,5 +48,21 @@ namespace TTMMBot.Services
         public async Task<Channel> CreateChannelAsync() => (await Context.AddAsync(new Channel(), new CancellationToken())).Entity;
         public async Task<IList<Channel>> LoadChannelsAsync() => await Context.Channel.ToListAsync();
         public void DeleteChannel(Channel c) => Context.Remove(c);
+
+        public async Task CleanDB()
+        {
+            var c = await LoadClansAsync();
+            var m = await LoadMembersAsync();
+
+            m.Where(x => x.ClanId == 0 || x.Name == string.Empty).ForEach(x =>
+            {
+                var id = x.ClanId;
+                Context.Remove(x);
+
+                if(id.HasValue)
+                    Context.Remove(c.FirstOrDefault(y => y.ClanId == id));
+                Context.SaveChanges();
+            });
+        }
     }
 }

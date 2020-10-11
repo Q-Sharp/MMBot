@@ -2,7 +2,7 @@
 using TTMMBot.Services;
 using TTMMBot.Services.Interfaces;
 
-namespace TTMMBot.Modules
+namespace TTMMBot.Modules.Interfaces
 {
     public interface IAdminModule
     {

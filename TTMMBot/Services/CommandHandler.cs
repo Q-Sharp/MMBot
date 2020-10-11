@@ -61,12 +61,17 @@ namespace TTMMBot.Services
             if (r is null)
                 Logger.Log(LogLevel.Information, "Bot is connected!");
             else
-                await Client.GetGuild(r.Item1).GetTextChannel(r.Item2).SendMessageAsync("Bot service has been restarted!");
+                await Client.GetGuild(r.Item1)
+                    .GetTextChannel(r.Item2)
+                    .SendMessageAsync("Bot service has been restarted!");
 
-            var channels = (await DatabaseService.LoadChannelsAsync())?.Select(x => Client.GetGuild(x.GuildId).GetTextChannel(x.TextChannelId));
-            channels.ForEach(x => _channelList.Add(x));
+            await DatabaseService.CleanDB();
 
-            await GoogleFormsSubmissionService.SubmitAsync("https://docs.google.com/forms/d/e/1FAIpQLSc1Rc_aCu4lEO9EWNCtjOlLF9FQJz47oVmi2ka2ncjs1yzMrg/viewform?usp=sf_link", "");
+            //(await DatabaseService.LoadChannelsAsync())?
+            //    .Select(x => Client.GetGuild(x.GuildId).GetTextChannel(x.TextChannelId))?
+            //    .ForEach(x => _channelList.Add(x));
+
+            //await GoogleFormsSubmissionService.SubmitAsync("https://docs.google.com/forms/d/e/1FAIpQLSc1Rc_aCu4lEO9EWNCtjOlLF9FQJz47oVmi2ka2ncjs1yzMrg/viewform?usp=sf_link", "");
         }
 
         private async Task Client_Disconnected(Exception arg)

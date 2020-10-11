@@ -2,7 +2,7 @@
 using Discord.Commands;
 using TTMMBot.Services.Interfaces;
 
-namespace TTMMBot.Modules
+namespace TTMMBot.Modules.Interfaces
 {
     public interface IMemberModule
     {
