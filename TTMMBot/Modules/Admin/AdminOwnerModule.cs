@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -68,8 +69,14 @@ namespace TTMMBot.Modules.Admin
         [RequireOwner]
         public async Task AddChannelToUrlScan(IGuildChannel channel)
         {
-            await ReplyAsync("Not implemented!");
             await _commandHandler.AddChannelToGoogleFormsWatchList(channel);
+
+            var dbChannel = await _databaseService.CreateChannelAsync();
+            dbChannel.GuildId = channel.GuildId;
+            dbChannel.TextChannelId = channel.Id;
+            await _databaseService.SaveDataAsync();
+
+            await ReplyAsync($"Successfully added {channel.Name} to UrlScanList.");
         }
 
         [Command("RemoveChannelFromUrlScan")]
@@ -77,8 +84,12 @@ namespace TTMMBot.Modules.Admin
         [RequireOwner]
         public async Task RemoveChannelFromUrlScan(IGuildChannel channel)
         {
-            await ReplyAsync("Not implemented!");
             await _commandHandler.RemoveChannelFromGoogleFormsWatchList(channel);
+
+            var c = (await _databaseService.LoadChannelsAsync()).FirstOrDefault(x => x.GuildId == channel.GuildId && x.TextChannelId == channel.Id);
+            _databaseService.DeleteChannel(c);
+
+            await ReplyAsync($"Successfully removed {channel.Name} to UrlScanList.");
         }
     }
 }

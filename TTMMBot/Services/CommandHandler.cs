@@ -61,11 +61,9 @@ namespace TTMMBot.Services
 
             await _databaseService.CleanDB();
 
-            //(await DatabaseService.LoadChannelsAsync())?
-            //    .Select(x => Client.GetGuild(x.GuildId).GetTextChannel(x.TextChannelId))?
-            //    .ForEach(x => _channelList.Add(x));
-
-            //await GoogleFormsSubmissionService.SubmitAsync("https://docs.google.com/forms/d/e/1FAIpQLSc1Rc_aCu4lEO9EWNCtjOlLF9FQJz47oVmi2ka2ncjs1yzMrg/viewform?usp=sf_link", "");
+            (await _databaseService.LoadChannelsAsync())?
+                .Select(x => _client.GetGuild(x.GuildId).GetTextChannel(x.TextChannelId))?
+                .ForEach(x => _channelList.Add(x));
         }
 
         private async Task Client_Disconnected(Exception arg)

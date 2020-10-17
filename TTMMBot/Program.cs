@@ -9,6 +9,7 @@ using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using TTMMBot.Data;
 using TTMMBot.Services;
+using TTMMBot.Services.GoogleForms;
 using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot
@@ -75,6 +76,14 @@ namespace TTMMBot
                         LogLevel = LogSeverity.Warning,
                         CaseSensitiveCommands = false,
                         SeparatorChar = ' '
+                    });
+
+
+                    var hc = services.AddHttpClient("forms", c =>
+                    {
+                        c.BaseAddress = new Uri("https://docs.google.com");
+                        c.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+                        c.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");
                     });
 
                     services.AddHostedService<DiscordWorker>()
