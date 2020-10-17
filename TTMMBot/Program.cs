@@ -24,8 +24,8 @@ namespace TTMMBot
                  .WriteTo.Console(theme: AnsiConsoleTheme.Literate, outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}")
                  .CreateLogger();
 
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledExceptionAsync;
-            AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExitAsync;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 
             using var h = CreateHostBuilder(args)?.Build();
             _services = h.Services;
@@ -33,7 +33,7 @@ namespace TTMMBot
             Log.CloseAndFlush();
         }
 
-        private static async void CurrentDomain_ProcessExitAsync(object sender, EventArgs e)
+        private static void CurrentDomain_ProcessExit(object sender, EventArgs e)
         {
             if (_services != null)
             {
@@ -44,16 +44,17 @@ namespace TTMMBot
                     discordClient.StopAsync().Wait();
                 }
             }
-            await Console.Out.WriteLineAsync("Exiting!").ConfigureAwait(false);
+
+            Log.Logger.Information("Exiting!");
         }
 
-        private static async void CurrentDomain_UnhandledExceptionAsync(object sender, UnhandledExceptionEventArgs e)
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             if (e.ExceptionObject is Exception ex)
-                await Console.Out.WriteLineAsync($"Unhandled exception: {ex.Message}").ConfigureAwait(false);
+                Log.Logger.Error($"Unhandled exception: {ex.Message}");
 
             if (e.IsTerminating)
-                await Console.Out.WriteLineAsync("Terminating!").ConfigureAwait(false);
+                Log.Logger.Error("Terminating!");
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

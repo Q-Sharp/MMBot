@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using Discord;
 using TTMMBot.Data.Enums;
-using TTMMBot.Helpers;
 
 namespace TTMMBot.Helpers
 {
@@ -42,6 +41,31 @@ namespace TTMMBot.Helpers
             return message;
         }
 
+        public static string GetProperty<T>(this T m, string propertyName) 
+            where T : class
+        {
+            var message = string.Empty;
+            var on = typeof(T).ToString().Split('.').LastOrDefault();
+
+            try
+            {
+                var pr = m.GetType().GetRuntimeProperty(propertyName);
+                if (pr != null)
+                {
+                    var t = Nullable.GetUnderlyingType(pr.PropertyType) ?? pr.PropertyType;
+                    var PropValue = m.GetType().GetProperty(propertyName)?.GetValue(m, null);
+
+                    message = $"The {on} {m} uses {PropValue} as {propertyName}.";
+                }
+            }
+            catch (Exception e)
+            {
+                message = e.Message;
+            }
+
+            return message;
+        }
+
         public static IEmbed GetEmbedPropertiesWithValues<T>(this T m, string imageUrl = null)
             where T : class
         {
@@ -67,7 +91,7 @@ namespace TTMMBot.Helpers
                     builder.AddField(x =>
                     {
                         x.Name = p?.Name?.ToSentence();
-                        x.Value = val?.ToString();
+                        x.Value = (val?.ToString()) ?? "not set";
                         x.IsInline = false;
                     });
                 }

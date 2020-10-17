@@ -8,10 +8,6 @@ namespace TTMMBot.Services.Interfaces
 {
     public interface ICommandHandler
     {
-        DiscordSocketClient Client { get; set; }
-        CommandService Commands { get; set; }
-        IServiceProvider Services { get; set; }
-        IGlobalSettingsService Gs { get; set; }
         Task InitializeAsync();
         Task HandleCommandAsync(SocketMessage arg);
         Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result);

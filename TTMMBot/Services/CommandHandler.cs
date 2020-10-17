@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TTMMBot.Helpers;
 using TTMMBot.Modules;
+using TTMMBot.Modules.Member;
 using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Services
@@ -16,56 +17,53 @@ namespace TTMMBot.Services
     public class CommandHandler : ICommandHandler
     {
         private readonly IDictionary<ulong, Func<IEmote, IUser, Task>> _messageIdWithReaction = new Dictionary<ulong, Func<IEmote, IUser, Task>>();
-        private IList<ISocketMessageChannel> _channelList = new List<ISocketMessageChannel>();
+        private readonly IList<ISocketMessageChannel> _channelList = new List<ISocketMessageChannel>();
 
-        public DiscordSocketClient Client { get; set; }
-        public CommandService Commands { get; set; }
-        public IServiceProvider Services { get; set; }
-        public IGlobalSettingsService Gs { get; set; }
-        public IDatabaseService DatabaseService { get; set; }
-        public IGoogleFormsService GoogleFormsSubmissionService { get; set; }
+        private readonly DiscordSocketClient _client;
+        private readonly CommandService _commands;
+        private readonly IServiceProvider _services;
+        private readonly IGlobalSettingsService _gs;
+        private readonly IDatabaseService _databaseService;
+        private readonly IGoogleFormsService _googleFormsSubmissionService;
 
         public ILogger<CommandHandler> Logger { get; set; }
 
         public CommandHandler(IServiceProvider services, CommandService commands, DiscordSocketClient client, GlobalSettingsService gs, ILogger<CommandHandler> logger, IDatabaseService databaseService, IGoogleFormsService gfss)
         {
-            Commands = commands;
-            Services = services;
-            Client = client;
-            Gs = gs;
+            _commands = commands;
+            _services = services;
+            _client = client;
+            _gs = gs;
             Logger = logger;
-            DatabaseService = databaseService;
-            GoogleFormsSubmissionService = gfss;
+            _databaseService = databaseService;
+            _googleFormsSubmissionService = gfss;
         }
 
         public async Task InitializeAsync()
         {
-            await Commands.AddModuleAsync<ClanModule>(Services);
-            await Commands.AddModuleAsync<MemberModule>(Services);
-            await Commands.AddModuleAsync<HelpModule>(Services);
-            await Commands.AddModuleAsync<AdminModule>(Services);
+            await _commands.AddModulesAsync(GetType().Assembly, _services);
 
-            Commands.CommandExecuted += CommandExecutedAsync;
+            _commands.CommandExecuted += CommandExecutedAsync;
 
-            Client.MessageReceived += HandleCommandAsync;
-            Client.ReactionAdded += Client_ReactionAdded;
-            Client.Disconnected += Client_Disconnected;
+            _client.MessageReceived += HandleCommandAsync;
+            _client.ReactionAdded += Client_ReactionAdded;
+            _client.Disconnected += Client_Disconnected;
 
-            Client.Ready += Client_Ready;
+            _client.Ready += Client_Ready;
         }
 
         private async Task Client_Ready()
         {
-            var r = await DatabaseService.ConsumeRestart();
+            var r = await _databaseService.ConsumeRestart();
 
             if (r is null)
                 Logger.Log(LogLevel.Information, "Bot is connected!");
             else
-                await Client.GetGuild(r.Item1)
+                await _client.GetGuild(r.Item1)
                     .GetTextChannel(r.Item2)
                     .SendMessageAsync("Bot service has been restarted!");
 
-            await DatabaseService.CleanDB();
+            await _databaseService.CleanDB();
 
             //(await DatabaseService.LoadChannelsAsync())?
             //    .Select(x => Client.GetGuild(x.GuildId).GetTextChannel(x.TextChannelId))?
@@ -90,7 +88,7 @@ namespace TTMMBot.Services
             {
                 lock (_messageIdWithReaction)
                 {
-                    if (_messageIdWithReaction.Keys.Contains(arg3.MessageId) && arg3.UserId != Client.CurrentUser.Id)
+                    if (_messageIdWithReaction.Keys.Contains(arg3.MessageId) && arg3.UserId != _client.CurrentUser.Id)
                         _messageIdWithReaction[arg3.MessageId](arg3.Emote, arg3.User.IsSpecified ? arg3.User.Value : null);
                 }
             });
@@ -102,17 +100,19 @@ namespace TTMMBot.Services
                 var urls = arg.Content.GetUrl();
                 urls.ForEach(async x =>
                 {
-                    await GoogleFormsSubmissionService.SubmitAsync(x, "@Tag");
+                    var m = await _databaseService.LoadMembersAsync();
+
+                    m.Where(z => z.AutoSignUpForFightNight && z.PlayerTag != null).ForEach(async y => await _googleFormsSubmissionService.SubmitAsync(x, "@Tag"));
                 });
             }
 
-            if (!(arg is SocketUserMessage msg) || msg.Author.Id == Client.CurrentUser.Id || msg.Author.IsBot) return;
+            if (!(arg is SocketUserMessage msg) || msg.Author.Id == _client.CurrentUser.Id || msg.Author.IsBot) return;
 
             var pos = 0;
-            if (msg.HasStringPrefix(Gs.Prefix, ref pos) || msg.HasMentionPrefix(Client.CurrentUser, ref pos))
+            if (msg.HasStringPrefix(_gs.Prefix, ref pos) || msg.HasMentionPrefix(_client.CurrentUser, ref pos))
             {
-                var context = new SocketCommandContext(Client, msg);
-                var result = await Commands.ExecuteAsync(context, pos, Services);
+                var context = new SocketCommandContext(_client, msg);
+                var result = await _commands.ExecuteAsync(context, pos, _services);
 
                 if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
                     await msg.Channel.SendMessageAsync(result.ErrorReason);
@@ -134,7 +134,7 @@ namespace TTMMBot.Services
                 _messageIdWithReaction.Add(message.Id, fT);
             }
 
-            return Task.Delay(Gs.WaitForReaction)
+            return Task.Delay(_gs.WaitForReaction)
                 .ContinueWith(x =>
                 {
                     lock (_messageIdWithReaction)
@@ -153,10 +153,10 @@ namespace TTMMBot.Services
 
             return Task.Run(async () => 
             {
-                var c = await DatabaseService.CreateChannelAsync();
+                var c = await _databaseService.CreateChannelAsync();
                 c.TextChannelId = channel.Id;
                 c.GuildId = channel.GuildId;
-                await DatabaseService.SaveDataAsync();
+                await _databaseService.SaveDataAsync();
             });
         }
 
@@ -169,12 +169,12 @@ namespace TTMMBot.Services
 
             return Task.Run(async () => 
             {
-                var c = (await DatabaseService.LoadChannelsAsync()).FirstOrDefault(x => x.GuildId == channel.GuildId && x.TextChannelId == channel.Id);
+                var c = (await _databaseService.LoadChannelsAsync()).FirstOrDefault(x => x.GuildId == channel.GuildId && x.TextChannelId == channel.Id);
 
                 if(c != null)
-                    DatabaseService.DeleteChannel(c);
+                    _databaseService.DeleteChannel(c);
 
-                await DatabaseService.SaveDataAsync();
+                await _databaseService.SaveDataAsync();
             });
         }
     }

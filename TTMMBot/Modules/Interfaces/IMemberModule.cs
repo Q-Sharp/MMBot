@@ -1,14 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Discord.Commands;
-using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Modules.Interfaces
 {
     public interface IMemberModule
     {
-        IDatabaseService DatabaseService { get; set; }
-        ICommandHandler CommandHandler { get; set; }
-        IGlobalSettingsService GlobalSettings { get; set; }
         Task List();
         Task Sort();
         Task Changes(string compact = null);

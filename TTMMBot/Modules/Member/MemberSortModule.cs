@@ -7,25 +7,15 @@ using System.Threading.Tasks;
 using TTMMBot.Data.Entities;
 using TTMMBot.Helpers;
 using TTMMBot.Modules.Interfaces;
-using TTMMBot.Services;
 using TTMMBot.Services.Interfaces;
 
-namespace TTMMBot.Modules
+namespace TTMMBot.Modules.Member
 {
-    [Name("Member")]
-    [Group("Member")]
-    [Alias("M", "Members")]
-    public class MemberModule : ModuleBase<SocketCommandContext>, IMemberModule
+    public partial class MemberModule : ModuleBase<SocketCommandContext>, IMemberModule
     {
         private readonly string[] _header = { "Name", "Clan", "Join", "SHigh", "Role" };
         private readonly int[] _pad = { 16, 4, 4, 5, 7 };
         private readonly string[] _fields = { "Name", "Clan.Tag", "Join", "SHigh", "Role" };
-
-        public IDatabaseService DatabaseService { get; set; }
-        public ICommandHandler CommandHandler { get; set; }
-        public IGlobalSettingsService GlobalSettings { get; set; }
-        public IMemberSortService MemberSortService { get; set; }
-
 
         [Command("List", RunMode = RunMode.Async)]
         [Summary("Lists all members by current clan membership.")]
@@ -33,7 +23,7 @@ namespace TTMMBot.Modules
         {
             try
             {
-                var m = await MemberSortService.GetCurrentMemberList();
+                var m = await _memberSortService.GetCurrentMemberList();
                 await ShowMembers(m);
             }
             catch (Exception e)
@@ -49,7 +39,7 @@ namespace TTMMBot.Modules
         {
             try
             {
-                var m = (await MemberSortService.GetChanges()).Select(x => x.NewMemberList).ToList();
+                var m = (await _memberSortService.GetChanges()).Select(x => x.NewMemberList).ToList();
                 await ShowMembers(m);
             }
             catch (Exception e)
@@ -58,9 +48,9 @@ namespace TTMMBot.Modules
             }
         }
 
-        private async Task ShowMembers(IList<IList<Member>> mm)
+        private async Task ShowMembers(IList<IList<Data.Entities.Member>> mm)
         {
-            var cQty = (await DatabaseService.LoadClansAsync())?.Count();
+            var cQty = (await _databaseService.LoadClansAsync())?.Count();
 
             if(!cQty.HasValue)
             {
@@ -75,7 +65,7 @@ namespace TTMMBot.Modules
             var next = new Emoji("▶️");
             await message.AddReactionsAsync(new IEmote[] { back, next });
 
-            await CommandHandler.AddToReactionList(message, async (r, u) =>
+            await _commandHandler.AddToReactionList(message, async (r, u) =>
             {
                 if (r.Name == back.Name && page >= 1)
                     await message.ModifyAsync(me => me.Content = GetTable(mm[--page], page + 1));
@@ -94,7 +84,7 @@ namespace TTMMBot.Modules
         {
             try
             {
-                var result = (await MemberSortService.GetChanges()).Where(x => x.Join.Count > 0 && x.Leave.Count > 0).ToList();
+                var result = (await _memberSortService.GetChanges()).Where(x => x.Join.Count > 0 && x.Leave.Count > 0).ToList();
 
                 if(result?.Count() == 0)
                 {
@@ -102,7 +92,7 @@ namespace TTMMBot.Modules
                     return;
                 }
 
-                var c = await DatabaseService.LoadClansAsync();
+                var c = await _databaseService.LoadClansAsync();
                 var cQty = c?.Count();
                
                 if(!string.IsNullOrWhiteSpace(compact))
@@ -116,7 +106,7 @@ namespace TTMMBot.Modules
                     var next = new Emoji("▶️");
                     await message.AddReactionsAsync(new IEmote[] { back, next });
                     
-                    await CommandHandler.AddToReactionList(message, async (r, u) =>
+                    await _commandHandler.AddToReactionList(message, async (r, u) =>
                     {
                        if (r.Name == back.Name && page >= 1)
                            await message.ModifyAsync(me => me.Content = GetDetailedMemberChangesString(result, --page, c));
@@ -176,7 +166,7 @@ namespace TTMMBot.Modules
             return r;
         }
 
-        private string GetTable(IList<Member> members, int? clanNo = null)
+        private string GetTable(IList<Data.Entities.Member> members, int? clanNo = null)
         {
             if(members is null || members.Count <= 0)
                 return null;
@@ -222,7 +212,7 @@ namespace TTMMBot.Modules
             return l;
         }
 
-        private string GetValues(Member m, IReadOnlyList<string> header)
+        private string GetValues(Data.Entities.Member m, IReadOnlyList<string> header)
         {
             var l = "";
             var ac = header.Count;
@@ -236,100 +226,6 @@ namespace TTMMBot.Modules
             l = l.TrimEnd('|');
             l += $"{Environment.NewLine}";
             return l;
-        }
-
-        [Command("Show")]
-        [Alias("s")]
-        [Summary("Shows all information of a member.")]
-        public async Task Show(string name = null)
-        {
-            try
-            {
-                var m = name != null
-                    ? (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == name)
-                    : (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discord == Context.User.ToString());
-
-                if (m == null)
-                {
-                    await ReplyAsync($"I can't find {name ?? "you"}!");
-                    return;
-                }
-
-                var imageUrl = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => x.GetUserAndDiscriminator() == m.Discord)?.GetAvatarUrl());
-                var e = m.GetEmbedPropertiesWithValues(imageUrl);
-                await ReplyAsync("", false, e as Embed);
-
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}");
-            }
-        }
-
-        [Command("Delete")]
-        [Alias("D")]
-        [Summary("Deletes member with given name.")]
-        [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task Delete(string name)
-        {
-            try
-            {
-                var m = (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase));
-                DatabaseService.DeleteMember(m);
-                await DatabaseService.SaveDataAsync();
-                await ReplyAsync($"The member {m} was deleted");
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}");
-            }
-        }
-
-        [RequireUserPermission(ChannelPermission.ManageRoles)]
-        [Command("Set")]
-        [Summary("Set [Username] [Property name] [Value]")]
-        public async Task Set(string name, string propertyName, [Remainder] string value)
-        {
-            var m = (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase));
-            var r = m.ChangeProperty(propertyName, value);
-            await DatabaseService.SaveDataAsync();
-            await ReplyAsync(r);
-        }
-
-        [RequireUserPermission(ChannelPermission.ManageRoles)]
-        [Command("Create")]
-        [Summary("Creates a new member.")]
-        public async Task Create(string name)
-        {
-            try
-            {
-                var m = await DatabaseService.CreateMemberAsync();
-                m.Name = name;
-                await DatabaseService.SaveDataAsync();
-                await ReplyAsync($"The member {m} was added to database.");
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}");
-            }
-        }
-
-        [RequireUserPermission(ChannelPermission.ManageRoles)]
-        [Command("ShowAll")]
-        [Summary("Show all member where propertyName has value")]
-        public async Task ShowAll(string propertyName, [Remainder] string value)
-        {
-            try
-            {
-                var m = await DatabaseService.LoadMembersAsync();
-
-                var fm = m.FilterCollectionByPropertyWithValue(propertyName, value).Select(x => x.Name).ToList();
-                await ReplyAsync($"These members fulfill the given condition ({propertyName} == {value}): {string.Join(',', fm)}"); 
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}");
-            }
         }
     }
 }

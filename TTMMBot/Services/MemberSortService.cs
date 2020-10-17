@@ -129,7 +129,7 @@ namespace TTMMBot.Services
 
                 if(clanSortNo < currentMember.Clan.SortOrder)
                 {
-                    if(currentMember.IgnoreOnMoveUp || currentMember.Role >= Role.CoLeader)
+                    if(currentMember.IgnoreOnMoveUp || currentMember.Role == Role.Leader)
                         continue;
                     else
                         movedQty++;

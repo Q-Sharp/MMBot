@@ -76,7 +76,7 @@ namespace TTMMBot.Data.Entities
         public string PlayerTag { get; set; }
 
         [Display]
-        public bool AutoSignUpForFighNight { get; set; }
+        public bool AutoSignUpForFightNight { get; set; }
 
         public override string ToString() => Clan?.Tag != null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
 

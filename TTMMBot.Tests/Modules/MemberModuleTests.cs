@@ -1,8 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using FakeItEasy;
-using TTMMBot.Modules;
-using TTMMBot.Services;
+using TTMMBot.Modules.Member;
 using TTMMBot.Services.Interfaces;
 using Xunit;
 
@@ -10,14 +9,19 @@ namespace TTMMBot.Tests.Modules
 {
     public class MemberModuleTests
     {
-        private static MemberModule GetMemberModule()
-        {
-            var mm = A.Fake<MemberModule>();
+        private IGlobalSettingsService GlobalSettings;
+        private IDatabaseService DatabaseService;
+        private ICommandHandler CommandHandler;
+        private IMemberSortService MemberSortService;
 
-            mm.GlobalSettings = A.Fake<IGlobalSettingsService>();
-            mm.DatabaseService = A.Fake<IDatabaseService>();
-            mm.CommandHandler = A.Fake<ICommandHandler>();
-            return mm;
+        private MemberModule GetMemberModule()
+        {
+            GlobalSettings = A.Fake<IGlobalSettingsService>();
+            DatabaseService = A.Fake<IDatabaseService>();
+            CommandHandler = A.Fake<ICommandHandler>();
+            MemberSortService = A.Fake<IMemberSortService>();
+
+            return A.Fake<MemberModule>(x => x.WithArgumentsForConstructor(() => new MemberModule(DatabaseService, CommandHandler, GlobalSettings, MemberSortService)));
         }
 
 
@@ -25,11 +29,10 @@ namespace TTMMBot.Tests.Modules
         public async Task CreateMemberAsync()
         {
             var mm = GetMemberModule();
-
             await mm.Create("Member");
 
-            A.CallTo(() => mm.DatabaseService.CreateMemberAsync()).WithAnyArguments().MustHaveHappened();
-            A.CallTo(() => mm.DatabaseService.SaveDataAsync()).WithAnyArguments().MustHaveHappened();
+            A.CallTo(() => DatabaseService.CreateMemberAsync()).WithAnyArguments().MustHaveHappened();
+            A.CallTo(() => DatabaseService.SaveDataAsync()).WithAnyArguments().MustHaveHappened();
             A.CallTo(mm).Where(x => x.Method.Name == "ReplyAsync").WithAnyArguments().MustHaveHappened();
         }
     }
