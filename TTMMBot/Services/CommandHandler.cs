@@ -8,8 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using TTMMBot.Helpers;
-using TTMMBot.Modules;
-using TTMMBot.Modules.Member;
 using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Services
@@ -25,8 +23,7 @@ namespace TTMMBot.Services
         private readonly IGlobalSettingsService _gs;
         private readonly IDatabaseService _databaseService;
         private readonly IGoogleFormsService _googleFormsSubmissionService;
-
-        public ILogger<CommandHandler> Logger { get; set; }
+        private readonly ILogger<CommandHandler> _logger;
 
         public CommandHandler(IServiceProvider services, CommandService commands, DiscordSocketClient client, GlobalSettingsService gs, ILogger<CommandHandler> logger, IDatabaseService databaseService, IGoogleFormsService gfss)
         {
@@ -34,7 +31,7 @@ namespace TTMMBot.Services
             _services = services;
             _client = client;
             _gs = gs;
-            Logger = logger;
+            _logger = logger;
             _databaseService = databaseService;
             _googleFormsSubmissionService = gfss;
         }
@@ -55,10 +52,9 @@ namespace TTMMBot.Services
         private async Task Client_Ready()
         {
             var r = await _databaseService.ConsumeRestart();
+            _logger.Log(LogLevel.Information, "Bot is connected!");
 
-            if (r is null)
-                Logger.Log(LogLevel.Information, "Bot is connected!");
-            else
+            if (r != null)
                 await _client.GetGuild(r.Item1)
                     .GetTextChannel(r.Item2)
                     .SendMessageAsync("Bot service has been restarted!");
@@ -74,7 +70,7 @@ namespace TTMMBot.Services
 
         private async Task Client_Disconnected(Exception arg)
         {
-            Logger.LogError(arg.Message);
+            _logger.LogError(arg.Message);
 
             await Task.Run(() =>
             { 

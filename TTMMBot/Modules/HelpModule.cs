@@ -4,18 +4,21 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using TTMMBot.Modules.Interfaces;
-using TTMMBot.Services;
+using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Modules
 {
     [Name("Help")]
     public class HelpModule : ModuleBase<SocketCommandContext>, IHelpModule
     {
-        public GlobalSettingsService Gm { get; set; }
-
+        private readonly IGlobalSettingsService _gss;
         private readonly CommandService _service;
 
-        public HelpModule(CommandService service) => _service = service;
+        public HelpModule(CommandService service, IGlobalSettingsService globalSettingsService)
+        {
+            _service = service;
+            _gss = globalSettingsService;
+        }
 
         [Command("help")]
         public async Task HelpAsync()
@@ -42,11 +45,11 @@ namespace TTMMBot.Modules
                     var args = string.Join(" ", cmd.Parameters?.Select(x => $"[{x.Name}]").ToArray() ?? Array.Empty<string>());
 
                     if (string.Equals(cmd.Name, module.Group, StringComparison.InvariantCultureIgnoreCase))
-                        description += $"{Gm.Prefix}{module.Group} {args}{Environment.NewLine}";
+                        description += $"{_gss.Prefix}{module.Group} {args}{Environment.NewLine}";
                     else if(string.IsNullOrWhiteSpace(module.Group))
-                        description += $"{Gm.Prefix}{cmd.Name} {args}{Environment.NewLine}";
+                        description += $"{_gss.Prefix}{cmd.Name} {args}{Environment.NewLine}";
                     else
-                        description += $"{Gm.Prefix}{module.Group} {cmd.Name} {args}{Environment.NewLine}";
+                        description += $"{_gss.Prefix}{module.Group} {cmd.Name} {args}{Environment.NewLine}";
                 }
 
                 if (!string.IsNullOrWhiteSpace(description))

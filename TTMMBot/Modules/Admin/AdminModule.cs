@@ -1,38 +1,43 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
-using TTMMBot.Data.Entities;
 using TTMMBot.Data.Enums;
 using TTMMBot.Helpers;
 using TTMMBot.Modules.Interfaces;
-using TTMMBot.Services;
 using TTMMBot.Services.Interfaces;
 
-namespace TTMMBot.Modules
+namespace TTMMBot.Modules.Admin
 {
     [Name("Admin")]
     [Group("Admin")]
     [Alias("admin", "a", "A")]
-    public class AdminModule : ModuleBase<SocketCommandContext>, IAdminModule
+    public partial class AdminModule : ModuleBase<SocketCommandContext>, IAdminModule
     {
         private static volatile bool _commandIsRunning;
+        
+        private readonly IDatabaseService _databaseService;
+        private readonly INotionCsvService _csvService;
+        private readonly IAdminService _adminService;
+        private readonly IGlobalSettingsService _globalSettings;
+        private readonly ICommandHandler _commandHandler;
 
-        public IDatabaseService DatabaseService { get; set; }
-        public INotionCsvService CsvService { get; set; }
-        public IAdminService AdminService { get; set; }
-        public GlobalSettingsService GlobalSettings { get; set; }
-        public ICommandHandler CommandHandler { get; set; }
+        public AdminModule(IDatabaseService databaseService, INotionCsvService csvService, IAdminService adminService, IGlobalSettingsService globalSettings, ICommandHandler commandHandler)
+        {
+            _databaseService = databaseService;
+            _csvService = csvService;
+            _adminService = adminService;
+            _globalSettings = globalSettings;
+            _commandHandler = commandHandler;
+        }
 
-        [RequireOwner]
         [Command("ImportCSV", RunMode = RunMode.Async)]
         [Alias("import")]
         [Summary("Imports a notion csv export to update db")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task ImportCsv()
         {
             try
@@ -48,9 +53,9 @@ namespace TTMMBot.Modules
                 if (csvFile != null)
                 {
                     var csv = myWebClient.DownloadData(csvFile.Url);
-                    if (CsvService != null)
+                    if (_csvService != null)
                     {
-                        var result = await CsvService.ImportCsv(csv);
+                        var result = await _csvService.ImportCsv(csv);
 
                         if(result == null)
                             File.WriteAllBytes(Path.Combine(Environment.CurrentDirectory, "lastImport.csv"), csv);
@@ -71,10 +76,10 @@ namespace TTMMBot.Modules
             }
         }
 
-        [RequireOwner]
         [Command("ReImportCSV")]
         [Alias("Reimport")]
         [Summary("Reimport last csv file")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task ReImportCSV()
         {
             try
@@ -86,9 +91,9 @@ namespace TTMMBot.Modules
                 }
 
                 var csv = File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, "lastImport.csv"));
-                if (CsvService != null)
+                if (_csvService != null)
                 {
-                    var result = await CsvService.ImportCsv(csv);
+                    var result = await _csvService.ImportCsv(csv);
 
                     await ReplyAsync(result == null
                         ? "CSV file import was successful"
@@ -101,22 +106,22 @@ namespace TTMMBot.Modules
             }
         }
 
-        [RequireOwner]
         [Command("ExportCSV")]
         [Alias("export")]
         [Summary("Exports a csv file from db")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task ExportCsv()
         {
             try
             {
-                if (CsvService != null)
+                if (_csvService != null)
                 {
-                    var result = await CsvService?.ExportCsv();
-                    await File.WriteAllBytesAsync(GlobalSettings.FileName, result);
+                    var result = await _csvService?.ExportCsv();
+                    await File.WriteAllBytesAsync(_globalSettings.FileName, result);
                 }
 
-                await Context.Channel.SendFileAsync(GlobalSettings.FileName, "Csv db export");
-                File.Delete(GlobalSettings.FileName);
+                await Context.Channel.SendFileAsync(_globalSettings.FileName, "Csv db export");
+                File.Delete(_globalSettings.FileName);
             }
             catch (Exception e)
             {
@@ -124,15 +129,15 @@ namespace TTMMBot.Modules
             }
         }
 
-        [RequireOwner]
         [Command("Reorder")]
         [Alias("reorder")]
         [Summary("Reorders member in db")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task ReorderJoin()
         {
             try
             {
-                await Task.Run(() => AdminService.Reorder());
+                await Task.Run(() => _adminService.Reorder());
                 await ReplyAsync("Members join order updated!");
             }
             catch (Exception e)
@@ -141,30 +146,10 @@ namespace TTMMBot.Modules
             }
         }
 
-        [RequireOwner]
-        [Command("Restart")]
-        [Alias("restart")]
-        [Summary("Restarts the bot")]
-        public async Task Restart(bool saveRestart = true)
-        {
-            if(saveRestart)
-            {
-                var r = await DatabaseService?.AddRestart();
-                r.Guild = Context.Guild.Id;
-                r.Channel = Context.Channel.Id;
-                await DatabaseService?.SaveDataAsync();
-            }
-
-            Process.Start(AppDomain.CurrentDomain.FriendlyName);
-            await ReplyAsync($"Bot service is restarting...");
-            
-            Environment.Exit(0);
-        }
-
-        [RequireUserPermission(ChannelPermission.ManageRoles)]
         [Command("FixRoles", RunMode = RunMode.Async)]
         [Alias("FR")]
         [Summary("Checks and fixes discord roles of all clan members.")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task FixRoles() =>
             await Task.Run(async () =>
             {
@@ -179,7 +164,7 @@ namespace TTMMBot.Modules
                     _commandIsRunning = true;
                     await ReplyAsync($"Fixing roles of discord members accordingly to their clan membership....");
 
-                    var c = await DatabaseService.LoadClansAsync();
+                    var c = await _databaseService.LoadClansAsync();
                     var ar = Context.Guild.Roles.Where(x => c.Select(clan => clan.DiscordRole).Contains(x.Name))
                         .ToArray();
 
@@ -231,56 +216,5 @@ namespace TTMMBot.Modules
                     _commandIsRunning = false;
                 }
             });
-
-        [RequireOwner]
-        [Command("DeleteDB")]
-        [Alias("deletedb")]
-        [Summary("Deletes sqlite db file")]
-        public async Task DeleteDb() => await Task.Run(async () =>
-        {
-            var db = $"{Path.Combine(Directory.GetCurrentDirectory(), "TTMMBot.db")}";
-            File.Delete(db);
-            await ReplyAsync($"{db} has been deleted.");
-            await Restart(false);
-        });
-
-        [RequireOwner]
-        [Command("Show")]
-        [Summary("Show Global settings")]
-        public async Task Show()
-        {
-            var gs = (await DatabaseService.LoadGlobalSettingsAsync());
-            var e = gs.GetEmbedPropertiesWithValues();
-            await ReplyAsync("", false, e as Embed);
-        }
-
-        [RequireOwner]
-        [Command("Set")]
-        [Summary("Set Global settings")]
-        public async Task Set(string propertyName, [Remainder] string value)
-        {
-            var gs = (await DatabaseService.LoadGlobalSettingsAsync());
-            var r = gs.ChangeProperty(propertyName, value);
-            await DatabaseService.SaveDataAsync();
-            await ReplyAsync(r);
-        }
-
-        [RequireOwner]
-        [Command("AddChannelToUrlScan")]
-        [Summary("Adds channel to url scan list")]
-        public async Task AddChannelToUrlScan(IGuildChannel channel)
-        {
-            await ReplyAsync("Not implemented!");
-            await CommandHandler.AddChannelToGoogleFormsWatchList(channel);
-        }
-
-        [RequireOwner]
-        [Command("RemoveChannelFromUrlScan")]
-        [Summary("Removes channel from url scan list")]
-        public async Task RemoveChannelFromUrlScan(IGuildChannel channel)
-        {
-            await ReplyAsync("Not implemented!");
-            await CommandHandler.RemoveChannelFromGoogleFormsWatchList(channel);
-        }
     }
 }

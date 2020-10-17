@@ -1,9 +1,9 @@
-﻿using Discord;
-using Discord.Commands;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Discord;
+using Discord.Commands;
 using TTMMBot.Data.Entities;
 using TTMMBot.Helpers;
 using TTMMBot.Modules.Interfaces;
@@ -35,6 +35,7 @@ namespace TTMMBot.Modules.Member
         [Command("Sort", RunMode = RunMode.Async)]
         [Summary("Sort all members by season high.")]
         [Alias("S")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Sort()
         {
             try
@@ -48,38 +49,10 @@ namespace TTMMBot.Modules.Member
             }
         }
 
-        private async Task ShowMembers(IList<IList<Data.Entities.Member>> mm)
-        {
-            var cQty = (await _databaseService.LoadClansAsync())?.Count();
-
-            if(!cQty.HasValue)
-            {
-                await ReplyAsync($"No member data in db.");
-                return;
-            }
-
-            var page = 0;
-            var message = await ReplyAsync(GetTable(mm[page], page + 1));
-
-            var back = new Emoji("◀️");
-            var next = new Emoji("▶️");
-            await message.AddReactionsAsync(new IEmote[] { back, next });
-
-            await _commandHandler.AddToReactionList(message, async (r, u) =>
-            {
-                if (r.Name == back.Name && page >= 1)
-                    await message.ModifyAsync(me => me.Content = GetTable(mm[--page], page + 1));
-                else if (r.Name == next.Name && page < cQty)
-                    await message.ModifyAsync(me => me.Content = GetTable(mm[++page], page + 1));
-
-                if(u != null)
-                    await message.RemoveReactionAsync(r, u);
-            });
-        }
-
         [Command("Changes", RunMode = RunMode.Async)]
         [Summary("Lists the needed changes to clan memberships.")]
         [Alias("C")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Changes(string compact = null)
         {
             try
@@ -122,6 +95,35 @@ namespace TTMMBot.Modules.Member
             {
                 await ReplyAsync($"{e.Message}");
             }
+        }
+
+        private async Task ShowMembers(IList<IList<Data.Entities.Member>> mm)
+        {
+            var cQty = (await _databaseService.LoadClansAsync())?.Count();
+
+            if(!cQty.HasValue)
+            {
+                await ReplyAsync($"No member data in db.");
+                return;
+            }
+
+            var page = 0;
+            var message = await ReplyAsync(GetTable(mm[page], page + 1));
+
+            var back = new Emoji("◀️");
+            var next = new Emoji("▶️");
+            await message.AddReactionsAsync(new IEmote[] { back, next });
+
+            await _commandHandler.AddToReactionList(message, async (r, u) =>
+            {
+                if (r.Name == back.Name && page >= 1)
+                    await message.ModifyAsync(me => me.Content = GetTable(mm[--page], page + 1));
+                else if (r.Name == next.Name && page < cQty)
+                    await message.ModifyAsync(me => me.Content = GetTable(mm[++page], page + 1));
+
+                if(u != null)
+                    await message.RemoveReactionAsync(r, u);
+            });
         }
 
         private string GetCompactMemberChangesString(List<MemberChanges> changes, IList<Clan> clans)
