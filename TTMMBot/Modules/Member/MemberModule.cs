@@ -30,12 +30,12 @@ namespace TTMMBot.Modules.Member
         [Command("Profile")]
         [Alias("p")]
         [Summary("Shows all information of a member.")]
-        public async Task Show(string name = null)
+        public async Task Profile(string name = null)
         {
             try
             {
                 var m = name != null
-                    ? (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == name)
+                    ? (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => string.CompareOrdinal(x.Name, name) == 0)
                     : (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discord == Context.User.GetUserAndDiscriminator());
 
                 if (m == null)

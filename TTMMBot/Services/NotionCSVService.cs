@@ -153,7 +153,8 @@ namespace TTMMBot.Services
                         else
                             me.IsActive = true;
                     }
-                    
+                    else
+                        me.IsActive = true;
 
                     if (row.Table.Columns.Contains("IgnoreOnMoveUp") && row["IgnoreOnMoveUp"] != DBNull.Value  && bool.TryParse((string)row["IgnoreOnMoveUp"], out var iomu))
                         me.IgnoreOnMoveUp = iomu;
