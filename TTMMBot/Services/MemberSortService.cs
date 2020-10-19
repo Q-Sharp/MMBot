@@ -73,16 +73,17 @@ namespace TTMMBot.Services
                 for(var i = 1; i <= clanQty; i++)
                 {
                     var mL = new List<Member>();
-                    foreach(var m in GetNextMemberForClan(mpool, i, moveQty, chunkSize))
+
+                    var addLeader = current[i - 1].Where(x => x.Role >= Role.CoLeader && mpool.Contains(x));
+                    mL.AddRange(addLeader);
+                    var removed = mpool.RemoveAll(x => mL.Contains(x));
+
+                    foreach(var m in GetNextMemberForClan(mpool, i, removed, moveQty, chunkSize))
                         mL.Add(m);
 
-                    var removed = mpool.RemoveAll(x => mL.Contains(x));
+                    removed += mpool.RemoveAll(x => mL.Contains(x));
                     if(mL.Count() != chunkSize)
                     {
-                        var addLeader = current[i - 1].Where(x => x.Role >= Role.CoLeader && mpool.Contains(x));
-                        mL.AddRange(addLeader);
-                        removed += mpool.RemoveAll(x => mL.Contains(x));
-                        
                         var addMissing = mpool.Where(x => x.Clan.SortOrder <= i).OrderByDescending(x => x.SHigh).Take(chunkSize - removed);
                         mL.AddRange(addMissing);
                         removed += mpool.RemoveAll(x => mL.Contains(x));
@@ -118,9 +119,8 @@ namespace TTMMBot.Services
                 .ToList();
             });
 
-        private IEnumerable<Member> GetNextMemberForClan(List<Member> allMember, int clanSortNo, int moveQty, int chunkSize)
+        private IEnumerable<Member> GetNextMemberForClan(List<Member> allMember, int clanSortNo, int currentSize, int moveQty, int chunkSize)
         {
-            var currentSize = 0;
             var movedQty = 0;
             foreach(var currentMember in allMember)
             {
@@ -129,7 +129,7 @@ namespace TTMMBot.Services
 
                 if(clanSortNo < currentMember.Clan.SortOrder)
                 {
-                    if(currentMember.IgnoreOnMoveUp || currentMember.Role == Role.Leader)
+                    if(currentMember.IgnoreOnMoveUp || currentMember.Role >= Role.CoLeader)
                         continue;
                     else
                         movedQty++;

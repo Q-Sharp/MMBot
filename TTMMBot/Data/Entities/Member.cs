@@ -58,6 +58,7 @@ namespace TTMMBot.Data.Entities
 
         public DiscordStatus DiscordStatus { get; set; } = DiscordStatus.Active;
 
+        [Display]
         public bool IsActive { get; set; }
 
         public int? ClanId { get; set; }
@@ -84,6 +85,7 @@ namespace TTMMBot.Data.Entities
         {
             e.Context.Member.AsQueryable()
                 .Where(x => x.ClanId == e.Entity.ClanId)
+                .ToList()
                 .OrderBy(x => x.Join)
                 .Select((m, i) => new { i, m })
                 .ToList()

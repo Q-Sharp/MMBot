@@ -1,11 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Discord.Commands;
+using TTMMBot.Modules.Énum;
 
 namespace TTMMBot.Modules.Interfaces
 {
     public interface IMemberModule
     {
-        Task List();
+        Task List(SortBy sortBy);
         Task Sort();
         Task Changes(string compact = null);
         Task Profile(string name = null);

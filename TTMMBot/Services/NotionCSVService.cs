@@ -114,6 +114,8 @@ namespace TTMMBot.Services
                         await Context.Member.AddAsync(me);
                     }
 
+                    me.IsActive = true;
+
                     if (row.Table.Columns.Contains("Name") && row["Name"] != DBNull.Value)
                         me.Name = (string)row["Name"];
 
@@ -145,16 +147,14 @@ namespace TTMMBot.Services
                     {
                         me.DiscordStatus = (DiscordStatus)ds;
 
-                        if(me.DiscordStatus != DiscordStatus.Active)
+                        if(me.DiscordStatus == DiscordStatus.NoIdea
+                            || me.DiscordStatus == DiscordStatus.Left
+                            || me.DiscordStatus == DiscordStatus.CertifiedBadass)
                         {
                             me.IsActive = false;
                             me.ClanId = null;
                         }
-                        else
-                            me.IsActive = true;
                     }
-                    else
-                        me.IsActive = true;
 
                     if (row.Table.Columns.Contains("IgnoreOnMoveUp") && row["IgnoreOnMoveUp"] != DBNull.Value  && bool.TryParse((string)row["IgnoreOnMoveUp"], out var iomu))
                         me.IgnoreOnMoveUp = iomu;

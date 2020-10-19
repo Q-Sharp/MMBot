@@ -6,6 +6,7 @@ using Discord;
 using Discord.Commands;
 using TTMMBot.Data.Entities;
 using TTMMBot.Helpers;
+using TTMMBot.Modules.Énum;
 using TTMMBot.Modules.Interfaces;
 using TTMMBot.Services.Interfaces;
 
@@ -19,12 +20,12 @@ namespace TTMMBot.Modules.Member
 
         [Command("List", RunMode = RunMode.Async)]
         [Summary("Lists all members by current clan membership.")]
-        public async Task List()
+        public async Task List(SortBy sortBy = SortBy.SHigh)
         {
             try
             {
                 var m = await _memberSortService.GetCurrentMemberList();
-                await ShowMembers(m);
+                await ShowMembers(m, sortBy);
             }
             catch (Exception e)
             {
@@ -97,7 +98,7 @@ namespace TTMMBot.Modules.Member
             }
         }
 
-        private async Task ShowMembers(IList<IList<Data.Entities.Member>> mm)
+        private async Task ShowMembers(IList<IList<Data.Entities.Member>> mm, SortBy sortBy = SortBy.SHigh)
         {
             var cQty = (await _databaseService.LoadClansAsync())?.Count();
 
@@ -108,7 +109,7 @@ namespace TTMMBot.Modules.Member
             }
 
             var page = 0;
-            var message = await ReplyAsync(GetTable(mm[page], page + 1));
+            var message = await ReplyAsync(GetTable(mm[page], page + 1, sortBy));
 
             var back = new Emoji("◀️");
             var next = new Emoji("▶️");
@@ -117,9 +118,9 @@ namespace TTMMBot.Modules.Member
             await _commandHandler.AddToReactionList(message, async (r, u) =>
             {
                 if (r.Name == back.Name && page >= 1)
-                    await message.ModifyAsync(me => me.Content = GetTable(mm[--page], page + 1));
+                    await message.ModifyAsync(me => me.Content = GetTable(mm[--page], page + 1, sortBy));
                 else if (r.Name == next.Name && page < cQty)
-                    await message.ModifyAsync(me => me.Content = GetTable(mm[++page], page + 1));
+                    await message.ModifyAsync(me => me.Content = GetTable(mm[++page], page + 1, sortBy));
 
                 if(u != null)
                     await message.RemoveReactionAsync(r, u);
@@ -168,10 +169,21 @@ namespace TTMMBot.Modules.Member
             return r;
         }
 
-        private string GetTable(IList<Data.Entities.Member> members, int? clanNo = null)
+        private string GetTable(IList<Data.Entities.Member> members, int? clanNo = null, SortBy sortBy = SortBy.SHigh)
         {
             if(members is null || members.Count <= 0)
                 return null;
+
+            switch(sortBy)
+            {
+                case SortBy.Name:
+                    members = members.OrderBy(x => x.Name).ToList();
+                    break;
+
+                case SortBy.SHigh:
+                    members = members.OrderByDescending(x => x.SHigh).ToList();
+                    break;
+            }
 
             var clans = members.Select(x => new { x.Clan.Tag, x.Clan.Name }).Distinct().OrderBy(x => x.Tag).ThenBy(x => x.Name).ToList();
 
