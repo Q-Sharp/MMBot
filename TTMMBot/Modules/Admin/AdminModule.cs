@@ -65,6 +65,8 @@ namespace TTMMBot.Modules.Admin
                             : $"ERROR: {result.Message}");
                     }
                 }
+
+                _databaseService.CleanDB();
             }
             catch (Exception e)
             {
