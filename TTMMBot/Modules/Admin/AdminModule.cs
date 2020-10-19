@@ -66,7 +66,7 @@ namespace TTMMBot.Modules.Admin
                     }
                 }
 
-                _databaseService.CleanDB();
+                await _databaseService.CleanDB();
             }
             catch (Exception e)
             {

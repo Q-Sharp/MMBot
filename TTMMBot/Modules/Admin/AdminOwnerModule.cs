@@ -53,14 +53,24 @@ namespace TTMMBot.Modules.Admin
             await ReplyAsync("", false, e as Embed);
         }
 
-        [RequireOwner]
         [Command("Set")]
         [Summary("Set Global settings")]
+        [RequireOwner]
         public async Task Set(string propertyName, [Remainder] string value)
         {
             var gs = (await _databaseService.LoadGlobalSettingsAsync());
             var r = gs.ChangeProperty(propertyName, value);
             await _databaseService.SaveDataAsync();
+            await ReplyAsync(r);
+        }
+
+        [Command("Get")]
+        [Summary("Get Global setting")]
+        [RequireOwner]
+        public async Task Get(string propertyName)
+        {
+            var gs = await _databaseService.LoadGlobalSettingsAsync();
+            var r = gs.GetProperty(propertyName);
             await ReplyAsync(r);
         }
 
