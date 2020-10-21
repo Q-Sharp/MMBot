@@ -16,18 +16,16 @@ namespace TTMMBot.Modules.Member
     {
         private readonly IDatabaseService _databaseService;
         private readonly ICommandHandler _commandHandler;
-        private readonly IGlobalSettingsService _globalSettings;
         private readonly IMemberSortService _memberSortService;
 
-        public MemberModule(IDatabaseService databaseService, ICommandHandler commandHandler, IGlobalSettingsService globalSettingsService, IMemberSortService memberSortService)
+        public MemberModule(IDatabaseService databaseService, ICommandHandler commandHandler, IMemberSortService memberSortService)
         {
             _databaseService = databaseService;
             _commandHandler = commandHandler;
-            _globalSettings = globalSettingsService;
             _memberSortService = memberSortService;
         }
 
-        [Command("Profile")]
+        [Command("Profile", RunMode = RunMode.Async)]
         [Alias("p")]
         [Summary("Shows all information of a member.")]
         public async Task Profile(string name = null)
@@ -35,14 +33,11 @@ namespace TTMMBot.Modules.Member
             try
             {
                 var m = name != null
-                    ? (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => string.CompareOrdinal(x.Name, name) == 0)
+                    ? await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(name, Context.Channel, _commandHandler)
                     : (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discord == Context.User.GetUserAndDiscriminator());
 
                 if (m == null)
-                {
-                    await ReplyAsync($"I can't find {name ?? "you"}!");
                     return;
-                }
 
                 var imageUrl = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => x.GetUserAndDiscriminator() == m.Discord)?.GetAvatarUrl());
                 var e = m.GetEmbedPropertiesWithValues(imageUrl);

@@ -21,7 +21,7 @@ namespace TTMMBot.Tests.Modules
             CommandHandler = A.Fake<ICommandHandler>();
             MemberSortService = A.Fake<IMemberSortService>();
 
-            return A.Fake<MemberModule>(x => x.WithArgumentsForConstructor(() => new MemberModule(DatabaseService, CommandHandler, GlobalSettings, MemberSortService)));
+            return A.Fake<MemberModule>(x => x.WithArgumentsForConstructor(() => new MemberModule(DatabaseService, CommandHandler, MemberSortService)));
         }
 
 

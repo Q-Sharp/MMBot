@@ -11,6 +11,8 @@ namespace TTMMBot.Helpers
 {
     public static class EntityHelpers
     {
+        private static BindingFlags cisBF = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic |  BindingFlags.Static | BindingFlags.IgnoreCase;
+
         public static string ChangeProperty<T>(this T m, string propertyName, string newValue) 
             where T : class
         {
@@ -19,16 +21,16 @@ namespace TTMMBot.Helpers
 
             try
             {
-                var pr = m.GetType().GetRuntimeProperty(propertyName);
+                var pr = m.GetType().GetProperty(propertyName, cisBF);
                 if (pr != null)
                 {
                     var t = Nullable.GetUnderlyingType(pr.PropertyType) ?? pr.PropertyType;
                     var safeValue = (newValue == null) ? null : Enum.TryParse(newValue.ToString(), out Role eNum) ? eNum : Convert.ChangeType(newValue, t);
                     var val = Convert.ChangeType(safeValue, t);
 
-                    var oldPropValue = m.GetType().GetProperty(propertyName)?.GetValue(m, null);
-                    m.GetType().GetProperty(propertyName)?.SetValue(m, val);
-                    var newPropValue = m.GetType().GetProperty(propertyName)?.GetValue(m, null);
+                    var oldPropValue = m.GetType().GetProperty(propertyName, cisBF)?.GetValue(m, null);
+                    m.GetType().GetProperty(propertyName, cisBF)?.SetValue(m, val);
+                    var newPropValue = m.GetType().GetProperty(propertyName, cisBF)?.GetValue(m, null);
 
                     message = $"The {on} {m} now uses {newPropValue} instead of {oldPropValue} as {propertyName}.";
                 }
@@ -49,11 +51,11 @@ namespace TTMMBot.Helpers
 
             try
             {
-                var pr = m.GetType().GetRuntimeProperty(propertyName);
+                var pr = m.GetType().GetProperty(propertyName, cisBF);
                 if (pr != null)
                 {
                     var t = Nullable.GetUnderlyingType(pr.PropertyType) ?? pr.PropertyType;
-                    var PropValue = m.GetType().GetProperty(propertyName)?.GetValue(m, null);
+                    var PropValue = m.GetType().GetProperty(propertyName, cisBF)?.GetValue(m, null);
 
                     message = $"The {on} {m} uses {PropValue} as {propertyName}.";
                 }
@@ -80,11 +82,11 @@ namespace TTMMBot.Helpers
                     ThumbnailUrl = imageUrl,
                 };
 
-                var pr = m.GetType().GetRuntimeProperties().Where(x => x.CustomAttributes.Any(x => x.AttributeType == typeof(DisplayAttribute))).ToArray();
+                var pr = m.GetType().GetProperties(cisBF).Where(x => x.CustomAttributes.Any(x => x.AttributeType == typeof(DisplayAttribute))).ToArray();
 
                 foreach (var p in pr)
                 {
-                    var pVal = m.GetType().GetProperty(p.Name)?.GetValue(m, null);
+                    var pVal = m.GetType().GetProperty(p.Name, cisBF)?.GetValue(m, null);
                     var t = Nullable.GetUnderlyingType(p.PropertyType) ?? p.PropertyType;
                     var val = Convert.ChangeType(pVal, t);
 
@@ -113,13 +115,13 @@ namespace TTMMBot.Helpers
             {
                 return ml.Where(m => 
                 {
-                    var pr = m.GetType().GetRuntimeProperty(propertyName);
+                    var pr = m.GetType().GetProperty(propertyName, cisBF);
                     
                     var t = Nullable.GetUnderlyingType(pr.PropertyType) ?? pr.PropertyType;
                     var safeValue = (value == null) ? null : Enum.TryParse(value.ToString(), out Role eNum) ? eNum : Convert.ChangeType(value, t);
                     var val = Convert.ChangeType(safeValue, t);
 
-                    var actPropValue = m.GetType().GetProperty(propertyName)?.GetValue(m, null);
+                    var actPropValue = m.GetType().GetProperty(propertyName, cisBF)?.GetValue(m, null);
 
                     return Comparer.DefaultInvariant.Compare(actPropValue, val) == 0; 
                 })

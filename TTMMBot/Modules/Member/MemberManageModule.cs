@@ -21,7 +21,7 @@ namespace TTMMBot.Modules.Member
         {
             try
             {
-                var m = (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase));
+                var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(name, Context.Channel, _commandHandler);
                 _databaseService.DeleteMember(m);
                 await _databaseService.SaveDataAsync();
                 await ReplyAsync($"The member {m} was deleted");
@@ -37,7 +37,7 @@ namespace TTMMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Set(string name, string propertyName, [Remainder] string value)
         {
-            var m = (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase));
+            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(name, Context.Channel, _commandHandler);
             var r = m.ChangeProperty(propertyName, value);
             await _databaseService.SaveDataAsync();
             await ReplyAsync(r);
@@ -48,7 +48,7 @@ namespace TTMMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Get(string name, string propertyName)
         {
-            var m = (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase));
+            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(name, Context.Channel, _commandHandler);
             var r = m.GetProperty(propertyName);
             await ReplyAsync(r);
         }

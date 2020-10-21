@@ -11,7 +11,7 @@ namespace TTMMBot.Services.Interfaces
         Task InitializeAsync();
         Task HandleCommandAsync(SocketMessage arg);
         Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result);
-        Task AddToReactionList(IUserMessage message, Func<IEmote, IUser, Task> fT);
+        Task AddToReactionList(IUserMessage message, Func<IEmote, IUser, Task> fT, bool allowMultiple = true);
         Task AddChannelToGoogleFormsWatchList(IGuildChannel channel);
         Task RemoveChannelFromGoogleFormsWatchList(IGuildChannel channel);
     }

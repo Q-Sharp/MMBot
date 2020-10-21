@@ -84,7 +84,7 @@ namespace TTMMBot.Modules.Member
                     {
                        if (r.Name == back.Name && page >= 1)
                            await message.ModifyAsync(me => me.Content = GetDetailedMemberChangesString(result, --page, c));
-                       else if (r.Name == next.Name && page < cQty)
+                       else if (r.Name == next.Name && page < cQty-1)
                            await message.ModifyAsync(me => me.Content = GetDetailedMemberChangesString(result, ++page, c));
 
                        if(u != null)

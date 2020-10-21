@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -10,35 +11,35 @@ using System.Threading.Tasks;
 using TTMMBot.Helpers;
 using TTMMBot.Services.Interfaces;
 
-namespace TTMMBot.Services
+namespace TTMMBot.Services.CommandHandler
 {
-    public class CommandHandler : ICommandHandler
+    public partial class CommandHandler : ICommandHandler
     {
-        private readonly IDictionary<ulong, Func<IEmote, IUser, Task>> _messageIdWithReaction = new Dictionary<ulong, Func<IEmote, IUser, Task>>();
-        private readonly IList<ISocketMessageChannel> _channelList = new List<ISocketMessageChannel>();
-
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
         private readonly IServiceProvider _services;
-        private readonly IGlobalSettingsService _gs;
-        private readonly IDatabaseService _databaseService;
-        private readonly IGoogleFormsService _googleFormsSubmissionService;
         private readonly ILogger<CommandHandler> _logger;
+        private readonly IList<ISocketMessageChannel> _channelList = new List<ISocketMessageChannel>();
 
-        public CommandHandler(IServiceProvider services, CommandService commands, DiscordSocketClient client, GlobalSettingsService gs, ILogger<CommandHandler> logger, IDatabaseService databaseService, IGoogleFormsService gfss)
+        private IGlobalSettingsService _gs;
+        private IDatabaseService _databaseService;
+        private IGoogleFormsService _googleFormsSubmissionService;
+
+        public CommandHandler(IServiceProvider services, CommandService commands, DiscordSocketClient client, ILogger<CommandHandler> logger)
         {
             _commands = commands;
             _services = services;
             _client = client;
-            _gs = gs;
             _logger = logger;
-            _databaseService = databaseService;
-            _googleFormsSubmissionService = gfss;
         }
 
         public async Task InitializeAsync()
         {
             await _commands.AddModulesAsync(GetType().Assembly, _services);
+
+            _databaseService = _services.GetService<IDatabaseService>();
+            _gs = _services.GetService<IGlobalSettingsService>();
+            _googleFormsSubmissionService = _services.GetService<IGoogleFormsService>();
 
             _commands.CommandExecuted += CommandExecutedAsync;
 
@@ -77,16 +78,6 @@ namespace TTMMBot.Services
             });
         }
 
-        private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
-            => await Task.Run(() =>
-            {
-                lock (_messageIdWithReaction)
-                {
-                    if (_messageIdWithReaction.Keys.Contains(arg3.MessageId) && arg3.UserId != _client.CurrentUser.Id)
-                        _messageIdWithReaction[arg3.MessageId](arg3.Emote, arg3.User.IsSpecified ? arg3.User.Value : null);
-                }
-            });
-
         public async Task HandleCommandAsync(SocketMessage arg)
         {
             if (_channelList.Contains(arg.Channel))
@@ -119,23 +110,6 @@ namespace TTMMBot.Services
                 return;
 
             await context.Channel.SendMessageAsync($"error: {result}");
-        }
-
-        public Task AddToReactionList(IUserMessage message, Func<IEmote, IUser, Task> fT)
-        {
-            lock (_messageIdWithReaction)
-            {
-                _messageIdWithReaction.Add(message.Id, fT);
-            }
-
-            return Task.Delay(_gs.WaitForReaction)
-                .ContinueWith(x =>
-                {
-                    lock (_messageIdWithReaction)
-                    {
-                        _messageIdWithReaction.Remove(message.Id);
-                    }
-                });
         }
 
         public Task AddChannelToGoogleFormsWatchList(IGuildChannel channel)

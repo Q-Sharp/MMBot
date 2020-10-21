@@ -9,6 +9,7 @@ using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using TTMMBot.Data;
 using TTMMBot.Services;
+using TTMMBot.Services.CommandHandler;
 using TTMMBot.Services.GoogleForms;
 using TTMMBot.Services.Interfaces;
 
@@ -68,13 +69,14 @@ namespace TTMMBot
                     var dsc = new DiscordSocketClient(new DiscordSocketConfig
                     {
                         LogLevel = LogSeverity.Warning,
-                        MessageCacheSize = 300,                       
+                        MessageCacheSize = 300
                     });
 
                     var cs = new CommandService(new CommandServiceConfig
                     {
                         LogLevel = LogSeverity.Warning,
                         CaseSensitiveCommands = false,
+                        DefaultRunMode = RunMode.Async,
                         SeparatorChar = ' '
                     });
 
