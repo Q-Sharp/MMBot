@@ -12,7 +12,7 @@ using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Modules.Member
 {
-    public partial class MemberModule : ModuleBase<SocketCommandContext>, IMemberModule
+    public partial class MemberModule : MMBotModule, IMemberModule
     {
         private readonly string[] _header = { "Name", "Clan", "Join", "SHigh", "Role" };
         private readonly int[] _pad = { 16, 4, 4, 5, 7 };

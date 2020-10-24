@@ -23,7 +23,7 @@ namespace TTMMBot.Tests.Services
         private MemberSortService GetMemberSortService()
         {
             var dbs = A.Fake<IDatabaseService>();
-            var gss = A.Fake<IGlobalSettingsService>();
+            var gss = A.Fake<IGuildSettingsService>();
             var mss = new MemberSortService(dbs, gss);
 
             return mss;

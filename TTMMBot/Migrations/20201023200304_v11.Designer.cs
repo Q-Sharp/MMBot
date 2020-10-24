@@ -9,14 +9,31 @@ using TTMMBot.Data;
 namespace TTMMBot.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20200905145848_v7")]
-    partial class v7
+    [Migration("20201023200304_v11")]
+    partial class v11
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.7");
+                .HasAnnotation("ProductVersion", "3.1.9");
+
+            modelBuilder.Entity("TTMMBot.Data.Entities.Channel", b =>
+                {
+                    b.Property<int>("ChannelId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<ulong>("GuildId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<ulong>("TextChannelId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ChannelId");
+
+                    b.ToTable("Channel");
+                });
 
             modelBuilder.Entity("TTMMBot.Data.Entities.Clan", b =>
                 {
@@ -26,6 +43,9 @@ namespace TTMMBot.Migrations
 
                     b.Property<string>("DiscordRole")
                         .HasColumnType("TEXT");
+
+                    b.Property<ulong>("GuildId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
@@ -48,9 +68,9 @@ namespace TTMMBot.Migrations
                     b.ToTable("Clan");
                 });
 
-            modelBuilder.Entity("TTMMBot.Data.Entities.guildSettings", b =>
+            modelBuilder.Entity("TTMMBot.Data.Entities.GuildSettings", b =>
                 {
-                    b.Property<int>("guildSettingsId")
+                    b.Property<int>("GuildSettingsId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -59,6 +79,9 @@ namespace TTMMBot.Migrations
 
                     b.Property<string>("FileName")
                         .HasColumnType("TEXT");
+
+                    b.Property<ulong>("GuildId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("MemberMovementQty")
                         .HasColumnType("INTEGER");
@@ -72,9 +95,9 @@ namespace TTMMBot.Migrations
                     b.Property<TimeSpan>("WaitForReaction")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("guildSettingsId");
+                    b.HasKey("GuildSettingsId");
 
-                    b.ToTable("guildSettings");
+                    b.ToTable("GuildSettings");
                 });
 
             modelBuilder.Entity("TTMMBot.Data.Entities.Member", b =>
@@ -84,6 +107,9 @@ namespace TTMMBot.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("AHigh")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("AutoSignUpForFightNight")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("ClanId")
@@ -96,6 +122,9 @@ namespace TTMMBot.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("Donations")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<ulong>("GuildId")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IgnoreOnMoveUp")
@@ -112,6 +141,9 @@ namespace TTMMBot.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PlayerTag")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Role")

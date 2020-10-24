@@ -15,23 +15,18 @@ namespace TTMMBot.Modules.Admin
     [Name("Admin")]
     [Group("Admin")]
     [Alias("admin", "a", "A")]
-    public partial class AdminModule : ModuleBase<SocketCommandContext>, IAdminModule
+    public partial class AdminModule : MMBotModule, IAdminModule
     {
         private static volatile bool _commandIsRunning;
         
-        private readonly IDatabaseService _databaseService;
         private readonly INotionCsvService _csvService;
         private readonly IAdminService _adminService;
-        private readonly IGlobalSettingsService _globalSettings;
-        private readonly ICommandHandler _commandHandler;
 
-        public AdminModule(IDatabaseService databaseService, INotionCsvService csvService, IAdminService adminService, IGlobalSettingsService globalSettings, ICommandHandler commandHandler)
+        public AdminModule(IDatabaseService databaseService, INotionCsvService csvService, IAdminService adminService, IGuildSettingsService guildSettings, ICommandHandler commandHandler)
+            : base(databaseService, guildSettings, commandHandler)
         {
-            _databaseService = databaseService;
             _csvService = csvService;
             _adminService = adminService;
-            _globalSettings = globalSettings;
-            _commandHandler = commandHandler;
         }
 
         [Command("ImportCSV", RunMode = RunMode.Async)]
@@ -119,11 +114,11 @@ namespace TTMMBot.Modules.Admin
                 if (_csvService != null)
                 {
                     var result = await _csvService?.ExportCsv();
-                    await File.WriteAllBytesAsync(_globalSettings.FileName, result);
+                    await File.WriteAllBytesAsync(_guildSettings.FileName, result);
                 }
 
-                await Context.Channel.SendFileAsync(_globalSettings.FileName, "Csv db export");
-                File.Delete(_globalSettings.FileName);
+                await Context.Channel.SendFileAsync(_guildSettings.FileName, "Csv db export");
+                File.Delete(_guildSettings.FileName);
             }
             catch (Exception e)
             {

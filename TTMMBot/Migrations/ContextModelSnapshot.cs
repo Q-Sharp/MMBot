@@ -14,7 +14,7 @@ namespace TTMMBot.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.8");
+                .HasAnnotation("ProductVersion", "3.1.9");
 
             modelBuilder.Entity("TTMMBot.Data.Entities.Channel", b =>
                 {
@@ -42,6 +42,9 @@ namespace TTMMBot.Migrations
                     b.Property<string>("DiscordRole")
                         .HasColumnType("TEXT");
 
+                    b.Property<ulong>("GuildId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
@@ -63,9 +66,9 @@ namespace TTMMBot.Migrations
                     b.ToTable("Clan");
                 });
 
-            modelBuilder.Entity("TTMMBot.Data.Entities.GlobalSettings", b =>
+            modelBuilder.Entity("TTMMBot.Data.Entities.GuildSettings", b =>
                 {
-                    b.Property<int>("GlobalSettingsId")
+                    b.Property<int>("GuildSettingsId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -75,21 +78,21 @@ namespace TTMMBot.Migrations
                     b.Property<string>("FileName")
                         .HasColumnType("TEXT");
 
+                    b.Property<ulong>("GuildId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("MemberMovementQty")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Prefix")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("UseTriggers")
-                        .HasColumnType("INTEGER");
-
                     b.Property<TimeSpan>("WaitForReaction")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("GlobalSettingsId");
+                    b.HasKey("GuildSettingsId");
 
-                    b.ToTable("GlobalSettings");
+                    b.ToTable("GuildSettings");
                 });
 
             modelBuilder.Entity("TTMMBot.Data.Entities.Member", b =>
@@ -114,6 +117,9 @@ namespace TTMMBot.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("Donations")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<ulong>("GuildId")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IgnoreOnMoveUp")

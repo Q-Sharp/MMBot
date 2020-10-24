@@ -13,12 +13,12 @@ namespace TTMMBot.Services
     public class MemberSortService : IMemberSortService
     {
         private readonly IDatabaseService _databaseService;
-        private readonly IGlobalSettingsService _globalSettings;
+        private readonly IGuildSettingsService _guildSettings;
 
-        public MemberSortService(IDatabaseService databaseService, IGlobalSettingsService globalSettings)
+        public MemberSortService(IDatabaseService databaseService, IGuildSettingsService guildSettings)
         {
             _databaseService = databaseService;
-            _globalSettings = globalSettings;
+            _guildSettings = guildSettings;
         }
 
         public async Task<IList<MemberChanges>> GetChanges(ExchangeMode memberExchangeMode = ExchangeMode.SkipSteps)
@@ -34,12 +34,12 @@ namespace TTMMBot.Services
 
             var future = m.OrderByDescending(x => x.SHigh)
                 .ToList()
-                .ChunkBy(_globalSettings.ClanSize);
+                .ChunkBy(_guildSettings.ClanSize);
 
             if (current is null || future is null)
                 return null;
 
-            var moveQty = _globalSettings.MemberMovementQty;
+            var moveQty = _guildSettings.MemberMovementQty;
             List<MemberChanges> result = null;
 
             switch(memberExchangeMode)
@@ -49,7 +49,7 @@ namespace TTMMBot.Services
                     break;
 
                 case ExchangeMode.SkipSteps:
-                    result = await GetSkipStepsMemberMovement(m.OrderByDescending(y => y.SHigh).ToList(), moveQty, _globalSettings.ClanSize, cqty);
+                    result = await GetSkipStepsMemberMovement(m.OrderByDescending(y => y.SHigh).ToList(), moveQty, _guildSettings.ClanSize, cqty);
                     break;
             }
 
@@ -197,7 +197,7 @@ namespace TTMMBot.Services
         public async Task<IList<IList<Member>>> GetSortedMemberList(SortMode sortedBy = SortMode.BySeasonHigh)
         {
             var m = (await _databaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
-            int? chunkSize = _globalSettings.ClanSize;
+            int? chunkSize = _guildSettings.ClanSize;
 
             switch(sortedBy)
             {

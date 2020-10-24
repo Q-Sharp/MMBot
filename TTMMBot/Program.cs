@@ -1,12 +1,12 @@
-﻿using System;
-using Discord;
+﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using EntityFrameworkCore.Triggers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
+using System;
 using TTMMBot.Data;
 using TTMMBot.Services;
 using TTMMBot.Services.CommandHandler;
@@ -35,20 +35,7 @@ namespace TTMMBot
             Log.CloseAndFlush();
         }
 
-        private static void CurrentDomain_ProcessExit(object sender, EventArgs e)
-        {
-            if (_services != null)
-            {
-                var discordClient = _services.GetService<DiscordSocketClient>();
-                if (discordClient != null)
-                {
-                    discordClient.LogoutAsync().Wait();
-                    discordClient.StopAsync().Wait();
-                }
-            }
-
-            Log.Logger.Information("Exiting!");
-        }
+        private static void CurrentDomain_ProcessExit(object sender, EventArgs e) => Log.Logger.Information("Exiting!");
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
@@ -64,12 +51,17 @@ namespace TTMMBot
            new HostBuilder()
                 .ConfigureLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true))
                 .UseSystemd()
+                .ConfigureAppConfiguration((hostContext, configBuilder) =>
+                {
+                    configBuilder.AddEnvironmentVariables("MMBot_");
+                })
                 .ConfigureServices((hostContext, services) =>
                 {
                     var dsc = new DiscordSocketClient(new DiscordSocketConfig
                     {
                         LogLevel = LogSeverity.Warning,
-                        MessageCacheSize = 300
+                        MessageCacheSize = 1000,
+                        DefaultRetryMode = RetryMode.AlwaysRetry
                     });
 
                     var cs = new CommandService(new CommandServiceConfig
@@ -88,16 +80,15 @@ namespace TTMMBot
                         c.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");
                     });
 
-                    services.AddHostedService<DiscordWorker>()
-                        .AddSingleton<GlobalSettingsService>()
+                     services.AddHostedService<DiscordWorker>()
+                        .AddSingleton<GuildSettingsService>()
                         .AddDbContext<Context>()
-                        .AddTriggers()
-                        .AddSingleton<IGlobalSettingsService, GlobalSettingsService>()
+                        .AddSingleton<IGuildSettingsService, GuildSettingsService>()
                         .AddSingleton(dsc)
                         .AddSingleton(cs)
                         .AddTransient<IGoogleFormsService, GoogleFormsService>()
                         .AddSingleton<ICommandHandler, CommandHandler>()
-                        .AddSingleton<IGlobalSettingsService, GlobalSettingsService>()
+                        .AddSingleton<IGuildSettingsService, GuildSettingsService>()
                         .AddTransient<IDatabaseService, DatabaseService>()
                         .AddTransient<INotionCsvService, NotionCsvService>()
                         .AddTransient<IAdminService, AdminService>()

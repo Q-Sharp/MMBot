@@ -10,7 +10,7 @@ using TTMMBot.Modules.Interfaces;
 
 namespace TTMMBot.Modules.Admin
 {
-    public partial class AdminModule : ModuleBase<SocketCommandContext>, IAdminModule
+    public partial class AdminModule : MMBotModule, IAdminModule
     {
         [Command("Restart")]
         [Alias("restart")]
@@ -48,7 +48,7 @@ namespace TTMMBot.Modules.Admin
         [RequireOwner]
         public async Task Show()
         {
-            var gs = (await _databaseService.LoadGlobalSettingsAsync());
+            var gs = (await _databaseService.LoadGuildSettingsAsync());
             var e = gs.GetEmbedPropertiesWithValues();
             await ReplyAsync("", false, e as Embed);
         }
@@ -58,7 +58,7 @@ namespace TTMMBot.Modules.Admin
         [RequireOwner]
         public async Task Set(string propertyName, [Remainder] string value)
         {
-            var gs = (await _databaseService.LoadGlobalSettingsAsync());
+            var gs = (await _databaseService.LoadGuildSettingsAsync());
             var r = gs.ChangeProperty(propertyName, value);
             await _databaseService.SaveDataAsync();
             await ReplyAsync(r);
@@ -69,7 +69,7 @@ namespace TTMMBot.Modules.Admin
         [RequireOwner]
         public async Task Get(string propertyName)
         {
-            var gs = await _databaseService.LoadGlobalSettingsAsync();
+            var gs = await _databaseService.LoadGuildSettingsAsync();
             var r = gs.GetProperty(propertyName);
             await ReplyAsync(r);
         }

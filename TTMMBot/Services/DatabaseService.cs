@@ -12,31 +12,33 @@ namespace TTMMBot.Services
 {
     public class DatabaseService : IDatabaseService
     {
-        public Context Context { get; set; }
-        public DatabaseService(Context context) => Context = context;
+        private Context _context;
+        private ulong _guildId;
+
+        public DatabaseService(Context context) => _context = context;
         
-        public async Task<Clan> CreateClanAsync() => (await Context.AddAsync(new Clan(), new CancellationToken())).Entity;
-        public async Task<IList<Clan>> LoadClansAsync() => await Context.Clan.ToListAsync();
-        public void DeleteClan(Clan c) => Context.Remove(c);
+        public async Task<Clan> CreateClanAsync() => (await _context.AddAsync(new Clan{ GuildId = _guildId }, new CancellationToken())).Entity;
+        public async Task<IList<Clan>> LoadClansAsync() => await _context.Clan.AsAsyncEnumerable().Where(x => x.GuildId == _guildId).ToListAsync();
+        public void DeleteClan(Clan c) => _context.Remove(c);
 
-        public async Task<Member> CreateMemberAsync() => (await Context.AddAsync(new Member(), new CancellationToken())).Entity;
-        public async Task<IList<Member>> LoadMembersAsync() => await Context.Member.ToListAsync();
-        public void DeleteMember(Member m) => Context.Remove(m);
+        public async Task<Member> CreateMemberAsync() => (await _context.AddAsync(new Member{ GuildId = _guildId }, new CancellationToken())).Entity;
+        public async Task<IList<Member>> LoadMembersAsync() => await _context.Member.AsAsyncEnumerable().Where(x => x.GuildId == _guildId).ToListAsync();
+        public void DeleteMember(Member m) => _context.Remove(m);
 
-        public async Task MigrateAsync() => await Context?.MigrateAsync();
-        public async Task SaveDataAsync() => await Context?.SaveChangesAsync(new CancellationToken());
+        public async Task MigrateAsync() => await _context?.MigrateAsync();
+        public async Task SaveDataAsync() => await _context?.SaveChangesAsync(new CancellationToken());
 
-        public async Task<GlobalSettings> LoadGlobalSettingsAsync() => await Context.GlobalSettings.FirstOrDefaultAsync();
+        public async Task<GuildSettings> LoadGuildSettingsAsync() => await _context.GuildSettings.AsAsyncEnumerable().Where(x => x.GuildId == _guildId).FirstOrDefaultAsync();
 
-        public async Task<Restart> AddRestart() => (await Context.AddAsync(new Restart(), new CancellationToken())).Entity;
+        public async Task<Restart> AddRestart() => (await _context.AddAsync(new Restart(), new CancellationToken())).Entity;
         public async Task<Tuple<ulong, ulong>> ConsumeRestart()
         {
             try
             {
-                var r = await Context.Restart.FirstOrDefaultAsync();
+                var r = await _context.Restart.FirstOrDefaultAsync();
                 var t = new Tuple<ulong, ulong>(r.Guild, r.Channel);
-                Context.Restart.Remove(r);
-                await Context.SaveChangesAsync(new CancellationToken());
+                _context.Restart.Remove(r);
+                await _context.SaveChangesAsync(new CancellationToken());
                 return t;
             }
             catch
@@ -45,9 +47,9 @@ namespace TTMMBot.Services
             }
         }
 
-        public async Task<Channel> CreateChannelAsync() => (await Context.AddAsync(new Channel(), new CancellationToken())).Entity;
-        public async Task<IList<Channel>> LoadChannelsAsync() => await Context.Channel.ToListAsync();
-        public void DeleteChannel(Channel c) => Context.Remove(c);
+        public async Task<Channel> CreateChannelAsync() => (await _context.AddAsync(new Channel(), new CancellationToken())).Entity;
+        public async Task<IList<Channel>> LoadChannelsAsync() => await _context.Channel.AsAsyncEnumerable().Where(x => x.GuildId == _guildId).ToListAsync();
+        public void DeleteChannel(Channel c) => _context.Remove(c);
 
         public async Task CleanDB()
         {
@@ -57,12 +59,14 @@ namespace TTMMBot.Services
             m.Where(x => x.ClanId == 0 || x.Name == string.Empty).ForEach(x =>
             {
                 var id = x.ClanId;
-                Context.Remove(x);
+                _context.Remove(x);
 
                 if(id.HasValue)
-                    Context.Remove(c.FirstOrDefault(y => y.ClanId == id));
-                Context.SaveChanges();
+                    _context.Remove(c.FirstOrDefault(y => y.ClanId == id));
+                _context.SaveChanges();
             });
         }
+
+        public void SetGuild(ulong id) => _guildId = id;
     }
 }

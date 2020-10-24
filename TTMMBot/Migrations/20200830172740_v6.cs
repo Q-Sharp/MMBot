@@ -8,10 +8,10 @@ namespace TTMMBot.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "GlobalSettings",
+                name: "guildSettings",
                 columns: table => new
                 {
-                    GlobalSettingsId = table.Column<int>(nullable: false)
+                    guildSettingsId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Prefix = table.Column<string>(nullable: true),
                     WaitForReaction = table.Column<TimeSpan>(nullable: false),
@@ -21,7 +21,7 @@ namespace TTMMBot.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GlobalSettings", x => x.GlobalSettingsId);
+                    table.PrimaryKey("PK_guildSettings", x => x.guildSettingsId);
                 });
 
             migrationBuilder.CreateTable(
@@ -42,7 +42,7 @@ namespace TTMMBot.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "GlobalSettings");
+                name: "guildSettings");
 
             migrationBuilder.DropTable(
                 name: "Restart");

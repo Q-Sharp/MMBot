@@ -9,15 +9,14 @@ using TTMMBot.Services.Interfaces;
 namespace TTMMBot.Modules
 {
     [Name("Help")]
-    public class HelpModule : ModuleBase<SocketCommandContext>, IHelpModule
+    public class HelpModule : MMBotModule, IHelpModule
     {
-        private readonly IGlobalSettingsService _gss;
         private readonly CommandService _service;
 
-        public HelpModule(CommandService service, IGlobalSettingsService globalSettingsService)
+        public HelpModule(CommandService service, IDatabaseService databaseService,  IGuildSettingsService guildSettings, ICommandHandler commandHandler)
+            : base(databaseService, guildSettings, commandHandler)
         {
             _service = service;
-            _gss = globalSettingsService;
         }
 
         [Command("help")]
@@ -45,11 +44,11 @@ namespace TTMMBot.Modules
                     var args = string.Join(" ", cmd.Parameters?.Select(x => $"[{x.Name}]").ToArray() ?? Array.Empty<string>());
 
                     if (string.Equals(cmd.Name, module.Group, StringComparison.InvariantCultureIgnoreCase))
-                        description += $"{_gss.Prefix}{module.Group} {args}{Environment.NewLine}";
+                        description += $"{_guildSettings.Prefix}{module.Group} {args}{Environment.NewLine}";
                     else if(string.IsNullOrWhiteSpace(module.Group))
-                        description += $"{_gss.Prefix}{cmd.Name} {args}{Environment.NewLine}";
+                        description += $"{_guildSettings.Prefix}{cmd.Name} {args}{Environment.NewLine}";
                     else
-                        description += $"{_gss.Prefix}{module.Group} {cmd.Name} {args}{Environment.NewLine}";
+                        description += $"{_guildSettings.Prefix}{module.Group} {cmd.Name} {args}{Environment.NewLine}";
                 }
 
                 if (!string.IsNullOrWhiteSpace(description))

@@ -11,7 +11,7 @@ namespace TTMMBot.Modules.Member
     /// <summary>
     /// Methods for Managers
     /// </summary>
-    public partial class MemberModule : ModuleBase<SocketCommandContext>, IMemberModule
+    public partial class MemberModule : MMBotModule, IMemberModule
     {
         [Command("Delete")]
         [Alias("D")]

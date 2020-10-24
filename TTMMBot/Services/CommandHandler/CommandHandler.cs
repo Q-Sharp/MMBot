@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using TTMMBot.Helpers;
+using TTMMBot.Modules.Interfaces;
 using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Services.CommandHandler
@@ -21,7 +22,7 @@ namespace TTMMBot.Services.CommandHandler
         private readonly ILogger<CommandHandler> _logger;
         private readonly IList<ISocketMessageChannel> _channelList = new List<ISocketMessageChannel>();
 
-        private IGlobalSettingsService _gs;
+        private IGuildSettingsService _gs;
         private IDatabaseService _databaseService;
         private IGoogleFormsService _googleFormsSubmissionService;
 
@@ -38,12 +39,12 @@ namespace TTMMBot.Services.CommandHandler
             await _commands.AddModulesAsync(GetType().Assembly, _services);
 
             _databaseService = _services.GetService<IDatabaseService>();
-            _gs = _services.GetService<IGlobalSettingsService>();
+            _gs = _services.GetService<IGuildSettingsService>();
             _googleFormsSubmissionService = _services.GetService<IGoogleFormsService>();
 
             _commands.CommandExecuted += CommandExecutedAsync;
 
-            _client.MessageReceived += HandleCommandAsync;
+            _client.MessageReceived += Client_HandleCommandAsync;
             _client.ReactionAdded += Client_ReactionAdded;
             _client.Disconnected += Client_Disconnected;
 
@@ -78,7 +79,7 @@ namespace TTMMBot.Services.CommandHandler
             });
         }
 
-        public async Task HandleCommandAsync(SocketMessage arg)
+        public async Task Client_HandleCommandAsync(SocketMessage arg)
         {
             if (_channelList.Contains(arg.Channel))
             {
@@ -92,9 +93,10 @@ namespace TTMMBot.Services.CommandHandler
             }
 
             if (!(arg is SocketUserMessage msg) || msg.Author.Id == _client.CurrentUser.Id || msg.Author.IsBot) return;
+            _gs?.LoadSettings((msg.Channel as IGuildChannel).Id);
 
             var pos = 0;
-            if (msg.HasStringPrefix(_gs.Prefix, ref pos) || msg.HasMentionPrefix(_client.CurrentUser, ref pos))
+            if (msg.HasStringPrefix(_gs.Prefix, ref pos) || msg.HasMentionPrefix(_client.CurrentUser, ref pos) || msg.Content.ToLower().StartsWith(_gs.Prefix.ToLower()))
             {
                 var context = new SocketCommandContext(_client, msg);
                 var result = await _commands.ExecuteAsync(context, pos, _services);
@@ -106,9 +108,15 @@ namespace TTMMBot.Services.CommandHandler
 
         public async Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)
         {
-            if (!command.IsSpecified || result.IsSuccess)
+            if (result.IsSuccess)
                 return;
 
+            if(!command.IsSpecified)
+            {
+                await context.Channel.SendMessageAsync($"I don't know this command: {context.Message}");
+                return;
+            }
+                
             await context.Channel.SendMessageAsync($"error: {result}");
         }
 

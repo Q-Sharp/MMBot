@@ -18,6 +18,8 @@ namespace TTMMBot.Data.Entities
         public string Name { get; set; }
         public string DiscordRole { get; set; }
 
+        public ulong GuildId { get; set; }
+
         public virtual ICollection<Member> Member { get; set; }
         public override string ToString() => $"[{Tag}]";
     }

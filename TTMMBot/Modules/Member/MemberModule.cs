@@ -12,16 +12,13 @@ namespace TTMMBot.Modules.Member
     [Name("Member")]
     [Group("Member")]
     [Alias("M", "Members")]
-    public partial class MemberModule : ModuleBase<SocketCommandContext>, IMemberModule
+    public partial class MemberModule : MMBotModule, IMemberModule
     {
-        private readonly IDatabaseService _databaseService;
-        private readonly ICommandHandler _commandHandler;
         private readonly IMemberSortService _memberSortService;
 
-        public MemberModule(IDatabaseService databaseService, ICommandHandler commandHandler, IMemberSortService memberSortService)
+        public MemberModule(IDatabaseService databaseService, ICommandHandler commandHandler, IMemberSortService memberSortService, IGuildSettingsService guildSettings)
+            : base(databaseService, guildSettings, commandHandler)
         {
-            _databaseService = databaseService;
-            _commandHandler = commandHandler;
             _memberSortService = memberSortService;
         }
 

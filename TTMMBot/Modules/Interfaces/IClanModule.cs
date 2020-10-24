@@ -1,15 +1,10 @@
-﻿using System.Threading.Tasks;
-using Discord.Commands;
-using Microsoft.Extensions.Logging;
-using TTMMBot.Services;
-using TTMMBot.Services.Interfaces;
+﻿using Discord.Commands;
+using System.Threading.Tasks;
 
 namespace TTMMBot.Modules.Interfaces
 {
     public interface IClanModule
     {
-        ILogger<ClanModule> Logger { get; set; }
-        IDatabaseService DatabaseService { get; set; }
         Task List(string tag = null);
         Task Delete(string tag);
         Task SetCommand(string tag, string propertyName, [Remainder] string value);

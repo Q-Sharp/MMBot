@@ -14,11 +14,15 @@ namespace TTMMBot.Modules
     [Name("Clan")]
     [Group("Clan")]
     [Alias("C", "Clans")]
-    public class ClanModule : ModuleBase<SocketCommandContext>, IClanModule
+    public class ClanModule : MMBotModule, IClanModule
     {
-        public ILogger<ClanModule> Logger { get; set; }
+        private ILogger<ClanModule> _logger;
 
-        public IDatabaseService DatabaseService { get; set; }
+        public ClanModule(IDatabaseService databaseService, ILogger<ClanModule> logger, IGuildSettingsService guildSettings, ICommandHandler commandHandler)
+            : base(databaseService, guildSettings, commandHandler)
+        {
+            _logger = logger;
+        }
 
         [Command("List")]
         [Summary("Lists all Clans")]
@@ -29,7 +33,7 @@ namespace TTMMBot.Modules
                 if (tag is null)
                 {
 
-                    var clans = await DatabaseService.LoadClansAsync();
+                    var clans = await _databaseService.LoadClansAsync();
 
                     var builder = new EmbedBuilder { Color = Color.DarkTeal, Title = "Clans" };
 
@@ -47,7 +51,7 @@ namespace TTMMBot.Modules
                 }
                 else
                 {
-                    var c = (await DatabaseService.LoadClansAsync())?.FirstOrDefault(x => string.CompareOrdinal(x.Tag, tag) == 0);
+                    var c = (await _databaseService.LoadClansAsync())?.FirstOrDefault(x => string.CompareOrdinal(x.Tag, tag) == 0);
 
                     if(c == null)
                         await ReplyAsync("I don't know this clan.");
@@ -69,9 +73,9 @@ namespace TTMMBot.Modules
         {
             try
             {
-                var c = (await DatabaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
-                DatabaseService.DeleteClan(c);
-                await DatabaseService.SaveDataAsync();
+                var c = (await _databaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
+                _databaseService.DeleteClan(c);
+                await _databaseService.SaveDataAsync();
                 await ReplyAsync($"The clan {c} was deleted");
             }
             catch (Exception e)
@@ -85,9 +89,9 @@ namespace TTMMBot.Modules
         [Summary("Set [Clan tag] [Property name] [Value]")]
         public async Task SetCommand(string tag, string propertyName, [Remainder] string value)
         {
-            var c = (await DatabaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
+            var c = (await _databaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
             var m = c.ChangeProperty(propertyName, value);
-            await DatabaseService.SaveDataAsync();
+            await _databaseService.SaveDataAsync();
             await ReplyAsync(m);
         }
 
@@ -98,10 +102,10 @@ namespace TTMMBot.Modules
         {
             try
             {
-                var c = await DatabaseService.CreateClanAsync();
+                var c = await _databaseService.CreateClanAsync();
                 c.Tag = tag;
                 c.Name = name;
-                await DatabaseService.SaveDataAsync();
+                await _databaseService.SaveDataAsync();
                 await ReplyAsync($"The clan {c} was added to database.");
             }
             catch (Exception e)
@@ -117,14 +121,14 @@ namespace TTMMBot.Modules
         {
             try
             {
-                var c = (await DatabaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
-                var m = (await DatabaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == memberName);
+                var c = (await _databaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
+                var m = (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == memberName);
 
                 if (m != null && c != null)
                 {
                     m.Clan.Tag = c.Tag;
 
-                    await DatabaseService.SaveDataAsync();
+                    await _databaseService.SaveDataAsync();
                     await ReplyAsync($"The member {m} is now member of {c}.");
                 }
             }

@@ -1,12 +1,11 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
 using TTMMBot.Data.Entities;
 
 namespace TTMMBot.Data
 {
-    public class Context : DbContextWithTriggers
+    public class Context : DbContext
     {
         private readonly string _dbname = $"{Path.Combine(Directory.GetCurrentDirectory(), "TTMMBot.db")}";
         protected override void OnConfiguring(DbContextOptionsBuilder options) => options
@@ -14,10 +13,9 @@ namespace TTMMBot.Data
             .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
             .UseLazyLoadingProxies();
 
-        public bool UseTriggers { get; set; } = true;
         public DbSet<Member> Member { get; set; }
         public DbSet<Clan> Clan { get; set; }
-        public DbSet<GlobalSettings> GlobalSettings { get; set; }
+        public DbSet<GuildSettings> GuildSettings { get; set; }
         public DbSet<Restart> Restart { get; set; }
         public DbSet<Vacation> Vacation { get; set; }
         public DbSet<Channel> Channel { get; set; }

@@ -1,14 +1,14 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using TTMMBot.Services;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot
@@ -17,11 +17,13 @@ namespace TTMMBot
     {
         private readonly IServiceProvider _sp;
         private readonly ILogger<DiscordWorker> _logger;
+        private readonly IConfiguration _config;
 
-        public DiscordWorker(IServiceProvider sp, ILogger<DiscordWorker> logger)
+        public DiscordWorker(IServiceProvider sp, ILogger<DiscordWorker> logger, IConfiguration config)
         {
             _sp = sp;
             _logger = logger;
+            _config = config;
         }
 
         protected async override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -51,11 +53,13 @@ namespace TTMMBot
                 return;
             }
 
-            var token 
+            var token =
 #if DEBUG
-            = "DiscordTokenDev";
+            //_config.GetProperty("DiscordTokenDev");
+            "DiscordTokenDev";
 #else
-            = "DiscordToken";
+            //_config.GetProperty("DiscordToken");
+            "DiscordToken";
 #endif
 
             var client = _sp.GetRequiredService<DiscordSocketClient>();
@@ -63,9 +67,11 @@ namespace TTMMBot
             client.Log += LogAsync;
 
             await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable(token));
+            //await client.LoginAsync(TokenType.Bot, token);
             await client.StartAsync();
 
-            await _sp.GetRequiredService<ICommandHandler>().InitializeAsync();
+            var ch = _sp.GetRequiredService<ICommandHandler>();
+            await ch?.InitializeAsync();
         }
 
         public static Task LogAsync(LogMessage message)

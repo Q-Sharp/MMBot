@@ -8,7 +8,7 @@ namespace TTMMBot.Migrations
         {
             migrationBuilder.AddColumn<int>(
                 name: "MemberMovementQty",
-                table: "GlobalSettings",
+                table: "guildSettings",
                 nullable: false,
                 defaultValue: 3);
 
@@ -35,7 +35,7 @@ namespace TTMMBot.Migrations
 
             migrationBuilder.DropColumn(
                 name: "MemberMovementQty",
-                table: "GlobalSettings");
+                table: "guildSettings");
 
             migrationBuilder.DropColumn(
                 name: "SortOrder",

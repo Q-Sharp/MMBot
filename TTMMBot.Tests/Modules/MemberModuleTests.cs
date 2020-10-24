@@ -9,19 +9,19 @@ namespace TTMMBot.Tests.Modules
 {
     public class MemberModuleTests
     {
-        private IGlobalSettingsService GlobalSettings;
+        private IGuildSettingsService guildSettings;
         private IDatabaseService DatabaseService;
         private ICommandHandler CommandHandler;
         private IMemberSortService MemberSortService;
 
         private MemberModule GetMemberModule()
         {
-            GlobalSettings = A.Fake<IGlobalSettingsService>();
+            guildSettings = A.Fake<IGuildSettingsService>();
             DatabaseService = A.Fake<IDatabaseService>();
             CommandHandler = A.Fake<ICommandHandler>();
             MemberSortService = A.Fake<IMemberSortService>();
 
-            return A.Fake<MemberModule>(x => x.WithArgumentsForConstructor(() => new MemberModule(DatabaseService, CommandHandler, MemberSortService)));
+            return A.Fake<MemberModule>(x => x.WithArgumentsForConstructor(() => new MemberModule(DatabaseService, CommandHandler, MemberSortService, guildSettings)));
         }
 
 

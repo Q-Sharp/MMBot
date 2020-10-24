@@ -16,15 +16,15 @@ namespace TTMMBot.Services
 {
     public class NotionCsvService : INotionCsvService
     {
-        public Context Context { get; set; }
-        public GlobalSettingsService Settings { get; set; }
-        public ILogger<NotionCsvService> Logger { get; set; }
+        private Context _context;
+        private GuildSettingsService _settings;
+        private ILogger<NotionCsvService> _logger;
 
-        public NotionCsvService(Context context, GlobalSettingsService settings, ILogger<NotionCsvService> logger)
+        public NotionCsvService(Context context, GuildSettingsService settings, ILogger<NotionCsvService> logger)
         {
-            Context = context;
-            Settings = settings;
-            Logger = logger;
+            _context = context;
+            _settings = settings;
+            _logger = logger;
         }
 
         public async Task<Exception> ImportCsv(byte[] csv)
@@ -40,15 +40,16 @@ namespace TTMMBot.Services
 
             try
             {
-                if (!Context.Clan.Any())
+                if (!_context.Clan.Any())
                 {
                     var nc = new Clan
                     {
                         Tag = "TT",
                         Name = "The Tavern",
-                        SortOrder = 1
+                        SortOrder = 1,
+                        GuildId = _settings.GuildId
                     };
-                    await Context.AddAsync(nc);
+                    await _context.AddAsync(nc);
 
                     for (var i = 2; i <= 4; i++)
                     {
@@ -56,12 +57,13 @@ namespace TTMMBot.Services
                         {
                             Tag = $"TT{i}",
                             Name = $"The Tavern {i}",
-                            SortOrder = i
+                            SortOrder = i,
+                            GuildId = _settings.GuildId
                         };
-                        await Context.AddAsync(c2);
+                        await _context.AddAsync(c2);
                     }
 
-                    await Context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
                 }
             }
             catch
@@ -71,8 +73,6 @@ namespace TTMMBot.Services
 
             try
             {
-                Settings.UseTriggers = Context.UseTriggers = false;
-
                 using var dr = new CsvDataReader(csvReader);
                 var dt = new DataTable();
                 dt.Load(dr);
@@ -105,13 +105,13 @@ namespace TTMMBot.Services
                 
                 foreach (DataRow row in dt.Rows)
                 {
-                    var me = Context.Member.FirstOrDefault(x => row["Name"] != DBNull.Value 
+                    var me = _context.Member.FirstOrDefault(x => row["Name"] != DBNull.Value 
                         && x.Name.ToLower() == ((string)row["Name"]).ToLower());
 
                     if(me == null)
                     {
                         me = new Member();
-                        await Context.Member.AddAsync(me);
+                        await _context.Member.AddAsync(me);
                     }
 
                     me.IsActive = true;
@@ -121,7 +121,7 @@ namespace TTMMBot.Services
 
                     if (row.Table.Columns.Contains("ClanTag") && row["ClanTag"] != DBNull.Value && !string.IsNullOrEmpty((string)row["ClanTag"]))
                     {
-                        me.Clan = Context.Clan.FirstOrDefault(x => x.Tag == (string)row["ClanTag"]);
+                        me.Clan = _context.Clan.FirstOrDefault(x => x.Tag == (string)row["ClanTag"]);
                         me.ClanId =  me.Clan?.ClanId;
                     }
 
@@ -160,11 +160,10 @@ namespace TTMMBot.Services
                         me.IgnoreOnMoveUp = iomu;
 
                     me.LastUpdated = DateTime.Now;
+                    me.GuildId = _settings.GuildId;
 
-                    await Context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
                 }
-
-                Settings.UseTriggers = null;
             }
             catch (Exception e)
             {
@@ -180,9 +179,9 @@ namespace TTMMBot.Services
             await using var writer = new StreamWriter(mem, Encoding.UTF8);
             await using var csvWriter = new CsvWriter(writer, CultureInfo.CurrentCulture);
 
-            csvWriter.Configuration.Delimiter = ",";
+            csvWriter.Configuration.Delimiter = ";";
 
-            var m = Context.Member;
+            var m = _context.Member;
 
             //var dt = new DataTable();
             //var dc = new DataColumn[]

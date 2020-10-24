@@ -15,7 +15,7 @@ namespace TTMMBot.Services.Interfaces
         Task<IList<Member>> LoadMembersAsync();
         void DeleteMember(Member m);
 
-        Task<GlobalSettings> LoadGlobalSettingsAsync();
+        Task<GuildSettings> LoadGuildSettingsAsync();
 
         Task<Restart> AddRestart();
         Task<Tuple<ulong, ulong>> ConsumeRestart();
@@ -27,5 +27,7 @@ namespace TTMMBot.Services.Interfaces
         Task SaveDataAsync();
         Task MigrateAsync();
         Task CleanDB();
+
+        void SetGuild(ulong id);
     }
 }

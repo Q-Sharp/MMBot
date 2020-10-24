@@ -7,9 +7,6 @@ namespace TTMMBot.Services.Interfaces
 {
     public interface INotionCsvService
     {
-        Context Context { get; set; }
-        GlobalSettingsService Settings { get; set; }
-        ILogger<NotionCsvService> Logger { get; set; }
         Task<Exception> ImportCsv(byte[] csv);
         Task<byte[]> ExportCsv();
     }

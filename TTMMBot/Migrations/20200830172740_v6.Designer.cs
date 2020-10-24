@@ -42,9 +42,9 @@ namespace TTMMBot.Migrations
                     b.ToTable("Clan");
                 });
 
-            modelBuilder.Entity("TTMMBot.Data.Entities.GlobalSettings", b =>
+            modelBuilder.Entity("TTMMBot.Data.Entities.guildSettings", b =>
                 {
-                    b.Property<int>("GlobalSettingsId")
+                    b.Property<int>("guildSettingsId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -63,9 +63,9 @@ namespace TTMMBot.Migrations
                     b.Property<TimeSpan>("WaitForReaction")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("GlobalSettingsId");
+                    b.HasKey("guildSettingsId");
 
-                    b.ToTable("GlobalSettings");
+                    b.ToTable("guildSettings");
                 });
 
             modelBuilder.Entity("TTMMBot.Data.Entities.Member", b =>

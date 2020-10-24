@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TTMMBot.Data;
 using TTMMBot.Data.Entities;
 using TTMMBot.Services.Interfaces;
@@ -8,15 +9,15 @@ namespace TTMMBot.Services
 {
     public class AdminService : IAdminService
     {
-        public Context Context { get; set; }
-        public IGlobalSettingsService Settings { get; set; }
-        public ICommandHandler CommandHandler { get; set; }
+        private Context _context;
+        private IGuildSettingsService _settings;
+        private ICommandHandler _commandHandler;
 
-        public AdminService(Context context, IGlobalSettingsService settings, ICommandHandler commandHandler)
+        public AdminService(Context context, IGuildSettingsService settings, ICommandHandler commandHandler)
         {
-            Context = context;
-            Settings = settings;
-            CommandHandler = commandHandler;
+            _context = context;
+            _settings = settings;
+            _commandHandler = commandHandler;
         }
 
         public class JoinComparer : IComparer<int>
@@ -41,10 +42,10 @@ namespace TTMMBot.Services
             }
         }
 
-        public void Reorder()
+        public async Task Reorder()
         {
-            Context.Member.AsEnumerable()
-                .OrderBy(x => x.Join, JoinComparer.Create(Settings.ClanSize))
+            _context.Member.AsEnumerable()
+                .OrderBy(x => x.Join, JoinComparer.Create(_settings.ClanSize))
                 .ThenBy(x => x.SHigh)
                 .GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
                 .Select(x => x.Members.ToList() as IList<Member>)
@@ -55,7 +56,7 @@ namespace TTMMBot.Services
                     x.ToList().ForEach(m => m.Join = i++);
                 });
 
-            Context?.SaveChanges();
+            await _context?.SaveChangesAsync();
         }
     }
 }

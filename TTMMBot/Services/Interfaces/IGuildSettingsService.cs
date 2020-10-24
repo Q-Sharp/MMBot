@@ -1,16 +1,17 @@
 ﻿using System;
-using TTMMBot.Data;
+using System.Threading.Tasks;
 
 namespace TTMMBot.Services.Interfaces
 {
-    public interface IGlobalSettingsService
+    public interface IGuildSettingsService
     {
-        Context Dbcontext { get; set; }
         string Prefix { get; }
         TimeSpan WaitForReaction { get; }
-        bool? UseTriggers { get; set; }
         string FileName { get; }
         int ClanSize { get; }
         int MemberMovementQty { get; }
+        ulong GuildId { get; }
+
+        void LoadSettings(ulong id);
     }
 }
