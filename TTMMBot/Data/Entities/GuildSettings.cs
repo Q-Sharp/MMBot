@@ -27,7 +27,5 @@ namespace TTMMBot.Data.Entities
 
         [Display]
         public int MemberMovementQty { get; set; }
-
-        public bool? UseTriggers { get; set; }
     }
 }

@@ -36,8 +36,7 @@ namespace TTMMBot.Services
                 WaitForReaction = TimeSpan.FromMinutes(5),
                 FileName = "export.csv",
                 ClanSize = 20,
-                MemberMovementQty = 3,
-                UseTriggers = false
+                MemberMovementQty = 3
             })
             .Entity;
 

@@ -86,13 +86,13 @@ namespace TTMMBot
                         .AddSingleton<IGuildSettingsService, GuildSettingsService>()
                         .AddSingleton(dsc)
                         .AddSingleton(cs)
-                        .AddTransient<IGoogleFormsService, GoogleFormsService>()
+                        .AddScoped<IGoogleFormsService, GoogleFormsService>()
                         .AddSingleton<ICommandHandler, CommandHandler>()
-                        .AddSingleton<IGuildSettingsService, GuildSettingsService>()
-                        .AddTransient<IDatabaseService, DatabaseService>()
-                        .AddTransient<INotionCsvService, NotionCsvService>()
-                        .AddTransient<IAdminService, AdminService>()
-                        .AddTransient<IMemberSortService, MemberSortService>()
+                        .AddScoped<IGuildSettingsService, GuildSettingsService>()
+                        .AddScoped<IDatabaseService, DatabaseService>()
+                        .AddScoped<INotionCsvService, NotionCsvService>()
+                        .AddScoped<IAdminService, AdminService>()
+                        .AddScoped<IMemberSortService, MemberSortService>()
                         .BuildServiceProvider();
                 });
     }
