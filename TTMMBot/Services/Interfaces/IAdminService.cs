@@ -3,7 +3,7 @@ using TTMMBot.Data;
 
 namespace TTMMBot.Services.Interfaces
 {
-    public interface IAdminService
+    public interface IAdminService : IMMBotInterface, IGuildSetter
     {
         Task Reorder();
     }

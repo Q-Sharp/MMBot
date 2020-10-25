@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
@@ -11,14 +12,14 @@ using TTMMBot.Data;
 using TTMMBot.Services;
 using TTMMBot.Services.CommandHandler;
 using TTMMBot.Services.GoogleForms;
+using TTMMBot.Services.IE;
 using TTMMBot.Services.Interfaces;
+using TTMMBot.Services.MemberSort;
 
 namespace TTMMBot
 {
     public class Program
     {
-        private static IServiceProvider _services;
-
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
@@ -30,7 +31,6 @@ namespace TTMMBot
             AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 
             using var h = CreateHostBuilder(args)?.Build();
-            _services = h.Services;
             h?.Run();
             Log.CloseAndFlush();
         }
@@ -47,9 +47,8 @@ namespace TTMMBot
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-           //Host.CreateDefaultBuilder(args)
-           new HostBuilder()
-                .ConfigureLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true))
+           Host.CreateDefaultBuilder(args)
+                .ConfigureLogging(loggingBuilder => loggingBuilder.ClearProviders().AddSerilog(dispose: true))
                 .UseSystemd()
                 .ConfigureAppConfiguration((hostContext, configBuilder) =>
                 {
@@ -90,7 +89,8 @@ namespace TTMMBot
                         .AddSingleton<ICommandHandler, CommandHandler>()
                         .AddScoped<IGuildSettingsService, GuildSettingsService>()
                         .AddScoped<IDatabaseService, DatabaseService>()
-                        .AddScoped<INotionCsvService, NotionCsvService>()
+                        .AddScoped<ICsvService, CsvService>()
+                        .AddScoped<IJsonService, JsonService>()
                         .AddScoped<IAdminService, AdminService>()
                         .AddScoped<IMemberSortService, MemberSortService>()
                         .BuildServiceProvider();

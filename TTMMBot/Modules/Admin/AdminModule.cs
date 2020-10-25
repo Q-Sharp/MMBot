@@ -5,9 +5,11 @@ using System.Net;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using TTMMBot.Data.Enums;
 using TTMMBot.Helpers;
 using TTMMBot.Modules.Interfaces;
+using TTMMBot.Services.IE;
 using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Modules.Admin
@@ -19,17 +21,19 @@ namespace TTMMBot.Modules.Admin
     {
         private static volatile bool _commandIsRunning;
         
-        private readonly INotionCsvService _csvService;
+        private readonly ICsvService _csvService;
         private readonly IAdminService _adminService;
+        private readonly IJsonService _jsonService;
 
-        public AdminModule(IDatabaseService databaseService, INotionCsvService csvService, IAdminService adminService, IGuildSettingsService guildSettings, ICommandHandler commandHandler)
+        public AdminModule(IDatabaseService databaseService, ICsvService csvService, IAdminService adminService, IGuildSettingsService guildSettings, ICommandHandler commandHandler, IJsonService jsonService)
             : base(databaseService, guildSettings, commandHandler)
         {
             _csvService = csvService;
             _adminService = adminService;
+            _jsonService = jsonService;
         }
 
-        [Command("ImportCSV", RunMode = RunMode.Async)]
+        [Command("ImportCSV")]
         [Alias("import")]
         [Summary("Imports a notion csv export to update db")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
@@ -143,7 +147,7 @@ namespace TTMMBot.Modules.Admin
             }
         }
 
-        [Command("FixRoles", RunMode = RunMode.Async)]
+        [Command("FixRoles")]
         [Alias("FR")]
         [Summary("Checks and fixes discord roles of all clan members.")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]

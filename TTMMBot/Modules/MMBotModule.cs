@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Discord.Commands;
 using TTMMBot.Helpers;
 using TTMMBot.Services.Interfaces;
 
-namespace TTMMBot.Modules.Interfaces
+namespace TTMMBot.Modules
 {
     public abstract class MMBotModule : ModuleBase<SocketCommandContext>
     {
-        protected readonly IDatabaseService _databaseService;
-        protected readonly ICommandHandler _commandHandler;
-        protected readonly IGuildSettingsService _guildSettings;
+        protected IDatabaseService _databaseService;
+        protected ICommandHandler _commandHandler;
+        protected IGuildSettingsService _guildSettings;
 
         public MMBotModule(IDatabaseService databaseService, IGuildSettingsService guildSettings, ICommandHandler commandHandler)
         {
@@ -23,8 +22,11 @@ namespace TTMMBot.Modules.Interfaces
 
         protected override void BeforeExecute(CommandInfo command)
         {
-            _databaseService.SetGuild(Context.Channel.Id);
-            _guildSettings.LoadSettings(Context.Channel.Id);
+            typeof(MMBotModule)
+                .GetProperties(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField)
+                .OfType<IGuildSetter>()
+                .ForEach(s => s.SetGuild(Context.Channel.Id));
+
             base.BeforeExecute(command);
         }
     }

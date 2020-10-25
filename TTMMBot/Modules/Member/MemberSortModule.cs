@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using TTMMBot.Data.Entities;
 using TTMMBot.Helpers;
 using TTMMBot.Modules.Énum;
 using TTMMBot.Modules.Interfaces;
 using TTMMBot.Services.Interfaces;
+using TTMMBot.Services.MemberSort;
 
 namespace TTMMBot.Modules.Member
 {
@@ -127,7 +127,7 @@ namespace TTMMBot.Modules.Member
             });
         }
 
-        private string GetCompactMemberChangesString(List<MemberChanges> changes, IList<Clan> clans)
+        private string GetCompactMemberChangesString(List<MemberChanges> changes, IList<Data.Entities.Clan> clans)
         {
             var up = new Emoji("↗️");
             var down = new Emoji("↘️");
@@ -148,7 +148,7 @@ namespace TTMMBot.Modules.Member
             return r;
         }
 
-        private string GetDetailedMemberChangesString(List<MemberChanges> changes, int index, IList<Clan> clans)
+        private string GetDetailedMemberChangesString(List<MemberChanges> changes, int index, IList<Data.Entities.Clan> clans)
         {
             var up = new Emoji("⏫");
             var down = new Emoji("⏬");

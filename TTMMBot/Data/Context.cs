@@ -19,6 +19,8 @@ namespace TTMMBot.Data
         public DbSet<Restart> Restart { get; set; }
         public DbSet<Vacation> Vacation { get; set; }
         public DbSet<Channel> Channel { get; set; }
+        public DbSet<MemberGroup> MemberGroup { get; set; }
+        
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -47,6 +49,11 @@ namespace TTMMBot.Data
             modelBuilder.Entity<Clan>()
                 .HasIndex(c => c.SortOrder)
                 .IsUnique();
+
+            modelBuilder.Entity<Member>()
+                .HasOne(m => m.MemberGroup)
+                .WithMany(mg => mg.Members)
+                .HasForeignKey(m => m.MemberGroupId);
         }
 
         public async Task MigrateAsync() => await Database.MigrateAsync();

@@ -5,7 +5,7 @@ using TTMMBot.Data.Entities;
 
 namespace TTMMBot.Services.Interfaces
 {
-    public interface IDatabaseService
+    public interface IDatabaseService : IMMBotInterface, IGuildSetter
     {
         Task<Clan> CreateClanAsync();
         Task<IList<Clan>> LoadClansAsync();
@@ -27,7 +27,5 @@ namespace TTMMBot.Services.Interfaces
         Task SaveDataAsync();
         Task MigrateAsync();
         Task CleanDB();
-
-        void SetGuild(ulong id);
     }
 }

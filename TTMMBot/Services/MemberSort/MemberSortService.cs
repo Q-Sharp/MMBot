@@ -8,7 +8,7 @@ using TTMMBot.Helpers;
 using TTMMBot.Enums;
 using TTMMBot.Services.Interfaces;
 
-namespace TTMMBot.Services
+namespace TTMMBot.Services.MemberSort
 {
     public class MemberSortService : IMemberSortService
     {

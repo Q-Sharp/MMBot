@@ -43,7 +43,7 @@ namespace TTMMBot.Services
             _dbcontext?.SaveChanges();
         }
 
-        public void LoadSettings(ulong id)
+        public void SetGuild(ulong id)
         {
              _gs = _dbcontext.GuildSettings.FirstOrDefault(x => x.GuildId == id);
 

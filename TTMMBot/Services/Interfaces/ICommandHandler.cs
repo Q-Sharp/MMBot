@@ -6,7 +6,7 @@ using Discord.WebSocket;
 
 namespace TTMMBot.Services.Interfaces
 {
-    public interface ICommandHandler
+    public interface ICommandHandler : IMMBotInterface 
     {
         Task InitializeAsync();
         Task Client_HandleCommandAsync(SocketMessage arg);

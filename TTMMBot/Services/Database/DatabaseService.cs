@@ -56,6 +56,9 @@ namespace TTMMBot.Services
             var c = await LoadClansAsync();
             var m = await LoadMembersAsync();
 
+            if(c == null || c.Count() == 0 || m == null || m.Count() == 0)
+                return;
+
             m.Where(x => x.ClanId == 0 || x.Name == string.Empty).ForEach(x =>
             {
                 var id = x.ClanId;

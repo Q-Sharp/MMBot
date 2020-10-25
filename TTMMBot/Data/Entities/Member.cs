@@ -60,6 +60,9 @@ namespace TTMMBot.Data.Entities
 
         public ulong GuildId { get; set; }
 
+        public int? MemberGroupId { get; set; }
+        public virtual MemberGroup MemberGroup { get; set; }
+
         public override string ToString() => Clan?.Tag != null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
     }
 }

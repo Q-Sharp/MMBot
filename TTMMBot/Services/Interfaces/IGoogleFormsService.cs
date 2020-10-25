@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace TTMMBot.Services.Interfaces
 {
-    public interface IGoogleFormsService
+    public interface IGoogleFormsService : IMMBotInterface
     {
         Task<bool> SubmitAsync(string url, string playerTag);
     }

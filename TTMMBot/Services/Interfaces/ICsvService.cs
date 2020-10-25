@@ -5,7 +5,7 @@ using TTMMBot.Data;
 
 namespace TTMMBot.Services.Interfaces
 {
-    public interface INotionCsvService
+    public interface ICsvService : IMMBotInterface, IGuildSetter
     {
         Task<Exception> ImportCsv(byte[] csv);
         Task<byte[]> ExportCsv();

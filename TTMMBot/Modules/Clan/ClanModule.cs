@@ -3,13 +3,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TTMMBot.Helpers;
 using TTMMBot.Modules.Interfaces;
 using TTMMBot.Services;
 using TTMMBot.Services.Interfaces;
 
-namespace TTMMBot.Modules
+namespace TTMMBot.Modules.Clan
 {
     [Name("Clan")]
     [Group("Clan")]

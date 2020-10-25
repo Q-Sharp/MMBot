@@ -1,7 +1,9 @@
 ﻿using FakeItEasy;
 using TTMMBot.Services;
 using TTMMBot.Services.Interfaces;
+using TTMMBot.Services.MemberSort;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace TTMMBot.Tests.Services
 {

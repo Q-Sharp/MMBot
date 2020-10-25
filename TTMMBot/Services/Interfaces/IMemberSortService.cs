@@ -2,24 +2,11 @@
 using System.Threading.Tasks;
 using TTMMBot.Data.Entities;
 using TTMMBot.Enums;
+using TTMMBot.Services.MemberSort;
 
 namespace TTMMBot.Services.Interfaces
 {
-    public class MemberChanges
-    {
-        public int SortOrder { get; set; }
-        public IList<MemberMovement> Leave { get; set; }
-        public IList<MemberMovement> Join { get; set; }
-        public IList<Member> NewMemberList { get; set; }
-    }
-
-    public class MemberMovement
-    {
-        public Member Member { get; set; }
-        public bool IsUp { get; set; }
-    }
-
-    public interface IMemberSortService
+    public interface IMemberSortService : IMMBotInterface
     {
         public Task<IList<IList<Member>>> GetCurrentMemberList();
 

@@ -1,6 +1,7 @@
-﻿using System.Linq;
+﻿using FakeItEasy;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
-using FakeItEasy;
 using TTMMBot.Modules.Member;
 using TTMMBot.Services.Interfaces;
 using Xunit;
@@ -9,19 +10,19 @@ namespace TTMMBot.Tests.Modules
 {
     public class MemberModuleTests
     {
-        private IGuildSettingsService guildSettings;
-        private IDatabaseService DatabaseService;
-        private ICommandHandler CommandHandler;
-        private IMemberSortService MemberSortService;
+        private IDatabaseService _dbs;
+        private ICommandHandler _ch;
+        private IGuildSettingsService _gs;
+        private IMemberSortService _mss;
 
         private MemberModule GetMemberModule()
         {
-            guildSettings = A.Fake<IGuildSettingsService>();
-            DatabaseService = A.Fake<IDatabaseService>();
-            CommandHandler = A.Fake<ICommandHandler>();
-            MemberSortService = A.Fake<IMemberSortService>();
+            _dbs = A.Fake<IDatabaseService>();
+            _ch = A.Fake<ICommandHandler>();
+            _gs = A.Fake<IGuildSettingsService>();
+            _mss = A.Fake<IMemberSortService>();
 
-            return A.Fake<MemberModule>(x => x.WithArgumentsForConstructor(() => new MemberModule(DatabaseService, CommandHandler, MemberSortService, guildSettings)));
+            return A.Fake<MemberModule>(x => x.WithArgumentsForConstructor(() => new MemberModule(_dbs, _ch, _mss, _gs)));
         }
 
 
@@ -31,8 +32,8 @@ namespace TTMMBot.Tests.Modules
             var mm = GetMemberModule();
             await mm.Create("Member");
 
-            A.CallTo(() => DatabaseService.CreateMemberAsync()).WithAnyArguments().MustHaveHappened();
-            A.CallTo(() => DatabaseService.SaveDataAsync()).WithAnyArguments().MustHaveHappened();
+            A.CallTo(() => _dbs.CreateMemberAsync()).WithAnyArguments().MustHaveHappened();
+            A.CallTo(() => _dbs.SaveDataAsync()).WithAnyArguments().MustHaveHappened();
             A.CallTo(mm).Where(x => x.Method.Name == "ReplyAsync").WithAnyArguments().MustHaveHappened();
         }
     }

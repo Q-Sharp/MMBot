@@ -12,6 +12,7 @@ namespace TTMMBot.Services
         private Context _context;
         private IGuildSettingsService _settings;
         private ICommandHandler _commandHandler;
+        private ulong _guildId;
 
         public AdminService(Context context, IGuildSettingsService settings, ICommandHandler commandHandler)
         {
@@ -44,7 +45,7 @@ namespace TTMMBot.Services
 
         public async Task Reorder()
         {
-            _context.Member.AsEnumerable()
+            (await _context.Member.AsAsyncEnumerable().Where(x => x.GuildId == _guildId).ToListAsync())
                 .OrderBy(x => x.Join, JoinComparer.Create(_settings.ClanSize))
                 .ThenBy(x => x.SHigh)
                 .GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
@@ -58,5 +59,8 @@ namespace TTMMBot.Services
 
             await _context?.SaveChangesAsync();
         }
+
+
+        public void SetGuild(ulong id) => _guildId = id;
     }
 }

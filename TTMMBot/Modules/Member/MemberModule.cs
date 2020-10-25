@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace TTMMBot.Modules.Member
     [Alias("M", "Members")]
     public partial class MemberModule : MMBotModule, IMemberModule
     {
-        private readonly IMemberSortService _memberSortService;
+        protected readonly IMemberSortService _memberSortService;
 
         public MemberModule(IDatabaseService databaseService, ICommandHandler commandHandler, IMemberSortService memberSortService, IGuildSettingsService guildSettings)
             : base(databaseService, guildSettings, commandHandler)

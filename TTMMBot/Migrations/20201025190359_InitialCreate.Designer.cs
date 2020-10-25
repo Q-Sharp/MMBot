@@ -9,7 +9,7 @@ using TTMMBot.Data;
 namespace TTMMBot.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20201024024045_InitialCreate")]
+    [Migration("20201025190359_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -136,6 +136,9 @@ namespace TTMMBot.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("MemberGroupId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -153,10 +156,23 @@ namespace TTMMBot.Migrations
 
                     b.HasIndex("ClanId");
 
+                    b.HasIndex("MemberGroupId");
+
                     b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("Member");
+                });
+
+            modelBuilder.Entity("TTMMBot.Data.Entities.MemberGroup", b =>
+                {
+                    b.Property<int>("MemberGroupId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MemberGroupId");
+
+                    b.ToTable("MemberGroup");
                 });
 
             modelBuilder.Entity("TTMMBot.Data.Entities.Restart", b =>
@@ -203,6 +219,10 @@ namespace TTMMBot.Migrations
                     b.HasOne("TTMMBot.Data.Entities.Clan", "Clan")
                         .WithMany("Member")
                         .HasForeignKey("ClanId");
+
+                    b.HasOne("TTMMBot.Data.Entities.MemberGroup", "MemberGroup")
+                        .WithMany("Members")
+                        .HasForeignKey("MemberGroupId");
                 });
 
             modelBuilder.Entity("TTMMBot.Data.Entities.Vacation", b =>

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace TTMMBot.Services.Interfaces
 {
-    public interface IGuildSettingsService
+    public interface IGuildSettingsService : IMMBotInterface, IGuildSetter
     {
         string Prefix { get; }
         TimeSpan WaitForReaction { get; }
@@ -11,7 +11,5 @@ namespace TTMMBot.Services.Interfaces
         int ClanSize { get; }
         int MemberMovementQty { get; }
         ulong GuildId { get; }
-
-        void LoadSettings(ulong id);
     }
 }

@@ -7,8 +7,6 @@ namespace TTMMBot.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql("PRAGMA encoding = 'UTF-16'");
-
             migrationBuilder.CreateTable(
                 name: "Channel",
                 columns: table => new
@@ -59,6 +57,18 @@ namespace TTMMBot.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MemberGroup",
+                columns: table => new
+                {
+                    MemberGroupId = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MemberGroup", x => x.MemberGroupId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Restart",
                 columns: table => new
                 {
@@ -92,7 +102,8 @@ namespace TTMMBot.Migrations
                     IgnoreOnMoveUp = table.Column<bool>(nullable: false),
                     PlayerTag = table.Column<string>(nullable: true),
                     AutoSignUpForFightNight = table.Column<bool>(nullable: false),
-                    GuildId = table.Column<ulong>(nullable: false)
+                    GuildId = table.Column<ulong>(nullable: false),
+                    MemberGroupId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -102,6 +113,12 @@ namespace TTMMBot.Migrations
                         column: x => x.ClanId,
                         principalTable: "Clan",
                         principalColumn: "ClanId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Member_MemberGroup_MemberGroupId",
+                        column: x => x.MemberGroupId,
+                        principalTable: "MemberGroup",
+                        principalColumn: "MemberGroupId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -144,6 +161,11 @@ namespace TTMMBot.Migrations
                 column: "ClanId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Member_MemberGroupId",
+                table: "Member",
+                column: "MemberGroupId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Member_Name",
                 table: "Member",
                 column: "Name",
@@ -174,6 +196,9 @@ namespace TTMMBot.Migrations
 
             migrationBuilder.DropTable(
                 name: "Clan");
+
+            migrationBuilder.DropTable(
+                name: "MemberGroup");
         }
     }
 }

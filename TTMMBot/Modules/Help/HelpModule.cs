@@ -3,10 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using TTMMBot.Modules.Interfaces;
 using TTMMBot.Services.Interfaces;
 
-namespace TTMMBot.Modules
+namespace TTMMBot.Modules.Help
 {
     [Name("Help")]
     public class HelpModule : MMBotModule, IHelpModule
@@ -68,7 +69,9 @@ namespace TTMMBot.Modules
         [Command("help")]
         public async Task HelpAsync([Remainder] string command)
         {
-            var result = _service.Search(Context, command);
+            var name = _service.Commands.Where(x => x.Name.ToLower() == command.ToLower() || x.Aliases.Select(x => x.ToLower()).Contains(command.ToLower())).FirstOrDefault().Name;
+            var result = _service.Search(Context, (name ?? command));
+            
 
             if (!result.IsSuccess)
             {

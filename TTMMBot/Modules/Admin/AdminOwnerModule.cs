@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using System.IO.Compression;
 using TTMMBot.Helpers;
 using TTMMBot.Modules.Interfaces;
 
@@ -12,6 +13,41 @@ namespace TTMMBot.Modules.Admin
 {
     public partial class AdminModule : MMBotModule, IAdminModule
     {
+        [Command("ExportDb")]
+        [Summary("Exports db data as json")]
+        [RequireOwner()]
+        public async Task ExportDb()
+        {
+            try
+            {
+                var json = await _jsonService.ExportDBToJson();
+
+                var ex = await Task.Run(() => 
+                {
+                    var backupDir = Path.Combine(".", "backup");
+                    var export = "dataexport.zip";
+
+                    Directory.CreateDirectory(backupDir);
+                   
+                    foreach(var entry in json)
+                        File.WriteAllText(Path.Combine(backupDir, $"{entry.Key}.json"), entry.Value);
+
+                    ZipFile.CreateFromDirectory(backupDir, export);
+
+                    Directory.Delete(backupDir, true);
+                    return export;
+                });
+
+                await Context.Channel.SendFileAsync(ex, "dbExport");
+                File.Delete(ex);
+            }
+            catch (Exception e)
+            {
+                await ReplyAsync($"{e.Message}");
+            }
+        }
+
+
         [Command("Restart")]
         [Alias("restart")]
         [Summary("Restarts the bot")]

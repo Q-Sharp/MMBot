@@ -12,15 +12,16 @@ using TTMMBot.Data.Entities;
 using TTMMBot.Data.Enums;
 using TTMMBot.Services.Interfaces;
 
-namespace TTMMBot.Services
+namespace TTMMBot.Services.IE
 {
-    public class NotionCsvService : INotionCsvService
+    public class CsvService : ICsvService
     {
         private Context _context;
         private GuildSettingsService _settings;
-        private ILogger<NotionCsvService> _logger;
+        private ILogger<CsvService> _logger;
+        private ulong _guildId;
 
-        public NotionCsvService(Context context, GuildSettingsService settings, ILogger<NotionCsvService> logger)
+        public CsvService(Context context, GuildSettingsService settings, ILogger<CsvService> logger)
         {
             _context = context;
             _settings = settings;
@@ -206,5 +207,7 @@ namespace TTMMBot.Services
 
             return mem.ToArray();
         }
+
+        public void SetGuild(ulong id) => _guildId = id;
     }
 }
