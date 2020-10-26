@@ -165,8 +165,8 @@ namespace TTMMBot.Modules.Admin
                         foreach (var member in clan.Member)
                         {
                             await memberMessage.ModifyAsync(m => m.Content = $"Fixing roles of {member}...");
-                            var user = await Task.Run(async () =>
-                               (await Context.Guild.GetUsersAsync()).FirstOrDefault(x =>
+                            var user = await Task.Run(() =>
+                               Context.Guild.Users.FirstOrDefault(x =>
                                     $"{x.Username}#{x.Discriminator}" == member.Discord));
 
                             if (user is null || member.ClanId is null || clan.DiscordRole is null)

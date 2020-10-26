@@ -8,7 +8,7 @@ using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Modules
 {
-    public abstract class MMBotModule : ModuleBase<CommandContext>
+    public abstract class MMBotModule : ModuleBase<SocketCommandContext>
     {
         protected IDatabaseService _databaseService;
         protected ICommandHandler _commandHandler;

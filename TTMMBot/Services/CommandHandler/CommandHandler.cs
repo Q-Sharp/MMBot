@@ -174,9 +174,9 @@ namespace TTMMBot.Services.CommandHandler
                             return;
                     }
                 }
-                catch(Exception e)
+                catch
                 {
-
+                    // ignore
                 }
             }
 

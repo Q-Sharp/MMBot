@@ -37,7 +37,7 @@ namespace TTMMBot.Modules.Member
                 if (m == null)
                     return;
 
-                var imageUrl = await Task.Run(async () => (await Context.Guild.GetUsersAsync()).FirstOrDefault(x => x.GetUserAndDiscriminator() == m.Discord)?.GetAvatarUrl());
+                var imageUrl = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => x.GetUserAndDiscriminator() == m.Discord)?.GetAvatarUrl());
                 var e = m.GetEmbedPropertiesWithValues(imageUrl);
                 await ReplyAsync("", false, e as Embed);
 
