@@ -126,71 +126,70 @@ namespace TTMMBot.Services.CommandHandler
             {
                 gfa = await _googleFormsSubmissionService.LoadAsync(u);
                 
-                if(gfa != null)
-                    break;
-            }
-
-            await gfa.AddPlayerTagToAnswers(mtags.FirstOrDefault());
-            await gfa.AnswerQuestionsAuto();
-
-            if(!gfa.AllFieldsAreFilledWithAnswers)
-            {
-                try
-                {
-                    var msg = await questionsChannel.SendMessageAsync($"There are problems with auto fill of the latest form.{Environment.NewLine}What should we do now? (1 = answer, 2 = cancel)");
-
-                    var emojis = new IEmote[] 
-                    {
-                       new Emoji("1️⃣"),
-                       new Emoji("2️⃣")
-                    }
-                    .ToArray();
-
-                    var cancel = false;
-                    await msg.AddReactionsAsync(emojis);
-                
-                    await AddToReactionList(msg, async (r, u) =>
-                    {
-                        cancel = r.Name == "2️⃣";
-                        await msg.DeleteAsync();
-                    }, 
-                    false);
-
-                    if(cancel)
-                        return;
-
-                    foreach(var q in gfa.OpenFields)
-                    {
-                        var qMsg = await questionsChannel.SendMessageAsync($"Question: {q.QuestionText}");
-
-                        var context = new CommandContext(_client, qMsg);
-                        var sC = new SocketCommandContext(_client, questionsChannel.GetCachedMessage(qMsg.Id) as SocketUserMessage);
-
-                        var response = await _interactiveService.NextMessageAsync(sC, false, true, timeout: TimeSpan.FromHours(2));
-                        if (response != null)
-                        {
-                            await gfa.AnswerQuestionManual(q.AnswerSubmissionId, response.Content);
-                            await questionsChannel.SendMessageAsync($"Answer added: {response.Content}");
-                        }  
-                        else
-                            return;
-                    }
-                }
-                catch
-                {
-                    // ignore
-                }
-            }
-
-            foreach(var pTag in mtags)
-            {
-                await gfa.AddPlayerTagToAnswers(pTag);
-                await _googleFormsSubmissionService.SubmitToGoogleFormAsync(gfa);
-                var random = new Random((int)DateTime.Now.Ticks);
-                await Task.Delay(TimeSpan.FromSeconds(random.Next(30, 300)));
-            }
+                if(gfa == null)
+                    continue;
             
+                await gfa.AddPlayerTagToAnswers(mtags.FirstOrDefault());
+                await gfa.AnswerQuestionsAuto();
+
+                if(!gfa.AllFieldsAreFilledWithAnswers)
+                {
+                    try
+                    {
+                        var msg = await questionsChannel.SendMessageAsync($"There are problems with auto fill of the latest form({gfa.Title}).{Environment.NewLine}What should we do now? (1 = answer, 2 = cancel)");
+
+                        var emojis = new IEmote[] 
+                        {
+                           new Emoji("1️⃣"),
+                           new Emoji("2️⃣")
+                        }
+                        .ToArray();
+
+                        var cancel = false;
+                        await msg.AddReactionsAsync(emojis);
                 
+                        await AddToReactionList(msg, async (r, u) =>
+                        {
+                            cancel = r.Name == "2️⃣";
+                            await msg.DeleteAsync();
+                        }, 
+                        false);
+
+                        if(cancel)
+                            return;
+
+                        await questionsChannel.SendMessageAsync($"Questions for the form: {gfa.Title}");
+                        foreach(var q in gfa.OpenFields)
+                        {
+                            var qMsg = await questionsChannel.SendMessageAsync($"Question: {q.QuestionText}");
+
+                            var context = new CommandContext(_client, qMsg);
+                            var sC = new SocketCommandContext(_client, questionsChannel.GetCachedMessage(qMsg.Id) as SocketUserMessage);
+
+                            var response = await _interactiveService.NextMessageAsync(sC, false, true, timeout: TimeSpan.FromHours(2));
+                            if (response != null)
+                            {
+                                await gfa.AnswerQuestionManual(q.AnswerSubmissionId, response.Content);
+                                await questionsChannel.SendMessageAsync($"Answer added: {response.Content}");
+                            }  
+                            else
+                                return;
+                        }
+                    }
+                    catch
+                    {
+                        // ignore
+                    }
+                }
+
+                foreach(var pTag in mtags)
+                {
+                    await gfa.AddPlayerTagToAnswers(pTag);
+                    await _googleFormsSubmissionService.SubmitToGoogleFormAsync(gfa);
+                    var random = new Random((int)DateTime.Now.Ticks);
+                    await Task.Delay(TimeSpan.FromSeconds(random.Next(20, 120)));
+                }
+            }   
         }
 
         public async Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)

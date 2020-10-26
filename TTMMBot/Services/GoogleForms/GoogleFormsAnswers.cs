@@ -11,6 +11,7 @@ namespace TTMMBot.Services.GoogleForms
         public IList<GoogleFormField> AllRequireFields { get; set; } = new List<GoogleFormField>();
         public IList<GoogleFormField> AnsweredFields { get; set; } = new List<GoogleFormField>();
         public IList<GoogleFormField> OpenFields => AllRequireFields.Where(x => !AnsweredFields.Contains(x)).ToList();
+        public string Title { get; set; }
         public Dictionary<string, string> AllAnswers { get; set; } = new Dictionary<string, string>();
         public string FormId { get; set; }
         public bool AllFieldsAreFilledWithAnswers => AllAnswers.Count >= AllRequireFields?.Count;

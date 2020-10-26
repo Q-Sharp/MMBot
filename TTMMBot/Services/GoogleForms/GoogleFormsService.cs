@@ -31,7 +31,7 @@ namespace TTMMBot.Services.GoogleForms
             try
             {
                 var fields = await LoadGoogleFormStructureAsync(url);
-                var gfa = new GoogleFormsAnswers { AllRequireFields = fields.QuestionFieldList.Where(x => x.IsAnswerRequired).ToList(), FormId = fields.FormId };
+                var gfa = new GoogleFormsAnswers { AllRequireFields = fields.QuestionFieldList.Where(x => x.IsAnswerRequired).ToList(), FormId = fields.FormId, Title = fields.Title };
                 return gfa;
             }
             catch (Exception e)
