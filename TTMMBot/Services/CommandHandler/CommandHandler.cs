@@ -136,8 +136,8 @@ namespace TTMMBot.Services.CommandHandler
                 {
                     try
                     {
-                        var users = await questionsChannel.GetUsersAsync(CacheMode.AllowDownload).ToListAsync();
-                        var mentionAll = string.Join(", ", users.Select(x => x.Select(y => y.Mention)));
+                        var users = await questionsChannel.GetUsersAsync(CacheMode.AllowDownload).FlattenAsync();
+                        var mentionAll = string.Join(", ", users.Select(y => y.Mention));
                         var msg = await questionsChannel.SendMessageAsync($"I have problems to auto fill of the latest form with the tile: {gfa.Title}." + Environment.NewLine + 
                                                                           $"Wake up and help me out: {mentionAll}" + Environment.NewLine + 
                                                                           $"What should we do now? (1 = answer, 2 = cancel)");
