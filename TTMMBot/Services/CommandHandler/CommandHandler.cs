@@ -161,7 +161,6 @@ namespace TTMMBot.Services.CommandHandler
 
                     foreach(var q in gfa.OpenFields)
                     {
-                    
                         var qMsg = await questionsChannel.SendMessageAsync($"Question: {q.QuestionText}");
 
                         var context = new CommandContext(_client, qMsg);
@@ -169,7 +168,10 @@ namespace TTMMBot.Services.CommandHandler
 
                         var response = await _interactiveService.NextMessageAsync(sC, false, true, timeout: TimeSpan.FromHours(2));
                         if (response != null)
+                        {
                             await gfa.AnswerQuestionManual(q.AnswerSubmissionId, response.Content);
+                            await questionsChannel.SendMessageAsync($"Answer added: {response.Content}");
+                        }  
                         else
                             return;
                     }
