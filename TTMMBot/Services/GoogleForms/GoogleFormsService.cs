@@ -23,44 +23,30 @@ namespace TTMMBot.Services.GoogleForms
             _clientFactory = clientFactory;
         }
 
-        public async Task<bool> SubmitAsync(string url, string playerTag)
+        public async Task<GoogleFormsAnswers> LoadAsync(string url)
         {
-            if (string.IsNullOrWhiteSpace(url) || string.IsNullOrWhiteSpace(playerTag))
-                return false;
+            if (string.IsNullOrWhiteSpace(url))
+                return null;
 
             try
             {
                 var fields = await LoadGoogleFormStructureAsync(url);
-                var answerReq = fields.QuestionFieldList.Where(x => x.IsAnswerRequired).ToList();
-
-                var answersFilled = new List<KeyValuePair<string, string>>();
-
-                var filled = answerReq.Where(x => x.QuestionText.Contains("tag", StringComparison.InvariantCultureIgnoreCase) && x.QuestionType == GoogleFormsFieldType.ShortAnswerField);
-                answersFilled.AddRange(filled.Select(x => new KeyValuePair<string, string>($"entry.{x.AnswerSubmissionId}", playerTag)));
-
-                filled.ForEach(x => answerReq.Remove(x));
-                //var notfilled = fields.QuestionFieldList.Where(x => !x.IsAnswerRequired).Select(x => new KeyValuePair<string, string>($"entry.{x.AnswerSubmissionId}", ""));
-
-                while(answerReq.Any())
-                {
-                    await Task.Delay(TimeSpan.FromSeconds(30));
-                }
-
-                return await SubmitToGoogleFormAsyncTest(fields.FormId, new Dictionary<string, string>(answersFilled/*.Concat(notfilled)*/));
+                var gfa = new GoogleFormsAnswers { AllRequireFields = fields.QuestionFieldList.Where(x => x.IsAnswerRequired).ToList(), FormId = fields.FormId };
+                return gfa;
             }
-            catch(Exception e)
-            { 
+            catch (Exception e)
+            {
                 _logger.LogError(e.Message);
             }
 
-            return false;
+            return null;
         }
 
-        private async Task<bool> SubmitToGoogleFormAsyncTest(string formID, Dictionary<string, string> formData)
+        public async Task<bool> SubmitToGoogleFormAsync(GoogleFormsAnswers gfa)
         {
-            var url = $"https://docs.google.com/forms/d/e/{formID}/formResponse";
+            var url = $"https://docs.google.com/forms/d/e/{gfa.FormId}/formResponse";
             var client = _clientFactory?.CreateClient("forms");
-            var content = new FormUrlEncodedContent(formData);
+            var content = new FormUrlEncodedContent(gfa.AllAnswers);
             var response = await client.PostAsync(url, content);
 
             if (response.StatusCode == HttpStatusCode.OK)
@@ -69,13 +55,7 @@ namespace TTMMBot.Services.GoogleForms
             return false;
         }
 
-        /// <summary>
-        /// Loading Google Form's generic information
-        /// and Question Field list data including
-        /// Question Type, Answer Options, Submission Id, etc
-        /// </summary>
-        /// <param name="yourGoogleFormsUrl"></param>
-        public async Task<GoogleForm> LoadGoogleFormStructureAsync(string yourGoogleFormsUrl)
+        private async Task<GoogleForm> LoadGoogleFormStructureAsync(string yourGoogleFormsUrl)
         {
             var web = new HtmlWeb();
             var htmlDoc = await web.LoadFromWebAsync(yourGoogleFormsUrl).ConfigureAwait(false);

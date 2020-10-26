@@ -13,21 +13,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200825005006_v4.cs" />
-    <Compile Remove="Migrations\20200825005006_v4.Designer.cs" />
-    <Compile Remove="Migrations\20200830170518_v6.cs" />
-    <Compile Remove="Migrations\20200830170518_v6.Designer.cs" />
-    <Compile Remove="Migrations\20201023202357_v13.cs" />
-    <Compile Remove="Migrations\20201023202357_v13.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="TTMMBot.db" />
   </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="15.0.8" />
-    <PackageReference Include="Discord.Net" Version="2.2.0" />
+    <PackageReference Include="Discord.Addons.Interactive" Version="2.0.0" />
+    <PackageReference Include="Discord.Net.Core" Version="2.2.0" />
+    <PackageReference Include="Discord.Net.WebSocket" Version="2.2.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.25" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="3.1.9" />

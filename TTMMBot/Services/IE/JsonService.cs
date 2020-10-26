@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization.Json;
-using TTMMBot.Data;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
-using System.Threading.Tasks;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using TTMMBot.Services.Interfaces;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using TTMMBot.Data;
 using TTMMBot.Data.Entities;
+using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Services.IE
 {
@@ -18,7 +15,6 @@ namespace TTMMBot.Services.IE
     {
         private Context _context;
         private ILogger<CsvService> _logger;
-
         private JsonSerializerSettings _jsonSerializerSettings;
 
         public JsonService(Context context, ILogger<CsvService> logger)
@@ -52,7 +48,7 @@ namespace TTMMBot.Services.IE
                 { "GuildSettings", JsonConvert.SerializeObject(ags, _jsonSerializerSettings) },
                 { "Vacation", JsonConvert.SerializeObject(av, _jsonSerializerSettings) },
                 { "Channel", JsonConvert.SerializeObject(aca, _jsonSerializerSettings) },
-                { "MemberGroups", JsonConvert.SerializeObject(amg, _jsonSerializerSettings) }
+                { "MemberGroup", JsonConvert.SerializeObject(amg, _jsonSerializerSettings) }
             };
 
             return dict;
@@ -60,15 +56,44 @@ namespace TTMMBot.Services.IE
 
         public async Task<bool> ImportJsonToDB(IDictionary<string, string> importJson)
         {
-            IList<Channel> am = JsonConvert.DeserializeObject<IList<Channel>>(importJson["Channel"], _jsonSerializerSettings);
-            IList<GuildSettings> ac = JsonConvert.DeserializeObject<IList<GuildSettings>>(importJson["GuildSettings"], _jsonSerializerSettings);
-            IList<Clan> ags= JsonConvert.DeserializeObject<IList<Clan>>(importJson["Clan"], _jsonSerializerSettings);
-            IList<Vacation> av = JsonConvert.DeserializeObject<IList<Vacation>>(importJson["Vacation"], _jsonSerializerSettings);
-            IList<Member> aca = JsonConvert.DeserializeObject<IList<Member>>(importJson["Member"], _jsonSerializerSettings);
-            IList<MemberGroup> amg = JsonConvert.DeserializeObject<IList<MemberGroup>>(importJson["MemberGroup"], _jsonSerializerSettings);
+            try
+            {
+                var am = JsonConvert.DeserializeObject<IList<Channel>>(importJson["Channel"], _jsonSerializerSettings);
+                var ac = JsonConvert.DeserializeObject<IList<GuildSettings>>(importJson["GuildSettings"], _jsonSerializerSettings);
+                var ags = JsonConvert.DeserializeObject<IList<Clan>>(importJson["Clan"], _jsonSerializerSettings);
+                var aca = JsonConvert.DeserializeObject<IList<Member>>(importJson["Member"], _jsonSerializerSettings);
+                var av = JsonConvert.DeserializeObject<IList<Vacation>>(importJson["Vacation"], _jsonSerializerSettings);
+                var amg = JsonConvert.DeserializeObject<IList<MemberGroup>>(importJson["MemberGroup"], _jsonSerializerSettings);
 
+                await ImportOrUpgrade(_context.Channel, am);
+                await ImportOrUpgrade(_context.GuildSettings, ac);
+                await ImportOrUpgrade(_context.Clan, ags);
+                await ImportOrUpgrade(_context.Member, aca);
+                await ImportOrUpgrade(_context.Vacation, av);
+                await ImportOrUpgrade(_context.MemberGroup, amg);
 
-            return await Task.Run(() => false);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch(Exception e)
+            {
+                 _logger.LogError(e.Message);
+                return false;
+            }
+        }
+
+        private async Task ImportOrUpgrade<T>(DbSet<T> currentData, IList<T> updateWithData) 
+            where T : class, IHaveId
+        {
+            foreach(var uwd in updateWithData)
+            {
+                var found = await currentData.FindAsync(uwd.Id);
+
+                if(found != null)
+                    found.Update(uwd);
+                else
+                    await currentData.AddAsync(uwd);
+            }
         }
     }
 }

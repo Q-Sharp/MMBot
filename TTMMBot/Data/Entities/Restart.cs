@@ -1,13 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TTMMBot.Helpers;
 
 namespace TTMMBot.Data.Entities
 {
-    public class Restart
+    public class Restart : IHaveId
     {
         [Key]
-        public int RestartId { get; set; }
+        public int Id { get; set; }
 
         public ulong Guild { get; set; }
         public ulong Channel { get; set; }
+
+        public void Update(object restart)
+        {
+            if(restart is Restart r && Id == r.Id)
+                this.ChangeProperties(r);
+        }
     }
 }

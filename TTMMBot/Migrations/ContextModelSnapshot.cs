@@ -18,8 +18,11 @@ namespace TTMMBot.Migrations
 
             modelBuilder.Entity("TTMMBot.Data.Entities.Channel", b =>
                 {
-                    b.Property<int>("ChannelId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<ulong>("AnswerTextChannelId")
                         .HasColumnType("INTEGER");
 
                     b.Property<ulong>("GuildId")
@@ -28,14 +31,14 @@ namespace TTMMBot.Migrations
                     b.Property<ulong>("TextChannelId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("ChannelId");
+                    b.HasKey("Id");
 
                     b.ToTable("Channel");
                 });
 
             modelBuilder.Entity("TTMMBot.Data.Entities.Clan", b =>
                 {
-                    b.Property<int>("ClanId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -55,7 +58,7 @@ namespace TTMMBot.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("ClanId");
+                    b.HasKey("Id");
 
                     b.HasIndex("SortOrder")
                         .IsUnique();
@@ -68,7 +71,7 @@ namespace TTMMBot.Migrations
 
             modelBuilder.Entity("TTMMBot.Data.Entities.GuildSettings", b =>
                 {
-                    b.Property<int>("GuildSettingsId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -90,14 +93,14 @@ namespace TTMMBot.Migrations
                     b.Property<TimeSpan>("WaitForReaction")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("GuildSettingsId");
+                    b.HasKey("Id");
 
                     b.ToTable("GuildSettings");
                 });
 
             modelBuilder.Entity("TTMMBot.Data.Entities.Member", b =>
                 {
-                    b.Property<int>("MemberId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -150,7 +153,7 @@ namespace TTMMBot.Migrations
                     b.Property<int?>("SHigh")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("MemberId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ClanId");
 
@@ -164,18 +167,18 @@ namespace TTMMBot.Migrations
 
             modelBuilder.Entity("TTMMBot.Data.Entities.MemberGroup", b =>
                 {
-                    b.Property<int>("MemberGroupId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("MemberGroupId");
+                    b.HasKey("Id");
 
                     b.ToTable("MemberGroup");
                 });
 
             modelBuilder.Entity("TTMMBot.Data.Entities.Restart", b =>
                 {
-                    b.Property<int>("RestartId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -185,14 +188,14 @@ namespace TTMMBot.Migrations
                     b.Property<ulong>("Guild")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("RestartId");
+                    b.HasKey("Id");
 
                     b.ToTable("Restart");
                 });
 
             modelBuilder.Entity("TTMMBot.Data.Entities.Vacation", b =>
                 {
-                    b.Property<int>("VacationId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -205,7 +208,7 @@ namespace TTMMBot.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("VacationId");
+                    b.HasKey("Id");
 
                     b.HasIndex("MemberId");
 

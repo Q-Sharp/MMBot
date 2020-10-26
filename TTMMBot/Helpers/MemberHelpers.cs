@@ -11,7 +11,7 @@ namespace TTMMBot.Helpers
 {
     public static class MemberHelpers
     {
-        public static async Task<Member> FindAndAskForMember(this IEnumerable<Member> members, string search, ISocketMessageChannel smc, ICommandHandler ch) 
+        public static async Task<Member> FindAndAskForMember(this IEnumerable<Member> members, string search, IMessageChannel smc, ICommandHandler ch) 
             => await members
                 .FindMember(search)
                 .AskForMemberAsync(smc, ch);
@@ -19,7 +19,7 @@ namespace TTMMBot.Helpers
         private static IEnumerable<Member> FindMember(this IEnumerable<Member> members, string search) 
             => members.Where(x => x.Name.ToLower().Contains(search.ToLower()));
 
-        private static async Task<Member> AskForMemberAsync(this IEnumerable<Member> members, ISocketMessageChannel smc, ICommandHandler ch)
+        private static async Task<Member> AskForMemberAsync(this IEnumerable<Member> members, IMessageChannel smc, ICommandHandler ch)
         {
             if(members.Count() > 5)
             {

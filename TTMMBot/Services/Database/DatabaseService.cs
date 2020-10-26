@@ -48,7 +48,7 @@ namespace TTMMBot.Services
         }
 
         public async Task<Channel> CreateChannelAsync() => (await _context.AddAsync(new Channel(), new CancellationToken())).Entity;
-        public async Task<IList<Channel>> LoadChannelsAsync() => await _context.Channel.AsAsyncEnumerable().Where(x => x.GuildId == _guildId).ToListAsync();
+        public async Task<IList<Channel>> LoadChannelsAsync() => await _context.Channel.ToListAsync();
         public void DeleteChannel(Channel c) => _context.Remove(c);
 
         public async Task CleanDB()
@@ -65,7 +65,7 @@ namespace TTMMBot.Services
                 _context.Remove(x);
 
                 if(id.HasValue)
-                    _context.Remove(c.FirstOrDefault(y => y.ClanId == id));
+                    _context.Remove(c.FirstOrDefault(y => y.Id == id));
                 _context.SaveChanges();
             });
         }

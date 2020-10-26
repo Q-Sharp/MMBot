@@ -1,13 +1,15 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using TTMMBot.Helpers;
 
 namespace TTMMBot.Data.Entities
 {
-    public class GuildSettings
+    public class GuildSettings : IHaveId
     {
         [Key]
-        public int GuildSettingsId { get; set; }
+        public int Id { get; set; }
 
+        [Display]
         public ulong GuildId { get; set; }
 
         // Discord
@@ -27,5 +29,11 @@ namespace TTMMBot.Data.Entities
 
         [Display]
         public int MemberMovementQty { get; set; }
+
+        public void Update(object guildSettings)
+        {
+            if(guildSettings is GuildSettings gs && Id == gs.Id)
+                this.ChangeProperties(gs);
+        }
     }
 }

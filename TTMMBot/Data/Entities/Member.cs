@@ -4,13 +4,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
 using TTMMBot.Data.Enums;
+using TTMMBot.Helpers;
 
 namespace TTMMBot.Data.Entities
 {
-    public class Member
+    public class Member : IHaveId
     {
         [Key]
-        public int MemberId { get; set; }
+        public int Id { get; set; }
 
         [Required]
         [Display]
@@ -64,5 +65,11 @@ namespace TTMMBot.Data.Entities
         public virtual MemberGroup MemberGroup { get; set; }
 
         public override string ToString() => Clan?.Tag != null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
+
+        public void Update(object member)
+        {
+            if(member is Member m && (Id == m.Id || Name == m.Name))
+                this.ChangeProperties(m);
+        }
     }
 }

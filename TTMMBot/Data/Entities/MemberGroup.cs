@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Runtime.Serialization;
-using TTMMBot.Data.Enums;
+using TTMMBot.Helpers;
 
 namespace TTMMBot.Data.Entities
 {
-    public class MemberGroup
+    public class MemberGroup : IHaveId
     {
         [Key]
-        public int MemberGroupId { get; set; }
+        public int Id { get; set; }
 
-        public virtual ICollection<Member> Members { get; set; } 
+        public virtual ICollection<Member> Members { get; set; }
+
+        public void Update(object memberGroup)
+        {
+            if (memberGroup is MemberGroup mg && Id == mg.Id)
+                this.ChangeProperties(mg);
+        }
     }
 }

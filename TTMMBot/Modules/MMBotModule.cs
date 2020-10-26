@@ -2,12 +2,13 @@
 using System.Linq;
 using System.Reflection;
 using Discord.Commands;
+using Discord.WebSocket;
 using TTMMBot.Helpers;
 using TTMMBot.Services.Interfaces;
 
 namespace TTMMBot.Modules
 {
-    public abstract class MMBotModule : ModuleBase<SocketCommandContext>
+    public abstract class MMBotModule : ModuleBase<CommandContext>
     {
         protected IDatabaseService _databaseService;
         protected ICommandHandler _commandHandler;

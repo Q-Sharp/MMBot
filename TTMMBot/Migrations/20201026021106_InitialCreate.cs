@@ -11,21 +11,22 @@ namespace TTMMBot.Migrations
                 name: "Channel",
                 columns: table => new
                 {
-                    ChannelId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     GuildId = table.Column<ulong>(nullable: false),
-                    TextChannelId = table.Column<ulong>(nullable: false)
+                    TextChannelId = table.Column<ulong>(nullable: false),
+                    AnswerTextChannelId = table.Column<ulong>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Channel", x => x.ChannelId);
+                    table.PrimaryKey("PK_Channel", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Clan",
                 columns: table => new
                 {
-                    ClanId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     SortOrder = table.Column<int>(nullable: false),
                     Tag = table.Column<string>(nullable: false),
@@ -35,14 +36,14 @@ namespace TTMMBot.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Clan", x => x.ClanId);
+                    table.PrimaryKey("PK_Clan", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "GuildSettings",
                 columns: table => new
                 {
-                    GuildSettingsId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     GuildId = table.Column<ulong>(nullable: false),
                     Prefix = table.Column<string>(nullable: true),
@@ -53,40 +54,40 @@ namespace TTMMBot.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GuildSettings", x => x.GuildSettingsId);
+                    table.PrimaryKey("PK_GuildSettings", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "MemberGroup",
                 columns: table => new
                 {
-                    MemberGroupId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MemberGroup", x => x.MemberGroupId);
+                    table.PrimaryKey("PK_MemberGroup", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Restart",
                 columns: table => new
                 {
-                    RestartId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Guild = table.Column<ulong>(nullable: false),
                     Channel = table.Column<ulong>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Restart", x => x.RestartId);
+                    table.PrimaryKey("PK_Restart", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Member",
                 columns: table => new
                 {
-                    MemberId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(nullable: false),
                     Discord = table.Column<string>(nullable: true),
@@ -107,18 +108,18 @@ namespace TTMMBot.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Member", x => x.MemberId);
+                    table.PrimaryKey("PK_Member", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Member_Clan_ClanId",
                         column: x => x.ClanId,
                         principalTable: "Clan",
-                        principalColumn: "ClanId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Member_MemberGroup_MemberGroupId",
                         column: x => x.MemberGroupId,
                         principalTable: "MemberGroup",
-                        principalColumn: "MemberGroupId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -126,7 +127,7 @@ namespace TTMMBot.Migrations
                 name: "Vacation",
                 columns: table => new
                 {
-                    VacationId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     StartDate = table.Column<DateTime>(nullable: false),
                     EndDate = table.Column<DateTime>(nullable: false),
@@ -134,12 +135,12 @@ namespace TTMMBot.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vacation", x => x.VacationId);
+                    table.PrimaryKey("PK_Vacation", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Vacation_Member_MemberId",
                         column: x => x.MemberId,
                         principalTable: "Member",
-                        principalColumn: "MemberId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 

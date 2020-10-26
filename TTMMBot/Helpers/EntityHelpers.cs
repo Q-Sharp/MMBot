@@ -43,6 +43,20 @@ namespace TTMMBot.Helpers
             return message;
         }
 
+        public static void ChangeProperties<T>(this T m, T updateWith) 
+            where T : class
+        {
+            try
+            {
+                foreach(var p in m.GetType().GetProperties())
+                    ChangeProperty(m, p.Name, updateWith.GetProperty(p.Name));
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+
         public static string GetProperty<T>(this T m, string propertyName) 
             where T : class
         {

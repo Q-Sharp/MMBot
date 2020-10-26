@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using TTMMBot.Helpers;
 
 namespace TTMMBot.Data.Entities
 {
-    public class Clan
+    public class Clan : IHaveId
     {
         [Key]
-        public int ClanId { get; set; }
+        public int Id { get; set; }
 
         public int SortOrder { get; set; }
 
@@ -22,5 +23,11 @@ namespace TTMMBot.Data.Entities
 
         public virtual ICollection<Member> Member { get; set; }
         public override string ToString() => $"[{Tag}]";
+
+        public void Update(object clan)
+        {
+            if(clan is Clan c && (Id == c.Id || Name == c.Name))
+                this.ChangeProperties(c);
+        }
     }
 }

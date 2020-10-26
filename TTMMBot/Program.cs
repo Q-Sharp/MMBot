@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
@@ -93,6 +94,7 @@ namespace TTMMBot
                         .AddScoped<IJsonService, JsonService>()
                         .AddScoped<IAdminService, AdminService>()
                         .AddScoped<IMemberSortService, MemberSortService>()
+                        .AddSingleton<InteractiveService, InteractiveService>()
                         .BuildServiceProvider();
                 });
     }

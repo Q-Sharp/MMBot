@@ -123,7 +123,7 @@ namespace TTMMBot.Services.IE
                     if (row.Table.Columns.Contains("ClanTag") && row["ClanTag"] != DBNull.Value && !string.IsNullOrEmpty((string)row["ClanTag"]))
                     {
                         me.Clan = _context.Clan.FirstOrDefault(x => x.Tag == (string)row["ClanTag"]);
-                        me.ClanId =  me.Clan?.ClanId;
+                        me.ClanId =  me.Clan?.Id;
                     }
 
                     if (row.Table.Columns.Contains("Discord") && row["Discord"] != DBNull.Value)
