@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30309.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot", "MMBot\MMBot.csproj", "{91D3C09B-60AA-476A-A68D-A861598C7CCB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Tests", "MMBot.Tests\MMBot.Tests.csproj", "{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{91D3C09B-60AA-476A-A68D-A861598C7CCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91D3C09B-60AA-476A-A68D-A861598C7CCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91D3C09B-60AA-476A-A68D-A861598C7CCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91D3C09B-60AA-476A-A68D-A861598C7CCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {98C44232-FD62-499A-9141-A4D59FF009FE}
+	EndGlobalSection
+EndGlobal
