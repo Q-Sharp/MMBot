@@ -33,7 +33,7 @@ jobs:
       env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltgoDzvO --delete-excluded --filter 'protect *.db'"
-          SOURCE: TTMMBot/bin/Release/netcoreapp3.1/linux-x64/publish/
+          SOURCE: MMBot/bin/Release/netcoreapp3.1/linux-x64/publish/
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
