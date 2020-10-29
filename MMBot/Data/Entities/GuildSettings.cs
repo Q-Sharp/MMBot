@@ -35,5 +35,7 @@ namespace MMBot.Data.Entities
             if(guildSettings is GuildSettings gs && Id == gs.Id)
                 this.ChangeProperties(gs);
         }
+
+        public override string ToString() => $"{GuildId}";
     }
 }

@@ -38,5 +38,7 @@ namespace MMBot.Data.Entities
            if(timer is MMTimer t && Id == t.Id)
                 this.ChangeProperties(t);
         }
+
+        public override string ToString() => $"{Name}";
     }
 }

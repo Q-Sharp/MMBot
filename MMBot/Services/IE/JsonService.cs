@@ -40,6 +40,7 @@ namespace MMBot.Services.IE
             var av = await _context.Vacation.AsAsyncEnumerable().ToListAsync().AsTask();
             var aca = await _context.Channel.AsAsyncEnumerable().ToListAsync().AsTask();
             var amg = await _context.MemberGroup.AsAsyncEnumerable().ToListAsync().AsTask();
+            var mmt = await _context.Timer.AsAsyncEnumerable().ToListAsync().AsTask();
 
             var dict = new Dictionary<string, string>
             {
@@ -48,7 +49,8 @@ namespace MMBot.Services.IE
                 { "GuildSettings", JsonConvert.SerializeObject(ags, _jsonSerializerSettings) },
                 { "Vacation", JsonConvert.SerializeObject(av, _jsonSerializerSettings) },
                 { "Channel", JsonConvert.SerializeObject(aca, _jsonSerializerSettings) },
-                { "MemberGroup", JsonConvert.SerializeObject(amg, _jsonSerializerSettings) }
+                { "MemberGroup", JsonConvert.SerializeObject(amg, _jsonSerializerSettings) },
+                { "MMTimer", JsonConvert.SerializeObject(mmt, _jsonSerializerSettings) }
             };
 
             return dict;
@@ -64,6 +66,7 @@ namespace MMBot.Services.IE
                 var aca = JsonConvert.DeserializeObject<IList<Member>>(importJson["Member"], _jsonSerializerSettings);
                 var av = JsonConvert.DeserializeObject<IList<Vacation>>(importJson["Vacation"], _jsonSerializerSettings);
                 var amg = JsonConvert.DeserializeObject<IList<MemberGroup>>(importJson["MemberGroup"], _jsonSerializerSettings);
+                var mmt = JsonConvert.DeserializeObject<IList<MMTimer>>(importJson["Timer"], _jsonSerializerSettings);
 
                 await ImportOrUpgrade(_context.Channel, am);
                 await ImportOrUpgrade(_context.GuildSettings, ac);
@@ -71,6 +74,7 @@ namespace MMBot.Services.IE
                 await ImportOrUpgrade(_context.Member, aca);
                 await ImportOrUpgrade(_context.Vacation, av);
                 await ImportOrUpgrade(_context.MemberGroup, amg);
+                await ImportOrUpgrade(_context.Timer, mmt);
 
                 await _context.SaveChangesAsync();
                 return true;

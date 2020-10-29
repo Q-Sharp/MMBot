@@ -23,10 +23,8 @@ namespace MMBot.Modules
 
         protected override void BeforeExecute(CommandInfo command)
         {
-            typeof(MMBotModule)
-                .GetProperties(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField)
-                .OfType<IGuildSetter>()
-                .ForEach(s => s.SetGuild(Context.Channel.Id));
+            typeof(MMBotModule).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField)
+                .ForEach(x => (x.GetValue(this) as IGuildSetter)?.SetGuild(Context.Channel.Id));
 
             base.BeforeExecute(command);
         }
