@@ -122,6 +122,67 @@ namespace MMBot.Helpers
             return null;
         }
 
+        public static string GetTablePropertiesWithValues<T>(this IEnumerable<T> mm)
+            where T : class
+        {
+            var message = "```";
+
+            try
+            {
+                var m = mm.FirstOrDefault();
+
+                message += typeof(T).ToString().Split('.').LastOrDefault();
+                message += Environment.NewLine;
+
+                var pr = m.GetType().GetProperties(cisBF).Where(x => x.CustomAttributes.Any(x => x.AttributeType == typeof(DisplayAttribute))).ToArray();
+
+                var ss = pr.Select(p => new
+                {
+                    pVal = m.GetType().GetProperty(p.Name, cisBF)?.GetValue(m, null),
+                    t = Nullable.GetUnderlyingType(p.PropertyType) ?? p.PropertyType,
+                    p
+                })
+                .Select(p => new
+                {
+                    val = Convert.ChangeType(p.pVal, p.t),
+                    header = p.p?.Name?.ToSentence(),
+                    p = p.p 
+                })
+                .Select((p, i) => new
+                {
+                    i,
+                    Value = (p.val?.ToString()) ?? "not set",
+                    p.header
+                })
+                .GroupBy(p => p.i, (x, y) => new { Index = x, Values = y })
+                .Select(x =>
+                {
+                    var result = string.Empty;
+                    if(x.Index == 0)
+                    {
+                        result += string.Join(", ", x.Values.SelectMany(y => y.header));
+                        result += Environment.NewLine;
+                    }
+                        
+                    result += string.Join(", ", x.Values.SelectMany(y => y.Value));
+
+                    return result;
+                })
+                .ToArray();
+
+                message += string.Join(Environment.NewLine, ss);
+                message += "```";
+
+                return message; 
+            }
+            catch
+            {
+                // ignored
+            }
+
+            return null;
+        }
+
         public static IEnumerable<T> FilterCollectionByPropertyWithValue<T>(this IEnumerable<T> ml, string propertyName, string value)
             where T : class
         {

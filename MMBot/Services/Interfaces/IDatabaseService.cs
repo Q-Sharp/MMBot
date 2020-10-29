@@ -24,6 +24,10 @@ namespace MMBot.Services.Interfaces
         Task<IList<Channel>> LoadChannelsAsync();
         void DeleteChannel(Channel c);
 
+        Task<MMTimer> CreateTimerAsync();
+        Task<IList<MMTimer>> LoadTimerAsync();
+        void DeleteTimer(MMTimer c);
+
         Task SaveDataAsync();
         Task MigrateAsync();
         Task CleanDB();

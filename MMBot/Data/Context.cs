@@ -20,7 +20,7 @@ namespace MMBot.Data
         public DbSet<Vacation> Vacation { get; set; }
         public DbSet<Channel> Channel { get; set; }
         public DbSet<MemberGroup> MemberGroup { get; set; }
-        
+        public DbSet<MMTimer> Timer { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
