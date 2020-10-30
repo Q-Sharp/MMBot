@@ -49,7 +49,7 @@ namespace MMBot.Helpers
             try
             {
                 foreach(var p in m.GetType().GetProperties())
-                    ChangeProperty(m, p.Name, updateWith.GetProperty(p.Name));
+                    ChangeProperty(m, p.Name, updateWith.GetProperty(p.Name, false));
             }
             catch
             {

@@ -1,13 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MMBot.Data;
 using MMBot.Data.Entities;
 using MMBot.Services.Interfaces;
+using Newtonsoft.Json;
 
 namespace MMBot.Services.IE
 {
@@ -27,7 +27,8 @@ namespace MMBot.Services.IE
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 NullValueHandling = NullValueHandling.Ignore,
                 MissingMemberHandling = MissingMemberHandling.Ignore,
-                ObjectCreationHandling = ObjectCreationHandling.Auto,
+                ObjectCreationHandling = ObjectCreationHandling.Replace,
+                PreserveReferencesHandling = PreserveReferencesHandling.None,
                 Formatting = Formatting.Indented
             };
         }
@@ -60,46 +61,53 @@ namespace MMBot.Services.IE
         {
             try
             {
-                if(importJson.TryGetValue("Timer", out var channel))
+                if(importJson.TryGetValue("Channel", out var channel))
                 {
                     var am = JsonConvert.DeserializeObject<IList<Channel>>(channel, _jsonSerializerSettings);
                     await ImportOrUpgrade(_context.Channel, am);
+                    await _context.SaveChangesAsync();
                 }
 
-                if(importJson.TryGetValue("Timer", out var guild))
+                if(importJson.TryGetValue("GuildSettings", out var guild))
                 {
                     var ac = JsonConvert.DeserializeObject<IList<GuildSettings>>(guild, _jsonSerializerSettings);
                     await ImportOrUpgrade(_context.GuildSettings, ac);
+                    await _context.SaveChangesAsync();
                 }
 
-                if(importJson.TryGetValue("Timer", out var clan))
+                if(importJson.TryGetValue("Clan", out var clan))
                 {
                     var ags = JsonConvert.DeserializeObject<IList<Clan>>(clan, _jsonSerializerSettings);
                     await ImportOrUpgrade(_context.Clan, ags);
+                    await _context.SaveChangesAsync();
                 }
 
-                if(importJson.TryGetValue("Timer", out var member))
+                if(importJson.TryGetValue("Member", out var member))
                 {
                     var aca = JsonConvert.DeserializeObject<IList<Member>>(member, _jsonSerializerSettings);
                      await ImportOrUpgrade(_context.Member, aca);
+                    await _context.SaveChangesAsync();
                 }
 
-                if(importJson.TryGetValue("Timer", out var vac))
+                if(importJson.TryGetValue("Vacation", out var vac))
                 {
                     var av = JsonConvert.DeserializeObject<IList<Vacation>>(vac, _jsonSerializerSettings);
                     await ImportOrUpgrade(_context.Vacation, av);
+                    await _context.SaveChangesAsync();
                 }
 
-                if(importJson.TryGetValue("Timer", out var mgroup))
+                if(importJson.TryGetValue("MemberGroup", out var mgroup))
                 {
                     var amg = JsonConvert.DeserializeObject<IList<MemberGroup>>(mgroup, _jsonSerializerSettings);
                    await ImportOrUpgrade(_context.MemberGroup, amg);
+                    await _context.SaveChangesAsync();
                 }
                 
-                if(importJson.TryGetValue("Timer", out var timer))
+                if(importJson.TryGetValue("MMTimer", out var timer))
                 {
                     var mmt = JsonConvert.DeserializeObject<IList<MMTimer>>(timer, _jsonSerializerSettings);
                     await ImportOrUpgrade(_context.Timer, mmt);
+                    await _context.SaveChangesAsync();
                 }
                 
                 await _context.SaveChangesAsync();
