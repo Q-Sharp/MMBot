@@ -15,7 +15,6 @@ namespace MMBot.Data.Entities
 
         [Required]
         [Display]
-        [ConcurrencyCheck]
         public string Name { get; set; }
 
         [Display]

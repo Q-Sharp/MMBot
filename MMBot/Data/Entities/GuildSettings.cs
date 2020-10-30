@@ -10,7 +10,6 @@ namespace MMBot.Data.Entities
         public int Id { get; set; }
 
         [Display]
-        [ConcurrencyCheck]
         public ulong GuildId { get; set; }
 
         // Discord

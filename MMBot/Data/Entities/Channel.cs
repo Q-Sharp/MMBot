@@ -6,7 +6,6 @@ namespace MMBot.Data.Entities
     public class Channel : IHaveId
     {
         [Key]
-        [ConcurrencyCheck]
         public int Id { get; set; }
 
         public ulong GuildId { get; set; }

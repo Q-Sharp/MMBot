@@ -11,6 +11,7 @@ namespace MMBot.Data
         protected override void OnConfiguring(DbContextOptionsBuilder options) => options
             .UseSqlite($"Data Source={_dbname}")
             .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
+            .EnableSensitiveDataLogging(true)
             .UseLazyLoadingProxies();
 
         public DbSet<Member> Member { get; set; }

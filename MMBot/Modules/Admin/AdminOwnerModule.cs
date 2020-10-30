@@ -101,7 +101,7 @@ namespace MMBot.Modules.Admin
         [RequireOwner]
         public async Task Restart(bool saveRestart = true)
         {
-            if (saveRestart)
+           if (saveRestart)
             {
                 var r = await _databaseService?.AddRestart();
                 r.Guild = Context.Guild.Id;

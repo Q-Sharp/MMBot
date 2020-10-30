@@ -37,7 +37,7 @@ namespace MMBot.Services.IE
             csvReader.Configuration.HeaderValidated = null;
             csvReader.Configuration.MissingFieldFound = null;
             csvReader.Configuration.BadDataFound = null;
-            csvReader.Configuration.Delimiter = ",";
+            csvReader.Configuration.Delimiter = ";";
 
             try
             {
@@ -106,8 +106,8 @@ namespace MMBot.Services.IE
                 
                 foreach (DataRow row in dt.Rows)
                 {
-                    var me = _context.Member.FirstOrDefault(x => row["Name"] != DBNull.Value 
-                        && x.Name.ToLower() == ((string)row["Name"]).ToLower());
+                    var me = row["Name"] != DBNull.Value && _context.Member.Any() ? _context.Member.FirstOrDefault(
+                        x => x.Name.ToLower() == ((string)row["Name"]).ToLower()) : null;
 
                     if(me == null)
                     {
