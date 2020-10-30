@@ -15,12 +15,12 @@ namespace MMBot.Modules.Timer
     [Alias("T")]
     public partial class TimerModule : MMBotModule, ITimerModule
     {
-        //protected readonly ITimerService _timerService;
+        protected readonly ITimerService _timerService;
 
-        public TimerModule(IDatabaseService databaseService, ICommandHandler commandHandler, /*ITimerService timerService,*/ IGuildSettingsService guildSettings)
+        public TimerModule(IDatabaseService databaseService, ICommandHandler commandHandler, ITimerService timerService, IGuildSettingsService guildSettings)
             : base(databaseService, guildSettings, commandHandler)
         {
-            //_timerService = timerService;
+            _timerService = timerService;
         }
 
         [Command("Create")]
@@ -31,11 +31,17 @@ namespace MMBot.Modules.Timer
         {
             try
             {
+                if((await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId) != null)
+                {
+                    await ReplyAsync($"A timer with that name already exists!");
+                    return;
+                }
+
                 var t = await _databaseService.CreateTimerAsync();
                 t.Name = name;
                 t.IsRecurring = recurring;
                 await _databaseService.SaveDataAsync();
-                await ReplyAsync($"The member {t} was added to database.");
+                await ReplyAsync($"The timer {t} was added to database.");
             }
             catch (Exception e)
             {
@@ -51,10 +57,17 @@ namespace MMBot.Modules.Timer
         {
             try
             {
-                var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower().CompareTo(name) == 0 && _guildSettings.GuildId == t.GuildId);
-                _databaseService.DeleteTimer(t);
-                await _databaseService.SaveDataAsync();
-                await ReplyAsync($"The timer {t} was deleted");
+                var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
+
+                if(t !=  null)
+                {
+                    if(t.IsActive)
+                        await StopTimer(name);
+
+                    _databaseService.DeleteTimer(t);
+                    await _databaseService.SaveDataAsync();
+                    await ReplyAsync($"The timer {name} was deleted");
+                }
             }
             catch (Exception e)
             {
@@ -69,7 +82,8 @@ namespace MMBot.Modules.Timer
         public async Task ListTimers()
         {
             var timer = (await _databaseService.LoadTimerAsync()).Where(t => _guildSettings.GuildId == t.GuildId).ToList();
-            await ReplyAsync(timer.GetTablePropertiesWithValues());
+
+            await ReplyAsync(timer.Count > 0 ? timer.GetTablePropertiesWithValues() : "No timers");
         }
 
         [Command("AddNotification")]
@@ -78,34 +92,89 @@ namespace MMBot.Modules.Timer
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task AddNotification(string name, ISocketMessageChannel channel, [Remainder] string message)
         {
-            throw new NotImplementedException();
+            var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
+            if(t != null)
+            {
+                if(t.IsActive)
+                    await StopTimer(name);
+
+                t.ChannelId = channel.Id;
+                t.GuildId = _guildSettings.GuildId;
+                t.Message = message;
+                await _databaseService.SaveDataAsync();
+                await ReplyAsync($"A notification will be send to {channel.Name} for timer {t}.");
+            }
         }
 
         [Command("RemoveNotification")]
         [Alias("RN")]
-        [Summary("Removes all Notification channel the message from a timer")]
+        [Summary("Removes a notification channel the message from a timer")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task RemoveNotification(string name)
         {
-            throw new NotImplementedException();
+            var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
+            if(t != null)
+            {
+                if(t.IsActive)
+                    await StopTimer(name);
+
+                t.ChannelId = null;
+                t.Message = null;
+                await _databaseService.SaveDataAsync();
+                await ReplyAsync($"The notification for timer {t} is deleted.");
+            }
         }
 
         [Command("StartTimer")]
         [Alias("Start")]
-        [Summary("Starts a timer, which ring once after timerspan or every timerspan")]
+        [Summary("Starts a timer, which rings once after timerspan and every timerspan")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task StartTimer(string name, [Remainder] string timeSpan)
+        public async Task StartTimer(string name, string timeToFirstRing, string timeInterval = null)
         {
-            throw new NotImplementedException();
+            var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
+            if(t != null)
+            {
+                if(t.Message == null || t.ChannelId == null)
+                {
+                    await ReplyAsync($"You can't run a timer without a message and a textchannel.");
+                    return;
+                }
+
+                if(t.IsActive)
+                {
+                    await ReplyAsync($"This timer is already running.... idiot!");
+                    return;
+                }
+
+                t.IsActive = true;
+                t.StartTime = DateTime.Now;
+                t.RingSpan = TimeSpan.Parse(timeInterval ?? timeToFirstRing);
+                var toFirstRingSpan = TimeSpan.Parse(timeToFirstRing);
+                t.EndTime = t.StartTime + toFirstRingSpan;
+                await _databaseService.SaveDataAsync();
+
+                await _timerService?.Start(t, false, toFirstRingSpan);
+                await ReplyAsync($"Timer {t} is running.");
+            }
         }
 
         [Command("StopTimer")]
-        [Alias("AN")]
+        [Alias("Stop")]
         [Summary("Stops a timer")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task StopTimer(string name)
         {
-            throw new NotImplementedException();
+            var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
+            if(t != null)
+            {
+                await _timerService?.Stop(t);
+                t.IsActive = false;
+                t.StartTime = null;
+                t.RingSpan = null;
+                t.EndTime = null;
+                await _databaseService.SaveDataAsync();
+                await ReplyAsync($"Timer {t} stopped.");
+            }
         }
     }
 }

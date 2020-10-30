@@ -9,8 +9,8 @@ namespace MMBot.Modules.Interfaces
     {
         Task CreateTimer(string name, bool recurring);
         Task ListTimers();
-        Task DeleteTimer(string Name);
-        Task StartTimer(string name, [Remainder] string timeSpan);
+        Task DeleteTimer(string name);
+        Task StartTimer(string name, string timeToFirstRing, string timeInterval = null);
         Task StopTimer(string name);
         Task AddNotification(string name, ISocketMessageChannel channel, [Remainder] string message);
         Task RemoveNotification(string name);

@@ -84,6 +84,27 @@ namespace MMBot.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Timer",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(nullable: false),
+                    IsRecurring = table.Column<bool>(nullable: false),
+                    IsActive = table.Column<bool>(nullable: false),
+                    StartTime = table.Column<DateTime>(nullable: true),
+                    RingSpan = table.Column<TimeSpan>(nullable: true),
+                    EndTime = table.Column<DateTime>(nullable: true),
+                    GuildId = table.Column<ulong>(nullable: false),
+                    ChannelId = table.Column<ulong>(nullable: true),
+                    Message = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Timer", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Member",
                 columns: table => new
                 {
@@ -188,6 +209,9 @@ namespace MMBot.Migrations
 
             migrationBuilder.DropTable(
                 name: "Restart");
+
+            migrationBuilder.DropTable(
+                name: "Timer");
 
             migrationBuilder.DropTable(
                 name: "Vacation");

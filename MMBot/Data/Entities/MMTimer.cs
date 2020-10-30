@@ -11,6 +11,7 @@ namespace MMBot.Data.Entities
 
         [Required]
         [Display]
+        [ConcurrencyCheck]
         public string Name { get; set; }
 
         [Display]
@@ -19,15 +20,16 @@ namespace MMBot.Data.Entities
         [Display]
         public bool IsActive { get; set; }
 
-        [Display]
         public DateTime? StartTime { get; set; }
 
         [Display]
         public TimeSpan? RingSpan { get; set; }
 
+        [Display]
+        public DateTime? EndTime { get; set; }
+
         public ulong GuildId { get; set; }
 
-        [Display]
         public ulong? ChannelId { get; set; }
 
         [Display]

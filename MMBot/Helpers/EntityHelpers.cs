@@ -57,7 +57,7 @@ namespace MMBot.Helpers
             }
         }
 
-        public static string GetProperty<T>(this T m, string propertyName) 
+        public static string GetProperty<T>(this T m, string propertyName, bool returnMessage = true) 
             where T : class
         {
             var message = string.Empty;
@@ -71,7 +71,7 @@ namespace MMBot.Helpers
                     var t = Nullable.GetUnderlyingType(pr.PropertyType) ?? pr.PropertyType;
                     var PropValue = m.GetType().GetProperty(propertyName, cisBF)?.GetValue(m, null);
 
-                    message = $"The {on} {m} uses {PropValue} as {propertyName}.";
+                    message = returnMessage ? $"The {on} {m} uses {PropValue} as {propertyName}." : PropValue.ToString();
                 }
             }
             catch (Exception e)
@@ -126,53 +126,35 @@ namespace MMBot.Helpers
             where T : class
         {
             var message = "```";
-
             try
             {
-                var m = mm.FirstOrDefault();
-
                 message += typeof(T).ToString().Split('.').LastOrDefault();
                 message += Environment.NewLine;
 
-                var pr = m.GetType().GetProperties(cisBF).Where(x => x.CustomAttributes.Any(x => x.AttributeType == typeof(DisplayAttribute))).ToArray();
-
-                var ss = pr.Select(p => new
+                var ss = mm.Select(m => new
                 {
-                    pVal = m.GetType().GetProperty(p.Name, cisBF)?.GetValue(m, null),
-                    t = Nullable.GetUnderlyingType(p.PropertyType) ?? p.PropertyType,
-                    p
+                    pr = m.GetType().GetProperties(cisBF).Where(x => x.CustomAttributes.Any(x => x.AttributeType == typeof(DisplayAttribute))).ToArray(),
+                    m
                 })
                 .Select(p => new
                 {
-                    val = Convert.ChangeType(p.pVal, p.t),
-                    header = p.p?.Name?.ToSentence(),
-                    p = p.p 
+                    pName = p?.pr?.Select(x => x.Name).ToArray(),
+                    p.m
                 })
-                .Select((p, i) => new
+                .Select(p => new
                 {
-                    i,
-                    Value = (p.val?.ToString()) ?? "not set",
-                    p.header
-                })
-                .GroupBy(p => p.i, (x, y) => new { Index = x, Values = y })
-                .Select(x =>
-                {
-                    var result = string.Empty;
-                    if(x.Index == 0)
-                    {
-                        result += string.Join(", ", x.Values.SelectMany(y => y.header));
-                        result += Environment.NewLine;
-                    }
-                        
-                    result += string.Join(", ", x.Values.SelectMany(y => y.Value));
-
-                    return result;
-                })
+                    values = p.pName.Select(x => p.m.GetProperty(x, false)).ToArray(),
+                    header = p.pName.Select(x => x?.ToSentence() ?? "").ToArray(),
+                })    
+                .Select(x => new { header = string.Join(", ", x.header).TrimEnd(new char[] { ',', ' ' }), values = string.Join(", ", x.values).TrimEnd(new char[] { ',', ' ' }) })
                 .ToArray();
 
-                message += string.Join(Environment.NewLine, ss);
-                message += "```";
+                message += ss.FirstOrDefault().header;
+                message += Environment.NewLine;
+                message += string.Join(Environment.NewLine, ss.Select(s => s.values));
+                message.TrimEnd(Environment.NewLine.ToCharArray());
 
+                message += "```";
                 return message; 
             }
             catch

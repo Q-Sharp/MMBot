@@ -43,13 +43,17 @@ namespace MMBot
         public async Task InitAsync()
         {
             var dbs = _sp.GetRequiredService<IDatabaseService>();
+            var ads = _sp.GetRequiredService<IAdminService>();
+
             try
             {
                 await dbs.MigrateAsync();
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Migration failed");
+                _logger.LogError(e.Message, e, "Migration failed");
+                await ads.DeleteDb();
+                await ads.Restart();
                 return;
             }
 

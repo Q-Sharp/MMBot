@@ -13,6 +13,7 @@ namespace MMBot.Data.Entities
 
         [Required]
         [Display]
+        [ConcurrencyCheck]
         public string Tag { get; set; }
 
         [Display]

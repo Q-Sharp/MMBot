@@ -81,7 +81,7 @@ namespace MMBot.Services.IE
             }
             catch(Exception e)
             {
-                 _logger.LogError(e.Message);
+                 _logger.LogError(e.Message, e);
                 return false;
             }
         }

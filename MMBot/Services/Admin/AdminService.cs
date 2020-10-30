@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MMBot.Data;
@@ -62,5 +65,22 @@ namespace MMBot.Services
 
 
         public void SetGuild(ulong id) => _guildId = id;
+
+        public async Task DeleteDb() 
+            => await Task.Run(() =>
+               {
+                   var db = $"{Path.Combine(Directory.GetCurrentDirectory(), "MMBot.db")}";
+                   File.Delete(db);
+               });
+
+        public Task Restart()
+        {
+            Process.Start(AppDomain.CurrentDomain.FriendlyName);
+            return Task.Run(async () => 
+            {
+                await Task.Delay(100);
+                Environment.Exit(0);
+            });
+        }
     }
 }

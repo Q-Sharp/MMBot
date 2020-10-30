@@ -109,20 +109,19 @@ namespace MMBot.Modules.Admin
                 await _databaseService?.SaveDataAsync();
             }
 
-            Process.Start(AppDomain.CurrentDomain.FriendlyName);
+            var t = _adminService.Restart();
             await ReplyAsync($"Bot service is restarting...");
-
-            Environment.Exit(0);
+            await t;
         }
 
         [Command("DeleteDB")]
         [Summary("Deletes sqlite db file")]
         [RequireOwner]
-        public async Task DeleteDb() => await Task.Run(async () =>
+        public async Task DeleteDb() 
+            => await Task.Run(async () =>
         {
-            var db = $"{Path.Combine(Directory.GetCurrentDirectory(), "MMBot.db")}";
-            File.Delete(db);
-            await ReplyAsync($"{db} has been deleted.");
+            await _adminService.DeleteDb();
+            await ReplyAsync($"db file has been deleted.");
             await Restart(false);
         });
 

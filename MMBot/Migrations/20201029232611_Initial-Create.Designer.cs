@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MMBot.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20201029012234_v1")]
-    partial class v1
+    [Migration("20201029232611_Initial-Create")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,6 +21,7 @@ namespace MMBot.Migrations
             modelBuilder.Entity("MMBot.Data.Entities.Channel", b =>
                 {
                     b.Property<int>("Id")
+                        .IsConcurrencyToken()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -57,6 +58,7 @@ namespace MMBot.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Tag")
+                        .IsConcurrencyToken()
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -84,6 +86,7 @@ namespace MMBot.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<ulong>("GuildId")
+                        .IsConcurrencyToken()
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("MemberMovementQty")
@@ -109,6 +112,9 @@ namespace MMBot.Migrations
                     b.Property<ulong?>("ChannelId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("TEXT");
+
                     b.Property<ulong>("GuildId")
                         .HasColumnType("INTEGER");
 
@@ -122,6 +128,7 @@ namespace MMBot.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsConcurrencyToken()
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -179,6 +186,7 @@ namespace MMBot.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
+                        .IsConcurrencyToken()
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -217,6 +225,7 @@ namespace MMBot.Migrations
             modelBuilder.Entity("MMBot.Data.Entities.Restart", b =>
                 {
                     b.Property<int>("Id")
+                        .IsConcurrencyToken()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 

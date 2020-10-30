@@ -16,6 +16,8 @@ using MMBot.Services.GoogleForms;
 using MMBot.Services.IE;
 using MMBot.Services.Interfaces;
 using MMBot.Services.MemberSort;
+using MMBot.Modules.Timer;
+using MMBot.Services.Timer;
 
 namespace MMBot
 {
@@ -95,6 +97,7 @@ namespace MMBot
                         .AddScoped<IAdminService, AdminService>()
                         .AddScoped<IMemberSortService, MemberSortService>()
                         .AddSingleton<InteractiveService, InteractiveService>()
+                        .AddScoped<ITimerService, TimerService>()
                         .BuildServiceProvider();
                 });
     }

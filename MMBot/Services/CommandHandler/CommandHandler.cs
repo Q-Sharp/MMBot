@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MMBot.Helpers;
 using MMBot.Services.Interfaces;
+using MMBot.Services.Timer;
 
 namespace MMBot.Services.CommandHandler
 {
@@ -22,11 +23,11 @@ namespace MMBot.Services.CommandHandler
         private readonly ILogger<CommandHandler> _logger;
         private readonly IList<Tuple<ISocketMessageChannel, ISocketMessageChannel>> _formsChannelList = new List<Tuple<ISocketMessageChannel, ISocketMessageChannel>>();
         
-
         private IGuildSettingsService _gs;
         private IDatabaseService _databaseService;
         private IGoogleFormsService _googleFormsSubmissionService;
         private InteractiveService _interactiveService;
+        private ITimerService _timerService;
 
         public CommandHandler(IServiceProvider services, CommandService commands, DiscordSocketClient client, ILogger<CommandHandler> logger)
         {
@@ -44,6 +45,7 @@ namespace MMBot.Services.CommandHandler
             _gs = _services.GetService<IGuildSettingsService>();
             _googleFormsSubmissionService = _services.GetService<IGoogleFormsService>();
             _interactiveService = _services.GetService<InteractiveService>();
+            _timerService = _services.GetService<ITimerService>();
 
             _commands.CommandExecuted += CommandExecutedAsync;
 
@@ -56,25 +58,33 @@ namespace MMBot.Services.CommandHandler
 
         private async Task Client_Ready()
         {
-            var r = await _databaseService.ConsumeRestart();
             _logger.Log(LogLevel.Information, "Bot is connected!");
 
+            // clean db if needed
+            await _databaseService.CleanDB();
+
+            // handle restart information
+            var r = await _databaseService.ConsumeRestart();
             if (r != null)
                 await _client.GetGuild(r.Item1)
                     .GetTextChannel(r.Item2)
                     .SendMessageAsync("Bot service has been restarted!");
 
-            await _databaseService.CleanDB();
-
-           (await _databaseService.LoadChannelsAsync())?
+            // load channels for google forms scan
+            (await _databaseService.LoadChannelsAsync())?
                 .Select(x => 
                     new Tuple<ISocketMessageChannel, ISocketMessageChannel>(_client.GetGuild(x.GuildId).GetTextChannel(x.TextChannelId), 
                                                                             _client.GetGuild(x.GuildId).GetTextChannel(x.AnswerTextChannelId)))?.ForEach(x => _formsChannelList.Add(x));
+
+            // reinit timers
+            (await _databaseService.LoadTimerAsync())?
+                .Where(x => x.IsActive && _timerService.Check(x))
+                .ForEach(x => _timerService.Start(x, true));
         }
 
         private async Task Client_Disconnected(Exception arg)
         {
-            _logger.LogError(arg.Message);
+            _logger.LogError(arg.Message, arg);
 
             await Task.Run(() =>
             { 

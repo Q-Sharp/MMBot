@@ -15,7 +15,7 @@ namespace MMBot.Services
             => _dbcontext = dbcontext;
 
         // Discord
-        public string Prefix => _gs?.Prefix ?? ".m";
+        public string Prefix => _gs?.Prefix ?? "m.";
         public TimeSpan WaitForReaction => _gs?.WaitForReaction ?? TimeSpan.FromMinutes(5);
 
         // Filesystem

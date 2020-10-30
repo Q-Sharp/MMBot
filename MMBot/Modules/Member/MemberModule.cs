@@ -40,7 +40,6 @@ namespace MMBot.Modules.Member
                 var imageUrl = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => x.GetUserAndDiscriminator() == m.Discord)?.GetAvatarUrl());
                 var e = m.GetEmbedPropertiesWithValues(imageUrl);
                 await ReplyAsync("", false, e as Embed);
-
             }
             catch (Exception e)
             {
