@@ -7,6 +7,10 @@ using MMBot.Helpers;
 using MMBot.Modules.Interfaces;
 using MMBot.Services.Interfaces;
 using Discord.WebSocket;
+using System.Collections;
+using MMBot.Data.Entities;
+using System.Collections.Generic;
+using Nito.AsyncEx;
 
 namespace MMBot.Modules.Timer
 {
@@ -16,6 +20,8 @@ namespace MMBot.Modules.Timer
     public partial class TimerModule : MMBotModule, ITimerModule
     {
         protected readonly ITimerService _timerService;
+        private IList<MMTimer> CountDownList = new List<MMTimer>();
+        private readonly AsyncLock _mutex = new AsyncLock();
 
         public TimerModule(IDatabaseService databaseService, ICommandHandler commandHandler, ITimerService timerService, IGuildSettingsService guildSettings)
             : base(databaseService, guildSettings, commandHandler)
@@ -182,6 +188,54 @@ namespace MMBot.Modules.Timer
                 t.EndTime = null;
                 await _databaseService.SaveDataAsync();
                 await ReplyAsync($"Timer {t} stopped.");
+            }
+        }
+
+        [Command("StartCountdown")]
+        [Alias("sc")]
+        [Summary("Starts a countdown")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
+        public async Task StartCountdown(string name)
+        {
+            var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
+            if(t != null)
+            {
+                var timeLeft = await _timerService?.GetCountDown(t);
+                if(timeLeft != null)
+                {
+                    using(await _mutex.LockAsync())
+                        CountDownList.Add(t);
+
+                    var _ = Task.Run(async () =>
+                    {
+                        var cd = true;
+                        while(cd)
+                        {
+                            var timeLeft = await _timerService?.GetCountDown(t);
+
+                            using(await _mutex.LockAsync())
+                                cd = CountDownList.Contains(t);
+
+                            await ReplyAsync($"Countdown for {t}: {timeLeft}");
+                            await Task.Delay(TimeSpan.FromMinutes(5));
+                        }
+                    });
+                }
+            }
+        }
+
+        [Command("StopCountdown")]
+        [Alias("stopc")]
+        [Summary("Stops a countdown")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
+        public async Task StopCountdown(string name)
+        {
+            var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
+            if(t != null)
+            {
+                using (await _mutex.LockAsync())
+                    if(CountDownList.Contains(t))
+                        CountDownList.Remove(t);
             }
         }
     }

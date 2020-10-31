@@ -9,5 +9,6 @@ namespace MMBot.Services.Interfaces
         Task Start(MMTimer t, bool bReinit = false, TimeSpan? ToFirstRing = null);
         Task Stop(MMTimer t);
         bool Check(MMTimer t);
+        Task<string> GetCountDown(MMTimer t);
     }
 }

@@ -17,6 +17,7 @@ using MMBot.Services.IE;
 using MMBot.Services.Interfaces;
 using MMBot.Services.MemberSort;
 using MMBot.Services.Timer;
+using System.IO;
 
 namespace MMBot
 {
@@ -26,7 +27,8 @@ namespace MMBot
         {
             Log.Logger = new LoggerConfiguration()
                  .Enrich.FromLogContext()
-                 .WriteTo.Console(theme: AnsiConsoleTheme.Code, outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}")
+                 .WriteTo.Console(theme: AnsiConsoleTheme.Literate, outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}")
+                 .WriteTo.File(path: Path.Combine(Environment.CurrentDirectory, "mmbot.log"), outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}")
                  .CreateLogger();
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -37,7 +39,8 @@ namespace MMBot
             Log.CloseAndFlush();
         }
 
-        private static void CurrentDomain_ProcessExit(object sender, EventArgs e) => Log.Logger.Information("Exiting!");
+        private static void CurrentDomain_ProcessExit(object sender, EventArgs e) 
+            => Log.Logger.Information("Exiting!");
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {

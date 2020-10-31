@@ -12,7 +12,7 @@ namespace MMBot.Services.Interfaces
         Task Client_HandleCommandAsync(SocketMessage arg);
         Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result);
         Task AddToReactionList(IUserMessage message, Func<IEmote, IUser, Task> fT, bool allowMultiple = true);
-        void AddChannelToGoogleFormsWatchList(IGuildChannel channel, IGuildChannel qChannel);
-        void RemoveChannelFromGoogleFormsWatchList(IGuildChannel channel);
+        Task AddChannelToGoogleFormsWatchList(IGuildChannel channel, IGuildChannel qChannel);
+        Task RemoveChannelFromGoogleFormsWatchList(IGuildChannel channel);
     }
 }

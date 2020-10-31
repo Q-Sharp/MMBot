@@ -126,20 +126,16 @@ namespace MMBot.Services.CommandHandler
             }   
         }
 
-        public void AddChannelToGoogleFormsWatchList(IGuildChannel channel, IGuildChannel questionsChannel)
+        public async Task AddChannelToGoogleFormsWatchList(IGuildChannel channel, IGuildChannel questionsChannel)
         {
-            lock (_messageIdWithReaction)
-            {
+            using (await _mutex.LockAsync())
                 _formsChannelList.Add(Tuple.Create(channel as ISocketMessageChannel, questionsChannel as ISocketMessageChannel));
-            }
         }
 
-        public void RemoveChannelFromGoogleFormsWatchList(IGuildChannel channel)
+        public async Task RemoveChannelFromGoogleFormsWatchList(IGuildChannel channel)
         {
-            lock (_messageIdWithReaction)
-            {
+            using (await _mutex.LockAsync())
                 _formsChannelList.Remove(_formsChannelList.FirstOrDefault(x => x.Item1 == channel as ISocketMessageChannel));
-            }
         }
     }
 }

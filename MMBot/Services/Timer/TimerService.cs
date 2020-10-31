@@ -83,5 +83,8 @@ namespace MMBot.Services.Timer
         }
 
         public bool Check(MMTimer t) => DateTime.UtcNow < t.EndTime || t.IsRecurring;
+
+        public async Task<string> GetCountDown(MMTimer t) 
+            => await Task.Run(() => (_timerList?.FirstOrDefault(tl => tl?.TimerInfos?.Id == t?.Id)?.TimerInfos?.EndTime.Value - DateTime.UtcNow)?.ToString(@"hh\:mm\:ss"));
     }
 }
