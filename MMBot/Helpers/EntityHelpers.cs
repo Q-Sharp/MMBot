@@ -119,7 +119,7 @@ namespace MMBot.Helpers
                 // ignored
             }
 
-            return null;
+            return default;
         }
 
         public static string GetTablePropertiesWithValues<T>(this IEnumerable<T> mm)
@@ -162,7 +162,7 @@ namespace MMBot.Helpers
                 // ignored
             }
 
-            return null;
+            return default;
         }
 
         public static IEnumerable<T> FilterCollectionByPropertyWithValue<T>(this IEnumerable<T> ml, string propertyName, string value)
@@ -189,7 +189,7 @@ namespace MMBot.Helpers
                 // ignored
             }
 
-            return null;
+            return default;
         }
     }
 }

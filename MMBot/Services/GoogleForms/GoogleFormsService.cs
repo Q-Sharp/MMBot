@@ -26,7 +26,7 @@ namespace MMBot.Services.GoogleForms
         public async Task<GoogleFormsAnswers> LoadAsync(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
-                return null;
+                return default;
 
             try
             {
@@ -39,7 +39,7 @@ namespace MMBot.Services.GoogleForms
                 _logger.LogError(e.Message, e);
             }
 
-            return null;
+            return default;
         }
 
         public async Task<bool> SubmitToGoogleFormAsync(GoogleFormsAnswers gfa)

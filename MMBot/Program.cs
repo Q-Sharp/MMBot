@@ -16,8 +16,8 @@ using MMBot.Services.GoogleForms;
 using MMBot.Services.IE;
 using MMBot.Services.Interfaces;
 using MMBot.Services.MemberSort;
-using MMBot.Modules.Timer;
 using MMBot.Services.Timer;
+using Serilog.Enrichers.AspNetCore;
 
 namespace MMBot
 {
@@ -27,7 +27,8 @@ namespace MMBot
         {
             Log.Logger = new LoggerConfiguration()
                  .Enrich.FromLogContext()
-                 .WriteTo.Console(theme: AnsiConsoleTheme.Literate, outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}")
+                 .WriteTo.Console(theme: AnsiConsoleTheme.Code, outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}")
+                 .WriteTo.Debug(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}")
                  .CreateLogger();
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -51,7 +52,7 @@ namespace MMBot
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
            Host.CreateDefaultBuilder(args)
-                .ConfigureLogging(loggingBuilder => loggingBuilder.ClearProviders().AddSerilog(dispose: true))
+                
                 .UseSystemd()
                 .ConfigureAppConfiguration((hostContext, configBuilder) =>
                 {
@@ -82,7 +83,8 @@ namespace MMBot
                         c.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");
                     });
 
-                     services.AddHostedService<DiscordWorker>()
+                     services
+                        .AddHostedService<DiscordWorker>()
                         .AddSingleton<GuildSettingsService>()
                         .AddDbContext<Context>()
                         .AddSingleton<IGuildSettingsService, GuildSettingsService>()

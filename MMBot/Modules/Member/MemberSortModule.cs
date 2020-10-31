@@ -172,7 +172,7 @@ namespace MMBot.Modules.Member
         private string GetTable(IList<Data.Entities.Member> members, int? clanNo = null, SortBy sortBy = SortBy.SHigh)
         {
             if(members is null || members.Count <= 0)
-                return null;
+                return default;
 
             switch(sortBy)
             {

@@ -24,13 +24,13 @@ namespace MMBot.Helpers
             if(members.Count() > 5)
             {
                 await smc.SendMessageAsync("Be more precise with your input");
-                return null;
+                return default;
             }
                 
             if(members.Count() == 0)
             {
                 await smc.SendMessageAsync("I couldn't find anyone with that name!");
-                return null;
+                return default;
             }
 
             if(members.Count() == 1)

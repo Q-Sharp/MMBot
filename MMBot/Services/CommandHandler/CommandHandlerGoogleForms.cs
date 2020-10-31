@@ -1,15 +1,9 @@
 ﻿using Discord;
-using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.SymbolStore;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using MMBot.Helpers;
 using MMBot.Services.GoogleForms;
@@ -19,16 +13,27 @@ namespace MMBot.Services.CommandHandler
 {
     public partial class CommandHandler : ICommandHandler
     {
-        private readonly IDictionary<string, string> Answers = new Dictionary<string, string>();
-        private readonly IDictionary<string, string> Questions = new Dictionary<string, string>();
-
         private void CheckGoogleForms(SocketMessage arg)
         {
             if (_formsChannelList.Select(x => x.Item1).Contains(arg.Channel))
-            {
                 _ = Task.Run(async () => await HandleGoogleForms(arg, _formsChannelList.Where(x => x.Item1 == arg.Channel).FirstOrDefault().Item2));
+        }
+
+        private async Task ReInitGoogleFormsAsync()
+        {
+            var ch = await _databaseService.LoadChannelsAsync();
+
+            if(ch == null)
                 return;
-            }
+
+            ch?.ForEach(cha =>
+            {
+                var obserChannel = _client?.GetGuild(cha.GuildId)?.GetTextChannel(cha.TextChannelId);
+                var answerChannel = _client?.GetGuild(cha.GuildId)?.GetTextChannel(cha.AnswerTextChannelId);
+
+                if(obserChannel != null && answerChannel !=  null)
+                    _formsChannelList.Add(new Tuple<ISocketMessageChannel, ISocketMessageChannel>(obserChannel, answerChannel));
+            });            
         }
 
         private async Task HandleGoogleForms(SocketMessage arg, ISocketMessageChannel questionsChannel)
@@ -111,7 +116,10 @@ namespace MMBot.Services.CommandHandler
                 foreach(var pTag in mtags)
                 {
                     await gfa.AddPlayerTagToAnswers(pTag);
-                    await _googleFormsSubmissionService.SubmitToGoogleFormAsync(gfa);
+                    var success = await _googleFormsSubmissionService.SubmitToGoogleFormAsync(gfa);
+                    if(success)
+                        _logger.LogInformation($"{pTag} has been successfully joined {gfa.Title}");
+
                     var random = new Random((int)DateTime.Now.Ticks);
                     await Task.Delay(TimeSpan.FromSeconds(random.Next(20, 120)));
                 }

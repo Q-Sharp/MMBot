@@ -7,7 +7,7 @@
             try
             {
                 if (src is null || propName is null)
-                    return null;
+                    return default;
 
                 if (propName.Contains("."))
                 {

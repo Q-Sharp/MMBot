@@ -37,7 +37,7 @@ namespace MMBot.Services.MemberSort
                 .ChunkBy(_guildSettings.ClanSize);
 
             if (current is null || future is null)
-                return null;
+                return default;
 
             var moveQty = _guildSettings.MemberMovementQty;
             List<MemberChanges> result = null;

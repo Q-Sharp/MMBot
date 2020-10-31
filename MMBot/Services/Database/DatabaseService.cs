@@ -49,7 +49,7 @@ namespace MMBot.Services
             }
             catch
             {
-                return null;
+                return default;
             }
         }
 

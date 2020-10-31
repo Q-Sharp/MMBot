@@ -171,7 +171,7 @@ namespace MMBot.Services.IE
                 return e;
             }
 
-            return null;
+            return default;
         }
 
         public async Task<byte[]> ExportCsv()

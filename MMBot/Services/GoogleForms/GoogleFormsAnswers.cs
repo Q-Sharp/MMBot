@@ -25,7 +25,7 @@ namespace MMBot.Services.GoogleForms
             return await Task.Run(() =>
             {
                 if (string.IsNullOrWhiteSpace(playerTag) || gfa is null)
-                    return null;
+                    return default;
 
                 var filled = gfa.AllRequireFields.FirstOrDefault(x => x.QuestionText.Contains("tag", StringComparison.InvariantCultureIgnoreCase) && x.QuestionType == GoogleFormsFieldType.ShortAnswerField);
                 if (filled != null)
@@ -51,7 +51,7 @@ namespace MMBot.Services.GoogleForms
             return await Task.Run(() =>
             {
                 if (gfa is null)
-                    return null;
+                    return default;
 
                 if (gfa.AllFieldsAreFilledWithAnswers)
                     return gfa;
@@ -75,7 +75,7 @@ namespace MMBot.Services.GoogleForms
             return await Task.Run(() =>
             {
                 if (gfa is null)
-                    return null;
+                    return default;
 
                 if (gfa.AllFieldsAreFilledWithAnswers)
                     return gfa;

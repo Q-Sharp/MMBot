@@ -11,7 +11,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using MMBot.Helpers;
 using MMBot.Services.Interfaces;
-using MMBot.Services.Timer;
 
 namespace MMBot.Services.CommandHandler
 {
@@ -71,10 +70,7 @@ namespace MMBot.Services.CommandHandler
                     .SendMessageAsync("Bot service has been restarted!");
 
             // load channels for google forms scan
-            (await _databaseService.LoadChannelsAsync())?
-                .Select(x => 
-                    new Tuple<ISocketMessageChannel, ISocketMessageChannel>(_client.GetGuild(x.GuildId).GetTextChannel(x.TextChannelId), 
-                                                                            _client.GetGuild(x.GuildId).GetTextChannel(x.AnswerTextChannelId)))?.ForEach(x => _formsChannelList.Add(x));
+            await ReInitGoogleFormsAsync();
 
             // reinit timers
             (await _databaseService.LoadTimerAsync())?
