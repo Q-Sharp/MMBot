@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MMBot.Data.Entities
+﻿namespace MMBot.Data.Entities
 {
     public interface IHaveId
     {

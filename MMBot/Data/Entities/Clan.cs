@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using MMBot.Helpers;
 
 namespace MMBot.Data.Entities
@@ -21,13 +23,20 @@ namespace MMBot.Data.Entities
 
         public ulong GuildId { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Member> Member { get; set; }
         public override string ToString() => $"[{Tag}]";
 
         public void Update(object clan)
         {
             if(clan is Clan c && (Id == c.Id || Name == c.Name))
-                this.ChangeProperties(c);
+            {
+                SortOrder = c.SortOrder;
+                Tag = c.Tag;
+                Name = c.Name;
+                DiscordRole = c.DiscordRole;
+                GuildId = c.GuildId;
+            }
         }
     }
 }

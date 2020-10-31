@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using MMBot.Helpers;
 
 namespace MMBot.Data.Entities
@@ -12,12 +13,18 @@ namespace MMBot.Data.Entities
         public DateTime EndDate { get; set; }
 
         public int MemberId { get; set; }
+
+        [JsonIgnore]
         public virtual Member Member { get; set; }
 
         public void Update(object vacation)
         {
             if(vacation is Vacation v && Id == v.Id)
-                this.ChangeProperties(v);
+            {
+                StartDate = v.StartDate;
+                EndDate = v.EndDate;
+                MemberId = v.MemberId;
+            }
         }
     }
 }

@@ -23,6 +23,12 @@ namespace MMBot
 {
     public class Program
     {
+        #if DEBUG
+            public const bool IsDebug = true;
+        #else
+            public const bool isDebug = false;
+        #endif
+
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()

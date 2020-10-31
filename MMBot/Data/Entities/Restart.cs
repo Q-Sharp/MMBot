@@ -14,7 +14,10 @@ namespace MMBot.Data.Entities
         public void Update(object restart)
         {
             if(restart is Restart r && Id == r.Id)
-                this.ChangeProperties(r);
+            {
+                Guild = r.Guild;
+                Channel = r.Channel;
+            }
         }
     }
 }

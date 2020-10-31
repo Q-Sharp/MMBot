@@ -17,7 +17,11 @@ namespace MMBot.Data.Entities
         public void Update(object channel)
         {
             if(channel is Channel c && Id == c.Id)
-                this.ChangeProperties(c);
+            {
+                GuildId = c.GuildId;
+                TextChannelId = c.TextChannelId;
+                AnswerTextChannelId = c.AnswerTextChannelId;
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using MMBot.Helpers;
 
 namespace MMBot.Data.Entities
@@ -11,12 +12,11 @@ namespace MMBot.Data.Entities
         [Key]
         public int Id { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Member> Members { get; set; }
 
         public void Update(object memberGroup)
         {
-            if (memberGroup is MemberGroup mg && Id == mg.Id)
-                this.ChangeProperties(mg);
         }
     }
 }

@@ -37,7 +37,17 @@ namespace MMBot.Data.Entities
         public void Update(object timer)
         {
            if(timer is MMTimer t && Id == t.Id)
-                this.ChangeProperties(t);
+           {
+                Name = t.Name;
+                IsRecurring = t.IsRecurring;
+                IsActive = t.IsActive;
+                StartTime = t.StartTime;
+                RingSpan = t.RingSpan;
+                EndTime = t.EndTime;
+                GuildId = t.GuildId;
+                ChannelId = t.ChannelId;
+                Message = t.Message;
+           }
         }
 
         public override string ToString() => $"{Name}";

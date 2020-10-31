@@ -33,7 +33,15 @@ namespace MMBot.Data.Entities
         public void Update(object guildSettings)
         {
             if(guildSettings is GuildSettings gs && Id == gs.Id)
-                this.ChangeProperties(gs);
+            {
+                GuildId = gs.GuildId;
+                Prefix = gs.Prefix;
+                WaitForReaction = gs.WaitForReaction;
+                FileName = gs.FileName;
+                ClanSize = gs.ClanSize;
+                MemberMovementQty = gs.MemberMovementQty;
+
+            }
         }
 
         public override string ToString() => $"{GuildId}";

@@ -130,7 +130,7 @@ namespace MMBot.Modules.Admin
         [RequireOwner]
         public async Task AddChannelToUrlScan(IGuildChannel channel, IGuildChannel qChannel)
         {
-            _commandHandler.AddChannelToGoogleFormsWatchList(channel, qChannel);
+            await _commandHandler.AddChannelToGoogleFormsWatchList(channel, qChannel);
 
             var ch = await _databaseService.LoadChannelsAsync();
 
@@ -150,7 +150,7 @@ namespace MMBot.Modules.Admin
         [RequireOwner]
         public async Task RemoveChannelFromUrlScan(IGuildChannel channel)
         {
-            _commandHandler.RemoveChannelFromGoogleFormsWatchList(channel);
+            await _commandHandler.RemoveChannelFromGoogleFormsWatchList(channel);
 
             var c = (await _databaseService.LoadChannelsAsync()).FirstOrDefault(x => x.GuildId == channel.GuildId && x.TextChannelId == channel.Id);
 
