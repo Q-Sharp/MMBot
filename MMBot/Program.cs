@@ -17,7 +17,6 @@ using MMBot.Services.IE;
 using MMBot.Services.Interfaces;
 using MMBot.Services.MemberSort;
 using MMBot.Services.Timer;
-using Serilog.Enrichers.AspNetCore;
 
 namespace MMBot
 {
@@ -28,7 +27,6 @@ namespace MMBot
             Log.Logger = new LoggerConfiguration()
                  .Enrich.FromLogContext()
                  .WriteTo.Console(theme: AnsiConsoleTheme.Code, outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}")
-                 .WriteTo.Debug(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}")
                  .CreateLogger();
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -52,7 +50,8 @@ namespace MMBot
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
            Host.CreateDefaultBuilder(args)
-                
+                .ConfigureLogging(x => x.ClearProviders()
+                                        .AddSerilog())
                 .UseSystemd()
                 .ConfigureAppConfiguration((hostContext, configBuilder) =>
                 {
