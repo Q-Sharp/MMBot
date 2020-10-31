@@ -129,7 +129,7 @@ namespace MMBot.Modules.Timer
         [Alias("Start")]
         [Summary("Starts a timer, which rings once after timerspan and every timerspan")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task StartTimer(string name, string timeToFirstRing, string timeInterval = null)
+        public async Task StartTimer(string name, string timeToFirstRing, string timeInterval = null, double? timeOffSet = null)
         {
             var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
             if(t != null)
@@ -146,10 +146,18 @@ namespace MMBot.Modules.Timer
                     return;
                 }
 
+                var ulto = timeOffSet ?? (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discord == Context.Message.Author.GetUserAndDiscriminator())?.LocalTimeOffSet;
+                if(ulto is null)
+                {
+                    await ReplyAsync($"Please specify your local time offset compared to utc. You can do this either by changing the LocalTimeOffSet property in your profile or by calling this command with an additional offset value");
+                    return;
+                }
+
                 t.IsActive = true;
-                t.StartTime = DateTime.Now;
-                t.RingSpan = TimeSpan.Parse(timeInterval ?? timeToFirstRing);
+                t.StartTime = DateTime.UtcNow;
+                t.RingSpan = TimeSpan.Parse(timeInterval ?? timeToFirstRing) + TimeSpan.FromHours(ulto.Value);
                 var toFirstRingSpan = TimeSpan.Parse(timeToFirstRing);
+
                 t.EndTime = t.StartTime + toFirstRingSpan;
                 await _databaseService.SaveDataAsync();
 

@@ -31,10 +31,10 @@ namespace MMBot.Services.Timer
                 var timeSpan = t.RingSpan.Value;
                 if(reInit)
                 {
-                    firstStart = t.EndTime.Value - DateTime.Now;
+                    firstStart = t.EndTime.Value - DateTime.UtcNow;
                     while(firstStart <= TimeSpan.Zero)
                     {
-                        t.StartTime = DateTime.Now;
+                        t.StartTime = DateTime.UtcNow;
                         t.EndTime += t.RingSpan;
                         firstStart = t.EndTime - t.StartTime;
                     }
@@ -60,8 +60,8 @@ namespace MMBot.Services.Timer
 
                 if(tc.TimerInfos.IsRecurring)
                 {
-                    tc.TimerInfos.StartTime = DateTime.Now;
-                    tc.TimerInfos.EndTime = DateTime.Now + tc.TimerInfos.RingSpan;
+                    tc.TimerInfos.StartTime = DateTime.UtcNow;
+                    tc.TimerInfos.EndTime = DateTime.UtcNow + tc.TimerInfos.RingSpan;
                     await _databaseService.SaveDataAsync();
                 }
                 else
@@ -82,6 +82,6 @@ namespace MMBot.Services.Timer
             });
         }
 
-        public bool Check(MMTimer t) => DateTime.Now < t.EndTime || t.IsRecurring;
+        public bool Check(MMTimer t) => DateTime.UtcNow < t.EndTime || t.IsRecurring;
     }
 }

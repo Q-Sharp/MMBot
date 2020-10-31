@@ -30,7 +30,7 @@ namespace MMBot
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Worker running at: {time}", DateTime.Now);
+                _logger.LogInformation("Worker running at: {time}", DateTime.UtcNow);
                 await InitAsync();
                 await Task.Delay(Timeout.Infinite, stoppingToken);
             }

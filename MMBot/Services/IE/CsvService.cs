@@ -160,7 +160,7 @@ namespace MMBot.Services.IE
                     if (row.Table.Columns.Contains("IgnoreOnMoveUp") && row["IgnoreOnMoveUp"] != DBNull.Value  && bool.TryParse((string)row["IgnoreOnMoveUp"], out var iomu))
                         me.IgnoreOnMoveUp = iomu;
 
-                    me.LastUpdated = DateTime.Now;
+                    me.LastUpdated = DateTime.UtcNow;
                     me.GuildId = _settings.GuildId;
 
                     await _context.SaveChangesAsync();

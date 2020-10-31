@@ -120,7 +120,7 @@ namespace MMBot.Services.CommandHandler
                     if(success)
                         _logger.LogInformation($"{pTag} has been successfully joined {gfa.Title}");
 
-                    var random = new Random((int)DateTime.Now.Ticks);
+                    var random = new Random((int)DateTime.UtcNow.Ticks);
                     await Task.Delay(TimeSpan.FromSeconds(random.Next(20, 120)));
                 }
             }   
