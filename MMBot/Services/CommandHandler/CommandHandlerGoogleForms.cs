@@ -45,7 +45,7 @@ namespace MMBot.Services.CommandHandler
                 
                 return;
 
-            var mtags = m.Where(z => z.AutoSignUpForFightNight && z.PlayerTag != null).Select(x => x.PlayerTag).ToList();
+            var member = m.Where(z => z.AutoSignUpForFightNight && z.PlayerTag != null).ToList();
 
             GoogleFormsAnswers gfa = null;
 
@@ -56,7 +56,7 @@ namespace MMBot.Services.CommandHandler
                 if(gfa == null)
                     continue;
             
-                await gfa.AddPlayerTagToAnswers(mtags.FirstOrDefault());
+                await gfa.AddPlayerTagToAnswers(member.FirstOrDefault().PlayerTag);
                 await gfa.AnswerQuestionsAuto();
 
                 if(!gfa.AllFieldsAreFilledWithAnswers)
@@ -113,12 +113,12 @@ namespace MMBot.Services.CommandHandler
                     }
                 }
 
-                foreach(var pTag in mtags)
+                foreach(var me in member)
                 {
-                    await gfa.AddPlayerTagToAnswers(pTag);
+                    await gfa.AddPlayerTagToAnswers(me.PlayerTag);
                     var success = await _googleFormsSubmissionService.SubmitToGoogleFormAsync(gfa);
                     if(success)
-                        _logger.LogInformation($"{pTag} has been successfully joined {gfa.Title}");
+                        await questionsChannel.SendMessageAsync($"{me} using {me.PlayerTag} has been successfully joined {gfa.Title}");
 
                     var random = new Random((int)DateTime.UtcNow.Ticks);
                     await Task.Delay(TimeSpan.FromSeconds(random.Next(20, 120)));
