@@ -24,6 +24,7 @@ namespace MMBot.Services
         
         public async Task<Clan> CreateClanAsync() => (await _context.AddAsync(new Clan{ GuildId = _guildId }, new CancellationToken())).Entity;
         public async Task<IList<Clan>> LoadClansAsync() => await _context.Clan.AsAsyncEnumerable().Where(x => x.GuildId == _guildId || Program.IsDebug).ToListAsync();
+        public async Task<int> LoadAllClansCountAsync() => await _context.Clan.AsAsyncEnumerable().CountAsync();
         public void DeleteClan(Clan c) => _context.Remove(c);
 
         public async Task<Member> CreateMemberAsync() => (await _context.AddAsync(new Member { GuildId = _guildId }, new CancellationToken())).Entity;

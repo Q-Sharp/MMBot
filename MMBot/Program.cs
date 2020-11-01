@@ -60,7 +60,7 @@ namespace MMBot
         public static IHostBuilder CreateHostBuilder(string[] args) =>
            Host.CreateDefaultBuilder(args)
                 .ConfigureLogging(x => x.ClearProviders()
-                                        .AddSerilog())
+                                        .AddSerilog(Log.Logger))
                 .UseSystemd()
                 .ConfigureAppConfiguration((hostContext, configBuilder) =>
                 {
@@ -70,14 +70,14 @@ namespace MMBot
                 {
                     var dsc = new DiscordSocketClient(new DiscordSocketConfig
                     {
-                        LogLevel = LogSeverity.Warning,
+                        LogLevel = LogSeverity.Info,
                         MessageCacheSize = 1000,
                         DefaultRetryMode = RetryMode.AlwaysRetry
                     });
 
                     var cs = new CommandService(new CommandServiceConfig
                     {
-                        LogLevel = LogSeverity.Warning,
+                        LogLevel = LogSeverity.Info,
                         CaseSensitiveCommands = false,
                         DefaultRunMode = RunMode.Async,
                         SeparatorChar = ' '

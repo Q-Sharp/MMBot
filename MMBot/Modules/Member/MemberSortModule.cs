@@ -7,7 +7,6 @@ using Discord.Commands;
 using MMBot.Helpers;
 using MMBot.Modules.Énum;
 using MMBot.Modules.Interfaces;
-using MMBot.Services.Interfaces;
 using MMBot.Services.MemberSort;
 
 namespace MMBot.Modules.Member
@@ -22,15 +21,8 @@ namespace MMBot.Modules.Member
         [Summary("Lists all members by current clan membership.")]
         public async Task List(SortBy sortBy = SortBy.SHigh)
         {
-            try
-            {
-                var m = await _memberSortService.GetCurrentMemberList();
-                await ShowMembers(m, sortBy);
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}");
-            }
+            var m = await _memberSortService.GetCurrentMemberList();
+            await ShowMembers(m, sortBy);
         }
 
         [Command("Sort", RunMode = RunMode.Async)]
@@ -39,15 +31,8 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Sort()
         {
-            try
-            {
-                var m = (await _memberSortService.GetChanges()).Select(x => x.NewMemberList).ToList();
-                await ShowMembers(m);
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}");
-            }
+            var m = (await _memberSortService.GetChanges()).Select(x => x.NewMemberList).ToList();
+            await ShowMembers(m);
         }
 
         [Command("Changes", RunMode = RunMode.Async)]
@@ -56,45 +41,38 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Changes(string compact = null)
         {
-            try
+            var result = (await _memberSortService.GetChanges()).Where(x => x.Join.Count > 0 && x.Leave.Count > 0).ToList();
+
+            if(result?.Count() == 0)
             {
-                var result = (await _memberSortService.GetChanges()).Where(x => x.Join.Count > 0 && x.Leave.Count > 0).ToList();
-
-                if(result?.Count() == 0)
-                {
-                    await ReplyAsync($"No member data in db.");
-                    return;
-                }
-
-                var c = await _databaseService.LoadClansAsync();
-                var cQty = c?.Count();
-               
-                if(!string.IsNullOrWhiteSpace(compact))
-                    await ReplyAsync(GetCompactMemberChangesString(result, c));
-                else
-                {
-                    var page = 0;
-                    var message = await ReplyAsync(GetDetailedMemberChangesString(result, page, c));
-
-                    var back = new Emoji("◀️");
-                    var next = new Emoji("▶️");
-                    await message.AddReactionsAsync(new IEmote[] { back, next });
-                    
-                    await _commandHandler.AddToReactionList(message, async (r, u) =>
-                    {
-                       if (r.Name == back.Name && page >= 1)
-                           await message.ModifyAsync(me => me.Content = GetDetailedMemberChangesString(result, --page, c));
-                       else if (r.Name == next.Name && page < cQty-1)
-                           await message.ModifyAsync(me => me.Content = GetDetailedMemberChangesString(result, ++page, c));
-
-                       if(u != null)
-                           await message.RemoveReactionAsync(r, u);
-                    });
-                }
+                await ReplyAsync($"No member data in db.");
+                return;
             }
-            catch (Exception e)
+
+            var c = await _databaseService.LoadClansAsync();
+            var cQty = c?.Count();
+            
+            if(!string.IsNullOrWhiteSpace(compact))
+                await ReplyAsync(GetCompactMemberChangesString(result, c));
+            else
             {
-                await ReplyAsync($"{e.Message}");
+                var page = 0;
+                var message = await ReplyAsync(GetDetailedMemberChangesString(result, page, c));
+
+                var back = new Emoji("◀️");
+                var next = new Emoji("▶️");
+                await message.AddReactionsAsync(new IEmote[] { back, next });
+                
+                await _commandHandler.AddToReactionList(message, async (r, u) =>
+                {
+                   if (r.Name == back.Name && page >= 1)
+                       await message.ModifyAsync(me => me.Content = GetDetailedMemberChangesString(result, --page, c));
+                   else if (r.Name == next.Name && page < cQty-1)
+                       await message.ModifyAsync(me => me.Content = GetDetailedMemberChangesString(result, ++page, c));
+
+                   if(u != null)
+                       await message.RemoveReactionAsync(r, u);
+                });
             }
         }
 

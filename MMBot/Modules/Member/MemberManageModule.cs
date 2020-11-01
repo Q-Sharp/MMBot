@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -19,17 +18,10 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Delete(string name)
         {
-            try
-            {
-                var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(name, Context.Channel, _commandHandler);
-                _databaseService.DeleteMember(m);
-                await _databaseService.SaveDataAsync();
-                await ReplyAsync($"The member {m} was deleted");
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}");
-            }
+            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(name, Context.Channel, _commandHandler);
+            _databaseService.DeleteMember(m);
+            await _databaseService.SaveDataAsync();
+            await ReplyAsync($"The member {m} was deleted");
         }
         
         [Command("Set")]
@@ -58,17 +50,10 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Create(string name)
         {
-            try
-            {
-                var m = await _databaseService.CreateMemberAsync();
-                m.Name = name;
-                await _databaseService.SaveDataAsync();
-                await ReplyAsync($"The member {m} was added to database.");
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}");
-            }
+            var m = await _databaseService.CreateMemberAsync();
+            m.Name = name;
+            await _databaseService.SaveDataAsync();
+            await ReplyAsync($"The member {m} was added to database.");
         }
 
         [Command("ShowAll")]
@@ -76,17 +61,10 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task ShowAll(string propertyName, [Remainder] string value)
         {
-            try
-            {
-                var m = await _databaseService.LoadMembersAsync();
+            var m = await _databaseService.LoadMembersAsync();
 
-                var fm = m.FilterCollectionByPropertyWithValue(propertyName, value).Select(x => x.Name).ToList();
-                await ReplyAsync($"These members fulfill the given condition ({propertyName} == {value}): {string.Join(", ", fm)}"); 
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}");
-            }
+            var fm = m.FilterCollectionByPropertyWithValue(propertyName, value).Select(x => x.Name).ToList();
+            await ReplyAsync($"These members fulfill the given condition ({propertyName} == {value}): {string.Join(", ", fm)}"); 
         }
     }
 }

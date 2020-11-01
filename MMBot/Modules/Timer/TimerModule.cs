@@ -7,10 +7,10 @@ using MMBot.Helpers;
 using MMBot.Modules.Interfaces;
 using MMBot.Services.Interfaces;
 using Discord.WebSocket;
-using System.Collections;
 using MMBot.Data.Entities;
 using System.Collections.Generic;
 using Nito.AsyncEx;
+using Microsoft.Extensions.Logging;
 
 namespace MMBot.Modules.Timer
 {
@@ -35,24 +35,17 @@ namespace MMBot.Modules.Timer
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task CreateTimer(string name, bool recurring = true)
         {
-            try
+            if((await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId) != null)
             {
-                if((await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId) != null)
-                {
-                    await ReplyAsync($"A timer with that name already exists!");
-                    return;
-                }
+                await ReplyAsync($"A timer with that name already exists!");
+                return;
+            }
 
-                var t = await _databaseService.CreateTimerAsync();
-                t.Name = name;
-                t.IsRecurring = recurring;
-                await _databaseService.SaveDataAsync();
-                await ReplyAsync($"The timer {t} was added to database.");
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}");
-            }
+            var t = await _databaseService.CreateTimerAsync();
+            t.Name = name;
+            t.IsRecurring = recurring;
+            await _databaseService.SaveDataAsync();
+            await ReplyAsync($"The timer {t} was added to database.");
         }
 
         [Command("Delete")]
@@ -61,24 +54,17 @@ namespace MMBot.Modules.Timer
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task DeleteTimer(string name)
         {
-            try
-            {
-                var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
+            var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
 
-                if(t !=  null)
-                {
-                    if(t.IsActive)
-                        await StopTimer(name);
-
-                    _databaseService.DeleteTimer(t);
-                    await _databaseService.SaveDataAsync();
-                    await ReplyAsync($"The timer {name} was deleted");
-                }
-            }
-            catch (Exception e)
+            if(t !=  null)
             {
-                await ReplyAsync($"{e.Message}");
-            }
+               if(t.IsActive)
+                   await StopTimer(name);
+
+               _databaseService.DeleteTimer(t);
+               await _databaseService.SaveDataAsync();
+               await ReplyAsync($"The timer {name} was deleted");
+            }           
         }
 
         [Command("List")]
@@ -88,7 +74,6 @@ namespace MMBot.Modules.Timer
         public async Task ListTimers()
         {
             var timer = (await _databaseService.LoadTimerAsync()).Where(t => _guildSettings.GuildId == t.GuildId).ToList();
-
             await ReplyAsync(timer.Count > 0 ? timer.GetTablePropertiesWithValues() : "No timers");
         }
 
@@ -117,7 +102,7 @@ namespace MMBot.Modules.Timer
         [Summary("Removes a notification channel the message from a timer")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task RemoveNotification(string name)
-        {
+        {     
             var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
             if(t != null)
             {

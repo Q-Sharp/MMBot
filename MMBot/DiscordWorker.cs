@@ -78,23 +78,26 @@ namespace MMBot
             await ch?.InitializeAsync();
         }
 
-        public static Task LogAsync(LogMessage message)
+        public Task LogAsync(LogMessage message)
         {
             switch (message.Severity)
             {
                 case LogSeverity.Critical:
                 case LogSeverity.Error:
-                    Log.Error(message.Message);
+                    _logger.LogError(message.Message, message.Exception);
                     break;
+
                 case LogSeverity.Warning:
-                    Log.Warning(message.Message);
+                    _logger.LogWarning(message.Message, message.Exception);
                     break;
+
                 case LogSeverity.Info:
-                    Log.Information(message.Message);
+                    _logger.LogInformation(message.Message, message.Exception);
                     break;
+
                 case LogSeverity.Verbose:
                 case LogSeverity.Debug:
-                    Log.Verbose(message.Message);
+                    _logger.LogDebug(message.Message, message.Exception);
                     break;
             }
 

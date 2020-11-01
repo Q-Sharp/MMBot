@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using Discord.Commands;
-using Discord.WebSocket;
+using Microsoft.Extensions.Logging;
 using MMBot.Helpers;
 using MMBot.Services.Interfaces;
 

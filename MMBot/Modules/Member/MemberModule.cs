@@ -1,7 +1,5 @@
 ﻿using Discord;
 using Discord.Commands;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using MMBot.Helpers;
@@ -28,23 +26,16 @@ namespace MMBot.Modules.Member
         [Summary("Shows all information of a member.")]
         public async Task Profile(string name = null)
         {
-            try
-            {
-                var m = name != null
-                    ? await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(name, Context.Channel, _commandHandler)
-                    : (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discord == Context.User.GetUserAndDiscriminator());
+            var m = name != null
+                ? await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(name, Context.Channel, _commandHandler)
+                : (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discord == Context.User.GetUserAndDiscriminator());
 
-                if (m == null)
-                    return;
+            if (m == null)
+                return;
 
-                var imageUrl = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => x.GetUserAndDiscriminator() == m.Discord)?.GetAvatarUrl());
-                var e = m.GetEmbedPropertiesWithValues(imageUrl);
-                await ReplyAsync("", false, e as Embed);
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}");
-            }
+            var imageUrl = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => x.GetUserAndDiscriminator() == m.Discord)?.GetAvatarUrl());
+            var e = m.GetEmbedPropertiesWithValues(imageUrl);
+            await ReplyAsync("", false, e as Embed);
         }
     }
 }

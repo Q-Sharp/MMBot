@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MMBot.Helpers;
 using MMBot.Services.Interfaces;
+using Discord.API;
 
 namespace MMBot.Services.CommandHandler
 {
@@ -76,6 +77,9 @@ namespace MMBot.Services.CommandHandler
             (await _databaseService.LoadTimerAsync())?
                 .Where(x => x.IsActive && _timerService.Check(x))
                 .ForEach(x => _timerService.Start(x, true));
+
+            // set status
+            await _client.SetGameAsync($"Member Manager 2020");
         }
 
         private async Task Client_Disconnected(Exception arg)

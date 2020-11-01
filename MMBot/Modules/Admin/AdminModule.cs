@@ -1,17 +1,15 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MMBot.Data.Enums;
 using MMBot.Helpers;
 using MMBot.Modules.Interfaces;
-using MMBot.Services.IE;
 using MMBot.Services.Interfaces;
 
 namespace MMBot.Modules.Admin
@@ -43,33 +41,26 @@ namespace MMBot.Modules.Admin
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task ImportCsv()
         {
-            try
+            var csvFile = Context.Message.Attachments.FirstOrDefault();
+            var myWebClient = _clientFactory.CreateClient();
+            if (csvFile != null)
             {
-                var csvFile = Context.Message.Attachments.FirstOrDefault();
-                var myWebClient = _clientFactory.CreateClient();
-                if (csvFile != null)
+                var csv = await myWebClient.GetAsync(csvFile.Url);
+                if (_csvService != null)
                 {
-                    var csv = await myWebClient.GetAsync(csvFile.Url);
-                    if (_csvService != null)
-                    {
-                        var csvByte = await csv.Content.ReadAsByteArrayAsync();
-                        var result = await _csvService.ImportCsv(csvByte);
+                    var csvByte = await csv.Content.ReadAsByteArrayAsync();
+                    var result = await _csvService.ImportCsv(csvByte);
 
-                        if(result == null)
-                            File.WriteAllBytes(Path.Combine(Environment.CurrentDirectory, "lastImport.csv"), csvByte);
+                    if(result == null)
+                        File.WriteAllBytes(Path.Combine(Environment.CurrentDirectory, "lastImport.csv"), csvByte);
 
-                        await ReplyAsync(result == null
-                            ? "CSV file import was successful"
-                            : $"ERROR: {result.Message}");
-                    }
+                    await ReplyAsync(result == null
+                        ? "CSV file import was successful"
+                        : $"ERROR: {result.Message}");
                 }
+            }
 
-                await _databaseService.CleanDB();
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}");
-            }
+            await _databaseService.CleanDB();
         }
 
         [Command("ReImportCSV")]
@@ -78,22 +69,17 @@ namespace MMBot.Modules.Admin
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task ReImportCSV()
         {
-            try
+            var csv = File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, "lastImport.csv"));
+            if (_csvService != null)
             {
-                var csv = File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, "lastImport.csv"));
-                if (_csvService != null)
-                {
-                    var result = await _csvService.ImportCsv(csv);
+                var result = await _csvService.ImportCsv(csv);
 
-                    await ReplyAsync(result == null
-                        ? "CSV file import was successful"
-                        : $"ERROR: {result.Message}");
-                }
+                await ReplyAsync(result == null
+                    ? "CSV file import was successful"
+                    : $"ERROR: {result.Message}");
             }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}");
-            }
+
+            await _databaseService.CleanDB();
         }
 
         [Command("ExportCSV")]
@@ -102,18 +88,11 @@ namespace MMBot.Modules.Admin
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task ExportCsv()
         {
-            try
-            {
-                var result = await _csvService?.ExportCsv();
-                await File.WriteAllBytesAsync(_guildSettings.FileName, result);
+            var result = await _csvService?.ExportCsv();
+            await File.WriteAllBytesAsync(_guildSettings.FileName, result);
 
-                await Context.Channel.SendFileAsync(_guildSettings.FileName, "Csv db export");
-                File.Delete(_guildSettings.FileName);
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}");
-            }
+            await Context.Channel.SendFileAsync(_guildSettings.FileName, "Csv db export");
+            File.Delete(_guildSettings.FileName);
         }
 
         [Command("Reorder")]
@@ -122,15 +101,8 @@ namespace MMBot.Modules.Admin
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task ReorderJoin()
         {
-            try
-            {
-                await Task.Run(() => _adminService.Reorder());
-                await ReplyAsync("Members join order updated!");
-            }
-            catch (Exception e)
-            {
-                await ReplyAsync($"{e.Message}");
-            }
+            await Task.Run(() => _adminService.Reorder());
+            await ReplyAsync("Members join order updated!");
         }
 
         [Command("FixRoles")]
@@ -194,9 +166,9 @@ namespace MMBot.Modules.Admin
 
                     await ReplyAsync($"All roles have been fixed!");
                 }
-                catch (Exception e)
+                catch
                 {
-                    await ReplyAsync($"{e.Message}");
+                    throw;
                 }
                 finally
                 {

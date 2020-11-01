@@ -9,6 +9,7 @@ namespace MMBot.Services.Interfaces
     {
         Task<Clan> CreateClanAsync();
         Task<IList<Clan>> LoadClansAsync();
+        Task<int> LoadAllClansCountAsync();
         void DeleteClan(Clan c);
 
         Task<Member> CreateMemberAsync();

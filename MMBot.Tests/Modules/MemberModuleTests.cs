@@ -1,5 +1,4 @@
 ﻿using FakeItEasy;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using MMBot.Modules.Member;
