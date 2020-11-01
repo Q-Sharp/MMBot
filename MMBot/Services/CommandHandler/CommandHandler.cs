@@ -11,7 +11,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using MMBot.Helpers;
 using MMBot.Services.Interfaces;
-using Discord.API;
 
 namespace MMBot.Services.CommandHandler
 {
