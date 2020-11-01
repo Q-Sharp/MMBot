@@ -27,7 +27,7 @@ namespace MMBot.Helpers
                 if (pr != null)
                 {
                     var t = Nullable.GetUnderlyingType(pr.PropertyType) ?? pr.PropertyType;
-                    var safeValue = (newValue == null) ? null : newValue.GetType() == typeof(Role) ? Enum.TryParse(newValue.ToString(), out Role eNum) ? eNum : Convert.ChangeType(newValue, t) : Convert.ChangeType(newValue, t);
+                    var safeValue = (newValue == null) ? null : t == typeof(Role) ? Enum.TryParse(newValue.ToString(), out Role eNum) ? eNum : Convert.ChangeType(newValue, t) : Convert.ChangeType(newValue, t);
                     var val = Convert.ChangeType(safeValue, t);
 
                     var oldPropValue = m.GetType().GetProperty(propertyName, cisBF)?.GetValue(m, null);
