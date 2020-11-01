@@ -9,11 +9,12 @@ namespace MMBot.Services.Interfaces
     {
         Task<Clan> CreateClanAsync();
         Task<IList<Clan>> LoadClansAsync();
-        Task<int> LoadAllClansCountAsync();
+        Task<Clan> GetClanAsync(string tag);
         void DeleteClan(Clan c);
 
         Task<Member> CreateMemberAsync();
         Task<IList<Member>> LoadMembersAsync();
+        Task<Member> GetMemberAsync(string name);
         void DeleteMember(Member m);
 
         Task<GuildSettings> LoadGuildSettingsAsync();
@@ -27,6 +28,7 @@ namespace MMBot.Services.Interfaces
 
         Task<MMTimer> CreateTimerAsync();
         Task<IList<MMTimer>> LoadTimerAsync();
+        Task<MMTimer> GetTimerAsync(string name);
         void DeleteTimer(MMTimer c);
 
         Task SaveDataAsync();

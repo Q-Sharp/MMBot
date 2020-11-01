@@ -75,6 +75,9 @@ namespace MMBot.Modules.Admin
                 var result = await _jsonService.ImportJsonToDB(dict);
                 File.Delete(_import);
                 await ReplyAsync(result ? "db import completed!" : "error in db import!");
+
+                if(result)
+                    await Restart();
             }
         }
 

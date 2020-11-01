@@ -180,47 +180,13 @@ namespace MMBot.Modules.Timer
         [Alias("sc")]
         [Summary("Starts a countdown")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task StartCountdown(string name)
+        public async Task ShowTimeLeft(string name)
         {
             var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
             if(t != null)
             {
                 var timeLeft = await _timerService?.GetCountDown(t);
-                if(timeLeft != null)
-                {
-                    using(await _mutex.LockAsync())
-                        CountDownList.Add(t);
-
-                    var _ = Task.Run(async () =>
-                    {
-                        var cd = true;
-                        while(cd)
-                        {
-                            var timeLeft = await _timerService?.GetCountDown(t);
-
-                            using(await _mutex.LockAsync())
-                                cd = CountDownList.Contains(t);
-
-                            await ReplyAsync($"Countdown for {t}: {timeLeft}");
-                            await Task.Delay(TimeSpan.FromMinutes(5));
-                        }
-                    });
-                }
-            }
-        }
-
-        [Command("StopCountdown")]
-        [Alias("stopc")]
-        [Summary("Stops a countdown")]
-        [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task StopCountdown(string name)
-        {
-            var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
-            if(t != null)
-            {
-                using (await _mutex.LockAsync())
-                    if(CountDownList.Contains(t))
-                        CountDownList.Remove(t);
+                await ReplyAsync($"Countdown for {t}: {timeLeft}");
             }
         }
     }

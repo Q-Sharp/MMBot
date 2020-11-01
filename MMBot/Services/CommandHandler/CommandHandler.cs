@@ -47,6 +47,7 @@ namespace MMBot.Services.CommandHandler
             _timerService = _services.GetService<ITimerService>();
 
             _commands.CommandExecuted += CommandExecutedAsync;
+            _commands.Log += LogAsync;
 
             _client.MessageReceived += Client_HandleCommandAsync;
             _client.ReactionAdded += Client_ReactionAdded;
@@ -55,7 +56,16 @@ namespace MMBot.Services.CommandHandler
             _client.Ready += Client_Ready;
         }
 
-        private async Task Client_Ready()
+        public async Task LogAsync(LogMessage logMessage)
+        {
+            if (logMessage.Exception is CommandException cmdException)
+            {
+                await cmdException.Context.Channel.SendMessageAsync("Something went catastrophically wrong!");
+                _logger.LogError($"{cmdException.Context.User} failed to execute '{cmdException.Command.Name}' in {cmdException.Context.Channel}.", logMessage.Exception);
+            }
+        }
+
+        public async Task Client_Ready()
         {
             _logger.Log(LogLevel.Information, "Bot is connected!");
 
@@ -81,7 +91,7 @@ namespace MMBot.Services.CommandHandler
             await _client.SetGameAsync($"Member Manager 2020");
         }
 
-        private async Task Client_Disconnected(Exception arg)
+        public async Task Client_Disconnected(Exception arg)
         {
             _logger.LogError(arg.Message, arg);
 
@@ -103,10 +113,7 @@ namespace MMBot.Services.CommandHandler
             if (msg.HasStringPrefix(_gs.Prefix, ref pos) || msg.HasMentionPrefix(_client.CurrentUser, ref pos) || msg.Content.ToLower().StartsWith(_gs.Prefix.ToLower()))
             {
                 var context = new SocketCommandContext(_client, msg);
-                var result = await _commands.ExecuteAsync(context, pos, _services);
-
-                if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
-                    await msg.Channel.SendMessageAsync(result.ErrorReason);
+                await _commands.ExecuteAsync(context, pos, _services);
             }
         }
 
@@ -115,13 +122,48 @@ namespace MMBot.Services.CommandHandler
             if (result.IsSuccess)
                 return;
 
+            // error happened
             if(!command.IsSpecified)
             {
                 await context.Channel.SendMessageAsync($"I don't know this command: {context.Message}");
                 return;
             }
-                
-            await context.Channel.SendMessageAsync($"error: {result}");
+
+            //#TODO:
+            //var moduleName = command.Value.Module.Name;
+            //var commandName = command.Value.Name;
+
+            //if(result is MMBotResult runTimeResult)
+            //{
+            //    switch(runTimeResult?.Error ?? 0)
+            //    {
+            //        case CommandError.BadArgCount:
+            //            break;
+
+            //        case CommandError.Exception:
+            //            break;
+
+            //        case CommandError.MultipleMatches:
+            //            break;
+
+            //        case CommandError.ObjectNotFound:
+            //            break;
+                    
+            //        case CommandError.ParseFailed:
+            //            break;
+
+            //        case CommandError.UnknownCommand:
+            //            break;
+
+            //        case CommandError.UnmetPrecondition:
+            //            break;
+
+            //        case CommandError.Unsuccessful:
+            //            break;
+            //    }
+            //}
+   
+            await context.Channel.SendMessageAsync($"error: {result.ErrorReason}");
         }
     }
 }
