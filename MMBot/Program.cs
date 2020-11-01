@@ -26,7 +26,7 @@ namespace MMBot
         #if DEBUG
             public const bool IsDebug = true;
         #else
-            public const bool isDebug = false;
+            public const bool IsDebug = false;
         #endif
 
         public static void Main(string[] args)
