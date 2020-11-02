@@ -37,7 +37,7 @@ namespace MMBot.Services.IE
             csvReader.Configuration.HeaderValidated = null;
             csvReader.Configuration.MissingFieldFound = null;
             csvReader.Configuration.BadDataFound = null;
-            csvReader.Configuration.Delimiter = ";";
+            csvReader.Configuration.Delimiter = ",";
 
             try
             {
@@ -180,7 +180,7 @@ namespace MMBot.Services.IE
             await using var writer = new StreamWriter(mem, Encoding.UTF8);
             await using var csvWriter = new CsvWriter(writer, CultureInfo.CurrentCulture);
 
-            csvWriter.Configuration.Delimiter = ";";
+            csvWriter.Configuration.Delimiter = ",";
 
             var m = _context.Member;
 
