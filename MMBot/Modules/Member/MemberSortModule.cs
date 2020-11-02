@@ -13,9 +13,9 @@ namespace MMBot.Modules.Member
 {
     public partial class MemberModule : MMBotModule, IMemberModule
     {
-        private readonly string[] _header = { "Name", "Clan", "Join", "SHigh", "Role" };
-        private readonly int[] _pad = { 16, 4, 4, 5, 7 };
-        private readonly string[] _fields = { "Name", "Clan.Tag", "Join", "SHigh", "Role" };
+        private readonly string[] _header = { "Name", "Clan", "SHigh", "Role" };
+        private readonly int[] _pad = { 16, 4, 5, 7 };
+        private readonly string[] _fields = { "Name", "Clan.Tag", "SHigh", "Role" };
 
         [Command("List", RunMode = RunMode.Async)]
         [Summary("Lists all members by current clan membership.")]
