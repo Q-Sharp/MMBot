@@ -46,10 +46,11 @@ namespace MMBot.Services
             }
         }
 
-        public async Task Reorder()
+        public async Task Reorder(ulong guildId)
         {
+            var settings = await _settings.GetGuildSettingsAsync(guildId);
             (await _context.Member.AsAsyncEnumerable().Where(x => x.GuildId == _guildId).ToListAsync())
-                .OrderBy(x => x.Join, JoinComparer.Create(_settings.ClanSize))
+                .OrderBy(x => x.Join, JoinComparer.Create(settings.ClanSize))
                 .ThenBy(x => x.SHigh)
                 .GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
                 .Select(x => x.Members.ToList() as IList<Member>)

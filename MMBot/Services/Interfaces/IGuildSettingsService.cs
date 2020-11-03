@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using MMBot.Data.Entities;
 
 namespace MMBot.Services.Interfaces
 {
-    public interface IGuildSettingsService : IMMBotInterface, IGuildSetter
+    public interface IGuildSettingsService
     {
-        string Prefix { get; }
-        TimeSpan WaitForReaction { get; }
-        string FileName { get; }
-        int ClanSize { get; }
-        int MemberMovementQty { get; }
-        ulong GuildId { get; }
+        Task<GuildSettings> GetGuildSettingsAsync(ulong guildId);
     }
 }

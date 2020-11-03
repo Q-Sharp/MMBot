@@ -21,10 +21,11 @@ namespace MMBot.Services.MemberSort
             _guildSettings = guildSettings;
         }
 
-        public async Task<IList<MemberChanges>> GetChanges(ExchangeMode memberExchangeMode = ExchangeMode.SkipSteps)
+        public async Task<IList<MemberChanges>> GetChanges(ulong guildId, ExchangeMode memberExchangeMode = ExchangeMode.SkipSteps)
         {
-            var m = (await _databaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
-            var cqty = (await _databaseService.LoadClansAsync()).Count();
+            var settings = await _guildSettings.GetGuildSettingsAsync(guildId);
+            var m = (await _databaseService.LoadMembersAsync(guildId)).Where(x => x.IsActive).ToList();
+            var cqty = (await _databaseService.LoadClansAsync(guildId)).Count();
 
             var current = m.OrderBy(x => x.Clan?.Tag)
                 .GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
@@ -34,12 +35,12 @@ namespace MMBot.Services.MemberSort
 
             var future = m.OrderByDescending(x => x.SHigh)
                 .ToList()
-                .ChunkBy(_guildSettings.ClanSize);
+                .ChunkBy(settings.ClanSize);
 
             if (current is null || future is null)
                 return default;
 
-            var moveQty = _guildSettings.MemberMovementQty;
+            var moveQty = settings.MemberMovementQty;
             List<MemberChanges> result = null;
 
             switch(memberExchangeMode)
@@ -49,7 +50,7 @@ namespace MMBot.Services.MemberSort
                     break;
 
                 case ExchangeMode.SkipSteps:
-                    result = await GetSkipStepsMemberMovement(m.OrderByDescending(y => y.SHigh).ToList(), moveQty, _guildSettings.ClanSize, cqty);
+                    result = await GetSkipStepsMemberMovement(m.OrderByDescending(y => y.SHigh).ToList(), moveQty, settings.ClanSize, cqty);
                     break;
             }
 
@@ -182,9 +183,9 @@ namespace MMBot.Services.MemberSort
             return result;
         }
 
-        public async Task<IList<IList<Member>>> GetCurrentMemberList()
+        public async Task<IList<IList<Member>>> GetCurrentMemberList(ulong guildId)
         {
-            var m = (await _databaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
+            var m = (await _databaseService.LoadMembersAsync(guildId)).Where(x => x.IsActive).ToList();
 
             var sorted = m.GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
                     .OrderBy(x => x.Clan)
@@ -194,10 +195,11 @@ namespace MMBot.Services.MemberSort
            return sorted;
         }
 
-        public async Task<IList<IList<Member>>> GetSortedMemberList(SortMode sortedBy = SortMode.BySeasonHigh)
+        public async Task<IList<IList<Member>>> GetSortedMemberList(ulong guildId, SortMode sortedBy = SortMode.BySeasonHigh)
         {
-            var m = (await _databaseService.LoadMembersAsync()).Where(x => x.IsActive).ToList();
-            int? chunkSize = _guildSettings.ClanSize;
+            var settings = await _guildSettings.GetGuildSettingsAsync(guildId);
+            var m = (await _databaseService.LoadMembersAsync(guildId)).Where(x => x.IsActive).ToList();
+            int? chunkSize = settings.ClanSize;
 
             switch(sortedBy)
             {

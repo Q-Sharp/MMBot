@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using Microsoft.Extensions.Logging;
 using MMBot.Data.Enums;
 using MMBot.Helpers;
 using MMBot.Modules.Interfaces;
@@ -49,7 +48,7 @@ namespace MMBot.Modules.Admin
                 if (_csvService != null)
                 {
                     var csvByte = await csv.Content.ReadAsByteArrayAsync();
-                    var result = await _csvService.ImportCsv(csvByte);
+                    var result = await _csvService.ImportCsv(csvByte, Context.Guild.Id);
 
                     if(result == null)
                         File.WriteAllBytes(Path.Combine(Environment.CurrentDirectory, "lastImport.csv"), csvByte);
@@ -72,7 +71,7 @@ namespace MMBot.Modules.Admin
             var csv = File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, "lastImport.csv"));
             if (_csvService != null)
             {
-                var result = await _csvService.ImportCsv(csv);
+                var result = await _csvService.ImportCsv(csv, Context.Guild.Id);
 
                 await ReplyAsync(result == null
                     ? "CSV file import was successful"
@@ -88,11 +87,13 @@ namespace MMBot.Modules.Admin
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task ExportCsv()
         {
-            var result = await _csvService?.ExportCsv();
-            await File.WriteAllBytesAsync(_guildSettings.FileName, result);
+            var settings = await _guildSettings.GetGuildSettingsAsync(Context.Guild.Id);
 
-            await Context.Channel.SendFileAsync(_guildSettings.FileName, "Csv db export");
-            File.Delete(_guildSettings.FileName);
+            var result = await _csvService?.ExportCsv(Context.Guild.Id);
+            await File.WriteAllBytesAsync(settings.FileName, result);
+
+            await Context.Channel.SendFileAsync(settings.FileName, "Csv db export");
+            File.Delete(settings.FileName);
         }
 
         [Command("Reorder")]
@@ -101,7 +102,7 @@ namespace MMBot.Modules.Admin
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task ReorderJoin()
         {
-            await Task.Run(() => _adminService.Reorder());
+            await Task.Run(() => _adminService.Reorder(Context.Guild.Id));
             await ReplyAsync("Members join order updated!");
         }
 
@@ -181,7 +182,7 @@ namespace MMBot.Modules.Admin
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Show()
         {
-            var gs = (await _databaseService.LoadGuildSettingsAsync());
+            var gs = (await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id));
             var e = gs.GetEmbedPropertiesWithValues();
             await ReplyAsync("", false, e as Embed);
         }
@@ -191,7 +192,7 @@ namespace MMBot.Modules.Admin
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Set(string propertyName, [Remainder] string value)
         {
-            var gs = (await _databaseService.LoadGuildSettingsAsync());
+            var gs = (await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id));
             var r = gs.ChangeProperty(propertyName, value);
             await _databaseService.SaveDataAsync();
             await ReplyAsync(r);
@@ -202,7 +203,7 @@ namespace MMBot.Modules.Admin
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Get(string propertyName)
         {
-            var gs = await _databaseService.LoadGuildSettingsAsync();
+            var gs = await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id);
             var r = gs.GetProperty(propertyName);
             await ReplyAsync(r);
         }

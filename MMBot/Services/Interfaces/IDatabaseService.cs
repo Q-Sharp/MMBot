@@ -5,31 +5,31 @@ using MMBot.Data.Entities;
 
 namespace MMBot.Services.Interfaces
 {
-    public interface IDatabaseService : IMMBotInterface, IGuildSetter
+    public interface IDatabaseService
     {
-        Task<Clan> CreateClanAsync();
-        Task<IList<Clan>> LoadClansAsync();
-        Task<Clan> GetClanAsync(string tag);
-        void DeleteClan(Clan c);
+        Task<Clan> CreateClanAsync(ulong guildId);
+        Task<IList<Clan>> LoadClansAsync(ulong? guildId = null);
+        Task<Clan> GetClanAsync(string tag, ulong? guildId = null);
+        void DeleteClan(Clan c, ulong guildId);
 
-        Task<Member> CreateMemberAsync();
-        Task<IList<Member>> LoadMembersAsync();
-        Task<Member> GetMemberAsync(string name);
-        void DeleteMember(Member m);
+        Task<Member> CreateMemberAsync(ulong guildId);
+        Task<IList<Member>> LoadMembersAsync(ulong? guildId = null);
+        Task<Member> GetMemberAsync(string name, ulong? guildId = null);
+        void DeleteMember(Member m, ulong guildId);
 
-        Task<GuildSettings> LoadGuildSettingsAsync();
+        Task<GuildSettings> LoadGuildSettingsAsync(ulong guildId);
 
         Task<Restart> AddRestart();
         Task<Tuple<ulong, ulong>> ConsumeRestart();
 
-        Task<Channel> CreateChannelAsync();
-        Task<IList<Channel>> LoadChannelsAsync();
-        void DeleteChannel(Channel c);
+        Task<Channel> CreateChannelAsync(ulong guildId);
+        Task<IList<Channel>> LoadChannelsAsync(ulong? guildId = null);
+        void DeleteChannel(Channel c, ulong guildId);
 
-        Task<MMTimer> CreateTimerAsync();
-        Task<IList<MMTimer>> LoadTimerAsync();
-        Task<MMTimer> GetTimerAsync(string name);
-        void DeleteTimer(MMTimer c);
+        Task<MMTimer> CreateTimerAsync(ulong guildId);
+        Task<IList<MMTimer>> LoadTimerAsync(ulong? guildId = null);
+        Task<MMTimer> GetTimerAsync(string name, ulong? guildId = null);
+        void DeleteTimer(MMTimer c, ulong guildId);
 
         Task SaveDataAsync();
         Task MigrateAsync();

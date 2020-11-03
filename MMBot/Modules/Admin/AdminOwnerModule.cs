@@ -123,7 +123,7 @@ namespace MMBot.Modules.Admin
 
             if(!ch.Any(c => c.GuildId == channel.GuildId && c.TextChannelId == channel.Id))
             {
-                var dbChannel = await _databaseService.CreateChannelAsync();
+                var dbChannel = await _databaseService.CreateChannelAsync(Context.Guild.Id);
                 dbChannel.GuildId = channel.GuildId;
                 dbChannel.TextChannelId = channel.Id;
                 dbChannel.AnswerTextChannelId = qChannel.Id;
@@ -142,7 +142,7 @@ namespace MMBot.Modules.Admin
             var c = (await _databaseService.LoadChannelsAsync()).FirstOrDefault(x => x.GuildId == channel.GuildId && x.TextChannelId == channel.Id);
 
             if(c != null)
-                _databaseService.DeleteChannel(c);
+                _databaseService.DeleteChannel(c, Context.Guild.Id);
 
             await ReplyAsync($"Successfully removed {channel.Name} to UrlScanList.");
         }

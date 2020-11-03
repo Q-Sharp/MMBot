@@ -71,7 +71,6 @@ namespace MMBot.Data.Entities
         [JsonIgnore]
         public virtual MemberGroup MemberGroup { get; set; }
 
-        [Display]
         public double? LocalTimeOffSet { get; set; }
 
         public override string ToString() => Clan?.Tag != null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";

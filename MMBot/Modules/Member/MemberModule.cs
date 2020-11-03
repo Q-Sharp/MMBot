@@ -27,7 +27,7 @@ namespace MMBot.Modules.Member
         public async Task Profile(string name = null)
         {
             var m = name != null
-                ? await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(name, Context.Channel, _commandHandler)
+                ? await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler)
                 : (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discord == Context.User.GetUserAndDiscriminator());
 
             if (m == null)

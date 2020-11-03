@@ -35,15 +35,16 @@ namespace MMBot.Modules.Timer
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task CreateTimer(string name, bool recurring = true)
         {
-            if((await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId) != null)
+            if((await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && Context.Guild.Id == t.GuildId) != null)
             {
                 await ReplyAsync($"A timer with that name already exists!");
                 return;
             }
 
-            var t = await _databaseService.CreateTimerAsync();
+            var t = await _databaseService.CreateTimerAsync(Context.Guild.Id);
             t.Name = name;
             t.IsRecurring = recurring;
+            t.GuildId = Context.Guild.Id;
             await _databaseService.SaveDataAsync();
             await ReplyAsync($"The timer {t} was added to database.");
         }
@@ -54,14 +55,14 @@ namespace MMBot.Modules.Timer
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task DeleteTimer(string name)
         {
-            var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
+            var t = await _databaseService.GetTimerAsync(name, Context.Guild.Id);
 
             if(t !=  null)
             {
                if(t.IsActive)
                    await StopTimer(name);
 
-               _databaseService.DeleteTimer(t);
+               _databaseService.DeleteTimer(t, Context.Guild.Id);
                await _databaseService.SaveDataAsync();
                await ReplyAsync($"The timer {name} was deleted");
             }           
@@ -73,7 +74,7 @@ namespace MMBot.Modules.Timer
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task ListTimers()
         {
-            var timer = (await _databaseService.LoadTimerAsync()).Where(t => _guildSettings.GuildId == t.GuildId).ToList();
+            var timer = (await _databaseService.LoadTimerAsync(Context.Guild.Id)).ToList();
             await ReplyAsync(timer.Count > 0 ? timer.GetTablePropertiesWithValues() : "No timers");
         }
 
@@ -83,14 +84,14 @@ namespace MMBot.Modules.Timer
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task AddNotification(string name, ISocketMessageChannel channel, [Remainder] string message)
         {
-            var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
+            var t = await _databaseService.GetTimerAsync(name, Context.Guild.Id);
             if(t != null)
             {
                 if(t.IsActive)
                     await StopTimer(name);
 
                 t.ChannelId = channel.Id;
-                t.GuildId = _guildSettings.GuildId;
+                t.GuildId = Context.Guild.Id;
                 t.Message = message;
                 await _databaseService.SaveDataAsync();
                 await ReplyAsync($"A notification will be send to {channel.Name} for timer {t}.");
@@ -101,9 +102,9 @@ namespace MMBot.Modules.Timer
         [Alias("RN")]
         [Summary("Removes a notification channel the message from a timer")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task RemoveNotification(string name)
+        public async Task RemoveNotification(ulong guildId, string name)
         {     
-            var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
+            var t = await _databaseService.GetTimerAsync(name, guildId);
             if(t != null)
             {
                 if(t.IsActive)
@@ -122,7 +123,7 @@ namespace MMBot.Modules.Timer
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task StartTimer(string name, string timeToFirstRing, string timeInterval = null, double? timeOffSet = null)
         {
-            var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
+            var t = await _databaseService.GetTimerAsync(name, Context.Guild.Id);
             if(t != null)
             {
                 if(t.Message == null || t.ChannelId == null)
@@ -137,16 +138,16 @@ namespace MMBot.Modules.Timer
                     return;
                 }
 
-                var ulto = timeOffSet ?? (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discord == Context.Message.Author.GetUserAndDiscriminator())?.LocalTimeOffSet;
-                if(ulto is null)
-                {
-                    await ReplyAsync($"Please specify your local time offset compared to utc. You can do this either by changing the LocalTimeOffSet property in your profile or by calling this command with an additional offset value");
-                    return;
-                }
+                //var ulto = timeOffSet ?? (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discord == Context.Message.Author.GetUserAndDiscriminator())?.LocalTimeOffSet;
+                //if(ulto is null)
+                //{
+                //    await ReplyAsync($"Please specify your local time offset compared to utc. You can do this either by changing the LocalTimeOffSet property in your profile or by calling this command with an additional offset value");
+                //    return;
+                //}
 
                 t.IsActive = true;
                 t.StartTime = DateTime.UtcNow;
-                t.RingSpan = TimeSpan.Parse(timeInterval ?? timeToFirstRing) + TimeSpan.FromHours(ulto.Value);
+                t.RingSpan = TimeSpan.Parse(timeInterval ?? timeToFirstRing);
                 var toFirstRingSpan = TimeSpan.Parse(timeToFirstRing);
 
                 t.EndTime = t.StartTime + toFirstRingSpan;
@@ -163,7 +164,7 @@ namespace MMBot.Modules.Timer
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task StopTimer(string name)
         {
-            var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
+            var t = await _databaseService.GetTimerAsync(name, Context.Guild.Id);
             if(t != null)
             {
                 await _timerService?.Stop(t);
@@ -176,13 +177,13 @@ namespace MMBot.Modules.Timer
             }
         }
 
-        [Command("StartCountdown")]
+        [Command("ShowTimeLeft")]
         [Alias("sc")]
         [Summary("Starts a countdown")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task ShowTimeLeft(string name)
         {
-            var t = (await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && _guildSettings.GuildId == t.GuildId);
+            var t = await _databaseService.GetTimerAsync(name, Context.Guild.Id);
             if(t != null)
             {
                 var timeLeft = await _timerService?.GetCountDown(t);

@@ -21,7 +21,7 @@ namespace MMBot.Modules.Member
         [Summary("Lists all members by current clan membership.")]
         public async Task List(SortBy sortBy = SortBy.SHigh)
         {
-            var m = await _memberSortService.GetCurrentMemberList();
+            var m = await _memberSortService.GetCurrentMemberList(Context.Guild.Id);
             await ShowMembers(m, sortBy);
         }
 
@@ -31,7 +31,7 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Sort()
         {
-            var m = (await _memberSortService.GetChanges()).Select(x => x.NewMemberList).ToList();
+            var m = (await _memberSortService.GetChanges(Context.Guild.Id)).Select(x => x.NewMemberList).ToList();
             await ShowMembers(m);
         }
 
@@ -41,7 +41,7 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Changes(string compact = null)
         {
-            var result = (await _memberSortService.GetChanges()).Where(x => x.Join.Count > 0 && x.Leave.Count > 0).ToList();
+            var result = (await _memberSortService.GetChanges(Context.Guild.Id)).Where(x => x.Join.Count > 0 && x.Leave.Count > 0).ToList();
 
             if(result?.Count() == 0)
             {
@@ -63,7 +63,7 @@ namespace MMBot.Modules.Member
                 var next = new Emoji("▶️");
                 await message.AddReactionsAsync(new IEmote[] { back, next });
                 
-                await _commandHandler.AddToReactionList(message, async (r, u) =>
+                await _commandHandler.AddToReactionList(Context.Guild.Id, message, async (r, u) =>
                 {
                    if (r.Name == back.Name && page >= 1)
                        await message.ModifyAsync(me => me.Content = GetDetailedMemberChangesString(result, --page, c));
@@ -78,7 +78,7 @@ namespace MMBot.Modules.Member
 
         private async Task ShowMembers(IList<IList<Data.Entities.Member>> mm, SortBy sortBy = SortBy.SHigh)
         {
-            var cQty = (await _databaseService.LoadClansAsync())?.Count();
+            var cQty = (await _databaseService.LoadClansAsync(Context.Guild.Id))?.Count();
 
             if(!cQty.HasValue)
             {
@@ -93,7 +93,7 @@ namespace MMBot.Modules.Member
             var next = new Emoji("▶️");
             await message.AddReactionsAsync(new IEmote[] { back, next });
 
-            await _commandHandler.AddToReactionList(message, async (r, u) =>
+            await _commandHandler.AddToReactionList(Context.Guild.Id, message, async (r, u) =>
             {
                 if (r.Name == back.Name && page >= 1)
                     await message.ModifyAsync(me => me.Content = GetTable(mm[--page], page + 1, sortBy));

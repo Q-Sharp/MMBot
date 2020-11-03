@@ -3,9 +3,9 @@ using MMBot.Data;
 
 namespace MMBot.Services.Interfaces
 {
-    public interface IAdminService : IMMBotInterface, IGuildSetter
+    public interface IAdminService
     {
-        Task Reorder();
+        Task Reorder(ulong guildId);
         Task DeleteDb();
         Task Restart();
     }

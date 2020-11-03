@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using MMBot.Data;
 
 namespace MMBot.Services.Interfaces
 {
-    public interface ICsvService : IMMBotInterface, IGuildSetter
+    public interface ICsvService
     {
-        Task<Exception> ImportCsv(byte[] csv);
-        Task<byte[]> ExportCsv();
+        Task<Exception> ImportCsv(byte[] csv, ulong guildID);
+        Task<byte[]> ExportCsv(ulong guildID);
     }
 }

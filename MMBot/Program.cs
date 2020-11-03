@@ -107,7 +107,7 @@ namespace MMBot
                         .AddScoped<IAdminService, AdminService>()
                         .AddScoped<IMemberSortService, MemberSortService>()
                         .AddSingleton<InteractiveService, InteractiveService>()
-                        .AddScoped<ITimerService, TimerService>()
+                        .AddSingleton<ITimerService, TimerService>()
                         .BuildServiceProvider();
                 });
     }

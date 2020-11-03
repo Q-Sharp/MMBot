@@ -55,8 +55,6 @@ namespace MMBot.Services.Timer
                 var g = _dsc?.GetGuild(tc.TimerInfos.GuildId);
                 var tch = g?.GetTextChannel(tc.TimerInfos.ChannelId.Value);
 
-                
-
                 await tch?.SendMessageAsync(tc?.TimerInfos?.Message);
 
                 if(tc?.TimerInfos?.IsRecurring ?? false)

@@ -18,8 +18,8 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Delete(string name)
         {
-            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(name, Context.Channel, _commandHandler);
-            _databaseService.DeleteMember(m);
+            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
+            _databaseService.DeleteMember(m, Context.Guild.Id);
             await _databaseService.SaveDataAsync();
             await ReplyAsync($"The member {m} was deleted");
         }
@@ -29,7 +29,7 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Set(string name, string propertyName, [Remainder] string value)
         {
-            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(name, Context.Channel, _commandHandler);
+            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
             var r = m.ChangeProperty(propertyName, value);
             await _databaseService.SaveDataAsync();
             await ReplyAsync(r);
@@ -40,7 +40,7 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Get(string name, string propertyName)
         {
-            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(name, Context.Channel, _commandHandler);
+            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
             var r = m.GetProperty(propertyName);
             await ReplyAsync(r);
         }
@@ -50,7 +50,7 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task Create(string name)
         {
-            var m = await _databaseService.CreateMemberAsync();
+            var m = await _databaseService.CreateMemberAsync(Context.Guild.Id);
             m.Name = name;
             await _databaseService.SaveDataAsync();
             await ReplyAsync($"The member {m} was added to database.");

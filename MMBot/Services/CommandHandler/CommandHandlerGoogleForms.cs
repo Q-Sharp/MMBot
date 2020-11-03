@@ -13,10 +13,10 @@ namespace MMBot.Services.CommandHandler
 {
     public partial class CommandHandler : ICommandHandler
     {
-        private void CheckGoogleForms(SocketMessage arg)
+        private void CheckGoogleForms(SocketMessage arg, ulong guildId)
         {
             if (_formsChannelList.Select(x => x.Item1).Contains(arg.Channel))
-                _ = Task.Run(async () => await HandleGoogleForms(arg, _formsChannelList.Where(x => x.Item1 == arg.Channel).FirstOrDefault().Item2));
+                _ = Task.Run(async () => await HandleGoogleForms(guildId, arg, _formsChannelList.Where(x => x.Item1 == arg.Channel).FirstOrDefault().Item2));
         }
 
         private async Task ReInitGoogleFormsAsync()
@@ -36,7 +36,7 @@ namespace MMBot.Services.CommandHandler
             });            
         }
 
-        private async Task HandleGoogleForms(SocketMessage arg, ISocketMessageChannel questionsChannel)
+        private async Task HandleGoogleForms(ulong guildId, SocketMessage arg, ISocketMessageChannel questionsChannel)
         {
             var urls = arg.Content.GetUrl();
             var m = await _databaseService.LoadMembersAsync();
@@ -79,7 +79,7 @@ namespace MMBot.Services.CommandHandler
                         var cancel = false;
                         await msg.AddReactionsAsync(emojis);
                 
-                        await AddToReactionList(msg, async (r, u) =>
+                        await AddToReactionList(guildId, msg, async (r, u) =>
                         {
                             cancel = r.Name == "2️⃣";
                             await msg.DeleteAsync();

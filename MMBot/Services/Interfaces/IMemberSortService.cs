@@ -6,12 +6,12 @@ using MMBot.Services.MemberSort;
 
 namespace MMBot.Services.Interfaces
 {
-    public interface IMemberSortService : IMMBotInterface
+    public interface IMemberSortService
     {
-        public Task<IList<IList<Member>>> GetCurrentMemberList();
+        public Task<IList<IList<Member>>> GetCurrentMemberList(ulong guildId);
 
-        public Task<IList<IList<Member>>> GetSortedMemberList(SortMode sortedBy = SortMode.BySeasonHigh);
+        public Task<IList<IList<Member>>> GetSortedMemberList(ulong guildId, SortMode sortedBy = SortMode.BySeasonHigh);
 
-        public Task<IList<MemberChanges>> GetChanges(ExchangeMode memberExchangeMode = ExchangeMode.SkipSteps);
+        public Task<IList<MemberChanges>> GetChanges(ulong guildId, ExchangeMode memberExchangeMode = ExchangeMode.SkipSteps);
     }
 }

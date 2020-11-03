@@ -104,15 +104,21 @@ namespace MMBot.Services.CommandHandler
 
         public async Task Client_HandleCommandAsync(SocketMessage arg)
         {
-            CheckGoogleForms(arg);
+            if (!(arg is SocketUserMessage msg))
+                return;
 
-            if (!(arg is SocketUserMessage msg) || msg.Author.Id == _client.CurrentUser.Id || msg.Author.IsBot) return;
-            _gs?.SetGuild((msg.Channel as IGuildChannel).Id);
+            var context = new SocketCommandContext(_client, msg);
 
+            CheckGoogleForms(arg, context.Guild.Id);
+
+            if (msg.Author.Id == _client.CurrentUser.Id || msg.Author.IsBot) 
+                return;
+
+            var settings = await _gs.GetGuildSettingsAsync(context.Guild.Id);
             var pos = 0;
-            if (msg.HasStringPrefix(_gs.Prefix, ref pos) || msg.HasMentionPrefix(_client.CurrentUser, ref pos) || msg.Content.ToLower().StartsWith(_gs.Prefix.ToLower()))
+            if (msg.HasStringPrefix(settings.Prefix, ref pos) || msg.HasMentionPrefix(_client.CurrentUser, ref pos) || msg.Content.ToLower().StartsWith(settings.Prefix.ToLower()))
             {
-                var context = new SocketCommandContext(_client, msg);
+                
                 await _commands.ExecuteAsync(context, pos, _services);
             }
         }

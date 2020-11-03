@@ -22,6 +22,8 @@ namespace MMBot.Modules.Help
         [Command("help")]
         public async Task HelpAsync()
         {
+            var settings = await _guildSettings.GetGuildSettingsAsync(Context.Guild.Id);
+
             var builder = new EmbedBuilder()
             {
                 Color = new Color(114, 137, 218),
@@ -44,11 +46,11 @@ namespace MMBot.Modules.Help
                     var args = string.Join(" ", cmd.Parameters?.Select(x => $"[{x.Name}]").ToArray() ?? Array.Empty<string>());
 
                     if (string.Equals(cmd.Name, module.Group, StringComparison.InvariantCultureIgnoreCase))
-                        description += $"{_guildSettings.Prefix}{module.Group} {args}{Environment.NewLine}";
+                        description += $"{settings.Prefix}{module.Group} {args}{Environment.NewLine}";
                     else if(string.IsNullOrWhiteSpace(module.Group))
-                        description += $"{_guildSettings.Prefix}{cmd.Name} {args}{Environment.NewLine}";
+                        description += $"{settings.Prefix}{cmd.Name} {args}{Environment.NewLine}";
                     else
-                        description += $"{_guildSettings.Prefix}{module.Group} {cmd.Name} {args}{Environment.NewLine}";
+                        description += $"{settings.Prefix}{module.Group} {cmd.Name} {args}{Environment.NewLine}";
                 }
 
                 if (!string.IsNullOrWhiteSpace(description))

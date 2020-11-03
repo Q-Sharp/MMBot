@@ -31,7 +31,7 @@ namespace MMBot.Tests.Modules
             var mm = GetMemberModule();
             await mm.Create("Member");
 
-            A.CallTo(() => _dbs.CreateMemberAsync()).WithAnyArguments().MustHaveHappened();
+            A.CallTo(() => _dbs.CreateMemberAsync(0)).WithAnyArguments().MustHaveHappened();
             A.CallTo(() => _dbs.SaveDataAsync()).WithAnyArguments().MustHaveHappened();
             A.CallTo(mm).Where(x => x.Method.Name == "ReplyAsync").WithAnyArguments().MustHaveHappened();
         }

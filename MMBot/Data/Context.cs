@@ -51,6 +51,10 @@ namespace MMBot.Data
                 .HasOne(m => m.MemberGroup)
                 .WithMany(mg => mg.Members)
                 .HasForeignKey(m => m.MemberGroupId);
+
+            modelBuilder.Entity<GuildSettings>()
+                .HasIndex(m => m.GuildId)
+                .IsUnique();
         }
 
         public async Task MigrateAsync() => await Database.MigrateAsync();

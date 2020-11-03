@@ -59,7 +59,7 @@ namespace MMBot.Modules.Clan
         public async Task Delete(string tag)
         {
             var c = (await _databaseService.GetClanAsync(tag));
-            _databaseService.DeleteClan(c);
+            _databaseService.DeleteClan(c, Context.Guild.Id);
             await _databaseService.SaveDataAsync();
             await ReplyAsync($"The clan {c} was deleted");
         }
@@ -80,7 +80,7 @@ namespace MMBot.Modules.Clan
         [Summary("Creates a new clan")]
         public async Task Create(string tag, [Remainder] string name)
         {
-            var c = await _databaseService.CreateClanAsync();
+            var c = await _databaseService.CreateClanAsync(Context.Guild.Id);
             c.Tag = tag;
             c.Name = name;
             await _databaseService.SaveDataAsync();

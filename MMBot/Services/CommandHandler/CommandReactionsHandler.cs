@@ -27,8 +27,10 @@ namespace MMBot.Services.CommandHandler
                 }
             });
 
-        public async Task AddToReactionList(IUserMessage message, Func<IEmote, IUser, Task> fT, bool allowMultiple = true)
+        public async Task AddToReactionList(ulong guildId,IUserMessage message, Func<IEmote, IUser, Task> fT, bool allowMultiple = true)
         {
+            var settings = await _gs.GetGuildSettingsAsync(guildId);
+
             using (await _mutex.LockAsync())
                 _messageIdWithReaction.Add(message.Id, fT);
 
@@ -36,7 +38,7 @@ namespace MMBot.Services.CommandHandler
 
             await Task.Run(async () => 
             {
-                var t1 = Task.Delay(_gs.WaitForReaction);
+                var t1 = Task.Delay(settings.WaitForReaction);
                 var t2 = allowMultiple ? Task.Delay(-1) : _monitor.WaitAsync();
 
                 await Task.WhenAny(t1, t2);   

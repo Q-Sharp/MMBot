@@ -11,15 +11,15 @@ namespace MMBot.Helpers
 {
     public static class MemberHelpers
     {
-        public static async Task<Member> FindAndAskForMember(this IEnumerable<Member> members, string search, IMessageChannel smc, ICommandHandler ch) 
+        public static async Task<Member> FindAndAskForMember(this IEnumerable<Member> members, ulong guildId, string search, IMessageChannel smc, ICommandHandler ch) 
             => await members
                 .FindMember(search)
-                .AskForMemberAsync(smc, ch);
+                .AskForMemberAsync(guildId, smc, ch);
 
         private static IEnumerable<Member> FindMember(this IEnumerable<Member> members, string search) 
             => members.Where(x => x.Name.ToLower().Contains(search.ToLower()));
 
-        private static async Task<Member> AskForMemberAsync(this IEnumerable<Member> members, IMessageChannel smc, ICommandHandler ch)
+        private static async Task<Member> AskForMemberAsync(this IEnumerable<Member> members, ulong guildId, IMessageChannel smc, ICommandHandler ch)
         {
             if(members.Count() > 5)
             {
@@ -60,7 +60,7 @@ namespace MMBot.Helpers
             Member m = null;
             await question.AddReactionsAsync(emojis);
             
-            await ch.AddToReactionList(question, async (r, u) =>
+            await ch.AddToReactionList(guildId, question, async (r, u) =>
             {
                 if(emojis.Select(r => r.Name).Contains(r.Name))
                 {

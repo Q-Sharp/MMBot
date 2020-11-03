@@ -19,7 +19,6 @@ namespace MMBot.Services.IE
         private Context _context;
         private GuildSettingsService _settings;
         private ILogger<CsvService> _logger;
-        private ulong _guildId;
 
         public CsvService(Context context, GuildSettingsService settings, ILogger<CsvService> logger)
         {
@@ -28,7 +27,7 @@ namespace MMBot.Services.IE
             _logger = logger;
         }
 
-        public async Task<Exception> ImportCsv(byte[] csv)
+        public async Task<Exception> ImportCsv(byte[] csv, ulong guildId)
         {
             using var mem = new MemoryStream(csv);
             using var reader = new StreamReader(mem, Encoding.UTF8);
@@ -39,31 +38,49 @@ namespace MMBot.Services.IE
             csvReader.Configuration.BadDataFound = null;
             csvReader.Configuration.Delimiter = ",";
 
+             using var dr = new CsvDataReader(csvReader);
+             var dt = new DataTable();
+             dt.Load(dr);
+
             try
             {
-                if (!_context.Clan.Any())
+                if(dt.Columns.Contains("IGN"))
+                    dt.Columns["IGN"].ColumnName = "Name";
+
+                if(dt.Columns.Contains("Discord Status"))
+                    dt.Columns["Discord Status"].ColumnName = "DiscordStatus";
+
+                if(dt.Columns.Contains("Clan"))
+                    dt.Columns["Clan"].ColumnName = "ClanTag";
+
+                if(dt.Columns.Contains("AT-highest"))
+                    dt.Columns["AT-highest"].ColumnName = "AHigh";
+
+                if(dt.Columns.Contains("S-highest"))
+                    dt.Columns["S-highest"].ColumnName = "SHigh";
+
+                if(dt.Columns.Contains("Join Date"))
+                    dt.Columns["Join Date"].ColumnName = "Join";
+            }
+            catch
+            {
+                // ignore
+            }
+
+            try
+            {
+                var clanTags = dt.Rows.AsQueryable().Cast<object>().Where(x => x != DBNull.Value).OfType<string>().Distinct().ToList();
+
+                if (!_context.Clan.Any(x => !clanTags.Contains(x.Tag)))
                 {
-                    var nc = new Clan
+                    foreach(var tag in clanTags)
                     {
-                        Tag = "TT",
-                        Name = "The Tavern",
-                        SortOrder = 1,
-                        GuildId = _settings.GuildId
-                    };
-                    await _context.AddAsync(nc);
-
-                    for (var i = 2; i <= 4; i++)
-                    {
-                        var c2 = new Clan
-                        {
-                            Tag = $"TT{i}",
-                            Name = $"The Tavern {i}",
-                            SortOrder = i,
-                            GuildId = _settings.GuildId
-                        };
-                        await _context.AddAsync(c2);
+                        var clan = await _context.Clan.FirstOrDefaultAsync(c => c.Tag == tag) ?? new Clan();
+                        clan.Tag = tag;
+                        clan.Name = getName(tag);
+                        clan.SortOrder = _context.Clan.AsQueryable().Select(x => x.SortOrder).Max() + 1;
+                        clan.GuildId = guildId;
                     }
-
                     await _context.SaveChangesAsync();
                 }
             }
@@ -74,36 +91,6 @@ namespace MMBot.Services.IE
 
             try
             {
-                using var dr = new CsvDataReader(csvReader);
-                var dt = new DataTable();
-                dt.Load(dr);
-
-                try
-                {
-                    if(dt.Columns.Contains("IGN"))
-                        dt.Columns["IGN"].ColumnName = "Name";
-
-                    if(dt.Columns.Contains("Discord Status"))
-                        dt.Columns["Discord Status"].ColumnName = "DiscordStatus";
-
-                    if(dt.Columns.Contains("Clan"))
-                        dt.Columns["Clan"].ColumnName = "ClanTag";
-
-                    if(dt.Columns.Contains("AT-highest"))
-                        dt.Columns["AT-highest"].ColumnName = "AHigh";
-
-                    if(dt.Columns.Contains("S-highest"))
-                        dt.Columns["S-highest"].ColumnName = "SHigh";
-
-                    if(dt.Columns.Contains("Join Date"))
-                        dt.Columns["Join Date"].ColumnName = "Join";
-
-                }
-                catch
-                {
-                    // ignore
-                }
-                
                 foreach (DataRow row in dt.Rows)
                 {
                     var me = row["Name"] != DBNull.Value && _context.Member.Any() ? _context.Member.FirstOrDefault(
@@ -169,7 +156,7 @@ namespace MMBot.Services.IE
                         me.IgnoreOnMoveUp = iomu;
 
                     me.LastUpdated = DateTime.UtcNow;
-                    me.GuildId = _settings.GuildId;
+                    me.GuildId = guildId;
 
                     await _context.SaveChangesAsync();
                 }
@@ -182,7 +169,18 @@ namespace MMBot.Services.IE
             return default;
         }
 
-        public async Task<byte[]> ExportCsv()
+        private string getName(string tag)
+        {
+            switch(tag)
+            {
+                case "TT": return "The Tavern";
+                case "TT2": return "The Tavern 2";
+                case "TT3": return "The Tavern 3";
+            }
+            return null;
+        }
+
+        public async Task<byte[]> ExportCsv(ulong guildID)
         {
             await using var mem = new MemoryStream();
             await using var writer = new StreamWriter(mem, Encoding.UTF8);
@@ -190,32 +188,10 @@ namespace MMBot.Services.IE
 
             csvWriter.Configuration.Delimiter = ",";
 
-            var m = _context.Member;
-
-            //var dt = new DataTable();
-            //var dc = new DataColumn[]
-            //{
-            //    new DataColumn("Clan", typeof(string)),
-            //    new DataColumn("Discord", typeof(string)),
-            //    new DataColumn("IGN", typeof(string)),
-            //    new DataColumn("Role", typeof(string)),
-            //    new DataColumn("AT-highest", typeof(string)),
-            //    new DataColumn("S-highest", typeof(string)),
-            //    new DataColumn("Donations", typeof(string)),
-            //    new DataColumn("Join Date", typeof(string)),
-            //};
-            //dt.Columns.AddRange(dc);
-
-            //foreach (var member in m.ToArray())
-            //    dt.Rows.Add(member.ClanTag, member.Discord, member.Name, member.Role.ToString(),
-            //        member.AHigh.ToString(), member.SHigh.ToString(), member.Donations.ToString(),
-            //        member.Join.ToString());
-
+            var m = _context.Member.AsEnumerable().Where(x => x.GuildId == guildID).ToList();
             await csvWriter.WriteRecordsAsync(m.ToArray().AsEnumerable());
 
             return mem.ToArray();
         }
-
-        public void SetGuild(ulong id) => _guildId = id;
     }
 }
