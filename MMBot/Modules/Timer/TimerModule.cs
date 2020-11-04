@@ -121,7 +121,7 @@ namespace MMBot.Modules.Timer
         [Alias("Start")]
         [Summary("Starts a timer, which rings once after timerspan and every timerspan")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task StartTimer(string name, string timeToFirstRing, string timeInterval = null, double? timeOffSet = null)
+        public async Task StartTimer(string name, string timeToFirstRing, string timeInterval = null)
         {
             var t = await _databaseService.GetTimerAsync(name, Context.Guild.Id);
             if(t != null)
