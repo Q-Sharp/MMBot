@@ -14,7 +14,6 @@ namespace MMBot.Services.Interfaces
 
         Task<Member> CreateMemberAsync(ulong guildId);
         Task<IList<Member>> LoadMembersAsync(ulong? guildId = null);
-        Task<Member> GetMemberAsync(string name, ulong? guildId = null);
         void DeleteMember(Member m, ulong guildId);
 
         Task<GuildSettings> LoadGuildSettingsAsync(ulong guildId);
