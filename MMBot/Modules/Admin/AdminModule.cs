@@ -38,7 +38,7 @@ namespace MMBot.Modules.Admin
         [Alias("import")]
         [Summary("Imports a notion csv export to update db")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task ImportCsv()
+        public async Task<RuntimeResult> ImportCsv()
         {
             var csvFile = Context.Message.Attachments.FirstOrDefault();
             var myWebClient = _clientFactory.CreateClient();
@@ -60,13 +60,14 @@ namespace MMBot.Modules.Admin
             }
 
             await _databaseService.CleanDB();
+            return FromSuccess();
         }
 
         [Command("ReImportCSV")]
         [Alias("Reimport")]
         [Summary("Reimport last csv file")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task ReImportCSV()
+        public async Task<RuntimeResult> ReImportCSV()
         {
             var csv = File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, "lastImport.csv"));
             if (_csvService != null)
@@ -79,13 +80,14 @@ namespace MMBot.Modules.Admin
             }
 
             await _databaseService.CleanDB();
+            return FromSuccess();
         }
 
         [Command("ExportCSV")]
         [Alias("export")]
         [Summary("Exports a csv file from db")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task ExportCsv()
+        public async Task<RuntimeResult> ExportCsv()
         {
             var settings = await _guildSettings.GetGuildSettingsAsync(Context.Guild.Id);
 
@@ -94,118 +96,119 @@ namespace MMBot.Modules.Admin
 
             await Context.Channel.SendFileAsync(settings.FileName, "Csv db export");
             File.Delete(settings.FileName);
+            return FromSuccess();
         }
 
         [Command("Reorder")]
         [Alias("reorder")]
         [Summary("Reorders member in db")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task ReorderJoin()
+        public async Task<RuntimeResult> ReorderJoin()
         {
             await Task.Run(() => _adminService.Reorder(Context.Guild.Id));
             await ReplyAsync("Members join order updated!");
+            return FromSuccess();
         }
 
         [Command("FixRoles")]
         [Alias("FR")]
         [Summary("Checks and fixes discord roles of all clan members.")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task FixRoles() =>
-            await Task.Run(async () =>
+        public async Task<RuntimeResult> FixRoles()
+        {
+            try
             {
-                try
+                if (Interlocked.Read(ref _commandIsRunning) > 0)
+                    return FromError(CommandError.Unsuccessful, $"I can only run a single long running command at a time!");
+
+                Interlocked.Increment(ref _commandIsRunning);
+                await ReplyAsync($"Fixing roles of discord members accordingly to their clan membership....");
+
+                var c = await _databaseService.LoadClansAsync();
+                var ar = Context.Guild.Roles.Where(x => c.Select(clan => clan.DiscordRole).Contains(x.Name))
+                .ToArray();
+
+                var clanMessage = await ReplyAsync("...");
+                foreach (var clan in c)
                 {
-                    if (Interlocked.Read(ref _commandIsRunning) > 0)
+                    await clanMessage.ModifyAsync(m => m.Content = $"Fixing roles of members of {clan}....");
+                    var clanRole = Context.Guild.Roles.FirstOrDefault(x => x.Name == clan.DiscordRole) as IRole;
+
+                    var memberMessage = await ReplyAsync("...");
+                    foreach (var member in clan.Member)
                     {
-                        await ReplyAsync($"I can only run a single long running command at a time!");
-                        return;
-                    }
+                        await memberMessage.ModifyAsync(m => m.Content = $"Fixing roles of {member}...");
+                        var user = await Task.Run(() =>
+                        Context.Guild.Users.FirstOrDefault(x =>
+                        $"{x.Username}#{x.Discriminator}" == member.Discord));
 
-                    Interlocked.Increment(ref _commandIsRunning);
-                    await ReplyAsync($"Fixing roles of discord members accordingly to their clan membership....");
+                        if (user is null || member.ClanId is null || clan.DiscordRole is null)
+                        continue;
 
-                    var c = await _databaseService.LoadClansAsync();
-                    var ar = Context.Guild.Roles.Where(x => c.Select(clan => clan.DiscordRole).Contains(x.Name))
-                        .ToArray();
-
-                    var clanMessage = await ReplyAsync("...");
-                    foreach (var clan in c)
-                    {
-                        await clanMessage.ModifyAsync(m => m.Content = $"Fixing roles of members of {clan}....");
-                        var clanRole = Context.Guild.Roles.FirstOrDefault(x => x.Name == clan.DiscordRole) as IRole;
-
-                        var memberMessage = await ReplyAsync("...");
-                        foreach (var member in clan.Member)
+                        try
                         {
-                            await memberMessage.ModifyAsync(m => m.Content = $"Fixing roles of {member}...");
-                            var user = await Task.Run(() =>
-                               Context.Guild.Users.FirstOrDefault(x =>
-                                    $"{x.Username}#{x.Discriminator}" == member.Discord));
-
-                            if (user is null || member.ClanId is null || clan.DiscordRole is null)
-                                continue;
-
-                            try
-                            {
-                                if (member.Role == Role.CoLeader || member.Role == Role.Leader)
-                                {
-                                    await user.RemoveRolesAsync(ar);
-                                    await user.AddRolesAsync(ar);
-                                }
-                                else
-                                {
-                                    await user.RemoveRolesAsync(ar);
-                                    await user.AddRoleAsync(clanRole);
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                await ReplyAsync($"{member.Name}'s role couldn't be fixed: {e.Message}");
-                            }
+                            await user.RemoveRolesAsync(ar);
+                            await user.AddRoleAsync(clanRole);
+                        }
+                        catch (Exception e)
+                        {
+                            await ReplyAsync($"{member.Name}'s role couldn't be fixed: {e.Message}");
                         }
                     }
+                }
 
-                    await ReplyAsync($"All roles have been fixed!");
-                }
-                catch
-                {
-                    throw;
-                }
-                finally
-                {
-                    Interlocked.Decrement(ref _commandIsRunning);
-                }
-            });
+                //var members = await _databaseService.LoadMembersAsync();
+
+                //foreach(var m in members)
+                //{
+
+                //}
+
+                await ReplyAsync($"All roles have been fixed!");
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                Interlocked.Decrement(ref _commandIsRunning);
+            }
+
+            return FromSuccess();
+        }
 
         [Command("Show")]
         [Summary("Show guild settings")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task Show()
+        public async Task<RuntimeResult> Show()
         {
             var gs = (await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id));
             var e = gs.GetEmbedPropertiesWithValues();
             await ReplyAsync("", false, e as Embed);
+            return FromSuccess();
         }
 
         [Command("Set")]
         [Summary("Set guild settings")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task Set(string propertyName, [Remainder] string value)
+        public async Task<RuntimeResult> Set(string propertyName, [Remainder] string value)
         {
             var gs = (await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id));
             var r = gs.ChangeProperty(propertyName, value);
             await _databaseService.SaveDataAsync();
-            await ReplyAsync(r);
+            return FromSuccess(r);
         }
 
         [Command("Get")]
         [Summary("Get guild settings")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task Get(string propertyName)
+        public async Task<RuntimeResult> Get(string propertyName)
         {
             var gs = await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id);
             var r = gs.GetProperty(propertyName);
             await ReplyAsync(r);
+            return FromSuccess();
         }
     }
 }

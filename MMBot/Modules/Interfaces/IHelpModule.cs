@@ -5,7 +5,7 @@ namespace MMBot.Modules.Interfaces
 {
     public interface IHelpModule
     {
-        Task HelpAsync();
-        Task HelpAsync([Remainder] string command);
-    }
+        Task<RuntimeResult> HelpAsync();
+        Task<RuntimeResult> HelpAsync([Remainder] string command);
+    } 
 }

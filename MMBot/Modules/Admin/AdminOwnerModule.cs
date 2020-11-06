@@ -19,7 +19,7 @@ namespace MMBot.Modules.Admin
         [Command("ExportDb")]
         [Summary("Exports db data as json files in zip archive")]
         [RequireOwner()]
-        public async Task ExportDb()
+        public async Task<RuntimeResult> ExportDb()
         {
             var json = await _jsonService.ExportDBToJson();
 
@@ -38,12 +38,14 @@ namespace MMBot.Modules.Admin
 
             await Context.Channel.SendFileAsync(ex, "dbExport");
             File.Delete(ex);
+
+            return FromSuccess();
         }
 
         [Command("ImportDb")]
         [Summary("Imports the db with help of json files in zip archive")]
         [RequireOwner()]
-        public async Task ImportDb()
+        public async Task<RuntimeResult> ImportDb()
         {
             await ReplyAsync("Starting db import this can take a while...");
 
@@ -79,6 +81,8 @@ namespace MMBot.Modules.Admin
                 if(result)
                     await Restart();
             }
+
+            return FromSuccess();
         }
 
 
@@ -86,7 +90,7 @@ namespace MMBot.Modules.Admin
         [Alias("restart")]
         [Summary("Restarts the bot")]
         [RequireOwner]
-        public async Task Restart(bool saveRestart = true)
+        public async Task<RuntimeResult> Restart(bool saveRestart = true)
         {
            if (saveRestart)
             {
@@ -99,23 +103,24 @@ namespace MMBot.Modules.Admin
             var t = _adminService.Restart();
             await ReplyAsync($"Bot service is restarting...");
             await t;
+            return FromSuccess();
         }
 
         [Command("DeleteDB")]
         [Summary("Deletes sqlite db file")]
         [RequireOwner]
-        public async Task DeleteDb() 
-            => await Task.Run(async () =>
+        public async Task<RuntimeResult> DeleteDb()
         {
             await _adminService.DeleteDb();
             await ReplyAsync($"db file has been deleted.");
             await Restart(false);
-        });
+            return FromSuccess();
+        }
 
         [Command("AddChannelToUrlScan")]
         [Summary("Adds channel to url scan list")]
         [RequireOwner]
-        public async Task AddChannelToUrlScan(IGuildChannel channel, IGuildChannel qChannel)
+        public async Task<RuntimeResult> AddChannelToUrlScan(IGuildChannel channel, IGuildChannel qChannel)
         {
             await _commandHandler.AddChannelToGoogleFormsWatchList(channel, qChannel);
 
@@ -129,13 +134,14 @@ namespace MMBot.Modules.Admin
                 dbChannel.AnswerTextChannelId = qChannel.Id;
                 await _databaseService.SaveDataAsync();
             }
-            await ReplyAsync($"Successfully added {channel.Name} to UrlScanList and {qChannel.Name} for any questions!");
+
+            return FromSuccess($"Successfully added {channel.Name} to UrlScanList and {qChannel.Name} for any questions!");
         }
 
         [Command("RemoveChannelFromUrlScan")]
         [Summary("Removes channel from url scan list")]
         [RequireOwner]
-        public async Task RemoveChannelFromUrlScan(IGuildChannel channel)
+        public async Task<RuntimeResult> RemoveChannelFromUrlScan(IGuildChannel channel)
         {
             await _commandHandler.RemoveChannelFromGoogleFormsWatchList(channel);
 
@@ -144,7 +150,7 @@ namespace MMBot.Modules.Admin
             if(c != null)
                 _databaseService.DeleteChannel(c, Context.Guild.Id);
 
-            await ReplyAsync($"Successfully removed {channel.Name} to UrlScanList.");
+            return FromSuccess($"Successfully removed {channel.Name} to UrlScanList.");
         }
     }
 }

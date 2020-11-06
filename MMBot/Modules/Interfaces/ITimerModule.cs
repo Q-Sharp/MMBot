@@ -1,14 +1,15 @@
 ﻿using System.Threading.Tasks;
+using Discord.Commands;
 
 namespace MMBot.Modules.Interfaces
 {
     public interface ITimerModule
     {
-        Task CreateTimer(string name, bool recurring);
-        Task ListTimers();
-        Task DeleteTimer(string name);
-        Task StartTimer(string name, string timeToFirstRing, string timeInterval = null);
-        Task StopTimer(string name);
-        Task ShowTimeLeft(string name);
+        Task<RuntimeResult> CreateTimer(string name, bool recurring);
+        Task<RuntimeResult> ListTimers();
+        Task<RuntimeResult> DeleteTimer(string name);
+        Task<RuntimeResult> StartTimer(string name, string timeToFirstRing, string timeInterval = null);
+        Task<RuntimeResult> StopTimer(string name);
+        Task<RuntimeResult> ShowTimeLeft(string name);
     }
 }

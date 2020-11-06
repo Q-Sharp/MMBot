@@ -6,13 +6,13 @@ namespace MMBot.Modules.Interfaces
 {
     public interface IMemberModule
     {
-        Task List(SortBy sortBy);
-        Task Sort();
-        Task Changes(string compact = null);
-        Task Profile(string name = null);
-        Task ShowAll(string propertyName, [Remainder] string value);
-        Task Delete(string name);
-        Task Set(string name, string propertyName, [Remainder] string value);
-        Task Create(string name);
+        Task<RuntimeResult> List(SortBy sortBy);
+        Task<RuntimeResult> Sort();
+        Task<RuntimeResult> Changes(string compact = null);
+        Task<RuntimeResult> Profile(string name = null);
+        Task<RuntimeResult> ShowAll(string propertyName, [Remainder] string value);
+        Task<RuntimeResult> Delete(string name);
+        Task<RuntimeResult> Set(string name, string propertyName, [Remainder] string value);
+        Task<RuntimeResult> Create(string name);
     }
 }

@@ -21,17 +21,17 @@ namespace MMBot.Services
 
         
         public async Task<Clan> CreateClanAsync(ulong guildId) => (await _context.AddAsync(new Clan{ GuildId = guildId }, new CancellationToken())).Entity;
-        public async Task<IList<Clan>> LoadClansAsync(ulong? guildId = null) => await _context.Clan.AsAsyncEnumerable().Where(x => x.GuildId == guildId).ToListAsync();
+        public async Task<IList<Clan>> LoadClansAsync(ulong? guildId = null) => await _context.Clan.AsAsyncEnumerable().Where(x => !guildId.HasValue || x.GuildId == guildId).ToListAsync();
         public async Task<Clan> GetClanAsync(string tag, ulong? guildId) => await _context.Clan.AsAsyncEnumerable().FirstOrDefaultAsync(x => x.Tag == tag);
         public void DeleteClan(Clan c, ulong guildId) => _context.Remove(c);
 
         public async Task<Member> CreateMemberAsync(ulong guildId) => (await _context.AddAsync(new Member { GuildId = guildId }, new CancellationToken())).Entity;
-        public async Task<IList<Member>> LoadMembersAsync(ulong? guildId = null) => await _context.Member.AsAsyncEnumerable().Where(x => x.GuildId == guildId).ToListAsync();
+        public async Task<IList<Member>> LoadMembersAsync(ulong? guildId = null) => await _context.Member.AsAsyncEnumerable().Where(x => !guildId.HasValue || x.GuildId == guildId).ToListAsync();
         public void DeleteMember(Member m, ulong guildId) => _context.Remove(m);
 
         public async Task<MMTimer> CreateTimerAsync(ulong guildId) => (await _context.AddAsync(new MMTimer { GuildId = guildId }, new CancellationToken())).Entity;
-        public async Task<IList<MMTimer>> LoadTimerAsync(ulong? guildId) => await _context.Timer.AsAsyncEnumerable().Where(x => !guildId.HasValue || x.GuildId == guildId).ToListAsync();
-        public async Task<MMTimer> GetTimerAsync(string name, ulong? guildId) => await _context.Timer.AsAsyncEnumerable().FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower());
+        public async Task<IList<MMTimer>> LoadTimerAsync(ulong? guildId = null) => await _context.Timer.AsAsyncEnumerable().Where(x => !guildId.HasValue || x.GuildId == guildId).ToListAsync();
+        public async Task<MMTimer> GetTimerAsync(string name, ulong? guildId = null) => await _context.Timer.AsAsyncEnumerable().FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower());
         public void DeleteTimer(MMTimer t, ulong guildId) => _context.Remove(t);
 
         

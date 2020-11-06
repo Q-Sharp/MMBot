@@ -16,55 +16,55 @@ namespace MMBot.Modules.Member
         [Alias("D")]
         [Summary("Deletes member with given name.")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task Delete(string name)
+        public async Task<RuntimeResult> Delete(string name)
         {
             var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
             _databaseService.DeleteMember(m, Context.Guild.Id);
             await _databaseService.SaveDataAsync();
-            await ReplyAsync($"The member {m} was deleted");
+            return FromSuccess($"The member {m} was deleted");
         }
         
         [Command("Set")]
         [Summary("Set [Username] [Property name] [Value]")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task Set(string name, string propertyName, [Remainder] string value)
+        public async Task<RuntimeResult> Set(string name, string propertyName, [Remainder] string value)
         {
             var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
             var r = m.ChangeProperty(propertyName, value);
             await _databaseService.SaveDataAsync();
-            await ReplyAsync(r);
+            return FromSuccess(r);
         }
 
         [Command("Get")]
         [Summary("Get [Username] [Property name]")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task Get(string name, string propertyName)
+        public async Task<RuntimeResult> Get(string name, string propertyName)
         {
             var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
             var r = m.GetProperty(propertyName);
-            await ReplyAsync(r);
+            return FromSuccess(r);
         }
 
         [Command("Create")]
         [Summary("Creates a new member.")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task Create(string name)
+        public async Task<RuntimeResult> Create(string name)
         {
             var m = await _databaseService.CreateMemberAsync(Context.Guild.Id);
             m.Name = name;
             await _databaseService.SaveDataAsync();
-            await ReplyAsync($"The member {m} was added to database.");
+            return FromSuccess($"The member {m} was added to database.");
         }
 
         [Command("ShowAll")]
         [Summary("Show all member where propertyName has value")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task ShowAll(string propertyName, [Remainder] string value)
+        public async Task<RuntimeResult> ShowAll(string propertyName, [Remainder] string value)
         {
             var m = await _databaseService.LoadMembersAsync();
 
             var fm = m.FilterCollectionByPropertyWithValue(propertyName, value).Select(x => x.Name).ToList();
-            await ReplyAsync($"These members fulfill the given condition ({propertyName} == {value}): {string.Join(", ", fm)}"); 
+            return FromSuccess($"These members fulfill the given condition ({propertyName} == {value}): {string.Join(", ", fm)}");
         }
     }
 }

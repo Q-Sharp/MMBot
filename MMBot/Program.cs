@@ -70,14 +70,14 @@ namespace MMBot
                 {
                     var dsc = new DiscordSocketClient(new DiscordSocketConfig
                     {
-                        LogLevel = LogSeverity.Info,
+                        LogLevel = LogSeverity.Debug,
                         MessageCacheSize = 1000,
                         DefaultRetryMode = RetryMode.AlwaysRetry
                     });
 
                     var cs = new CommandService(new CommandServiceConfig
                     {
-                        LogLevel = LogSeverity.Info,
+                        LogLevel = LogSeverity.Debug,
                         CaseSensitiveCommands = false,
                         DefaultRunMode = RunMode.Async,
                         SeparatorChar = ' '

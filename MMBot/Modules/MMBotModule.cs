@@ -1,12 +1,10 @@
-﻿using System.Reflection;
+﻿using Discord.Addons.Interactive;
 using Discord.Commands;
-using Microsoft.Extensions.Logging;
-using MMBot.Helpers;
 using MMBot.Services.Interfaces;
 
 namespace MMBot.Modules
 {
-    public abstract class MMBotModule : ModuleBase<SocketCommandContext>
+    public abstract class MMBotModule : InteractiveBase<SocketCommandContext>
     {
         protected IDatabaseService _databaseService;
         protected ICommandHandler _commandHandler;
@@ -19,12 +17,18 @@ namespace MMBot.Modules
             _guildSettings = guildSettings;
         }
 
-        protected override void BeforeExecute(CommandInfo command)
-        {
-            //typeof(MMBotModule).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField)
-            //    .ForEach(x => (x.GetValue(this) as IGuildSetter)?.SetGuild(Context.Guild.Id));
+        public static MMBotResult FromSuccess(string successMessage = null) => MMBotResult.Create(null, successMessage);
+        public static MMBotResult FromError(CommandError error, string reason) => MMBotResult.Create(error, reason);
+        public static MMBotResult FromErrorObjectNotFound(string objectname, string searchstring) => MMBotResult.Create(CommandError.ObjectNotFound, $"{objectname}: {searchstring}");
+        public static MMBotResult FromErroUnsuccessful(string error) => MMBotResult.Create(CommandError.Unsuccessful, error);
+    }
 
-            //base.BeforeExecute(command);
+    public class MMBotResult : RuntimeResult
+    {
+        private MMBotResult(CommandError? error, string reason = null) : base(error, reason)
+        {
         }
+
+        public static MMBotResult Create(CommandError? error, string reason = null) => new MMBotResult(error, reason);
     }
 }

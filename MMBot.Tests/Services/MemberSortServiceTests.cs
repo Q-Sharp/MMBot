@@ -4,6 +4,7 @@ using MMBot.Services.Interfaces;
 using MMBot.Services.MemberSort;
 using Xunit;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace MMBot.Tests.Services
 {
@@ -26,7 +27,8 @@ namespace MMBot.Tests.Services
         {
             var dbs = A.Fake<IDatabaseService>();
             var gss = A.Fake<IGuildSettingsService>();
-            var mss = new MemberSortService(dbs, gss);
+            var ls = A.Fake<ILogger<MemberSortService>>();
+            var mss = new MemberSortService(dbs, gss, ls);
 
             return mss;
         }

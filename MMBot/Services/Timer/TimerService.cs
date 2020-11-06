@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord.WebSocket;
+using Microsoft.Extensions.Logging;
 using MMBot.Data.Entities;
 using MMBot.Services.Interfaces;
 
 namespace MMBot.Services.Timer
 {
-    public class TimerService : ITimerService
+    public class TimerService : MMBotService<TimerService>, ITimerService
     {
         private readonly IDatabaseService _databaseService;
         private readonly DiscordSocketClient _dsc;
         private readonly IList<TimerContainer> _timerList = new List<TimerContainer>();
 
-        public TimerService(IDatabaseService databaseService, DiscordSocketClient dsc)
+        public TimerService(IDatabaseService databaseService, DiscordSocketClient dsc, ILogger<TimerService> logger) : base(logger)
         {
             _databaseService = databaseService;
             _dsc = dsc;

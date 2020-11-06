@@ -19,35 +19,34 @@ namespace MMBot.Modules.Member
 
         [Command("List", RunMode = RunMode.Async)]
         [Summary("Lists all members by current clan membership.")]
-        public async Task List(SortBy sortBy = SortBy.SHigh)
+        public async Task<RuntimeResult> List(SortBy sortBy = SortBy.SHigh)
         {
             var m = await _memberSortService.GetCurrentMemberList(Context.Guild.Id);
             await ShowMembers(m, sortBy);
+            return FromSuccess();
         }
 
         [Command("Sort", RunMode = RunMode.Async)]
         [Summary("Sort all members by season high.")]
         [Alias("S")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task Sort()
+        public async Task<RuntimeResult> Sort()
         {
             var m = (await _memberSortService.GetChanges(Context.Guild.Id)).Select(x => x.NewMemberList).ToList();
             await ShowMembers(m);
+            return FromSuccess();
         }
 
         [Command("Changes", RunMode = RunMode.Async)]
         [Summary("Lists the needed changes to clan memberships.")]
         [Alias("C")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task Changes(string compact = null)
+        public async Task<RuntimeResult> Changes(string compact = null)
         {
             var result = (await _memberSortService.GetChanges(Context.Guild.Id)).Where(x => x.Join.Count > 0 && x.Leave.Count > 0).ToList();
 
             if(result?.Count() == 0)
-            {
-                await ReplyAsync($"No member data in db.");
-                return;
-            }
+                return FromError(CommandError.Unsuccessful, $"No member data in db.");
 
             var c = await _databaseService.LoadClansAsync();
             var cQty = c?.Count();
@@ -74,6 +73,8 @@ namespace MMBot.Modules.Member
                        await message.RemoveReactionAsync(r, u);
                 });
             }
+
+            return FromSuccess();
         }
 
         private async Task ShowMembers(IList<IList<Data.Entities.Member>> mm, SortBy sortBy = SortBy.SHigh)

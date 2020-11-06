@@ -5,10 +5,10 @@ namespace MMBot.Modules.Interfaces
 {
     public interface IClanModule
     {
-        Task List(string tag = null);
-        Task Delete(string tag);
-        Task SetCommand(string tag, string propertyName, [Remainder] string value);
-        Task Create(string tag, [Remainder] string name);
-        Task AddMember(string tag, string memberName);
+        Task<RuntimeResult> List(string tag = null);
+        Task<RuntimeResult> Delete(string tag);
+        Task<RuntimeResult> SetCommand(string tag, string propertyName, [Remainder] string value);
+        Task<RuntimeResult> Create(string tag, [Remainder] string name);
+        Task<RuntimeResult> AddMember(string tag, string memberName);
     }
 }

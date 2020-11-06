@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using MMBot.Helpers;
 
 namespace MMBot.Data.Entities
 {
@@ -12,9 +11,24 @@ namespace MMBot.Data.Entities
         [Display]
         public ulong GuildId { get; set; }
 
-        // Discord
         [Display]
         public string Prefix { get; set; }
+
+        // Discord
+        //[Display]
+        //public string ExMemberRole { get; set; }
+
+        //[Display]
+        //public string MemberRole { get; set; }
+
+        //[Display]
+        //public string ElderRole { get; set; }
+
+        //[Display]
+        //public string CoLeaderRole { get; set; }
+
+        //[Display]
+        //public string LeaderRole { get; set; }
 
         [Display]
         public TimeSpan WaitForReaction { get; set; }

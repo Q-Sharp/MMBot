@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MMBot.Helpers;
 using MMBot.Services.Interfaces;
+using MMBot.Modules;
 
 namespace MMBot.Services.CommandHandler
 {
@@ -51,9 +52,9 @@ namespace MMBot.Services.CommandHandler
 
             _client.MessageReceived += Client_HandleCommandAsync;
             _client.ReactionAdded += Client_ReactionAdded;
-            _client.Disconnected += Client_Disconnected;
-
+            _client.Disconnected += Client_Disconnected;           
             _client.Ready += Client_Ready;
+            _client.Log += LogAsync;
         }
 
         public async Task LogAsync(LogMessage logMessage)
@@ -116,18 +117,13 @@ namespace MMBot.Services.CommandHandler
 
             var settings = await _gs.GetGuildSettingsAsync(context.Guild.Id);
             var pos = 0;
+
             if (msg.HasStringPrefix(settings.Prefix, ref pos) || msg.HasMentionPrefix(_client.CurrentUser, ref pos) || msg.Content.ToLower().StartsWith(settings.Prefix.ToLower()))
-            {
-                
                 await _commands.ExecuteAsync(context, pos, _services);
-            }
         }
 
         public async Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)
         {
-            if (result.IsSuccess)
-                return;
-
             // error happened
             if(!command.IsSpecified)
             {
@@ -135,40 +131,46 @@ namespace MMBot.Services.CommandHandler
                 return;
             }
 
-            //#TODO:
-            //var moduleName = command.Value.Module.Name;
-            //var commandName = command.Value.Name;
+            var moduleName = command.Value.Module.Name;
+            var commandName = command.Value.Name;
 
-            //if(result is MMBotResult runTimeResult)
-            //{
-            //    switch(runTimeResult?.Error ?? 0)
-            //    {
-            //        case CommandError.BadArgCount:
-            //            break;
+            if (result is MMBotResult runTimeResult)
+            {
+                if (result.IsSuccess)
+                {
+                    if(runTimeResult.Reason != null)
+                    await context.Channel.SendMessageAsync(runTimeResult.Reason);
+                    return;
+                }
 
-            //        case CommandError.Exception:
-            //            break;
+                switch (runTimeResult?.Error ?? 0)
+                {
+                    case CommandError.BadArgCount:
+                        break;
 
-            //        case CommandError.MultipleMatches:
-            //            break;
+                    case CommandError.Exception:
+                        break;
 
-            //        case CommandError.ObjectNotFound:
-            //            break;
-                    
-            //        case CommandError.ParseFailed:
-            //            break;
+                    case CommandError.MultipleMatches:
+                        break;
 
-            //        case CommandError.UnknownCommand:
-            //            break;
+                    case CommandError.ObjectNotFound:
+                        break;
 
-            //        case CommandError.UnmetPrecondition:
-            //            break;
+                    case CommandError.ParseFailed:
+                        break;
 
-            //        case CommandError.Unsuccessful:
-            //            break;
-            //    }
-            //}
-   
+                    case CommandError.UnknownCommand:
+                        break;
+
+                    case CommandError.UnmetPrecondition:
+                        break;
+
+                    case CommandError.Unsuccessful:
+                        break;
+                }
+            }
+
             await context.Channel.SendMessageAsync($"error: {result.ErrorReason}");
         }
     }

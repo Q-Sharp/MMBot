@@ -1,14 +1,15 @@
 ﻿using System.Threading.Tasks;
+using Discord.Commands;
 
 namespace MMBot.Modules.Interfaces
 {
     public interface IAdminModule
     {
-        Task ImportCsv();
-        Task ExportCsv();
-        Task ReorderJoin();
-        Task Restart(bool saveRestart = true);
-        Task FixRoles();
-        Task DeleteDb();
+        Task<RuntimeResult> ImportCsv();
+        Task<RuntimeResult> ExportCsv();
+        Task<RuntimeResult> ReorderJoin();
+        Task<RuntimeResult> Restart(bool saveRestart = true);
+        Task<RuntimeResult> FixRoles();
+        Task<RuntimeResult> DeleteDb();
     }
 }

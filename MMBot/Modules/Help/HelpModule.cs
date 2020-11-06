@@ -20,7 +20,7 @@ namespace MMBot.Modules.Help
         }
 
         [Command("help")]
-        public async Task HelpAsync()
+        public async Task<RuntimeResult> HelpAsync()
         {
             var settings = await _guildSettings.GetGuildSettingsAsync(Context.Guild.Id);
 
@@ -65,20 +65,17 @@ namespace MMBot.Modules.Help
             }
 
             await ReplyAsync("", false, builder.Build());
+            return FromSuccess();
         }
 
         [Command("help")]
-        public async Task HelpAsync([Remainder] string command)
+        public async Task<RuntimeResult> HelpAsync([Remainder] string command)
         {
             var name = _service.Commands.Where(x => x.Name.ToLower() == command.ToLower() || x.Aliases.Select(x => x.ToLower()).Contains(command.ToLower())).FirstOrDefault().Name;
             var result = _service.Search(Context, (name ?? command));
             
-
             if (!result.IsSuccess)
-            {
-                await ReplyAsync($"Sorry, I couldn't find a command like **{command}**.");
-                return;
-            }
+                return FromErrorObjectNotFound("command", command);
 
             var builder = new EmbedBuilder()
             {
@@ -100,6 +97,7 @@ namespace MMBot.Modules.Help
             }
 
             await ReplyAsync("", false, builder.Build());
+            return FromSuccess();
         }
     }
 }

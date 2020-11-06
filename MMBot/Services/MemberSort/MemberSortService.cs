@@ -7,15 +7,16 @@ using MMBot.Data.Enums;
 using MMBot.Helpers;
 using MMBot.Enums;
 using MMBot.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace MMBot.Services.MemberSort
 {
-    public class MemberSortService : IMemberSortService
+    public class MemberSortService : MMBotService<MemberSortService>, IMemberSortService
     {
         private readonly IDatabaseService _databaseService;
         private readonly IGuildSettingsService _guildSettings;
 
-        public MemberSortService(IDatabaseService databaseService, IGuildSettingsService guildSettings)
+        public MemberSortService(IDatabaseService databaseService, IGuildSettingsService guildSettings, ILogger<MemberSortService> logger) : base(logger)
         {
             _databaseService = databaseService;
             _guildSettings = guildSettings;

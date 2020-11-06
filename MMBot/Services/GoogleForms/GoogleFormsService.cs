@@ -43,13 +43,22 @@ namespace MMBot.Services.GoogleForms
 
         public async Task<bool> SubmitToGoogleFormAsync(GoogleFormsAnswers gfa)
         {
-            var url = $"https://docs.google.com/forms/d/e/{gfa.FormId}/formResponse";
-            var client = _clientFactory?.CreateClient("forms");
-            var content = new FormUrlEncodedContent(gfa.AllAnswers);
-            var response = await client.PostAsync(url, content);
+            try
+            {
+                var url = $"https://docs.google.com/forms/d/e/{gfa.FormId}/formResponse";
+                var client = _clientFactory?.CreateClient("forms");
+                var content = new FormUrlEncodedContent(gfa.AllAnswers);
+                var response = await client.PostAsync(url, content);
 
-            if (response.StatusCode == HttpStatusCode.OK)
-                return true;
+                if (response.StatusCode == HttpStatusCode.OK)
+                    return true;
+                else
+                     _logger.LogError($"Problems with sending Google Forms! Http Status was: {response.StatusCode}");
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, e);
+            }
 
             return false;
         }
