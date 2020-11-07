@@ -7,6 +7,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using MMBot.Modules.Interfaces;
+using MMBot.Helpers;
+using System;
 
 namespace MMBot.Modules.Admin
 {
@@ -151,6 +153,35 @@ namespace MMBot.Modules.Admin
                 _databaseService.DeleteChannel(c, Context.Guild.Id);
 
             return FromSuccess($"Successfully removed {channel.Name} to UrlScanList.");
+        }
+
+        [Command("ListUrlScanChannel")]
+        [Summary("Lists all url scan channel")]
+        [RequireOwner]
+        public async Task<RuntimeResult> ListChannelFromUrlScan()
+        {
+            var cs = await _databaseService.LoadChannelsAsync(Context.Guild.Id);
+
+            if(cs != null)
+            {
+                string result = "Channel   |   QuestionsChannel";
+                foreach(var c in cs)
+                {
+                    var tc = Context.Client?.GetGuild(c.GuildId)?.GetTextChannel(c.TextChannelId);
+                    var tqc = Context.Client?.GetGuild(c.GuildId)?.GetTextChannel(c.AnswerTextChannelId);
+
+                    if(tc == null || tqc == null)
+                    {
+                        _databaseService.DeleteChannel(c, Context.Guild.Id);
+                        await _databaseService.SaveDataAsync();
+                        continue;
+                    }
+
+                    result += $"#{tc.Name} | #{tqc.Name} {Environment.NewLine}";
+                }
+                return FromSuccess(result.TrimEnd(Environment.NewLine.ToArray()));
+            }
+            return FromErrorObjectNotFound("UrlScanChannels", "Any");
         }
     }
 }

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using MMBot.Helpers;
 using MMBot.Services.GoogleForms;
 using MMBot.Services.Interfaces;
+using Discord.Addons.Interactive;
+using Microsoft.Extensions.Logging;
 
 namespace MMBot.Services.CommandHandler
 {
@@ -76,11 +78,13 @@ namespace MMBot.Services.CommandHandler
                         .ToArray();
 
                         var cancel = false;
+                        IUser qaU = null;
                         await msg.AddReactionsAsync(emojis);
                 
                         await AddToReactionList(guildId, msg, async (r, u) =>
                         {
                             cancel = r.Name == "2️⃣";
+                            qaU = u;
                             await msg.DeleteAsync();
                         }, 
                         false);
@@ -92,11 +96,9 @@ namespace MMBot.Services.CommandHandler
                         foreach(var q in gfa.OpenFields)
                         {
                             var qMsg = await questionsChannel.SendMessageAsync($"Question: {q.QuestionText}");
-
-                            var context = new CommandContext(_client, qMsg);
                             var sC = new SocketCommandContext(_client, questionsChannel.GetCachedMessage(qMsg.Id) as SocketUserMessage);
 
-                            var response = await _interactiveService.NextMessageAsync(sC, false, true, timeout: TimeSpan.FromHours(2));
+                            var response = await _interactiveService.NextMessageAsync(sC, new EnsureFromUserCriterion(qaU), timeout: TimeSpan.FromHours(2));
                             if (response != null)
                             {
                                 await gfa.AnswerQuestionManual(q.AnswerSubmissionId, response.Content);
@@ -106,9 +108,10 @@ namespace MMBot.Services.CommandHandler
                                 return;
                         }
                     }
-                    catch
+                    catch(Exception e)
                     {
                         // ignore
+                        _logger.LogError(e.Message, e);
                     }
                 }
 
