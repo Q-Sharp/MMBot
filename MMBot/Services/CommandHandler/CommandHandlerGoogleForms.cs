@@ -115,7 +115,7 @@ namespace MMBot.Services.CommandHandler
                     }
                 }
 
-                foreach(var me in member)
+                foreach(var me in member.Shuffle())
                 {
                     await gfa.AddPlayerTagToAnswers(me.PlayerTag);
                     var success = await _googleFormsSubmissionService.SubmitToGoogleFormAsync(gfa);

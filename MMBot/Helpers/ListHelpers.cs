@@ -13,5 +13,22 @@ namespace MMBot.Helpers
                      .ToList();
 
         public static void ForEach<T>(this IEnumerable<T> n, Action<T> a) => n.ToList().ForEach(a);
+
+        public static List<T> Shuffle<T>(this IList<T> sequence)
+        {
+            var random = new Random((int)DateTime.UtcNow.TimeOfDay.TotalMinutes);
+            var retArray = sequence.ToArray();
+
+            var n = retArray.Length;       
+            while (n > 1)
+            {
+               var k = random.Next(n--);   
+               var temp = retArray[n];     
+               retArray[n] = retArray[k];
+               retArray[k] = temp;
+            }
+
+            return retArray.ToList();
+        }
     }
 }
