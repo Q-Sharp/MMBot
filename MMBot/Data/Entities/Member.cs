@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -49,7 +50,7 @@ namespace MMBot.Data.Entities
         public virtual Clan Clan { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<Vacation> Vacation { get; set; }
+        public virtual ICollection<Vacation> Vacation { get; set; }  = new Collection<Vacation>();
 
         public DateTime? LastUpdated { get; set; }
 
@@ -72,6 +73,9 @@ namespace MMBot.Data.Entities
         public virtual MemberGroup MemberGroup { get; set; }
 
         public double? LocalTimeOffSet { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<Strike> Strikes { get; set; }  = new Collection<Strike>();
 
         public override string ToString() => Clan?.Tag != null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
 

@@ -18,6 +18,7 @@ namespace MMBot.Data
         public DbSet<Channel> Channel { get; set; }
         public DbSet<MemberGroup> MemberGroup { get; set; }
         public DbSet<MMTimer> Timer { get; set; }
+        public DbSet<Strike> Strike { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,6 +42,11 @@ namespace MMBot.Data
             modelBuilder.Entity<Vacation>()
                 .HasOne(v => v.Member)
                 .WithMany(m => m.Vacation)
+                .HasForeignKey(v => v.MemberId);
+
+            modelBuilder.Entity<Strike>()
+                .HasOne(v => v.Member)
+                .WithMany(m => m.Strikes)
                 .HasForeignKey(v => v.MemberId);
 
             modelBuilder.Entity<Clan>()

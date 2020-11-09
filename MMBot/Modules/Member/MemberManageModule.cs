@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using MMBot.Data.Entities;
 using MMBot.Helpers;
 using MMBot.Modules.Interfaces;
 
@@ -65,6 +67,45 @@ namespace MMBot.Modules.Member
 
             var fm = m.FilterCollectionByPropertyWithValue(propertyName, value).Select(x => x.Name).ToList();
             return FromSuccess($"These members fulfill the given condition ({propertyName} == {value}): {string.Join(", ", fm)}");
+        }
+
+        [Command("AddStrike")]
+        [Summary("Add a strike to a member")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
+        public async Task<RuntimeResult> AddStrike(string name, [Remainder] string strikeReason)
+        {
+            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
+            
+            m.Strikes.Add(new Strike { Reason = strikeReason, MemberId = m.Id, Member = m, StrikeDate = DateTime.UtcNow });
+            await _databaseService?.SaveDataAsync();
+
+            return FromSuccess($"{m} now has {m?.Strikes?.Count() ?? 0} strike(s)!");
+        }
+
+        [Command("RemoveStrike")]
+        [Summary("Removes a strike from a member.")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
+        public async Task<RuntimeResult> RemoveStrike(string name)
+        {
+            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
+            
+            m.Strikes.Remove(m.Strikes.OrderBy(y => y.StrikeDate).FirstOrDefault());
+            await _databaseService?.SaveDataAsync();
+
+            return FromSuccess($"{m} now has {m?.Strikes?.Count() ?? 0} strike(s)!");
+        }
+
+        [Command("ShowAllStrikes")]
+        [Summary("Show all member with strikes")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
+        public async Task<RuntimeResult> ShowAllStrikes()
+        {
+            var me = (await _databaseService.LoadMembersAsync(Context.Guild.Id)).Where(x => x.Strikes?.Count > 0)?.ToList();
+
+            if((me?.Count ?? 0) <= 0)
+                return FromErroUnsuccessful("No member with strikes found!");
+
+            return FromSuccess(me.GetTablePropertiesWithValues());
         }
     }
 }

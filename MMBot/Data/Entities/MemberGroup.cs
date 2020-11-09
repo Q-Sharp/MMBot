@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.Json.Serialization;
+using Microsoft.VisualBasic;
 using MMBot.Helpers;
 
 namespace MMBot.Data.Entities
@@ -13,7 +15,7 @@ namespace MMBot.Data.Entities
         public int Id { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<Member> Members { get; set; }
+        public virtual ICollection<Member> Members { get; set; } = new Collection<Member>();
 
         public void Update(object memberGroup)
         {

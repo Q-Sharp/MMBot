@@ -59,8 +59,7 @@ namespace MMBot
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
            Host.CreateDefaultBuilder(args)
-                .ConfigureLogging(x => x.ClearProviders()
-                                        .AddSerilog(Log.Logger))
+                .ConfigureLogging(x => x.ClearProviders().AddSerilog(Log.Logger))
                 .UseSystemd()
                 .ConfigureAppConfiguration((hostContext, configBuilder) =>
                 {
@@ -72,7 +71,9 @@ namespace MMBot
                     {
                         LogLevel = LogSeverity.Debug,
                         MessageCacheSize = 1000,
-                        DefaultRetryMode = RetryMode.AlwaysRetry
+                        DefaultRetryMode = RetryMode.AlwaysRetry,
+                        HandlerTimeout = null,
+                        LargeThreshold = 250
                     });
 
                     var cs = new CommandService(new CommandServiceConfig
@@ -80,7 +81,8 @@ namespace MMBot
                         LogLevel = LogSeverity.Debug,
                         CaseSensitiveCommands = false,
                         DefaultRunMode = RunMode.Async,
-                        SeparatorChar = ' '
+                        SeparatorChar = ' ',
+                        IgnoreExtraArgs = true
                     });
 
 
@@ -91,7 +93,7 @@ namespace MMBot
                         c.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");
                     });
 
-                     services
+                    services
                         .AddHostedService<DiscordWorker>()
                         .AddSingleton<GuildSettingsService>()
                         .AddDbContext<Context>()
