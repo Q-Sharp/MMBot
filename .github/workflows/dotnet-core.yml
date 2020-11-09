@@ -36,7 +36,5 @@ jobs:
           SOURCE: MMBot/bin/Release/netcoreapp3.1/linux-x64/publish/
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
-          
-    
-        
