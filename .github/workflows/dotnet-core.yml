@@ -27,7 +27,7 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
     - name: .NET Publish
       run: |
-        dotnet publish -c Release -r linux-x64 /p:PublishReadyToRun=false
+        dotnet publish -c Release -r linux-x64 /p:PublishReadyToRun=true
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v2.1.5
       env:
