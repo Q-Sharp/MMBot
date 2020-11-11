@@ -18,31 +18,38 @@ using MMBot.Services.Interfaces;
 using MMBot.Services.MemberSort;
 using MMBot.Services.Timer;
 using System.IO;
+using Serilog.Events;
 
 namespace MMBot
 {
     public class Program
     {
-        #if DEBUG
-            public const bool IsDebug = true;
-        #else
-            public const bool IsDebug = false;
-        #endif
+        private const string logTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}";
 
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
                  .Enrich.FromLogContext()
-                 .WriteTo.Console(theme: AnsiConsoleTheme.Literate, outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}")
-                 .WriteTo.File(path: Path.Combine(Environment.CurrentDirectory, "mmbot.log"), outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}")
+                 .WriteTo.Console(theme: AnsiConsoleTheme.Literate, outputTemplate: logTemplate, restrictedToMinimumLevel: LogEventLevel.Verbose)
+                 .WriteTo.File(path: Path.Combine(Environment.CurrentDirectory, "mmbot.log"), outputTemplate: logTemplate, rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Warning)
                  .CreateLogger();
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 
-            using var h = CreateHostBuilder(args)?.Build();
-            h?.Run();
-            Log.CloseAndFlush();
+            try
+            {
+                using var h = CreateHostBuilder(args)?.Build();
+                h?.Run();
+            }
+            catch(Exception e)
+            {
+                Log.Fatal(e, logTemplate);
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         private static void CurrentDomain_ProcessExit(object sender, EventArgs e) 
@@ -84,7 +91,6 @@ namespace MMBot
                         SeparatorChar = ' ',
                         IgnoreExtraArgs = true
                     });
-
 
                     var hc = services.AddHttpClient("forms", c =>
                     {

@@ -27,13 +27,13 @@ namespace MMBot.Services.CommandHandler
             if(ch == null)
                 return;
 
-            ch?.ForEach(cha =>
+            ch?.ForEach(async cha =>
             {
                 var obserChannel = _client?.GetGuild(cha.GuildId)?.GetTextChannel(cha.TextChannelId);
                 var answerChannel = _client?.GetGuild(cha.GuildId)?.GetTextChannel(cha.AnswerTextChannelId);
 
                 if(obserChannel != null && answerChannel !=  null)
-                    _formsChannelList.Add(new Tuple<ISocketMessageChannel, ISocketMessageChannel>(obserChannel, answerChannel));
+                    await AddChannelToGoogleFormsWatchList(obserChannel, answerChannel);
             });            
         }
 
