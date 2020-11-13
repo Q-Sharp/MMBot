@@ -94,7 +94,7 @@ namespace MMBot.Modules.Admin
         [RequireOwner]
         public async Task<RuntimeResult> Restart(bool saveRestart = true)
         {
-           if (saveRestart)
+            if (saveRestart)
             {
                 var r = await _databaseService?.AddRestart();
                 r.Guild = Context.Guild.Id;
@@ -102,9 +102,8 @@ namespace MMBot.Modules.Admin
                 await _databaseService?.SaveDataAsync();
             }
 
-            var t = _adminService.Restart();
             await ReplyAsync($"Bot service is restarting...");
-            await t;
+            await _adminService.Restart();
             return FromSuccess();
         }
 

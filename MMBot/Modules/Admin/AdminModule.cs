@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using MMBot.Data.Enums;
 using MMBot.Helpers;
 using MMBot.Modules.Interfaces;
 using MMBot.Services.Interfaces;
