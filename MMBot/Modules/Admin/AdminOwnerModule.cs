@@ -151,7 +151,7 @@ namespace MMBot.Modules.Admin
             if(c is not null)
                 _databaseService.DeleteChannel(c, Context.Guild.Id);
 
-            return FromSuccess($"Successfully removed {channel.Name} to UrlScanList.");
+            return FromSuccess($"Successfully removed {channel.Name} from UrlScanList.");
         }
 
         [Command("ListUrlScanChannel")]
@@ -176,9 +176,9 @@ namespace MMBot.Modules.Admin
                         continue;
                     }
 
-                    result += $"#{tc.Name} | #{tqc.Name} {Environment.NewLine}";
+                    result += $"{Environment.NewLine}#{tc.Name} | #{tqc.Name}";
                 }
-                return FromSuccess(result.TrimEnd(Environment.NewLine.ToArray()));
+                return FromSuccess(result);
             }
             return FromErrorObjectNotFound("UrlScanChannels", "Any");
         }
