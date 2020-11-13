@@ -29,7 +29,7 @@ namespace MMBot.Modules.Timer
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task<RuntimeResult> CreateTimer(string name, bool recurring = true)
         {
-            if((await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && Context.Guild.Id == t.GuildId) != null)
+            if((await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && Context.Guild.Id == t.GuildId) is not null)
             {
                 var es = $"A timer with that name already exists!";
                 await ReplyAsync(es);
@@ -37,7 +37,7 @@ namespace MMBot.Modules.Timer
             }
 
             var t = await _databaseService.CreateTimerAsync(Context.Guild.Id);
-            if(t != null)
+            if(t is not null)
             {
                 t.Name = name;
                 t.IsRecurring = recurring;
@@ -88,7 +88,7 @@ namespace MMBot.Modules.Timer
         public async Task<RuntimeResult> AddNotification(string name, ISocketMessageChannel channel, [Remainder] string message)
         {
             var t = await _databaseService.GetTimerAsync(name, Context.Guild.Id);
-            if(t != null)
+            if(t is not null)
             {
                 if(t.IsActive)
                     await StopTimer(name);
@@ -110,7 +110,7 @@ namespace MMBot.Modules.Timer
         public async Task<RuntimeResult> RemoveNotification(ulong guildId, string name)
         {     
             var t = await _databaseService.GetTimerAsync(name, guildId);
-            if(t != null)
+            if(t is not null)
             {
                 if(t.IsActive)
                     await StopTimer(name);
@@ -132,9 +132,9 @@ namespace MMBot.Modules.Timer
         public async Task<RuntimeResult> StartTimer(string name, string timeToFirstRing, string timeInterval = null)
         {
             var t = await _databaseService.GetTimerAsync(name, Context.Guild.Id);
-            if(t != null)
+            if(t is not null)
             {
-                if(t.Message == null || t.ChannelId == null)
+                if(t.Message is null || t.ChannelId is null)
                     return FromError(CommandError.Unsuccessful, $"You can't run a timer without a message and a textchannel.");
 
                 if(t.IsActive)
@@ -163,7 +163,7 @@ namespace MMBot.Modules.Timer
         public async Task<RuntimeResult> StopTimer(string name)
         {
             var t = await _databaseService.GetTimerAsync(name, Context.Guild.Id);
-            if(t != null)
+            if(t is not null)
             {
                 await _timerService?.Stop(t);
                 t.IsActive = false;
@@ -187,7 +187,7 @@ namespace MMBot.Modules.Timer
         {
             var t = await _databaseService.GetTimerAsync(name, Context.Guild.Id);
 
-            if(t != null)
+            if(t is not null)
             {
                 var timeLeft = await _timerService?.GetCountDown(t);
                 await ReplyAsync($"Countdown for {t}: {timeLeft}");

@@ -66,7 +66,7 @@ namespace MMBot.Helpers
                 {
                     m = members.ElementAt(emojis.Select((x, i) => new { x, i }).FirstOrDefault(x => x.x.Name == r.Name).i);
 
-                    if(m != null)
+                    if(m is not null)
                         await question.DeleteAsync();
                 }
             }, false);

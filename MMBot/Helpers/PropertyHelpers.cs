@@ -24,10 +24,10 @@ namespace MMBot.Helpers
             try
             {
                 var pr = m.GetType().GetProperty(propertyName, cisBF);
-                if (pr != null)
+                if (pr is not null)
                 {
                     var t = Nullable.GetUnderlyingType(pr.PropertyType) ?? pr.PropertyType;
-                    var safeValue = (newValue == null) ? null : t == typeof(Role) ? Enum.TryParse(newValue.ToString(), out Role eNum) ? eNum : Convert.ChangeType(newValue, t) : Convert.ChangeType(newValue, t);
+                    var safeValue = (newValue is null) ? null : t == typeof(Role) ? Enum.TryParse(newValue.ToString(), out Role eNum) ? eNum : Convert.ChangeType(newValue, t) : Convert.ChangeType(newValue, t);
                     var val = Convert.ChangeType(safeValue, t);
 
                     var oldPropValue = m.GetType().GetProperty(propertyName, cisBF)?.GetValue(m, null);
@@ -69,7 +69,7 @@ namespace MMBot.Helpers
             try
             {
                 var pr = m.GetType().GetProperty(propertyName, cisBF);
-                if (pr != null)
+                if (pr is not null)
                 {
                     var t = Nullable.GetUnderlyingType(pr.PropertyType) ?? pr.PropertyType;
                     var PropValue = m.GetType().GetProperty(propertyName, cisBF)?.GetValue(m, null);
@@ -105,7 +105,7 @@ namespace MMBot.Helpers
                 {
                     var pVal = m.GetType().GetProperty(p.Name, cisBF)?.GetValue(m, null);
                     var t = Nullable.GetUnderlyingType(p.PropertyType) ?? p.PropertyType;
-                    var val = pVal == null ? null : Convert.ChangeType(pVal, t);
+                    var val = pVal is null ? null : Convert.ChangeType(pVal, t);
 
                     builder.AddField(x =>
                     {
@@ -178,7 +178,7 @@ namespace MMBot.Helpers
                     var pr = m.GetType().GetProperty(propertyName, cisBF);
                     
                     var t = Nullable.GetUnderlyingType(pr.PropertyType) ?? pr.PropertyType;
-                    var safeValue = (value == null) ? null : Enum.TryParse(value.ToString(), out Role eNum) ? eNum : Convert.ChangeType(value, t);
+                    var safeValue = (value is null) ? null : Enum.TryParse(value.ToString(), out Role eNum) ? eNum : Convert.ChangeType(value, t);
                     var val = Convert.ChangeType(safeValue, t);
 
                     var actPropValue = m.GetType().GetProperty(propertyName, cisBF)?.GetValue(m, null);

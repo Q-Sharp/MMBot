@@ -45,7 +45,7 @@ namespace MMBot.Modules.Clan
             {
                 var c = (await _databaseService.LoadClansAsync())?.FirstOrDefault(x => string.CompareOrdinal(x.Tag, tag) == 0);
 
-                if(c == null)
+                if(c is null)
                     return FromErrorObjectNotFound("Clan", "tag");
                 else
                     await ReplyAsync("", false, c.GetEmbedPropertiesWithValues() as Embed);
@@ -100,7 +100,7 @@ namespace MMBot.Modules.Clan
             var c = (await _databaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
             var m = (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == memberName);
 
-            if (m != null || c != null)
+            if (m is not null || c is not null)
             {
                 m.Clan.Tag = c.Tag;
 

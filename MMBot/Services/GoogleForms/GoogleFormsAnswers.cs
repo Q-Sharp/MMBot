@@ -28,7 +28,7 @@ namespace MMBot.Services.GoogleForms
                     return default;
 
                 var filled = gfa.AllRequireFields.FirstOrDefault(x => x.QuestionText.Contains("tag", StringComparison.InvariantCultureIgnoreCase) && x.QuestionType == GoogleFormsFieldType.ShortAnswerField);
-                if (filled != null)
+                if (filled is not null)
                 {
                     var entryId = $"entry.{filled.AnswerSubmissionId}";
 
@@ -57,7 +57,7 @@ namespace MMBot.Services.GoogleForms
                     return gfa;
 
                 var filled = gfa.AllRequireFields.FirstOrDefault(x => x.QuestionText.Contains("rank", StringComparison.InvariantCultureIgnoreCase) && x.QuestionType == GoogleFormsFieldType.DropDownField);
-                if (filled != null)
+                if (filled is not null)
                 {
                     var a = filled.AnswerOptionList.FirstOrDefault(x => x.Contains("14"));
                     var entryId = $"entry.{filled.AnswerSubmissionId}";
@@ -81,7 +81,7 @@ namespace MMBot.Services.GoogleForms
                     return gfa;
 
                 var filled = gfa.AllRequireFields.FirstOrDefault(x => x.AnswerSubmissionId == answerSubmissionId);
-                if (filled != null)
+                if (filled is not null)
                 {
                     var entryId = $"entry.{filled.AnswerSubmissionId}";
                     gfa.AllAnswers.Add(entryId, answer);

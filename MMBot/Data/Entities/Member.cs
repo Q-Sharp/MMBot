@@ -77,7 +77,7 @@ namespace MMBot.Data.Entities
         [JsonIgnore]
         public virtual ICollection<Strike> Strikes { get; set; }  = new Collection<Strike>();
 
-        public override string ToString() => Clan?.Tag != null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
+        public override string ToString() => Clan?.Tag is not null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
 
         public void Update(object member)
         {

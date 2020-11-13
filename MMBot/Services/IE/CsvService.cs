@@ -96,7 +96,7 @@ namespace MMBot.Services.IE
                     var me = row["Name"] != DBNull.Value && _context.Member.Any() ? _context.Member.FirstOrDefault(
                         x => x.Name.ToLower() == ((string)row["Name"]).ToLower()) : null;
 
-                    if(me == null)
+                    if(me is null)
                     {
                         me = new Member();
                         await _context.Member.AddAsync(me);

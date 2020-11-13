@@ -77,7 +77,7 @@ namespace MMBot.Services.Timer
             await Task.Run(async () =>
             {
                 var container = _timerList.FirstOrDefault(x => x.TimerInfos.Id == t.Id);
-                if(container != null)
+                if(container is not null)
                 {
                     await container.Timer.DisposeAsync().AsTask();
                     _timerList.Remove(container);

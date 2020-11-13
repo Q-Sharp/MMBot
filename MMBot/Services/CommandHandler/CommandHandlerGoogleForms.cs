@@ -24,7 +24,7 @@ namespace MMBot.Services.CommandHandler
         {
             var ch = await _databaseService.LoadChannelsAsync();
 
-            if(ch == null)
+            if(ch is null)
                 return;
 
             ch?.ForEach(async cha =>
@@ -32,7 +32,7 @@ namespace MMBot.Services.CommandHandler
                 var obserChannel = _client?.GetGuild(cha.GuildId)?.GetTextChannel(cha.TextChannelId);
                 var answerChannel = _client?.GetGuild(cha.GuildId)?.GetTextChannel(cha.AnswerTextChannelId);
 
-                if(obserChannel != null && answerChannel !=  null)
+                if(obserChannel is not null && answerChannel !=  null)
                     await AddChannelToGoogleFormsWatchList(obserChannel, answerChannel);
             });            
         }
@@ -42,11 +42,11 @@ namespace MMBot.Services.CommandHandler
             var urls = arg.Content.GetUrl();
             var m = await _databaseService.LoadMembersAsync();
 
-            if(!urls.Any() || !m.Any(z => z.AutoSignUpForFightNight && z.PlayerTag != null))
+            if(!urls.Any() || !m.Any(z => z.AutoSignUpForFightNight && z.PlayerTag is not null))
                 
                 return;
 
-            var member = m.Where(z => z.AutoSignUpForFightNight && z.PlayerTag != null).ToList();
+            var member = m.Where(z => z.AutoSignUpForFightNight && z.PlayerTag is not null).ToList();
 
             GoogleFormsAnswers gfa = null;
 
@@ -54,7 +54,7 @@ namespace MMBot.Services.CommandHandler
             {
                 gfa = await _googleFormsSubmissionService.LoadAsync(u);
                 
-                if(gfa == null)
+                if(gfa is null)
                     continue;
             
                 await gfa.AddPlayerTagToAnswers(member.FirstOrDefault().PlayerTag);
@@ -99,7 +99,7 @@ namespace MMBot.Services.CommandHandler
                             var sC = new SocketCommandContext(_client, questionsChannel.GetCachedMessage(qMsg.Id) as SocketUserMessage);
 
                             var response = await _interactiveService.NextMessageAsync(sC, new EnsureFromUserCriterion(qaU), timeout: TimeSpan.FromHours(2));
-                            if (response != null)
+                            if (response is not null)
                             {
                                 await gfa.AnswerQuestionManual(q.AnswerSubmissionId, response.Content);
                                 await questionsChannel.SendMessageAsync($"Answer added: {response.Content}");
@@ -123,7 +123,7 @@ namespace MMBot.Services.CommandHandler
                         await questionsChannel.SendMessageAsync($"{me} using {me.PlayerTag} has been successfully joined {gfa.Title}");
 
                     var random = new Random((int)DateTime.UtcNow.Ticks);
-                    await Task.Delay(TimeSpan.FromSeconds(random.Next(20, 120)));
+                    await Task.Delay(TimeSpan.FromSeconds(random.Next(10, 30)));
                 }
             }   
         }

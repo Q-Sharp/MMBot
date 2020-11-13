@@ -26,11 +26,11 @@ namespace MMBot.Modules.Member
         [Summary("Shows all information of a member.")]
         public async Task<RuntimeResult> Profile(string name = null)
         {
-            var m = name != null
+            var m = name is not null
                 ? await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler)
                 : (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discord == Context.User.GetUserAndDiscriminator());
 
-            if (m == null)
+            if (m is null)
                 return FromErrorObjectNotFound("Member", name);
 
             var imageUrl = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => x.GetUserAndDiscriminator() == m.Discord)?.GetAvatarUrl());

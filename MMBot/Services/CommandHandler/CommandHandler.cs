@@ -71,11 +71,11 @@ namespace MMBot.Services.CommandHandler
             _logger.Log(LogLevel.Information, "Bot is connected!");
 
             // clean db if needed
-            await _databaseService.CleanDB();
+            await _databaseService.CleanDB(_client.Guilds.Select(g => g.Id));
 
             // handle restart information
             var r = await _databaseService.ConsumeRestart();
-            if (r != null)
+            if (r is not null)
                 await _client.GetGuild(r.Item1)
                     .GetTextChannel(r.Item2)
                     .SendMessageAsync("Bot service has been restarted!");
@@ -135,7 +135,7 @@ namespace MMBot.Services.CommandHandler
             {
                 if (result.IsSuccess)
                 {
-                    if(runTimeResult.Reason != null)
+                    if(runTimeResult.Reason is not null)
                         await context.Channel.SendMessageAsync(runTimeResult.Reason);
                     return;
                 }

@@ -42,18 +42,18 @@ namespace MMBot.Modules.Admin
         {
             var csvFile = Context.Message.Attachments.FirstOrDefault();
             var myWebClient = _clientFactory.CreateClient();
-            if (csvFile != null)
+            if (csvFile is not null)
             {
                 var csv = await myWebClient.GetAsync(csvFile.Url);
-                if (_csvService != null)
+                if (_csvService is not null)
                 {
                     var csvByte = await csv.Content.ReadAsByteArrayAsync();
                     var result = await _csvService.ImportCsv(csvByte, Context.Guild.Id);
 
-                    if(result == null)
+                    if(result is null)
                         File.WriteAllBytes(Path.Combine(Environment.CurrentDirectory, "lastImport.csv"), csvByte);
 
-                    await ReplyAsync(result == null
+                    await ReplyAsync(result is null
                         ? "CSV file import was successful"
                         : $"ERROR: {result.Message}");
                 }
@@ -70,11 +70,11 @@ namespace MMBot.Modules.Admin
         public async Task<RuntimeResult> ReImportCSV()
         {
             var csv = File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, "lastImport.csv"));
-            if (_csvService != null)
+            if (_csvService is not null)
             {
                 var result = await _csvService.ImportCsv(csv, Context.Guild.Id);
 
-                await ReplyAsync(result == null
+                await ReplyAsync(result is null
                     ? "CSV file import was successful"
                     : $"ERROR: {result.Message}");
             }

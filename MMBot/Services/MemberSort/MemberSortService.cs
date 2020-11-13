@@ -169,7 +169,7 @@ namespace MMBot.Services.MemberSort
                 .Select((x, i) => new
                 {
                     ClanId = x.ClanId,
-                    Leave = x.Curlow.Where(y => x.result != null && !x.result.Contains(y)).ToList(),
+                    Leave = x.Curlow.Where(y => x.result is not null && !x.result.Contains(y)).ToList(),
                     Join = x.Nexthigh.Where(y => x.result.Contains(y)).ToList(),
                 })
                 .Select((x, i) => new MemberChanges

@@ -69,7 +69,7 @@ namespace MMBot.Modules.Member
                    else if (r.Name == next.Name && page < cQty-1)
                        await message.ModifyAsync(me => me.Content = GetDetailedMemberChangesString(result, ++page, c));
 
-                   if(u != null)
+                   if(u is not null)
                        await message.RemoveReactionAsync(r, u);
                 });
             }
@@ -101,7 +101,7 @@ namespace MMBot.Modules.Member
                 else if (r.Name == next.Name && page < cQty)
                     await message.ModifyAsync(me => me.Content = GetTable(mm[++page], page + 1, sortBy));
 
-                if(u != null)
+                if(u is not null)
                     await message.RemoveReactionAsync(r, u);
             });
         }
@@ -210,7 +210,7 @@ namespace MMBot.Modules.Member
             var l = "";
             var ac = header.Count;
 
-            if (m == null)
+            if (m is null)
                 return string.Empty;
 
             for (var i = 0; i < ac; i++)

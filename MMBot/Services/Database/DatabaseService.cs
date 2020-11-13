@@ -57,12 +57,13 @@ namespace MMBot.Services
         public async Task<IList<Channel>> LoadChannelsAsync(ulong? guildId = null) => await _context.Channel.ToListAsync();
         public void DeleteChannel(Channel c, ulong guildId) => _context.Remove(c);
 
-        public async Task CleanDB()
+        public async Task CleanDB(IEnumerable<ulong> guildIds)
         {
             var c = await LoadClansAsync();
             var m = await LoadMembersAsync();
 
-            if(c == null || c.Count() == 0 || m == null || m.Count() == 0)
+            // clean dead member data
+            if(c is null || c.Count == 0 || m is null || m.Count == 0)
                 return;
 
             m.Where(x => x.ClanId == 0 || x.Name == string.Empty).ForEach(x =>
@@ -72,8 +73,16 @@ namespace MMBot.Services
 
                 if(id.HasValue)
                     _context.Remove(c.FirstOrDefault(y => y.Id == id));
-                _context.SaveChanges();
             });
+            await _context.SaveChangesAsync();
+
+            // clean dead channel data
+            if(guildIds is not null)
+            {
+                var ch = await LoadChannelsAsync();
+                ch.Where(x => !guildIds.Contains(x.GuildId)).ForEach(cha => _context.Remove(cha));
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

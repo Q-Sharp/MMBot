@@ -54,7 +54,7 @@ namespace MMBot.Modules.Admin
             var csvFile = Context.Message.Attachments.FirstOrDefault();
             var myWebClient = _clientFactory.CreateClient();
 
-            if (csvFile != null)
+            if (csvFile is not null)
             {
                 var zip = await myWebClient.GetAsync(csvFile.Url);
                 var zipByte = await zip.Content.ReadAsByteArrayAsync();
@@ -149,7 +149,7 @@ namespace MMBot.Modules.Admin
 
             var c = (await _databaseService.LoadChannelsAsync()).FirstOrDefault(x => x.GuildId == channel.GuildId && x.TextChannelId == channel.Id);
 
-            if(c != null)
+            if(c is not null)
                 _databaseService.DeleteChannel(c, Context.Guild.Id);
 
             return FromSuccess($"Successfully removed {channel.Name} to UrlScanList.");
@@ -162,15 +162,15 @@ namespace MMBot.Modules.Admin
         {
             var cs = await _databaseService.LoadChannelsAsync(Context.Guild.Id);
 
-            if(cs != null)
+            if(cs is not null)
             {
-                string result = "Channel   |   QuestionsChannel";
+                var result = "Channel   |   QuestionsChannel";
                 foreach(var c in cs)
                 {
                     var tc = Context.Client?.GetGuild(c.GuildId)?.GetTextChannel(c.TextChannelId);
                     var tqc = Context.Client?.GetGuild(c.GuildId)?.GetTextChannel(c.AnswerTextChannelId);
 
-                    if(tc == null || tqc == null)
+                    if(tc is null || tqc is null)
                     {
                         _databaseService.DeleteChannel(c, Context.Guild.Id);
                         await _databaseService.SaveDataAsync();

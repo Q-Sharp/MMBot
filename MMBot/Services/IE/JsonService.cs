@@ -127,7 +127,7 @@ namespace MMBot.Services.IE
             {
                 var found = await currentData.FindAsync(uwd.Id);
 
-                if(found != null)
+                if(found is not null)
                     found.Update(uwd);
                 else
                     await currentData.AddAsync(uwd);
