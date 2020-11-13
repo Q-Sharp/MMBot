@@ -134,9 +134,11 @@ namespace MMBot.Modules.Admin
                 dbChannel.TextChannelId = channel.Id;
                 dbChannel.AnswerTextChannelId = qChannel.Id;
                 await _databaseService.SaveDataAsync();
+
+                 return FromSuccess($"Successfully added {channel.Name} to UrlScanList and {qChannel.Name} for any questions!");
             }
 
-            return FromSuccess($"Successfully added {channel.Name} to UrlScanList and {qChannel.Name} for any questions!");
+            return FromErroUnsuccessful($"{channel.Name} is already on the UrlScanList!");
         }
 
         [Command("RemoveChannelFromUrlScan")]
@@ -149,9 +151,13 @@ namespace MMBot.Modules.Admin
             var c = (await _databaseService.LoadChannelsAsync()).FirstOrDefault(x => x.GuildId == channel.GuildId && x.TextChannelId == channel.Id);
 
             if(c is not null)
+            {
                 _databaseService.DeleteChannel(c, Context.Guild.Id);
-
-            return FromSuccess($"Successfully removed {channel.Name} from UrlScanList.");
+                await _databaseService.SaveDataAsync();
+                return FromSuccess($"Successfully removed {channel.Name} from UrlScanList.");
+            }
+            
+            return FromErrorObjectNotFound(nameof(channel), channel.Name);
         }
 
         [Command("ListUrlScanChannel")]
