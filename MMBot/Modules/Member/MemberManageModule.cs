@@ -79,7 +79,7 @@ namespace MMBot.Modules.Member
             m.Strikes.Add(new Strike { Reason = strikeReason, MemberId = m.Id, Member = m, StrikeDate = DateTime.UtcNow });
             await _databaseService?.SaveDataAsync();
 
-            return FromSuccess($"{m} now has {m?.Strikes?.Count() ?? 0} strike(s)!");
+            return FromSuccess($"{m} now has {m?.Strikes?.Count ?? 0} strike(s)!");
         }
 
         [Command("RemoveStrike")]
@@ -92,7 +92,7 @@ namespace MMBot.Modules.Member
             m.Strikes.Remove(m.Strikes.OrderBy(y => y.StrikeDate).FirstOrDefault());
             await _databaseService?.SaveDataAsync();
 
-            return FromSuccess($"{m} now has {m?.Strikes?.Count() ?? 0} strike(s)!");
+            return FromSuccess($"{m} now has {m?.Strikes?.Count ?? 0} strike(s)!");
         }
 
         [Command("ShowAllStrikes")]

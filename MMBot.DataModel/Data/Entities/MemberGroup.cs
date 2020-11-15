@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.Json.Serialization;
-using Microsoft.VisualBasic;
-using MMBot.Helpers;
+using MMBot.Data.Interfaces;
 
 namespace MMBot.Data.Entities
 {

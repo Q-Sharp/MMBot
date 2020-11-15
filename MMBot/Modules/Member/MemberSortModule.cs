@@ -79,7 +79,7 @@ namespace MMBot.Modules.Member
 
         private async Task ShowMembers(IList<IList<Data.Entities.Member>> mm, SortBy sortBy = SortBy.SHigh)
         {
-            var cQty = (await _databaseService.LoadClansAsync(Context.Guild.Id))?.Count();
+            var cQty = (await _databaseService.LoadClansAsync(Context.Guild.Id))?.Count;
 
             if(!cQty.HasValue)
             {
@@ -169,7 +169,7 @@ namespace MMBot.Modules.Member
             var table = $"```{Environment.NewLine}";
 
             if (clanNo.HasValue)
-                table += $"{clans?.FirstOrDefault()?.Tag} Members: {members.Count()}{Environment.NewLine}";
+                table += $"{clans?.FirstOrDefault()?.Tag} Members: {members.Count}{Environment.NewLine}";
                 
             table += GetHeader(_header);
             table += GetLimiter(_header);

@@ -97,12 +97,12 @@ namespace MMBot.Modules.Clan
         [Summary("Adds a member with name to clan with tag")]
         public async Task<RuntimeResult> AddMember(string tag, string memberName)
         {
-            var c = (await _databaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
-            var m = (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => x.Name == memberName);
+            var c = (await _databaseService.LoadClansAsync(Context.Guild.Id)).FirstOrDefault(x => x.Tag == tag);
+            var m = (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FirstOrDefault(x => x.Name == memberName);
 
             if (m is not null || c is not null)
             {
-                m.Clan.Tag = c.Tag;
+                m.ClanId = c.Id;
 
                 await _databaseService.SaveDataAsync();
                 await ReplyAsync($"The member {m} is now member of {c}.");

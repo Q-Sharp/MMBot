@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using MMBot.Helpers;
+using MMBot.Data.Interfaces;
 
 namespace MMBot.Data.Entities
 {

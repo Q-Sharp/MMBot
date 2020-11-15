@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using MMBot.Helpers;
+using MMBot.Data.Interfaces;
 
 namespace MMBot.Data.Entities
 {

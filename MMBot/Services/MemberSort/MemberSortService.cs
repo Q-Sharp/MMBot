@@ -84,7 +84,7 @@ namespace MMBot.Services.MemberSort
                         mL.Add(m);
 
                     removed += mpool.RemoveAll(x => mL.Contains(x));
-                    if(mL.Count() != chunkSize)
+                    if(mL.Count != chunkSize)
                     {
                         var addMissing = mpool.Where(x => x.Clan.SortOrder <= i).OrderByDescending(x => x.SHigh).Take(chunkSize - removed);
                         mL.AddRange(addMissing);

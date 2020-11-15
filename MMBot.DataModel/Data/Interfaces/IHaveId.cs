@@ -1,4 +1,4 @@
-﻿namespace MMBot.Data.Entities
+﻿namespace MMBot.Data.Interfaces
 {
     public interface IHaveId
     {

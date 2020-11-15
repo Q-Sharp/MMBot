@@ -14,13 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20201109212312_v3.cs" />
-    <Compile Remove="Migrations\20201109212312_v3.Designer.cs" />
-    <Compile Remove="Migrations\20201109212532_v3.cs" />
-    <Compile Remove="Migrations\20201109212532_v3.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="MMBot.db" />
   </ItemGroup>
   
@@ -53,6 +46,10 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
     <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\MMBot.DataModel\MMBot.DataModel.csproj" />
   </ItemGroup>
 
   <ItemGroup>

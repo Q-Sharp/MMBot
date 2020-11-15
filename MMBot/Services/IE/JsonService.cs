@@ -8,6 +8,7 @@ using MMBot.Data;
 using MMBot.Data.Entities;
 using MMBot.Services.Interfaces;
 using Newtonsoft.Json;
+using MMBot.Data.Interfaces;
 
 namespace MMBot.Services.IE
 {

@@ -6,6 +6,11 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot", "MMBot\MMBot.csproj", "{91D3C09B-60AA-476A-A68D-A861598C7CCB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Tests", "MMBot.Tests\MMBot.Tests.csproj", "{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B04B3027-6833-491D-A2FD-B7AD93F12028} = {B04B3027-6833-491D-A2FD-B7AD93F12028}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMBot.DataModel", "MMBot.DataModel\MMBot.DataModel.csproj", "{B04B3027-6833-491D-A2FD-B7AD93F12028}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +26,10 @@ Global
 		{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B04B3027-6833-491D-A2FD-B7AD93F12028}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B04B3027-6833-491D-A2FD-B7AD93F12028}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B04B3027-6833-491D-A2FD-B7AD93F12028}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B04B3027-6833-491D-A2FD-B7AD93F12028}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using MMBot.Data.Enums;
-using MMBot.Helpers;
+using MMBot.Data.Interfaces;
 
 namespace MMBot.Data.Entities
 {
@@ -82,7 +81,7 @@ namespace MMBot.Data.Entities
             => LocalTimeOffSet.HasValue ? DateTime.UtcNow + TimeSpan.FromHours(LocalTimeOffSet.Value) : null;
 
         [JsonIgnore]
-        public virtual ICollection<Strike> Strikes { get; set; }  = new Collection<Strike>();
+        public virtual ICollection<Strike> Strikes { get; set; } = new Collection<Strike>();
 
         public override string ToString() => Clan?.Tag is not null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
 
