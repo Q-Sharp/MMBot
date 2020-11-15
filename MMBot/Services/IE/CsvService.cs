@@ -131,29 +131,15 @@ namespace MMBot.Services.IE
                     if (row.Table.Columns.Contains("Join") && row["Join"] != DBNull.Value && int.TryParse((string)row["Join"], out var jd))
                         me.Join = jd;
 
-                    if (row.Table.Columns.Contains("DiscordStatus") && row["DiscordStatus"] != DBNull.Value && Enum.TryParse(typeof(DiscordStatus), ((string)row["DiscordStatus"]).Replace("No idea", "NoIdea").Replace(" ", ""), out var ds))
-                    {
+                    if (row.Table.Columns.Contains("DiscordStatus") && row["DiscordStatus"] != DBNull.Value 
+                        && Enum.TryParse(typeof(DiscordStatus), ((string)row["DiscordStatus"]).Replace("No idea", "NoIdea").Replace(" ", ""), out var ds))
                         me.DiscordStatus = (DiscordStatus)ds;
-
-                        if(me.DiscordStatus == DiscordStatus.NoIdea
-                            || me.DiscordStatus == DiscordStatus.Left
-                            || me.DiscordStatus == DiscordStatus.CertifiedBadass)
-                        {
-                            me.IsActive = false;
-                            me.ClanId = null;
-                        }
-
-                        if(me.DiscordStatus == 0
-                            || me.DiscordStatus == DiscordStatus.Active)
-                        {
-                            me.IsActive = true;
-                        }
-                    }
-                    else
-                        me.IsActive = true;
 
                     if (row.Table.Columns.Contains("IgnoreOnMoveUp") && row["IgnoreOnMoveUp"] != DBNull.Value  && bool.TryParse((string)row["IgnoreOnMoveUp"], out var iomu))
                         me.IgnoreOnMoveUp = iomu;
+
+                    if(me.Role == Role.ExMember)
+                        me.ClanId = null;
 
                     me.LastUpdated = DateTime.UtcNow;
                     me.GuildId = guildId;

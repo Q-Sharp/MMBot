@@ -22,6 +22,7 @@ namespace MMBot.Services.CommandHandler
         private readonly IServiceProvider _services;
         private readonly ILogger<CommandHandler> _logger;
         private readonly IList<Tuple<ISocketMessageChannel, ISocketMessageChannel>> _formsChannelList = new List<Tuple<ISocketMessageChannel, ISocketMessageChannel>>();
+        private ISocketMessageChannel _deletedMessagesChannel;
         
         private IGuildSettingsService _gs;
         private IDatabaseService _databaseService;
@@ -55,6 +56,26 @@ namespace MMBot.Services.CommandHandler
             _client.Disconnected += Client_Disconnected;           
             _client.Ready += Client_Ready;
             _client.Log += LogAsync;
+
+            _client.MessageDeleted += _client_MessageDeleted;
+            _client.MessagesBulkDeleted += _client_MessagesBulkDeleted;
+        }
+
+        public void SetDeletedMessagesChannel(IGuildChannel channel) => _deletedMessagesChannel = channel as ISocketMessageChannel;
+
+        private Task _client_MessagesBulkDeleted(IReadOnlyCollection<Cacheable<IMessage, ulong>> arg1, ISocketMessageChannel arg2)
+        {
+            arg1.ForEach(async x => await _client_MessageDeleted(x, arg2));
+            return Task.CompletedTask;
+        }
+
+        private async Task _client_MessageDeleted(Cacheable<IMessage, ulong> arg1, ISocketMessageChannel arg2)
+        {
+            if(_deletedMessagesChannel is null)
+                return;
+
+            var m = await arg1.DownloadAsync();
+            await _deletedMessagesChannel.SendMessageAsync($"{m.Author.Username} in {m.Channel.Name}: {m.Content}");
         }
 
         public async Task LogAsync(LogMessage logMessage)

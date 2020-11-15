@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using MMBot.Modules.Interfaces;
 using MMBot.Helpers;
 using System;
+using MMBot.Services.CommandHandler;
 
 namespace MMBot.Modules.Admin
 {
@@ -187,6 +188,15 @@ namespace MMBot.Modules.Admin
                 return FromSuccess(result);
             }
             return FromErrorObjectNotFound("UrlScanChannels", "Any");
+        }
+
+        [Command("SetDeletedMessageChannel")]
+        [RequireOwner]
+        public RuntimeResult SetDeletedMessageChannel(IGuildChannel channel)
+        {
+            (_commandHandler as CommandHandler).SetDeletedMessagesChannel(channel);
+            return FromSuccess();
+            
         }
     }
 }
