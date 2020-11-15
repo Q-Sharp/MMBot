@@ -45,11 +45,11 @@ namespace MMBot.Modules.Member
         {
             var result = (await _memberSortService.GetChanges(Context.Guild.Id)).Where(x => x.Join.Count > 0 && x.Leave.Count > 0).ToList();
 
-            if(result?.Count() == 0)
-                return FromError(CommandError.Unsuccessful, $"No member data in db.");
+            if(result?.Count == 0)
+                return FromError(CommandError.Unsuccessful, $"No changes.");
 
             var c = await _databaseService.LoadClansAsync();
-            var cQty = c?.Count();
+            var cQty = c?.Count;
             
             if(!string.IsNullOrWhiteSpace(compact))
                 await ReplyAsync(GetCompactMemberChangesString(result, c));

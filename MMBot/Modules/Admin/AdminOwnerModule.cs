@@ -148,11 +148,11 @@ namespace MMBot.Modules.Admin
         {
             await _commandHandler.RemoveChannelFromGoogleFormsWatchList(channel);
 
-            var c = (await _databaseService.LoadChannelsAsync()).FirstOrDefault(x => x.GuildId == channel.GuildId && x.TextChannelId == channel.Id);
+            var c = (await _databaseService.LoadChannelsAsync(Context.Guild.Id)).FirstOrDefault(x => x.TextChannelId == channel.Id);
 
             if(c is not null)
             {
-                _databaseService.DeleteChannel(c, Context.Guild.Id);
+                _databaseService.DeleteChannel(c);
                 await _databaseService.SaveDataAsync();
                 return FromSuccess($"Successfully removed {channel.Name} from UrlScanList.");
             }
@@ -177,7 +177,7 @@ namespace MMBot.Modules.Admin
 
                     if(tc is null || tqc is null)
                     {
-                        _databaseService.DeleteChannel(c, Context.Guild.Id);
+                        _databaseService.DeleteChannel(c);
                         await _databaseService.SaveDataAsync();
                         continue;
                     }

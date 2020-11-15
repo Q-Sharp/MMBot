@@ -14,22 +14,6 @@ namespace MMBot.Data.Entities
         [Display]
         public string Prefix { get; set; }
 
-        // Discord
-        //[Display]
-        //public string ExMemberRole { get; set; }
-
-        //[Display]
-        //public string MemberRole { get; set; }
-
-        //[Display]
-        //public string ElderRole { get; set; }
-
-        //[Display]
-        //public string CoLeaderRole { get; set; }
-
-        //[Display]
-        //public string LeaderRole { get; set; }
-
         [Display]
         public TimeSpan WaitForReaction { get; set; }
 
@@ -54,10 +38,7 @@ namespace MMBot.Data.Entities
                 FileName = gs.FileName;
                 ClanSize = gs.ClanSize;
                 MemberMovementQty = gs.MemberMovementQty;
-
             }
         }
-
-        public override string ToString() => $"{GuildId}";
     }
 }

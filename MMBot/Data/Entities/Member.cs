@@ -50,7 +50,7 @@ namespace MMBot.Data.Entities
         public virtual Clan Clan { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<Vacation> Vacation { get; set; }  = new Collection<Vacation>();
+        public virtual ICollection<Vacation> Vacation { get; set; } = new Collection<Vacation>();
 
         public DateTime? LastUpdated { get; set; }
 
@@ -72,7 +72,14 @@ namespace MMBot.Data.Entities
         [JsonIgnore]
         public virtual MemberGroup MemberGroup { get; set; }
 
+        [Display]
         public double? LocalTimeOffSet { get; set; }
+
+        [Display]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        public DateTime? LocalDateTime 
+            => LocalTimeOffSet.HasValue ? DateTime.UtcNow + TimeSpan.FromHours(LocalTimeOffSet.Value) : null;
 
         [JsonIgnore]
         public virtual ICollection<Strike> Strikes { get; set; }  = new Collection<Strike>();

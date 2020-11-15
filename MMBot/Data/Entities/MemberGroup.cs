@@ -17,6 +17,10 @@ namespace MMBot.Data.Entities
         [JsonIgnore]
         public virtual ICollection<Member> Members { get; set; } = new Collection<Member>();
 
+        [JsonIgnore]
+        [Display]
+        public int? SHighLowest => Members?.Min(x => x.SHigh);
+
         public void Update(object memberGroup)
         {
         }

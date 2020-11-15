@@ -105,7 +105,7 @@ namespace MMBot.Services.CommandHandler
 
         public async Task Client_HandleCommandAsync(SocketMessage arg)
         {
-            if (!(arg is SocketUserMessage msg))
+            if (arg is not SocketUserMessage msg)
                 return;
 
             var context = new SocketCommandContext(_client, msg);

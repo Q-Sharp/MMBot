@@ -26,7 +26,7 @@ namespace MMBot.Services.MemberSort
         {
             var settings = await _guildSettings.GetGuildSettingsAsync(guildId);
             var m = (await _databaseService.LoadMembersAsync(guildId)).Where(x => x.IsActive).ToList();
-            var cqty = (await _databaseService.LoadClansAsync(guildId)).Count();
+            var cqty = (await _databaseService.LoadClansAsync(guildId)).Count;
 
             var current = m.OrderBy(x => x.Clan?.Tag)
                 .GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
@@ -68,7 +68,7 @@ namespace MMBot.Services.MemberSort
                 var current = allMembersOrdered.OrderBy(x => x.Clan?.Tag)
                     .GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
                     .Select(x => x.Members.ToList() as IList<Member>)
-                    .Select(x => x.OrderByDescending(y => y.SHigh).ToList())
+                    .Select(x => x.OrderByDescending(y => y?.MemberGroup?.SHighLowest ?? y.SHigh).ToList())
                     .ToList();
 
                 var ListOfLists = new List<List<Member>>();
@@ -121,7 +121,7 @@ namespace MMBot.Services.MemberSort
                 .ToList();
             });
 
-        private IEnumerable<Member> GetNextMemberForClan(List<Member> allMember, int clanSortNo, int currentSize, int moveQty, int chunkSize)
+        private static IEnumerable<Member> GetNextMemberForClan(List<Member> allMember, int clanSortNo, int currentSize, int moveQty, int chunkSize)
         {
             var movedQty = 0;
             foreach(var currentMember in allMember)

@@ -23,21 +23,26 @@ namespace MMBot.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Clan>()
-                .HasIndex(c => c.Tag)
+                .HasIndex(c => new { c.Tag, c.GuildId })
+                .IsUnique();
+
+            modelBuilder.Entity<Clan>()
+                .HasIndex(c => new { c.SortOrder, c.GuildId })
                 .IsUnique();
 
             modelBuilder.Entity<Member>()
-                .HasIndex(m => m.Name)
+                .HasIndex(m =>new { m.Name, m.GuildId })
                 .IsUnique();
-
-            //modelBuilder.Entity<Member>()
-            //    .HasIndex(m => new { m.JoinOrder, m.ClanID })
-            //    .IsUnique();
 
             modelBuilder.Entity<Member>()
                 .HasOne(m => m.Clan)
                 .WithMany(c => c.Member)
                 .HasForeignKey(m => m.ClanId);
+
+            modelBuilder.Entity<Member>()
+                .HasOne(m => m.MemberGroup)
+                .WithMany(mg => mg.Members)
+                .HasForeignKey(m => m.MemberGroupId);
 
             modelBuilder.Entity<Vacation>()
                 .HasOne(v => v.Member)
@@ -48,15 +53,6 @@ namespace MMBot.Data
                 .HasOne(v => v.Member)
                 .WithMany(m => m.Strikes)
                 .HasForeignKey(v => v.MemberId);
-
-            modelBuilder.Entity<Clan>()
-                .HasIndex(c => c.SortOrder)
-                .IsUnique();
-
-            modelBuilder.Entity<Member>()
-                .HasOne(m => m.MemberGroup)
-                .WithMany(mg => mg.Members)
-                .HasForeignKey(m => m.MemberGroupId);
 
             modelBuilder.Entity<GuildSettings>()
                 .HasIndex(m => m.GuildId)

@@ -62,7 +62,7 @@ namespace MMBot.Modules.Timer
                if(t.IsActive)
                    await StopTimer(name);
 
-               _databaseService.DeleteTimer(t, Context.Guild.Id);
+               _databaseService.DeleteTimer(t);
                await _databaseService.SaveDataAsync();
                await ReplyAsync($"The timer {name} was deleted");
             }

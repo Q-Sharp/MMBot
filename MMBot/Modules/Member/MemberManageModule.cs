@@ -20,8 +20,8 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task<RuntimeResult> Delete(string name)
         {
-            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
-            _databaseService.DeleteMember(m, Context.Guild.Id);
+            var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
+            _databaseService.DeleteMember(m);
             await _databaseService.SaveDataAsync();
             return FromSuccess($"The member {m} was deleted");
         }
@@ -106,6 +106,35 @@ namespace MMBot.Modules.Member
                 return FromErroUnsuccessful("No member with strikes found!");
 
             return FromSuccess(me.GetTablePropertiesWithValues());
+        }
+
+        [Command("GroupMember")]
+        [Summary("Groups all following members")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
+        public async Task<RuntimeResult> GroupMember(params string[] memberNames)
+        {
+            var m = (await _databaseService.LoadMembersAsync());
+            var grouped = await Task.WhenAll(memberNames.Select(x => m.FindAndAskForMember(Context.Guild.Id, x, Context.Channel, _commandHandler)));
+
+            var group = new MemberGroup();
+
+            grouped.ForEach(x => x.MemberGroup = group);
+            await _databaseService?.SaveDataAsync();
+
+            return FromSuccess($"{string.Join(", ", memberNames)} are now in a MemberGroup!");
+        }
+
+        [Command("UnGroupMember")]
+        [Summary("Ungroups all following members")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
+        public async Task<RuntimeResult> UnGroupMember(params string[] memberNames)
+        {
+            var m = (await _databaseService.LoadMembersAsync());
+            var grouped = await Task.WhenAll(memberNames.Select(x => m.FindAndAskForMember(Context.Guild.Id, x, Context.Channel, _commandHandler)));
+            grouped.ForEach(x => x.MemberGroupId = null);
+            await _databaseService?.SaveDataAsync();
+
+            return FromSuccess($"{string.Join(", ", memberNames)} aren't in a MemberGroup any longer!");
         }
     }
 }

@@ -60,8 +60,8 @@ namespace MMBot.Modules.Clan
         [Summary("Deletes clan with given tag.")]
         public async Task<RuntimeResult> Delete(string tag)
         {
-            var c = (await _databaseService.GetClanAsync(tag));
-            _databaseService.DeleteClan(c, Context.Guild.Id);
+            var c = (await _databaseService.GetClanAsync(tag, Context.Guild.Id));
+            _databaseService.DeleteClan(c);
             await _databaseService.SaveDataAsync();
             await ReplyAsync($"The clan {c} was deleted");
             return FromSuccess();
