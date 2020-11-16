@@ -52,30 +52,29 @@ namespace MMBot.Services.CommandHandler
             _commands.Log += LogAsync;
 
             _client.MessageReceived += Client_HandleCommandAsync;
-            _client.ReactionAdded += Client_ReactionAdded;
-            _client.Disconnected += Client_Disconnected;           
+            _client.ReactionAdded += Client_ReactionAdded;         
             _client.Ready += Client_Ready;
             _client.Log += LogAsync;
 
-            _client.MessageDeleted += _client_MessageDeleted;
-            _client.MessagesBulkDeleted += _client_MessagesBulkDeleted;
+            _client.MessageDeleted += Client_MessageDeleted;
+            _client.MessagesBulkDeleted += Client_MessagesBulkDeleted;
         }
 
         public void SetDeletedMessagesChannel(IGuildChannel channel) => _deletedMessagesChannel = channel as ISocketMessageChannel;
 
-        private Task _client_MessagesBulkDeleted(IReadOnlyCollection<Cacheable<IMessage, ulong>> arg1, ISocketMessageChannel arg2)
+        private Task Client_MessagesBulkDeleted(IReadOnlyCollection<Cacheable<IMessage, ulong>> arg1, ISocketMessageChannel arg2)
         {
-            arg1.ForEach(async x => await _client_MessageDeleted(x, arg2));
+            arg1.ForEach(async x => await Client_MessageDeleted(x, arg2));
             return Task.CompletedTask;
         }
 
-        private async Task _client_MessageDeleted(Cacheable<IMessage, ulong> arg1, ISocketMessageChannel arg2)
+        private async Task Client_MessageDeleted(Cacheable<IMessage, ulong> arg1, ISocketMessageChannel arg2)
         {
             if(_deletedMessagesChannel is null)
                 return;
 
-            var m = await arg1.DownloadAsync();
-            await _deletedMessagesChannel.SendMessageAsync($"{m.Author.Username} in {m.Channel.Name}: {m.Content}");
+            var m = await arg1.DownloadAsync() ?? arg1.Value;
+            await _deletedMessagesChannel.SendMessageAsync($"{m.Author.GetUserAndDiscriminator()} deleted in {m.Channel.Name}: {m.Content}");
         }
 
         public async Task LogAsync(LogMessage logMessage)
@@ -111,17 +110,6 @@ namespace MMBot.Services.CommandHandler
 
             // set status
             await _client.SetGameAsync($"Member Manager 2020");
-        }
-
-        public async Task Client_Disconnected(Exception arg)
-        {
-            _logger.LogError(arg.Message, arg);
-
-            await Task.Run(() =>
-            { 
-                Process.Start(AppDomain.CurrentDomain.FriendlyName);
-                Environment.Exit(0);
-            });
         }
 
         public async Task Client_HandleCommandAsync(SocketMessage arg)

@@ -56,7 +56,20 @@ namespace MMBot
                 return;
             }
 
-            var token =
+            var client = _sp.GetRequiredService<DiscordSocketClient>();
+            _sp.GetRequiredService<CommandService>().Log += LogAsync;
+            client.Log += LogAsync;
+
+            client.Disconnected += async (o) => await LogIn(client);
+            await LogIn(client);
+    
+            var ch = _sp.GetRequiredService<ICommandHandler>();
+            await ch?.InitializeAsync();
+        }
+
+        private async Task LogIn(DiscordSocketClient client)
+        {
+             var token =
 #if DEBUG
             //_config.GetProperty("DiscordTokenDev");
             "DiscordTokenDev";
@@ -65,16 +78,8 @@ namespace MMBot
             "DiscordToken";
 #endif
 
-            var client = _sp.GetRequiredService<DiscordSocketClient>();
-            _sp.GetRequiredService<CommandService>().Log += LogAsync;
-            client.Log += LogAsync;
-
             await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable(token));
-            //await client.LoginAsync(TokenType.Bot, token);
             await client.StartAsync();
-
-            var ch = _sp.GetRequiredService<ICommandHandler>();
-            await ch?.InitializeAsync();
         }
 
         public Task LogAsync(LogMessage message)

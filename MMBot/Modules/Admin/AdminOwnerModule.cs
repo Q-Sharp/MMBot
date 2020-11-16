@@ -192,11 +192,10 @@ namespace MMBot.Modules.Admin
 
         [Command("SetDeletedMessageChannel")]
         [RequireOwner]
-        public RuntimeResult SetDeletedMessageChannel(IGuildChannel channel)
+        public async Task<RuntimeResult> SetDeletedMessageChannel(IGuildChannel channel)
         {
-            (_commandHandler as CommandHandler).SetDeletedMessagesChannel(channel);
+            await Task.Run(() => (_commandHandler as CommandHandler).SetDeletedMessagesChannel(channel));
             return FromSuccess();
-            
         }
     }
 }
