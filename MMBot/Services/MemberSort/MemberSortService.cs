@@ -34,7 +34,7 @@ namespace MMBot.Services.MemberSort
                 .Select(x => x.OrderByDescending(y => y.SHigh).ToList())
                 .ToList();
 
-            var future = m.OrderByDescending(x => x.SHigh)
+            var future = m.OrderByDescending(x => x?.SHighLowest ?? x.SHigh)
                 .ToList()
                 .ChunkBy(settings.ClanSize);
 
@@ -51,7 +51,8 @@ namespace MMBot.Services.MemberSort
                     break;
 
                 case ExchangeMode.SkipSteps:
-                    result = await GetSkipStepsMemberMovement(m.OrderByDescending(y => y.SHigh).Where(x => x.IsActive && x.Role != Role.ExMember).ToList(), moveQty, settings.ClanSize, cqty);
+                    result = await GetSkipStepsMemberMovement(m.OrderByDescending(y => y?.SHighLowest ?? y.SHigh)
+                        .Where(x => x.IsActive && x.Role != Role.ExMember).ToList(), moveQty, settings.ClanSize, cqty);
                     break;
             }
 
@@ -68,7 +69,7 @@ namespace MMBot.Services.MemberSort
                 var current = allMembersOrdered.OrderBy(x => x.Clan?.Tag)
                     .GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
                     .Select(x => x.Members.ToList() as IList<Member>)
-                    .Select(x => x.OrderByDescending(y => y?.MemberGroup?.SHighLowest ?? y.SHigh).ToList())
+                    .Select(x => x.OrderByDescending(y => y?.SHighLowest ?? y.SHigh).ToList())
                     .ToList();
 
                 var ListOfLists = new List<List<Member>>();
