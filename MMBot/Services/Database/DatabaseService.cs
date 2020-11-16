@@ -78,6 +78,14 @@ namespace MMBot.Services
             });
             await _context.SaveChangesAsync();
 
+            m.Where(x => !x.IsActive || x.ClanId == null || x.Role == Data.Enums.Role.ExMember).ForEach(x =>
+            {
+                x.IsActive = false;
+                x.ClanId = null;
+                x.Role = Data.Enums.Role.ExMember;
+            });
+            await _context.SaveChangesAsync();
+
             // clean dead channel data
             if(guildIds is not null)
             {

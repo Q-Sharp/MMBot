@@ -139,7 +139,10 @@ namespace MMBot.Services.IE
                         me.IgnoreOnMoveUp = iomu;
 
                     if(me.Role == Role.ExMember)
+                    {
                         me.ClanId = null;
+                        me.IsActive = false;
+                    }   
 
                     me.LastUpdated = DateTime.UtcNow;
                     me.GuildId = guildId;

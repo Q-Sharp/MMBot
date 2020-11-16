@@ -51,7 +51,7 @@ namespace MMBot.Services.MemberSort
                     break;
 
                 case ExchangeMode.SkipSteps:
-                    result = await GetSkipStepsMemberMovement(m.OrderByDescending(y => y.SHigh).ToList(), moveQty, settings.ClanSize, cqty);
+                    result = await GetSkipStepsMemberMovement(m.OrderByDescending(y => y.SHigh).Where(x => x.IsActive && x.Role != Role.ExMember).ToList(), moveQty, settings.ClanSize, cqty);
                     break;
             }
 
