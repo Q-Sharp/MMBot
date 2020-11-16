@@ -55,6 +55,7 @@ namespace MMBot.Services.CommandHandler
             _client.ReactionAdded += Client_ReactionAdded;         
             _client.Ready += Client_Ready;
             _client.Log += LogAsync;
+            _client.Disconnected += Client_Disconnected;
 
             _client.MessageDeleted += Client_MessageDeleted;
             _client.MessagesBulkDeleted += Client_MessagesBulkDeleted;
@@ -129,6 +130,17 @@ namespace MMBot.Services.CommandHandler
 
             if (msg.HasStringPrefix(settings.Prefix, ref pos) || msg.HasMentionPrefix(_client.CurrentUser, ref pos) || msg.Content.ToLower().StartsWith(settings.Prefix.ToLower()))
                 await _commands.ExecuteAsync(context, pos, _services);
+        }
+
+        public async Task Client_Disconnected(Exception arg)
+        {
+            _logger.LogError(arg.Message, arg);
+
+            await Task.Run(() =>
+            { 
+                Process.Start(AppDomain.CurrentDomain.FriendlyName);
+                Environment.Exit(0);
+            });
         }
 
         public async Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)

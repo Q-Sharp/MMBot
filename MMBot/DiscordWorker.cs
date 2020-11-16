@@ -60,9 +60,7 @@ namespace MMBot
             _sp.GetRequiredService<CommandService>().Log += LogAsync;
             client.Log += LogAsync;
 
-            client.Disconnected += async (o) => await LogIn(client);
             await LogIn(client);
-    
             var ch = _sp.GetRequiredService<ICommandHandler>();
             await ch?.InitializeAsync();
         }
