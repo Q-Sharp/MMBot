@@ -131,7 +131,7 @@ namespace MMBot.Services.MemberSort
 
                 if(clanSortNo < currentMember.Clan.SortOrder)
                 {
-                    if(currentMember.IgnoreOnMoveUp || currentMember.Role >= Role.CoLeader)
+                    if(currentMember.IgnoreOnMoveUp || currentMember.Role >= Role.CoLeader || CheckMemberGroup(currentMember, allMember, clanSortNo))
                         continue;
                     else
                         movedQty++;
@@ -140,6 +140,16 @@ namespace MMBot.Services.MemberSort
                 currentSize++;
                 yield return currentMember;
             } 
+        }
+
+        private static bool CheckMemberGroup(Member currentMember, List<Member> allMember, int clanSortNo)
+        {
+            if(!currentMember.MemberGroupId.HasValue)
+                return false;
+
+            var member = currentMember.MemberGroup.Members;
+            var newM = allMember.Where(x => member.Select(y => y.Id).Contains(x.Id));
+            return newM.Any(x => x.Clan.SortOrder > clanSortNo);
         }
 
         private List<MemberChanges> GetOneStepMemberMovement(List<List<Member>> current, int moveQty)
