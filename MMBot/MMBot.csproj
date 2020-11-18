@@ -20,9 +20,11 @@
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="15.0.10" />
     <PackageReference Include="Discord.Addons.Interactive" Version="2.0.0" />
-    <PackageReference Include="Discord.Net" Version="2.2.0" />
-    <PackageReference Include="Discord.Net.Core" Version="2.2.0" />
-    <PackageReference Include="Discord.Net.WebSocket" Version="2.2.0" />
+    <PackageReference Include="Discord.Net" Version="2.3.0-dev-20201118.6" />
+    <PackageReference Include="Discord.Net.Analyzers" Version="2.3.0-dev-20201118.6" />
+    <PackageReference Include="Discord.Net.Core" Version="2.3.0-dev-20201118.6" />
+    <PackageReference Include="Discord.Net.Webhook" Version="2.3.0-dev-20201118.6" />
+    <PackageReference Include="Discord.Net.WebSocket" Version="2.3.0-dev-20201118.6" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.28" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.0" />

@@ -19,6 +19,7 @@ using MMBot.Services.MemberSort;
 using MMBot.Services.Timer;
 using System.IO;
 using Serilog.Events;
+using System.Threading.Tasks;
 
 namespace MMBot
 {
@@ -26,7 +27,7 @@ namespace MMBot
     {
         private const string logTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}";
 
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
                  .Enrich.FromLogContext()
@@ -40,7 +41,7 @@ namespace MMBot
             try
             {
                 using var h = CreateHostBuilder(args)?.Build();
-                h?.Run();
+                await h?.RunAsync();
             }
             catch(Exception e)
             {
