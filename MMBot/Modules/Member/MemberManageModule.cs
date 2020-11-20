@@ -136,5 +136,22 @@ namespace MMBot.Modules.Member
 
             return FromSuccess($"{string.Join(", ", memberNames)} aren't in a MemberGroup any longer!");
         }
+
+        [Command("Profile", RunMode = RunMode.Async)]
+        [Alias("p")]
+        [Summary("Shows all information of a member.")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
+        public async Task<RuntimeResult> Profile(string name)
+        {
+            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
+
+            if (m is null)
+                return FromErrorObjectNotFound("Member", name);
+
+            var imageUrl = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => x.GetUserAndDiscriminator() == m.Discord)?.GetAvatarUrl());
+            var e = m.GetEmbedPropertiesWithValues(imageUrl);
+            await ReplyAsync("", false, e as Embed);
+            return FromSuccess();
+        }
     }
 }

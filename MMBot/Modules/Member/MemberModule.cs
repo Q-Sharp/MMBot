@@ -24,14 +24,12 @@ namespace MMBot.Modules.Member
         [Command("Profile", RunMode = RunMode.Async)]
         [Alias("p")]
         [Summary("Shows all information of a member.")]
-        public async Task<RuntimeResult> Profile(string name = null)
+        public async Task<RuntimeResult> Profile()
         {
-            var m = name is not null
-                ? await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler)
-                : (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discord == Context.User.GetUserAndDiscriminator());
+            var m = (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discord == Context.User.GetUserAndDiscriminator());
 
             if (m is null)
-                return FromErrorObjectNotFound("Member", name);
+                return FromErrorObjectNotFound("member", Context.User.Username);
 
             var imageUrl = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => x.GetUserAndDiscriminator() == m.Discord)?.GetAvatarUrl());
             var e = m.GetEmbedPropertiesWithValues(imageUrl);
