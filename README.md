@@ -1,4 +1,4 @@
-# TTMMBot
+# MMBot
 
 ![.NET Core](https://github.com/Q-Sharp/MMBot/workflows/.NET%20Core/badge.svg)
 
