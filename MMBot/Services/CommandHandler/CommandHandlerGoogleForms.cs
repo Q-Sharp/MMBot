@@ -14,10 +14,10 @@ namespace MMBot.Services.CommandHandler
 {
     public partial class CommandHandler : ICommandHandler
     {
-        private void CheckGoogleForms(SocketMessage arg, ulong guildId)
+        private async Task CheckGoogleForms(SocketMessage arg, ulong guildId)
         {
             if (_formsChannelList.Select(x => x.Item1).Contains(arg.Channel))
-                _ = Task.Run(async () => await HandleGoogleForms(guildId, arg, _formsChannelList.Where(x => x.Item1 == arg.Channel).FirstOrDefault().Item2));
+                await HandleGoogleForms(guildId, arg, _formsChannelList.Where(x => x.Item1 == arg.Channel).FirstOrDefault().Item2);
         }
 
         private async Task ReInitGoogleFormsAsync()

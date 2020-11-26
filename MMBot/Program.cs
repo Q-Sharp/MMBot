@@ -20,6 +20,7 @@ using MMBot.Services.Timer;
 using System.IO;
 using Serilog.Events;
 using System.Threading.Tasks;
+using MMBot.Services.Raid;
 
 namespace MMBot
 {
@@ -27,7 +28,7 @@ namespace MMBot
     {
         private const string logTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}";
 
-        public static async Task Main(string[] args)
+        public async static Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
                  .Enrich.FromLogContext()
@@ -40,7 +41,7 @@ namespace MMBot
 
             try
             {
-                using var h = CreateHostBuilder(args)?.Build();
+                using var h = CreateDiscordSocketHost(args)?.Build();
                 await h?.RunAsync();
             }
             catch(Exception e)
@@ -65,13 +66,15 @@ namespace MMBot
                 Log.Logger.Error("Terminating!");
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        public static IHostBuilder CreateDiscordSocketHost(string[] args) =>
            Host.CreateDefaultBuilder(args)
                 .ConfigureLogging(x => x.ClearProviders().AddSerilog(Log.Logger))
                 .UseSystemd()
+                
                 .ConfigureAppConfiguration((hostContext, configBuilder) =>
                 {
-                    configBuilder.AddEnvironmentVariables("MMBot_");
+                    configBuilder.AddEnvironmentVariables("MMBot_")
+                                 .AddUserSecrets<Program>(); 
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
@@ -117,6 +120,8 @@ namespace MMBot
                         .AddScoped<IMemberSortService, MemberSortService>()
                         .AddSingleton<InteractiveService, InteractiveService>()
                         .AddSingleton<ITimerService, TimerService>()
+                        //.AddScoped<IGoogleSheetsService, GoogleSheetsService>()
+                        //.AddScoped<IRaidService, RaidService>()
                         .BuildServiceProvider();
                 });
     }

@@ -116,13 +116,13 @@ namespace MMBot.Services.CommandHandler
         public async Task Client_HandleCommandAsync(SocketMessage arg)
         {
             if(arg.Author.IsWebhook && arg.Author is SocketWebhookUser whu)
-                CheckGoogleForms(arg, whu.Guild.Id);
+                await CheckGoogleForms(arg, whu.Guild.Id);
 
             if (arg is not SocketUserMessage msg)
                 return;
 
             var context = new SocketCommandContext(_client, msg);
-            CheckGoogleForms(arg, context.Guild.Id);
+            await CheckGoogleForms(arg, context.Guild.Id);
 
             if (msg.Author.Id == _client.CurrentUser.Id || msg.Author.IsBot) 
                 return;

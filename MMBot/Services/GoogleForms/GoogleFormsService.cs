@@ -83,50 +83,57 @@ namespace MMBot.Services.GoogleForms
                 QuestionFieldList = new List<GoogleFormField>(),
                 Description = jArray[1][0].ToObject<string>(),
                 Title = jArray[1][8].ToObject<string>(),
-                FormId = jArray[14].ToObject<string>().Substring(2),
+                FormId = jArray[14].ToObject<string>()[2..],
                 FormDocName = jArray[3].ToObject<string>()
             };
 
             foreach (var field in jArray[1][1])
             {
-                // Check if this Field is submittable or not
-                // index [4] contains the Field Answer 
-                // Submit Id of a Field Object 
-                // ex: ignore Fields used as Description panels
-                // ex: ignore Image banner fields
-                if (field.Count() < 4 && !field[4].HasValues)
-                    continue;
-
-                var googleFormField = new GoogleFormField();
-
-                // Load the Question Field data
-                var questionTextValue = field[1]; // Get Question Text
-                var questionText = questionTextValue.ToObject<string>();
-
-                var questionTypeCodeValue = field[3].ToObject<int>(); // Get Question Type Code   
-                var isRecognizedFieldType = Enum.TryParse(questionTypeCodeValue.ToString(), out GoogleFormsFieldType questionTypeEnum);
-
-                var answerOptionsList = new List<string>();
-                var answerOptionsListValue = field[4][0][1].ToList(); // Get Answers List
-                // List of Answers Available
-                if (answerOptionsListValue.Count > 0)
+                try
                 {
-                    foreach (var answerOption in answerOptionsListValue)
-                        answerOptionsList.Add(answerOption[0].ToString());
+                    // Check if this Field is submittable or not
+                    // index [4] contains the Field Answer 
+                    // Submit Id of a Field Object 
+                    // ex: ignore Fields used as Description panels
+                    // ex: ignore Image banner fields
+                    if (field.Count() < 4 && !field[4].HasValues)
+                        continue;
+
+                    var googleFormField = new GoogleFormField();
+
+                    // Load the Question Field data
+                    var questionTextValue = field[1]; // Get Question Text
+                    var questionText = questionTextValue.ToObject<string>();
+
+                    var questionTypeCodeValue = field[3].ToObject<int>(); // Get Question Type Code   
+                    var isRecognizedFieldType = Enum.TryParse(questionTypeCodeValue.ToString(), out GoogleFormsFieldType questionTypeEnum);
+
+                    var answerOptionsList = new List<string>();
+                    var answerOptionsListValue = field[4]?[0]?[1]?.ToList(); // Get Answers List
+                    // List of Answers Available
+                    if (answerOptionsListValue?.Count > 0)
+                    {
+                        foreach (var answerOption in answerOptionsListValue)
+                            answerOptionsList.Add(answerOption[0].ToString());
+                    }
+
+                    var answerSubmitIdValue = field[4][0][0]; // Get Answer Submit Id
+                    var isAnswerRequiredValue = field[4][0][2]; // Get if Answer is Required to be Submitted
+                    var answerSubmissionId = answerSubmitIdValue.ToObject<string>();
+                    var isAnswerRequired = isAnswerRequiredValue.ToObject<int>() == 1; // 1 or 0
+
+                    googleFormField.QuestionText = questionText;
+                    googleFormField.QuestionType = questionTypeEnum;
+                    googleFormField.AnswerOptionList = answerOptionsList;
+                    googleFormField.AnswerSubmissionId = answerSubmissionId;
+                    googleFormField.IsAnswerRequired = isAnswerRequired;
+
+                    googleForm.QuestionFieldList.Add(googleFormField);
                 }
-
-                var answerSubmitIdValue = field[4][0][0]; // Get Answer Submit Id
-                var isAnswerRequiredValue = field[4][0][2]; // Get if Answer is Required to be Submitted
-                var answerSubmissionId = answerSubmitIdValue.ToObject<string>();
-                var isAnswerRequired = isAnswerRequiredValue.ToObject<int>() == 1; // 1 or 0
-
-                googleFormField.QuestionText = questionText;
-                googleFormField.QuestionType = questionTypeEnum;
-                googleFormField.AnswerOptionList = answerOptionsList;
-                googleFormField.AnswerSubmissionId = answerSubmissionId;
-                googleFormField.IsAnswerRequired = isAnswerRequired;
-
-                googleForm.QuestionFieldList.Add(googleFormField);
+                catch
+                {
+                    // ignore
+                }
             }
 
             return googleForm;
