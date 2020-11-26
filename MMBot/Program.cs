@@ -70,11 +70,9 @@ namespace MMBot
            Host.CreateDefaultBuilder(args)
                 .ConfigureLogging(x => x.ClearProviders().AddSerilog(Log.Logger))
                 .UseSystemd()
-                
                 .ConfigureAppConfiguration((hostContext, configBuilder) =>
                 {
                     configBuilder.AddEnvironmentVariables("MMBot_");
-                                 //.AddUserSecrets<Program>();
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
