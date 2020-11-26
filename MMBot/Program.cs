@@ -73,8 +73,8 @@ namespace MMBot
                 
                 .ConfigureAppConfiguration((hostContext, configBuilder) =>
                 {
-                    configBuilder.AddEnvironmentVariables("MMBot_")
-                                 .AddUserSecrets<Program>(); 
+                    configBuilder.AddEnvironmentVariables("MMBot_");
+                                 //.AddUserSecrets<Program>();
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
