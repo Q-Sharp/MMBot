@@ -18,7 +18,7 @@ namespace MMBot.Services.Raid
 {
     public class GoogleSheetsService : MMBotService<GoogleSheetsService>, IGoogleSheetsService
     {
-        private static readonly string[] Scopes = { SheetsService.Scope.Spreadsheets, SheetsService.Scope.Drive };
+        private static readonly string[] Scopes = { SheetsService.Scope.SpreadsheetsReadonly };
         private static readonly string ApplicationName = "MMBot";
 
         private readonly IDatabaseService _databaseService;
@@ -48,6 +48,7 @@ namespace MMBot.Services.Raid
             {
                 HttpClientInitializer = credential,
                 ApplicationName = ApplicationName,
+                
             });
         }
 

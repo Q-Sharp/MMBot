@@ -20,7 +20,6 @@ using MMBot.Services.Timer;
 using System.IO;
 using Serilog.Events;
 using System.Threading.Tasks;
-using MMBot.Services.Raid;
 
 namespace MMBot
 {
@@ -72,7 +71,7 @@ namespace MMBot
                 .UseSystemd()
                 .ConfigureAppConfiguration((hostContext, configBuilder) =>
                 {
-                    configBuilder.AddEnvironmentVariables("MMBot_");
+                    configBuilder.AddEnvironmentVariables("MMBot_");          
                 })
                 .ConfigureServices((hostContext, services) =>
                 {

@@ -33,6 +33,8 @@ namespace MMBot.Data.Entities
         [Display]
         public int? SHigh { get; set; }
 
+        public int? Current { get; set; }
+
         [Display]
         public int? Donations { get; set; }
 

@@ -14,10 +14,18 @@ namespace MMBot.Services.CommandHandler
 {
     public partial class CommandHandler : ICommandHandler
     {
-        private async Task CheckGoogleForms(SocketMessage arg, ulong guildId)
+        private async Task CheckForUseableLinks(SocketMessage arg, ulong guildId)
         {
             if (_formsChannelList.Select(x => x.Item1).Contains(arg.Channel))
+            {
                 await HandleGoogleForms(guildId, arg, _formsChannelList.Where(x => x.Item1 == arg.Channel).FirstOrDefault().Item2);
+                await HandleYoutubeStream(guildId, arg, _formsChannelList.Where(x => x.Item1 == arg.Channel).FirstOrDefault().Item2);
+            }     
+        }
+
+        private Task HandleYoutubeStream(ulong guildId, SocketMessage arg, ISocketMessageChannel item2)
+        {
+            throw new NotImplementedException();
         }
 
         private async Task ReInitGoogleFormsAsync()
@@ -42,8 +50,7 @@ namespace MMBot.Services.CommandHandler
             var urls = arg.Content.GetUrl();
             var m = await _databaseService.LoadMembersAsync();
 
-            if(!urls.Any() || !m.Any(z => z.AutoSignUpForFightNight && z.PlayerTag is not null))
-                
+            if(!urls.Any() || !m.Any(z => z.AutoSignUpForFightNight && z.PlayerTag is not null))                
                 return;
 
             var member = m.Where(z => z.AutoSignUpForFightNight && z.PlayerTag is not null).ToList();

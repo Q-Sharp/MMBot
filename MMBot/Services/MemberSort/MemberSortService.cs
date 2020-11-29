@@ -22,7 +22,7 @@ namespace MMBot.Services.MemberSort
             _guildSettings = guildSettings;
         }
 
-        public async Task<IList<MemberChanges>> GetChanges(ulong guildId, ExchangeMode memberExchangeMode = ExchangeMode.SkipSteps)
+        public async Task<IList<MemberChanges>> GetChanges(ulong guildId, bool useCurrent = false, ExchangeMode memberExchangeMode = ExchangeMode.SkipSteps)
         {
             var settings = await _guildSettings.GetGuildSettingsAsync(guildId);
             var m = (await _databaseService.LoadMembersAsync(guildId)).Where(x => x.IsActive).ToList();
@@ -34,7 +34,7 @@ namespace MMBot.Services.MemberSort
                 .Select(x => x.OrderByDescending(y => y.SHigh).ToList())
                 .ToList();
 
-            var future = m.OrderByDescending(x => x?.SHighLowest ?? x.SHigh)
+            var future = m.OrderByDescending(x => (useCurrent ? x.Current : x?.SHighLowest ?? x.SHigh))
                 .ToList()
                 .ChunkBy(settings.ClanSize);
 

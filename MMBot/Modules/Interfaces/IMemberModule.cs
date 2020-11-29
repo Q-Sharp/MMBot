@@ -8,7 +8,7 @@ namespace MMBot.Modules.Interfaces
     {
         Task<RuntimeResult> List(SortBy sortBy);
         Task<RuntimeResult> Sort();
-        Task<RuntimeResult> Changes(string compact = null);
+        Task<RuntimeResult> Changes(string compact = null, bool useCurrent = false);
         Task<RuntimeResult> Profile(string name = null);
         Task<RuntimeResult> ShowAll(string propertyName, [Remainder] string value);
         Task<RuntimeResult> Delete(string name);

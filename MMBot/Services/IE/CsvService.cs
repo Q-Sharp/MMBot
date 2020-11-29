@@ -131,6 +131,9 @@ namespace MMBot.Services.IE
                     if (row.Table.Columns.Contains("Join") && row["Join"] != DBNull.Value && int.TryParse((string)row["Join"], out var jd))
                         me.Join = jd;
 
+                    if (row.Table.Columns.Contains("Current") && row["Current"] != DBNull.Value && int.TryParse((string)row["Current"], out var cu))
+                        me.Current = cu;
+
                     if (row.Table.Columns.Contains("DiscordStatus") && row["DiscordStatus"] != DBNull.Value 
                         && Enum.TryParse(typeof(DiscordStatus), ((string)row["DiscordStatus"]).Replace("No idea", "NoIdea").Replace(" ", ""), out var ds))
                         me.DiscordStatus = (DiscordStatus)ds;

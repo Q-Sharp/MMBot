@@ -41,9 +41,9 @@ namespace MMBot.Modules.Member
         [Summary("Lists the needed changes to clan memberships.")]
         [Alias("C")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task<RuntimeResult> Changes(string compact = null)
+        public async Task<RuntimeResult> Changes(string compact = null, bool useCurrent = false)
         {
-            var result = (await _memberSortService.GetChanges(Context.Guild.Id)).Where(x => x.Join.Count > 0 && x.Leave.Count > 0).ToList();
+            var result = (await _memberSortService.GetChanges(Context.Guild.Id, useCurrent)).Where(x => x.Join.Count > 0 && x.Leave.Count > 0).ToList();
 
             if(result?.Count == 0)
                 return FromError(CommandError.Unsuccessful, $"No changes.");
@@ -106,7 +106,7 @@ namespace MMBot.Modules.Member
             });
         }
 
-        private string GetCompactMemberChangesString(List<MemberChanges> changes, IList<Data.Entities.Clan> clans)
+        private static string GetCompactMemberChangesString(List<MemberChanges> changes, IList<Data.Entities.Clan> clans)
         {
             var up = new Emoji("↗️");
             var down = new Emoji("↘️");
@@ -127,7 +127,7 @@ namespace MMBot.Modules.Member
             return r;
         }
 
-        private string GetDetailedMemberChangesString(List<MemberChanges> changes, int index, IList<Data.Entities.Clan> clans)
+        private static string GetDetailedMemberChangesString(List<MemberChanges> changes, int index, IList<Data.Entities.Clan> clans)
         {
             var up = new Emoji("⏫");
             var down = new Emoji("⏬");
