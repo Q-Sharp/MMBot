@@ -34,24 +34,24 @@ namespace MMBot.Data
                 .HasIndex(m =>new { m.Name, m.GuildId })
                 .IsUnique();
 
-            modelBuilder.Entity<Member>()
-                .HasOne(m => m.Clan)
-                .WithMany(c => c.Member)
+             modelBuilder.Entity<Clan>()
+                .HasMany(c => c.Member)
+                .WithOne(m => m.Clan)
                 .HasForeignKey(m => m.ClanId);
 
-            modelBuilder.Entity<Member>()
-                .HasOne(m => m.MemberGroup)
-                .WithMany(mg => mg.Members)
-                .HasForeignKey(m => m.MemberGroupId);
+            modelBuilder.Entity<MemberGroup>()
+                .HasMany(m => m.Members)
+                .WithOne(m => m.MemberGroup)
+                .HasForeignKey(x => x.MemberGroupId);
 
-            modelBuilder.Entity<Vacation>()
-                .HasOne(v => v.Member)
-                .WithMany(m => m.Vacation)
+            modelBuilder.Entity<Member>()
+                .HasMany(v => v.Vacation)
+                .WithOne(m => m.Member)
                 .HasForeignKey(v => v.MemberId);
 
-            modelBuilder.Entity<Strike>()
-                .HasOne(v => v.Member)
-                .WithMany(m => m.Strikes)
+            modelBuilder.Entity<Member>()
+                .HasMany(v => v.Strikes)
+                .WithOne(m => m.Member)
                 .HasForeignKey(v => v.MemberId);
 
             modelBuilder.Entity<GuildSettings>()

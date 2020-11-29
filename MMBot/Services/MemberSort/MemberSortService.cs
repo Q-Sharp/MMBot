@@ -51,15 +51,15 @@ namespace MMBot.Services.MemberSort
                     break;
 
                 case ExchangeMode.SkipSteps:
-                    result = await GetSkipStepsMemberMovement(m.OrderByDescending(y => y?.SHighLowest ?? y.SHigh)
-                        .Where(x => x.IsActive && x.Role != Role.ExMember).ToList(), moveQty, settings.ClanSize, cqty);
+                    result = await GetSkipStepsMemberMovement(m.OrderByDescending(y => (useCurrent ? y.Current : y?.SHighLowest ?? y.SHigh))
+                        .Where(x => x.IsActive && x.Role != Role.ExMember).ToList(), moveQty, settings.ClanSize, cqty, useCurrent);
                     break;
             }
 
             return result;
         }
 
-        private async Task<List<MemberChanges>> GetSkipStepsMemberMovement(List<Member> allMembersOrdered, int moveQty, int chunkSize, int clanQty)
+        private static async Task<List<MemberChanges>> GetSkipStepsMemberMovement(List<Member> allMembersOrdered, int moveQty, int chunkSize, int clanQty, bool useCurrent = false)
             => await Task.Run(() =>
             {
                 // get all members ordered
@@ -69,7 +69,7 @@ namespace MMBot.Services.MemberSort
                 var current = allMembersOrdered.OrderBy(x => x.Clan?.Tag)
                     .GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
                     .Select(x => x.Members.ToList() as IList<Member>)
-                    .Select(x => x.OrderByDescending(y => y?.SHighLowest ?? y.SHigh).ToList())
+                    .Select(x => x.OrderByDescending(y => (useCurrent ? y.Current : y?.SHighLowest ?? y.SHigh)).ToList())
                     .ToList();
 
                 var ListOfLists = new List<List<Member>>();
@@ -81,7 +81,7 @@ namespace MMBot.Services.MemberSort
                     mL.AddRange(addLeader);
                     var removed = mpool.RemoveAll(x => mL.Contains(x));
 
-                    foreach(var m in GetNextMemberForClan(mpool, i, removed, moveQty, chunkSize))
+                    foreach(var m in GetNextMemberForClan(mpool, i, removed, moveQty, chunkSize, useCurrent))
                         mL.Add(m);
 
                     removed += mpool.RemoveAll(x => mL.Contains(x));
@@ -122,7 +122,7 @@ namespace MMBot.Services.MemberSort
                 .ToList();
             });
 
-        private static IEnumerable<Member> GetNextMemberForClan(List<Member> allMember, int clanSortNo, int currentSize, int moveQty, int chunkSize)
+        private static IEnumerable<Member> GetNextMemberForClan(List<Member> allMember, int clanSortNo, int currentSize, int moveQty, int chunkSize, bool useCurrent = false)
         {
             var movedQty = 0;
             foreach(var currentMember in allMember)
@@ -132,7 +132,7 @@ namespace MMBot.Services.MemberSort
 
                 if(clanSortNo < currentMember.Clan.SortOrder)
                 {
-                    if(currentMember.IgnoreOnMoveUp || currentMember.Role >= Role.CoLeader || CheckMemberGroup(currentMember, allMember, clanSortNo))
+                    if(!useCurrent && currentMember.IgnoreOnMoveUp || currentMember.Role >= Role.CoLeader || CheckMemberGroup(currentMember, allMember, clanSortNo))
                         continue;
                     else
                         movedQty++;
@@ -148,9 +148,16 @@ namespace MMBot.Services.MemberSort
             if(!currentMember.MemberGroupId.HasValue)
                 return false;
 
-            var member = currentMember.MemberGroup.Members;
-            var newM = allMember.Where(x => member.Select(y => y.Id).Contains(x.Id));
-            return newM.Any(x => x.Clan.SortOrder > clanSortNo);
+            try
+            {
+                var member = currentMember.MemberGroup.Members;
+                var newM = allMember.Where(x => member.Select(y => y.Id).Contains(x.Id));
+                return newM.Any(x => x.Clan.SortOrder > clanSortNo);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private List<MemberChanges> GetOneStepMemberMovement(List<List<Member>> current, int moveQty)
