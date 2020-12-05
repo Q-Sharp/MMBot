@@ -20,7 +20,7 @@ namespace MMBot.Modules
         public static MMBotResult FromSuccess(string successMessage = null) => MMBotResult.Create(null, successMessage);
         public static MMBotResult FromError(CommandError error, string reason) => MMBotResult.Create(error, reason);
         public static MMBotResult FromErrorObjectNotFound(string objectname, string searchstring) => MMBotResult.Create(CommandError.ObjectNotFound, $"{objectname}: {searchstring}");
-        public static MMBotResult FromErroUnsuccessful(string error) => MMBotResult.Create(CommandError.Unsuccessful, error);
+        public static MMBotResult FromErrorUnsuccessful(string error) => MMBotResult.Create(CommandError.Unsuccessful, error);
     }
 
     public class MMBotResult : RuntimeResult

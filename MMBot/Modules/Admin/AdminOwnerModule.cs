@@ -139,7 +139,7 @@ namespace MMBot.Modules.Admin
                  return FromSuccess($"Successfully added {channel.Name} to UrlScanList and {qChannel.Name} for any questions!");
             }
 
-            return FromErroUnsuccessful($"{channel.Name} is already on the UrlScanList!");
+            return FromErrorUnsuccessful($"{channel.Name} is already on the UrlScanList!");
         }
 
         [Command("RemoveChannelFromUrlScan")]

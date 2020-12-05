@@ -103,7 +103,7 @@ namespace MMBot.Modules.Member
             var me = (await _databaseService.LoadMembersAsync(Context.Guild.Id)).Where(x => x.Strikes?.Count > 0)?.ToList();
 
             if((me?.Count ?? 0) <= 0)
-                return FromErroUnsuccessful("No member with strikes found!");
+                return FromErrorUnsuccessful("No member with strikes found!");
 
             return FromSuccess(me.GetTablePropertiesWithValues());
         }

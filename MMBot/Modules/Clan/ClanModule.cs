@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -14,9 +15,12 @@ namespace MMBot.Modules.Clan
     [Alias("C", "Clans")]
     public class ClanModule : MMBotModule, IClanModule
     {
+        private ILogger<ClanModule> _logger;
+
         public ClanModule(IDatabaseService databaseService, ILogger<ClanModule> logger, IGuildSettingsService guildSettings, ICommandHandler commandHandler)
             : base(databaseService, guildSettings, commandHandler)
         {
+            _logger = logger;
         }
 
         [Command("List")]
@@ -25,7 +29,7 @@ namespace MMBot.Modules.Clan
         {
             if (tag is null)
             {
-                var clans = await _databaseService.LoadClansAsync();
+                var clans = await _databaseService.LoadClansAsync(Context.Guild.Id);
 
                 var builder = new EmbedBuilder { Color = Color.DarkTeal, Title = "Clans" };
 
@@ -60,11 +64,22 @@ namespace MMBot.Modules.Clan
         [Summary("Deletes clan with given tag.")]
         public async Task<RuntimeResult> Delete(string tag)
         {
-            var c = (await _databaseService.GetClanAsync(tag, Context.Guild.Id));
-            _databaseService.DeleteClan(c);
-            await _databaseService.SaveDataAsync();
-            await ReplyAsync($"The clan {c} was deleted");
-            return FromSuccess();
+            Data.Entities.Clan c;
+
+            try
+            {
+                c = (await _databaseService.GetClanAsync(tag, Context.Guild.Id));
+                _databaseService.DeleteClan(c);
+                await _databaseService.SaveDataAsync();
+            }
+            catch(Exception e)
+            {
+                var s = "data wasn't saved.";
+                _logger.LogError(e, s);
+                return FromErrorUnsuccessful(s);
+            }
+
+            return FromSuccess($"The clan {c} was deleted");
         }
 
         [RequireUserPermission(ChannelPermission.ManageRoles)]
@@ -72,11 +87,22 @@ namespace MMBot.Modules.Clan
         [Summary("Set [Clan tag] [Property name] [Value]")]
         public async Task<RuntimeResult> SetCommand(string tag, string propertyName, [Remainder] string value)
         {
-            var c = (await _databaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
-            var m = c.ChangeProperty(propertyName, value);
-            await _databaseService.SaveDataAsync();
-            await ReplyAsync(m);
-            return FromSuccess();
+            string m;
+
+            try
+            {
+                var c = (await _databaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
+                m = c.ChangeProperty(propertyName, value);
+                await _databaseService.SaveDataAsync();
+            }
+            catch(Exception e)
+            {
+                var s = "data wasn't saved.";
+                _logger.LogError(e, s);
+                return FromErrorUnsuccessful(s);
+            }
+
+            return FromSuccess(m);
         }
 
         [RequireUserPermission(ChannelPermission.ManageRoles)]
@@ -84,12 +110,23 @@ namespace MMBot.Modules.Clan
         [Summary("Creates a new clan")]
         public async Task<RuntimeResult> Create(string tag, [Remainder] string name)
         {
-            var c = await _databaseService.CreateClanAsync(Context.Guild.Id);
-            c.Tag = tag;
-            c.Name = name;
-            await _databaseService.SaveDataAsync();
-            await ReplyAsync($"The clan {c} was added to database.");
-            return FromSuccess();
+            Data.Entities.Clan c;
+
+            try
+            {
+                c = await _databaseService.CreateClanAsync(Context.Guild.Id);
+                c.Tag = tag;
+                c.Name = name;
+                await _databaseService.SaveDataAsync();
+            }
+            catch(Exception e)
+            {
+                var s = "data wasn't saved.";
+                _logger.LogError(e, s);
+                return FromErrorUnsuccessful(s);
+            }
+
+            return FromSuccess($"The clan {c} was added to database.");
         }
 
         [RequireUserPermission(ChannelPermission.ManageRoles)]

@@ -25,9 +25,9 @@ namespace MMBot
 {
     public class Program
     {
-        private const string logTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}";
+        private const string logTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
 
-        public async static Task Main(string[] args)
+        public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
                  .Enrich.FromLogContext()
@@ -40,10 +40,10 @@ namespace MMBot
 
             try
             {
-                using var h = CreateDiscordSocketHost(args)?.Build();
-                await h?.RunAsync();
+                var dsh = CreateDiscordSocketHost(args)?.Build();
+                dsh.Run();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Log.Fatal(e, logTemplate);
             }
