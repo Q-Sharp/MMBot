@@ -60,14 +60,7 @@ namespace MMBot
             _sp.GetRequiredService<CommandService>().Log += LogAsync;
             client.Log += LogAsync;
 
-            await LogIn(client);
-            var ch = _sp.GetRequiredService<ICommandHandler>();
-            await ch?.InitializeAsync();
-        }
-
-        private async Task LogIn(DiscordSocketClient client)
-        {
-             var token =
+            var token =
 #if DEBUG
             //_config.GetProperty("DiscordTokenDev");
             "DiscordTokenDev";
@@ -78,6 +71,9 @@ namespace MMBot
 
             await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable(token));
             await client.StartAsync();
+
+            var ch = _sp.GetRequiredService<ICommandHandler>();
+            await ch?.InitializeAsync();
         }
 
         public Task LogAsync(LogMessage message)

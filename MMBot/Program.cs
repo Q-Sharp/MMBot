@@ -40,8 +40,8 @@ namespace MMBot
 
             try
             {
-                var dsh = CreateDiscordSocketHost(args)?.Build();
-                dsh.Run();
+                using var h = CreateDiscordSocketHost(args)?.Build();
+                h.Run();
             }
             catch (Exception e)
             {
@@ -77,20 +77,16 @@ namespace MMBot
                 {
                     var dsc = new DiscordSocketClient(new DiscordSocketConfig
                     {
-                        LogLevel = LogSeverity.Debug,
-                        MessageCacheSize = 1000,
-                        DefaultRetryMode = RetryMode.AlwaysRetry,
-                        HandlerTimeout = null,
-                        LargeThreshold = 250
+                        LogLevel = LogSeverity.Warning,
+                        MessageCacheSize = 1000
                     });
 
                     var cs = new CommandService(new CommandServiceConfig
                     {
-                        LogLevel = LogSeverity.Debug,
+                        LogLevel = LogSeverity.Warning,
                         CaseSensitiveCommands = false,
                         DefaultRunMode = RunMode.Async,
-                        SeparatorChar = ' ',
-                        IgnoreExtraArgs = true
+                        SeparatorChar = ' '
                     });
 
                     var hc = services.AddHttpClient("forms", c =>

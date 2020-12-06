@@ -163,40 +163,42 @@ namespace MMBot.Services.CommandHandler
                     return;
                 }
 
-                switch (runTimeResult?.Error ?? 0)
-                {
-                    case CommandError.BadArgCount:
-                        await context.Channel.SendMessageAsync(runTimeResult.Reason);
-                        break;
+                //switch (runTimeResult?.Error ?? 0)
+                //{
+                //    case CommandError.BadArgCount:
+                //        await context.Channel.SendMessageAsync(runTimeResult.Reason);
+                //        break;
 
-                    case CommandError.Exception:
-                        await context.Channel.SendMessageAsync(runTimeResult.Reason);
-                        break;
+                //    case CommandError.Exception:
+                //        await context.Channel.SendMessageAsync(runTimeResult.Reason);
+                //        break;
 
-                    case CommandError.MultipleMatches:
-                        await context.Channel.SendMessageAsync(runTimeResult.Reason);
-                        break;
+                //    case CommandError.MultipleMatches:
+                //        await context.Channel.SendMessageAsync(runTimeResult.Reason);
+                //        break;
 
-                    case CommandError.ObjectNotFound:
-                        await context.Channel.SendMessageAsync(runTimeResult.Reason);
-                        break;
+                //    case CommandError.ObjectNotFound:
+                //        await context.Channel.SendMessageAsync(runTimeResult.Reason);
+                //        break;
 
-                    case CommandError.ParseFailed:
-                        await context.Channel.SendMessageAsync(runTimeResult.Reason);
-                        break;
+                //    case CommandError.ParseFailed:
+                //        await context.Channel.SendMessageAsync(runTimeResult.Reason);
+                //        break;
 
-                    case CommandError.UnknownCommand:
-                        await context.Channel.SendMessageAsync(runTimeResult.Reason);
-                        break;
+                //    case CommandError.UnknownCommand:
+                //        await context.Channel.SendMessageAsync(runTimeResult.Reason);
+                //        break;
 
-                    case CommandError.UnmetPrecondition:
-                        await context.Channel.SendMessageAsync(runTimeResult.Reason);
-                        break;
+                //    case CommandError.UnmetPrecondition:
+                //        await context.Channel.SendMessageAsync(runTimeResult.Reason);
+                //        break;
 
-                    case CommandError.Unsuccessful:
-                        await context.Channel.SendMessageAsync(runTimeResult.Reason);
-                        break;
-                }
+                //    case CommandError.Unsuccessful:
+                //        await context.Channel.SendMessageAsync(runTimeResult.Reason);
+                //        break;
+                //}
+
+                await context.Channel.SendMessageAsync($"{runTimeResult.Error}: {runTimeResult.Reason}");
 
                 var member = context.User.GetUserAndDiscriminator();
                 var moduleName = command.Value.Module.Name;
@@ -204,8 +206,6 @@ namespace MMBot.Services.CommandHandler
 
                 _logger.LogError($"{member} tried to use {commandName} (module: {moduleName}) this resultet in a {runTimeResult?.Error?.ToString()}");
             }
-
-            await context.Channel.SendMessageAsync($"error: {result.ErrorReason}");
         }
     }
 }
