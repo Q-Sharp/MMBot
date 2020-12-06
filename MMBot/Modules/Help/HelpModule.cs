@@ -71,8 +71,7 @@ namespace MMBot.Modules.Help
         [Command("help")]
         public async Task<RuntimeResult> HelpAsync([Remainder] string command)
         {
-            var name = _service.Commands.Where(x => x.Name.ToLower() == command.ToLower() || x.Aliases.Select(x => x.ToLower()).Contains(command.ToLower())).FirstOrDefault().Name;
-            var result = _service.Search(Context, (name ?? command));
+            var result = _service.Search(Context, command);
             
             if (!result.IsSuccess)
                 return FromErrorObjectNotFound("command", command);
