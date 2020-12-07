@@ -9,6 +9,7 @@ using MMBot.Data;
 using MMBot.Data.Entities;
 using MMBot.Services.Interfaces;
 using MMBot.Data.Interfaces;
+using System.Text.Json.Serialization;
 
 namespace MMBot.Services.IE
 {
@@ -25,8 +26,9 @@ namespace MMBot.Services.IE
 
             _jsonSerializerOptions = new JsonSerializerOptions
             {
-                MaxDepth = 1,
                 WriteIndented = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                IgnoreReadOnlyProperties = true,
             };
         }
 
@@ -39,8 +41,6 @@ namespace MMBot.Services.IE
             var aca = await _context.Channel.AsAsyncEnumerable().ToListAsync().AsTask();
             var amg = await _context.MemberGroup.AsAsyncEnumerable().ToListAsync().AsTask();
             var mmt = await _context.Timer.AsAsyncEnumerable().ToListAsync().AsTask();
-
-            var json = System.Text.Json.JsonSerializer.Serialize(am, _jsonSerializerOptions);
 
             var dict = new Dictionary<string, string>
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
@@ -69,19 +70,31 @@ namespace MMBot.Services.IE
 
             try
             {
-                var clanTags = dt.Rows.AsQueryable().Cast<object>().Where(x => x != DBNull.Value).OfType<string>().Distinct().ToList();
+                var clanTags = dt.AsEnumerable().OrderByDescending(x => x.Field<string>("SHigh"))
+                    .Select(x => x.Field<string>("ClanTag"))
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Distinct()
+                    .ToList();
 
-                if (!_context.Clan.Any(x => !clanTags.Contains(x.Tag)))
-                {
+                var c = _context.Clan.AsQueryable().Where(x => x.GuildId == guildId).ToList();
+
+                if (!c.Any(x => !clanTags.Contains(x.Tag)))
+                {   
+                    var i =  c.Any() ? c.Select(x => x.SortOrder).Max() + 1 : 1;
+
                     foreach(var tag in clanTags)
                     {
-                        var clan = await _context.Clan.FirstOrDefaultAsync(c => c.Tag == tag) ?? new Clan();
-                        clan.Tag = tag;
-                        clan.Name = getName(tag);
-                        clan.SortOrder = _context.Clan.AsQueryable().Select(x => x.SortOrder).Max() + 1;
-                        clan.GuildId = guildId;
+                        var clan = new Clan
+                        {
+                            Tag = tag,
+                            Name = getName(tag),
+                            SortOrder = i++,
+                            GuildId = guildId
+                        };
+
+                        await _context.AddAsync(clan);
+                        await _context.SaveChangesAsync();
                     }
-                    await _context.SaveChangesAsync();
                 }
             }
             catch
@@ -168,8 +181,8 @@ namespace MMBot.Services.IE
                 case "TT": return "The Tavern";
                 case "TT2": return "The Tavern 2";
                 case "TT3": return "The Tavern 3";
+                default: return tag;
             }
-            return null;
         }
 
         public async Task<byte[]> ExportCsv(ulong guildID)
