@@ -65,7 +65,6 @@ namespace MMBot.Data.Entities
         [Display]
         public string PlayerTag { get; set; }
 
-        [Display]
         public bool AutoSignUpForFightNight { get; set; }
 
         public ulong GuildId { get; set; }

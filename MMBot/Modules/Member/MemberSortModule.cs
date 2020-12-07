@@ -17,7 +17,7 @@ namespace MMBot.Modules.Member
         private readonly int[] _pad = { 16, 4, 5, 7 };
         private readonly string[] _fields = { "Name", "Clan.Tag", "SHigh", "Role" };
 
-        [Command("List", RunMode = RunMode.Async)]
+        [Command("List")]
         [Summary("Lists all members by current clan membership.")]
         public async Task<RuntimeResult> List(SortBy sortBy = SortBy.SHigh)
         {
@@ -26,7 +26,7 @@ namespace MMBot.Modules.Member
             return FromSuccess();
         }
 
-        [Command("Sort", RunMode = RunMode.Async)]
+        [Command("Sort")]
         [Summary("Sort all members by season high.")]
         [Alias("S")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
@@ -81,14 +81,15 @@ namespace MMBot.Modules.Member
         {
             var cQty = (await _databaseService.LoadClansAsync(Context.Guild.Id))?.Count;
 
-            if(!cQty.HasValue)
+            if(!cQty.HasValue || cQty.Value == 0)
             {
                 await ReplyAsync($"No member data in db.");
                 return;
             }
 
             var page = 0;
-            var message = await ReplyAsync(GetTable(mm[page], page + 1, sortBy));
+            var maxPage = cQty - 1;
+            var message = await ReplyAsync(GetTable(mm[page], sortBy));
 
             var back = new Emoji("◀️");
             var next = new Emoji("▶️");
@@ -97,9 +98,9 @@ namespace MMBot.Modules.Member
             await _commandHandler.AddToReactionList(Context.Guild.Id, message, async (r, u) =>
             {
                 if (r.Name == back.Name && page >= 1)
-                    await message.ModifyAsync(me => me.Content = GetTable(mm[--page], page + 1, sortBy));
-                else if (r.Name == next.Name && page < cQty)
-                    await message.ModifyAsync(me => me.Content = GetTable(mm[++page], page + 1, sortBy));
+                    await message.ModifyAsync(me => me.Content = GetTable(mm[--page], sortBy));
+                else if (r.Name == next.Name && page < maxPage)
+                    await message.ModifyAsync(me => me.Content = GetTable(mm[++page], sortBy));
 
                 if(u is not null)
                     await message.RemoveReactionAsync(r, u);
@@ -148,7 +149,7 @@ namespace MMBot.Modules.Member
             return r;
         }
 
-        private string GetTable(IList<Data.Entities.Member> members, int? clanNo = null, SortBy sortBy = SortBy.SHigh)
+        private string GetTable(IList<Data.Entities.Member> members, SortBy sortBy = SortBy.SHigh)
         {
             if(members is null || members.Count <= 0)
                 return default;
@@ -164,13 +165,9 @@ namespace MMBot.Modules.Member
                     break;
             }
 
-            var clans = members.Select(x => new { x.Clan.Tag, x.Clan.Name }).Distinct().OrderBy(x => x.Tag).ThenBy(x => x.Name).ToList();
-
             var table = $"```{Environment.NewLine}";
-
-            if (clanNo.HasValue)
-                table += $"{clans?.FirstOrDefault()?.Tag} Members: {members.Count}{Environment.NewLine}";
-                
+            
+            table += $"{members.FirstOrDefault().ClanTag} Members: {members.Count}{Environment.NewLine}";    
             table += GetHeader(_header);
             table += GetLimiter(_header);
 

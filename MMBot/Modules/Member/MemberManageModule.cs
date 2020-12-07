@@ -54,6 +54,7 @@ namespace MMBot.Modules.Member
         {
             var m = await _databaseService.CreateMemberAsync(Context.Guild.Id);
             m.Name = name;
+            m.IsActive = true;
             await _databaseService.SaveDataAsync();
             return FromSuccess($"The member {m} was added to database.");
         }

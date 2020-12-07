@@ -208,7 +208,7 @@ namespace MMBot.Services.MemberSort
 
             var sorted = m.GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
                     .OrderBy(x => x.Clan)
-                    .Select(x => x.Members.OrderByDescending(x => x.SHigh).Select(v => v).ToList() as IList<Member>)
+                    .Select(x => x.Members.OrderByDescending(x => x?.SHigh ?? x.Id).ToList() as IList<Member>)
                     .ToList();
 
            return sorted;
