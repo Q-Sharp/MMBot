@@ -28,9 +28,9 @@ namespace MMBot.Services.IE
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 NullValueHandling = NullValueHandling.Ignore,
                 MissingMemberHandling = MissingMemberHandling.Ignore,
-                ObjectCreationHandling = ObjectCreationHandling.Replace,
                 PreserveReferencesHandling = PreserveReferencesHandling.None,
-                Formatting = Formatting.Indented
+                Formatting = Formatting.Indented,
+                MaxDepth = 1
             };
         }
 
