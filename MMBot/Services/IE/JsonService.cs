@@ -2,35 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MMBot.Data;
 using MMBot.Data.Entities;
 using MMBot.Services.Interfaces;
-using Newtonsoft.Json;
 using MMBot.Data.Interfaces;
 
 namespace MMBot.Services.IE
 {
     public class JsonService : IJsonService
     {
-        private Context _context;
-        private ILogger<CsvService> _logger;
-        private JsonSerializerSettings _jsonSerializerSettings;
+        private readonly Context _context;
+        private readonly ILogger<CsvService> _logger;
+        private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public JsonService(Context context, ILogger<CsvService> logger)
         {
             _context = context;
             _logger = logger;
 
-            _jsonSerializerSettings = new JsonSerializerSettings
+            _jsonSerializerOptions = new JsonSerializerOptions
             {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                NullValueHandling = NullValueHandling.Ignore,
-                MissingMemberHandling = MissingMemberHandling.Ignore,
-                PreserveReferencesHandling = PreserveReferencesHandling.None,
-                Formatting = Formatting.Indented,
-                MaxDepth = 1
+                MaxDepth = 1,
+                WriteIndented = true,
             };
         }
 
@@ -44,15 +40,17 @@ namespace MMBot.Services.IE
             var amg = await _context.MemberGroup.AsAsyncEnumerable().ToListAsync().AsTask();
             var mmt = await _context.Timer.AsAsyncEnumerable().ToListAsync().AsTask();
 
+            var json = System.Text.Json.JsonSerializer.Serialize(am, _jsonSerializerOptions);
+
             var dict = new Dictionary<string, string>
             {
-                { "Member", JsonConvert.SerializeObject(am, _jsonSerializerSettings) },
-                { "Clan", JsonConvert.SerializeObject(ac, _jsonSerializerSettings) },
-                { "GuildSettings", JsonConvert.SerializeObject(ags, _jsonSerializerSettings) },
-                { "Vacation", JsonConvert.SerializeObject(av, _jsonSerializerSettings) },
-                { "Channel", JsonConvert.SerializeObject(aca, _jsonSerializerSettings) },
-                { "MemberGroup", JsonConvert.SerializeObject(amg, _jsonSerializerSettings) },
-                { "MMTimer", JsonConvert.SerializeObject(mmt, _jsonSerializerSettings) }
+                { "Member", JsonSerializer.Serialize(am, _jsonSerializerOptions) },
+                { "Clan", JsonSerializer.Serialize(ac, _jsonSerializerOptions) },
+                { "GuildSettings", JsonSerializer.Serialize(ags, _jsonSerializerOptions) },
+                { "Vacation", JsonSerializer.Serialize(av, _jsonSerializerOptions) },
+                { "Channel", JsonSerializer.Serialize(aca, _jsonSerializerOptions) },
+                { "MemberGroup", JsonSerializer.Serialize(amg, _jsonSerializerOptions) },
+                { "MMTimer", JsonSerializer.Serialize(mmt, _jsonSerializerOptions) }
             };
 
             return dict;
@@ -64,49 +62,49 @@ namespace MMBot.Services.IE
             {
                 if(importJson.TryGetValue("Channel", out var channel))
                 {
-                    var am = JsonConvert.DeserializeObject<IList<Channel>>(channel, _jsonSerializerSettings);
+                    var am = JsonSerializer.Deserialize<IList<Channel>>(channel, _jsonSerializerOptions);
                     await ImportOrUpgrade(_context.Channel, am);
                     await _context.SaveChangesAsync();
                 }
 
                 if(importJson.TryGetValue("GuildSettings", out var guild))
                 {
-                    var ac = JsonConvert.DeserializeObject<IList<GuildSettings>>(guild, _jsonSerializerSettings);
+                    var ac = JsonSerializer.Deserialize<IList<GuildSettings>>(guild, _jsonSerializerOptions);
                     await ImportOrUpgrade(_context.GuildSettings, ac);
                     await _context.SaveChangesAsync();
                 }
 
                 if(importJson.TryGetValue("Clan", out var clan))
                 {
-                    var ags = JsonConvert.DeserializeObject<IList<Clan>>(clan, _jsonSerializerSettings);
+                    var ags = JsonSerializer.Deserialize<IList<Clan>>(clan, _jsonSerializerOptions);
                     await ImportOrUpgrade(_context.Clan, ags);
                     await _context.SaveChangesAsync();
                 }
 
                 if(importJson.TryGetValue("Member", out var member))
                 {
-                    var aca = JsonConvert.DeserializeObject<IList<Member>>(member, _jsonSerializerSettings);
-                     await ImportOrUpgrade(_context.Member, aca);
+                    var aca = JsonSerializer.Deserialize<IList<Member>>(member, _jsonSerializerOptions);
+                    await ImportOrUpgrade(_context.Member, aca);
                     await _context.SaveChangesAsync();
                 }
 
                 if(importJson.TryGetValue("Vacation", out var vac))
                 {
-                    var av = JsonConvert.DeserializeObject<IList<Vacation>>(vac, _jsonSerializerSettings);
+                    var av = JsonSerializer.Deserialize<IList<Vacation>>(vac, _jsonSerializerOptions);
                     await ImportOrUpgrade(_context.Vacation, av);
                     await _context.SaveChangesAsync();
                 }
 
                 if(importJson.TryGetValue("MemberGroup", out var mgroup))
                 {
-                    var amg = JsonConvert.DeserializeObject<IList<MemberGroup>>(mgroup, _jsonSerializerSettings);
-                   await ImportOrUpgrade(_context.MemberGroup, amg);
+                    var amg = JsonSerializer.Deserialize<IList<MemberGroup>>(mgroup, _jsonSerializerOptions);
+                    await ImportOrUpgrade(_context.MemberGroup, amg);
                     await _context.SaveChangesAsync();
                 }
                 
                 if(importJson.TryGetValue("MMTimer", out var timer))
                 {
-                    var mmt = JsonConvert.DeserializeObject<IList<MMTimer>>(timer, _jsonSerializerSettings);
+                    var mmt = JsonSerializer.Deserialize<IList<MMTimer>>(timer, _jsonSerializerOptions);
                     await ImportOrUpgrade(_context.Timer, mmt);
                     await _context.SaveChangesAsync();
                 }
@@ -121,7 +119,7 @@ namespace MMBot.Services.IE
             }
         }
 
-        private async Task ImportOrUpgrade<T>(DbSet<T> currentData, IList<T> updateWithData) 
+        private async static Task ImportOrUpgrade<T>(DbSet<T> currentData, IList<T> updateWithData) 
             where T : class, IHaveId
         {
             foreach(var uwd in updateWithData)
