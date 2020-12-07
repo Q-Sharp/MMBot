@@ -6,7 +6,6 @@ namespace MMBot.Data.Entities
 {
     public class GuildSettings : IHaveId
     {
-        [Key]
         public int Id { get; set; }
 
         [Display]

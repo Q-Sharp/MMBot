@@ -1,23 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using MMBot.Data.Enums;
 using MMBot.Data.Interfaces;
+using System.Collections.Generic;
 
 namespace MMBot.Data.Entities
 {
-    public class Member : IHaveId
+    public class Member : IHaveId, IHaveIdentifier
     {
-        [Key]
         public int Id { get; set; }
 
         [Required]
         [Display]
         public string Name { get; set; }
+
+        [JsonIgnore]
+        public string Identitfier => Name;
 
         [Display]
         [IgnoreDataMember]
@@ -52,7 +53,7 @@ namespace MMBot.Data.Entities
         public virtual Clan Clan { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<Vacation> Vacation { get; set; } = new Collection<Vacation>();
+        public virtual IList<Vacation> Vacation { get; set; } = new List<Vacation>();
 
         public DateTime? LastUpdated { get; set; }
 
@@ -88,7 +89,7 @@ namespace MMBot.Data.Entities
             => LocalTimeOffSet.HasValue ? DateTime.UtcNow + TimeSpan.FromHours(LocalTimeOffSet.Value) : null;
 
         [JsonIgnore]
-        public virtual ICollection<Strike> Strikes { get; set; } = new Collection<Strike>();
+        public virtual IList<Strike> Strikes { get; set; } = new List<Strike>();
 
         public override string ToString() => Clan?.Tag is not null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
 

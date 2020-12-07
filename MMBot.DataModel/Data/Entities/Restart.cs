@@ -5,7 +5,6 @@ namespace MMBot.Data.Entities
 {
     public class Restart : IHaveId
     {
-        [Key]
         public int Id { get; set; }
 
         public ulong Guild { get; set; }

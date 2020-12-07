@@ -24,25 +24,36 @@ namespace MMBot.Modules.Admin
         [RequireOwner()]
         public async Task<RuntimeResult> ExportDb()
         {
-            var json = await _jsonService.ExportDBToJson();
+            string ex = string.Empty;
 
-            var ex = await Task.Run(async () =>
+            try
             {
-                Directory.CreateDirectory(_backupDir);
+                var json = await _jsonService.ExportDBToJson();
 
-                foreach (var entry in json)
-                    await File.WriteAllTextAsync(Path.Combine(_backupDir, $"{entry.Key}.json"), entry.Value);
+                ex = await Task.Run(async () =>
+                {
+                    Directory.CreateDirectory(_backupDir);
 
-                ZipFile.CreateFromDirectory(_backupDir, _export);
+                    foreach (var entry in json)
+                        await File.WriteAllTextAsync(Path.Combine(_backupDir, $"{entry.Key}.json"), entry.Value);
 
-                Directory.Delete(_backupDir, true);
-                return _export;
-            });
+                    ZipFile.CreateFromDirectory(_backupDir, _export);
+                    return _export;
+                });
 
-            await Context.Channel.SendFileAsync(ex, "dbExport");
-            File.Delete(ex);
+                await Context.Channel.SendFileAsync(ex, "dbExport");
 
-            return FromSuccess();
+                return FromSuccess();
+            }
+            catch
+            {
+                 return FromError(CommandError.Unsuccessful, "Export Exception");
+            }
+            finally
+            {
+                 Directory.Delete(_backupDir, true);
+                 File.Delete(ex);
+            }
         }
 
         [Command("ImportDb")]

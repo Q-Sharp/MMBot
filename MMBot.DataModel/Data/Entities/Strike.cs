@@ -6,7 +6,6 @@ namespace MMBot.Data.Entities
 {
     public class Strike : IHaveId
     {
-        [Key]
         public int Id { get; set; }
 
         public string Reason { get; set; }

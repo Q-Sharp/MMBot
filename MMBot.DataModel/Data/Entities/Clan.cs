@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using MMBot.Data.Interfaces;
 
 namespace MMBot.Data.Entities
 {
-    public class Clan : IHaveId
+    public class Clan : IHaveId, IHaveIdentifier
     {
-        [Key]
         public int Id { get; set; }
 
         public int SortOrder { get; set; }
@@ -18,6 +15,9 @@ namespace MMBot.Data.Entities
         [Display]
         public string Tag { get; set; }
 
+        [JsonIgnore]
+        public string Identitfier => Tag;
+
         [Display]
         public string Name { get; set; }
         public string DiscordRole { get; set; }
@@ -25,7 +25,7 @@ namespace MMBot.Data.Entities
         public ulong GuildId { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<Member> Member { get; set; } = new Collection<Member>();
+        public virtual IList<Member> Member { get; set; } = new List<Member>();
         public override string ToString() => $"[{Tag}]";
 
         public void Update(object clan)

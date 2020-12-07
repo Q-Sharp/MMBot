@@ -23,26 +23,23 @@ namespace MMBot.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Clan>()
-                .HasIndex(c => new { c.Tag, c.GuildId })
+                .HasKey(c => c.Id);
+
+            modelBuilder.Entity<Clan>()
+                .HasIndex(c => new { c.Tag, c.Name, c.GuildId, c.SortOrder })
                 .IsUnique();
 
             modelBuilder.Entity<Clan>()
-                .HasIndex(c => new { c.SortOrder, c.GuildId })
-                .IsUnique();
-
-            modelBuilder.Entity<Member>()
-                .HasIndex(m =>new { m.Name, m.GuildId })
-                .IsUnique();
-
-             modelBuilder.Entity<Clan>()
                 .HasMany(c => c.Member)
                 .WithOne(m => m.Clan)
                 .HasForeignKey(m => m.ClanId);
 
-            modelBuilder.Entity<MemberGroup>()
-                .HasMany(m => m.Members)
-                .WithOne(m => m.MemberGroup)
-                .HasForeignKey(x => x.MemberGroupId);
+             modelBuilder.Entity<Member>()
+                .HasKey(c => c.Id);
+
+            modelBuilder.Entity<Member>()
+                .HasIndex(m => new { m.Name, m.GuildId })
+                .IsUnique();
 
             modelBuilder.Entity<Member>()
                 .HasMany(v => v.Vacation)
@@ -54,9 +51,32 @@ namespace MMBot.Data
                 .WithOne(m => m.Member)
                 .HasForeignKey(v => v.MemberId);
 
+            modelBuilder.Entity<MemberGroup>()
+                .HasKey(c => c.Id);
+
+            modelBuilder.Entity<MemberGroup>()
+                .HasMany(m => m.Members)
+                .WithOne(m => m.MemberGroup)
+                .HasForeignKey(x => x.MemberGroupId);
+
             modelBuilder.Entity<GuildSettings>()
                 .HasIndex(m => m.GuildId)
                 .IsUnique();
+
+            modelBuilder.Entity<GuildSettings>()
+                .HasKey(c => c.Id);
+
+            modelBuilder.Entity<MMTimer>()
+                .HasKey(c => c.Id);
+
+            modelBuilder.Entity<Restart>()
+                .HasKey(c => c.Id);
+
+            modelBuilder.Entity<Strike>()
+                .HasKey(c => c.Id);
+
+            modelBuilder.Entity<Vacation>()
+                .HasKey(c => c.Id);
         }
 
         public async Task MigrateAsync() => await Database.MigrateAsync();

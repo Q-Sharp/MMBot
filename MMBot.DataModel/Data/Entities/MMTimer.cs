@@ -6,7 +6,6 @@ namespace MMBot.Data.Entities
 {
     public class MMTimer : IHaveId
     {
-        [Key]
         public int Id { get; set; }
 
         [Required]

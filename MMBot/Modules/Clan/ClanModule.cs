@@ -68,7 +68,7 @@ namespace MMBot.Modules.Clan
 
             try
             {
-                c = (await _databaseService.GetClanAsync(tag, Context.Guild.Id));
+                c = await (await _databaseService.LoadClansAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, tag, Context.Channel, _commandHandler);
                 _databaseService.DeleteClan(c);
                 await _databaseService.SaveDataAsync();
             }
@@ -91,7 +91,7 @@ namespace MMBot.Modules.Clan
 
             try
             {
-                var c = (await _databaseService.LoadClansAsync()).FirstOrDefault(x => x.Tag == tag);
+                var c = await (await _databaseService.LoadClansAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, tag, Context.Channel, _commandHandler);
                 m = c.ChangeProperty(propertyName, value);
                 await _databaseService.SaveDataAsync();
             }
@@ -111,12 +111,14 @@ namespace MMBot.Modules.Clan
         public async Task<RuntimeResult> Create(string tag, [Remainder] string name)
         {
             Data.Entities.Clan c;
+            var gs = await _databaseService.LoadClansAsync(Context.Guild.Id);
 
             try
             {
                 c = await _databaseService.CreateClanAsync(Context.Guild.Id);
                 c.Tag = tag;
                 c.Name = name;
+                c.SortOrder = gs.Any() ? gs.Max(y => y.SortOrder) + 1 : 1;
                 await _databaseService.SaveDataAsync();
             }
             catch(Exception e)
@@ -134,10 +136,10 @@ namespace MMBot.Modules.Clan
         [Summary("Adds a member with name to clan with tag")]
         public async Task<RuntimeResult> AddMember(string tag, string memberName)
         {
-            var c = (await _databaseService.LoadClansAsync(Context.Guild.Id)).FirstOrDefault(x => x.Tag == tag);
-            var m = (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FirstOrDefault(x => x.Name == memberName);
+            var c = await (await _databaseService.LoadClansAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, tag, Context.Channel, _commandHandler);
+            var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, memberName, Context.Channel, _commandHandler);
 
-            if (m is not null || c is not null)
+            if (m is not null && c is not null)
             {
                 m.ClanId = c.Id;
 

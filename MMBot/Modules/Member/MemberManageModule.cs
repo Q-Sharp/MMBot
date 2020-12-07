@@ -20,7 +20,7 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task<RuntimeResult> Delete(string name)
         {
-            var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
+            var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
             _databaseService.DeleteMember(m);
             await _databaseService.SaveDataAsync();
             return FromSuccess($"The member {m} was deleted");
@@ -31,7 +31,7 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task<RuntimeResult> Set(string name, string propertyName, [Remainder] string value)
         {
-            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
+            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
             var r = m.ChangeProperty(propertyName, value);
             await _databaseService.SaveDataAsync();
             return FromSuccess(r);
@@ -42,7 +42,7 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task<RuntimeResult> Get(string name, string propertyName)
         {
-            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
+            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
             var r = m.GetProperty(propertyName);
             return FromSuccess(r);
         }
@@ -74,7 +74,7 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task<RuntimeResult> AddStrike(string name, [Remainder] string strikeReason)
         {
-            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
+            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
             
             m.Strikes.Add(new Strike { Reason = strikeReason, MemberId = m.Id, Member = m, StrikeDate = DateTime.UtcNow });
             await _databaseService?.SaveDataAsync();
@@ -87,7 +87,7 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task<RuntimeResult> RemoveStrike(string name)
         {
-            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
+            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
             
             m.Strikes.Remove(m.Strikes.OrderBy(y => y.StrikeDate).FirstOrDefault());
             await _databaseService?.SaveDataAsync();
@@ -114,7 +114,7 @@ namespace MMBot.Modules.Member
         public async Task<RuntimeResult> GroupMember(params string[] memberNames)
         {
             var m = (await _databaseService.LoadMembersAsync());
-            var grouped = await Task.WhenAll(memberNames.Select(x => m.FindAndAskForMember(Context.Guild.Id, x, Context.Channel, _commandHandler)));
+            var grouped = await Task.WhenAll(memberNames.Select(x => m.FindAndAskForEntity(Context.Guild.Id, x, Context.Channel, _commandHandler)));
 
             var group = new MemberGroup();
 
@@ -130,7 +130,7 @@ namespace MMBot.Modules.Member
         public async Task<RuntimeResult> UnGroupMember(params string[] memberNames)
         {
             var m = (await _databaseService.LoadMembersAsync());
-            var grouped = await Task.WhenAll(memberNames.Select(x => m.FindAndAskForMember(Context.Guild.Id, x, Context.Channel, _commandHandler)));
+            var grouped = await Task.WhenAll(memberNames.Select(x => m.FindAndAskForEntity(Context.Guild.Id, x, Context.Channel, _commandHandler)));
             grouped.ForEach(x => x.MemberGroupId = null);
             await _databaseService?.SaveDataAsync();
 
@@ -143,7 +143,7 @@ namespace MMBot.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task<RuntimeResult> Profile(string name)
         {
-            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForMember(Context.Guild.Id, name, Context.Channel, _commandHandler);
+            var m = await (await _databaseService.LoadMembersAsync()).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
 
             if (m is null)
                 return FromErrorObjectNotFound("Member", name);
