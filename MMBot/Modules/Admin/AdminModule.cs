@@ -123,7 +123,7 @@ namespace MMBot.Modules.Admin
                 Interlocked.Increment(ref _commandIsRunning);
                 await ReplyAsync($"Fixing roles of discord members accordingly to their clan membership....");
 
-                var c = await _databaseService.LoadClansAsync();
+                var c = await _databaseService.LoadClansAsync(Context.Guild.Id);
                 var ar = Context.Guild.Roles.Where(x => c.Select(clan => clan.DiscordRole).Contains(x.Name))
                 .ToArray();
 

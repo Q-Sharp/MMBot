@@ -11,8 +11,8 @@ namespace MMBot.Services.CommandHandler
     public partial class CommandHandler : ICommandHandler
     {
         private readonly IDictionary<ulong, Func<IEmote, IUser, Task>> _messageIdWithReaction = new Dictionary<ulong, Func<IEmote, IUser, Task>>();
-        private readonly AsyncLock _mutex = new AsyncLock();
-        private readonly AsyncMonitor _monitor = new AsyncMonitor();
+        private static readonly AsyncLock _mutex = new AsyncLock();
+        private static readonly AsyncMonitor _monitor = new AsyncMonitor();
 
         private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
             => await Task.Run(async () =>
@@ -22,7 +22,7 @@ namespace MMBot.Services.CommandHandler
                     if (_messageIdWithReaction.Keys.Contains(arg3.MessageId) && arg3.UserId != _client.CurrentUser.Id)
                     {
                         await _messageIdWithReaction[arg3.MessageId](arg3.Emote, arg3.User.IsSpecified ? arg3.User.Value : null);
-                        _monitor.PulseAll();
+                        _monitor.Pulse();
                     }   
                 }
             });
@@ -34,22 +34,17 @@ namespace MMBot.Services.CommandHandler
             using (await _mutex.LockAsync())
                 _messageIdWithReaction.Add(message.Id, fT);
 
-            var _ = await _monitor.EnterAsync();
+            var dis = await _monitor.EnterAsync().ConfigureAwait(false);
 
-            await Task.Run(async () => 
-            {
-                var t1 = Task.Delay(settings.WaitForReaction);
-                var t2 = allowMultiple ? Task.Delay(-1) : _monitor.WaitAsync();
+            var t1 = Task.Delay(settings.WaitForReaction);
+            var t2 = allowMultiple ? Task.Delay(-1) : _monitor.WaitAsync();
 
-                await Task.WhenAny(t1, t2);   
-            })
-            .ContinueWith(async x =>
-            {
-                using (await _mutex.LockAsync())
-                    _messageIdWithReaction.Remove(message.Id);
+            await Task.WhenAny(t1, t2).ConfigureAwait(false);
+            
+            using (await _mutex.LockAsync().ConfigureAwait(false))
+                _messageIdWithReaction.Remove(message.Id);
 
-                _.Dispose();
-            });
+            dis.Dispose();
         }
     }
 }

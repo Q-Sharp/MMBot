@@ -8,12 +8,11 @@ namespace MMBot.Services.Interfaces
     public interface IDatabaseService
     {
         Task<Clan> CreateClanAsync(ulong guildId);
-        Task<IList<Clan>> LoadClansAsync(ulong? guildId = null);
-        Task<Clan> GetClanAsync(string tag, ulong? guildId = null);
+        Task<IList<Clan>> LoadClansAsync(ulong guildId);
         void DeleteClan(Clan c);
 
         Task<Member> CreateMemberAsync(ulong guildId);
-        Task<IList<Member>> LoadMembersAsync(ulong? guildId = null);
+        Task<IList<Member>> LoadMembersAsync(ulong guildId);
         void DeleteMember(Member m);
 
         Task<GuildSettings> LoadGuildSettingsAsync(ulong guildId);
@@ -27,7 +26,7 @@ namespace MMBot.Services.Interfaces
 
         Task<MMTimer> CreateTimerAsync(ulong guildId);
         Task<IList<MMTimer>> LoadTimerAsync(ulong? guildId = null);
-        Task<MMTimer> GetTimerAsync(string name, ulong? guildId = null);
+        Task<MMTimer> GetTimerAsync(string name, ulong guildId);
         void DeleteTimer(MMTimer c);
 
         Task SaveDataAsync();

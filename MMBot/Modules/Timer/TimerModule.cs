@@ -29,7 +29,7 @@ namespace MMBot.Modules.Timer
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task<RuntimeResult> CreateTimer(string name, bool recurring = true)
         {
-            if((await _databaseService.LoadTimerAsync()).FirstOrDefault(t => t.Name.ToLower() == name.ToLower() && Context.Guild.Id == t.GuildId) is not null)
+            if((await _databaseService.LoadTimerAsync(Context.Guild.Id)).FirstOrDefault(t => t.Name.ToLower() == name.ToLower()) is not null)
             {
                 var es = $"A timer with that name already exists!";
                 await ReplyAsync(es);

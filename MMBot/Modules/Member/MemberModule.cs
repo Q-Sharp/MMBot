@@ -21,12 +21,12 @@ namespace MMBot.Modules.Member
             _memberSortService = memberSortService;
         }
 
-        [Command("Profile", RunMode = RunMode.Async)]
+        [Command("Profile")]
         [Alias("p")]
         [Summary("Shows all information of a member.")]
         public async Task<RuntimeResult> Profile()
         {
-            var m = (await _databaseService.LoadMembersAsync()).FirstOrDefault(x => x.Discord == Context.User.GetUserAndDiscriminator());
+            var m = (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FirstOrDefault(x => x.Discord == Context.User.GetUserAndDiscriminator());
 
             if (m is null)
                 return FromErrorObjectNotFound("member", Context.User.Username);

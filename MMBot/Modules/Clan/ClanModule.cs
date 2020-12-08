@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Addons.Interactive;
 using Discord.Commands;
 using Microsoft.Extensions.Logging;
 using MMBot.Helpers;
@@ -16,11 +17,13 @@ namespace MMBot.Modules.Clan
     public class ClanModule : MMBotModule, IClanModule
     {
         private ILogger<ClanModule> _logger;
+        private InteractiveService _interactiveService;
 
-        public ClanModule(IDatabaseService databaseService, ILogger<ClanModule> logger, IGuildSettingsService guildSettings, ICommandHandler commandHandler)
+        public ClanModule(IDatabaseService databaseService, ILogger<ClanModule> logger, IGuildSettingsService guildSettings, ICommandHandler commandHandler, InteractiveService interactiveService)
             : base(databaseService, guildSettings, commandHandler)
         {
             _logger = logger;
+            _interactiveService = interactiveService;
         }
 
         [Command("List")]
@@ -47,7 +50,7 @@ namespace MMBot.Modules.Clan
             }
             else
             {
-                var c = (await _databaseService.LoadClansAsync())?.FirstOrDefault(x => string.CompareOrdinal(x.Tag, tag) == 0);
+                var c = (await _databaseService.LoadClansAsync(Context.Guild.Id))?.FirstOrDefault(x => string.CompareOrdinal(x.Tag, tag) == 0);
 
                 if(c is null)
                     return FromErrorObjectNotFound("Clan", "tag");
@@ -136,8 +139,11 @@ namespace MMBot.Modules.Clan
         [Summary("Adds a member with name to clan with tag")]
         public async Task<RuntimeResult> AddMember(string tag, string memberName)
         {
-            var c = await (await _databaseService.LoadClansAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, tag, Context.Channel, _commandHandler);
-            var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, memberName, Context.Channel, _commandHandler);
+            var cs = await _databaseService.LoadClansAsync(Context.Guild.Id);
+            var ms = await _databaseService.LoadMembersAsync(Context.Guild.Id);
+
+            var c = await cs.FindAndAskForEntity(Context.Guild.Id, tag, Context.Channel, _commandHandler);
+            var m = await ms.FindAndAskForEntity(Context.Guild.Id, memberName, Context.Channel, _commandHandler);
 
             if (m is not null && c is not null)
             {

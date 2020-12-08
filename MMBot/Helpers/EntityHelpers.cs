@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Addons.Interactive;
 using MMBot.Data.Interfaces;
 using MMBot.Services.Interfaces;
 
@@ -10,15 +11,18 @@ namespace MMBot.Helpers
 {
     public static class EntityHelpers
     {
-        public async static Task<T> FindAndAskForEntity<T>(this IEnumerable<T> entities, ulong guildId, string search, IMessageChannel smc, ICommandHandler ch) where T : class, IHaveIdentifier
+        public async static Task<T> FindAndAskForEntity<T>(this IEnumerable<T> entities, ulong guildId, string search, IMessageChannel smc, ICommandHandler ch) 
+            where T : class, IHaveIdentifier
             => await entities
                 .FindEntity(search)
                 .AskForEntityAsync(guildId, smc, ch);
 
-        private static IEnumerable<T> FindEntity<T>(this IEnumerable<T> entities, string search) where T : class, IHaveIdentifier
+        private static IEnumerable<T> FindEntity<T>(this IEnumerable<T> entities, string search) 
+            where T : class, IHaveIdentifier
             => entities.Where(x => x.Identitfier.ToLower().Contains(search.ToLower()));
 
-        private static async Task<T> AskForEntityAsync<T>(this IEnumerable<T> entities, ulong guildId, IMessageChannel smc, ICommandHandler ch) where T : class, IHaveIdentifier 
+        private async static Task<T> AskForEntityAsync<T>(this IEnumerable<T> entities, ulong guildId, IMessageChannel smc, ICommandHandler ch) 
+            where T : class, IHaveIdentifier 
         {
             if(entities.Count() > 5)
             {
@@ -57,6 +61,7 @@ namespace MMBot.Helpers
             var question = await smc.SendMessageAsync(qstring);
 
             IHaveIdentifier m = null;
+
             await question.AddReactionsAsync(emojis);
             
             await ch.AddToReactionList(guildId, question, async (r, u) =>

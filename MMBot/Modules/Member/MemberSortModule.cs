@@ -37,7 +37,7 @@ namespace MMBot.Modules.Member
             return FromSuccess();
         }
 
-        [Command("Changes", RunMode = RunMode.Async)]
+        [Command("Changes")]
         [Summary("Lists the needed changes to clan memberships.")]
         [Alias("C")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
@@ -48,7 +48,7 @@ namespace MMBot.Modules.Member
             if(result?.Count == 0)
                 return FromError(CommandError.Unsuccessful, $"No changes.");
 
-            var c = await _databaseService.LoadClansAsync();
+            var c = await _databaseService.LoadClansAsync(Context.Guild.Id);
             var cQty = c?.Count;
             
             if(!string.IsNullOrWhiteSpace(compact))

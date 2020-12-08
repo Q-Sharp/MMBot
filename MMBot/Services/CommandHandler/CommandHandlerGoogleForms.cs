@@ -48,7 +48,7 @@ namespace MMBot.Services.CommandHandler
         private async Task HandleGoogleForms(ulong guildId, SocketMessage arg, ISocketMessageChannel questionsChannel)
         {
             var urls = arg.Content.GetUrl();
-            var m = await _databaseService.LoadMembersAsync();
+            var m = await _databaseService.LoadMembersAsync(guildId);
 
             if(!urls.Any() || !m.Any(z => z.AutoSignUpForFightNight && z.PlayerTag is not null))                
                 return;
