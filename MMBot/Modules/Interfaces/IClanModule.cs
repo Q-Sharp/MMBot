@@ -7,8 +7,8 @@ namespace MMBot.Modules.Interfaces
     {
         Task<RuntimeResult> List(string tag = null);
         Task<RuntimeResult> Delete(string tag);
-        Task<RuntimeResult> SetCommand(string tag, string propertyName, [Remainder] string value);
+        Task<RuntimeResult> Set(string tag, string propertyName, [Remainder] string value);
         Task<RuntimeResult> Create(string tag, [Remainder] string name);
-        Task<RuntimeResult> AddMember(string tag, string memberName);
+        Task<RuntimeResult> AddMember(string tag, [Remainder] string memberName);
     }
 }

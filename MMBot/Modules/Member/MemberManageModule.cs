@@ -50,7 +50,7 @@ namespace MMBot.Modules.Member
         [Command("Create")]
         [Summary("Creates a new member.")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task<RuntimeResult> Create(string name)
+        public async Task<RuntimeResult> Create([Remainder] string name)
         {
             var m = await _databaseService.CreateMemberAsync(Context.Guild.Id);
             m.Name = name;
@@ -86,7 +86,7 @@ namespace MMBot.Modules.Member
         [Command("RemoveStrike")]
         [Summary("Removes a strike from a member.")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task<RuntimeResult> RemoveStrike(string name)
+        public async Task<RuntimeResult> RemoveStrike([Remainder] string name)
         {
             var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
             
@@ -142,7 +142,7 @@ namespace MMBot.Modules.Member
         [Alias("p")]
         [Summary("Shows all information of a member.")]
         [RequireUserPermission(ChannelPermission.ManageRoles)]
-        public async Task<RuntimeResult> Profile(string name)
+        public async Task<RuntimeResult> Profile([Remainder] string name)
         {
             var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
 

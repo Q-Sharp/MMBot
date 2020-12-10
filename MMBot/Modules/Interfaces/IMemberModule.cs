@@ -11,8 +11,8 @@ namespace MMBot.Modules.Interfaces
         Task<RuntimeResult> Changes(string compact = null, bool useCurrent = false);
         Task<RuntimeResult> Profile(string name = null);
         Task<RuntimeResult> ShowAll(string propertyName, [Remainder] string value);
-        Task<RuntimeResult> Delete(string name);
+        Task<RuntimeResult> Delete([Remainder] string name);
         Task<RuntimeResult> Set(string name, string propertyName, [Remainder] string value);
-        Task<RuntimeResult> Create(string name);
+        Task<RuntimeResult> Create([Remainder] string name);
     }
 }

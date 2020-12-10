@@ -17,13 +17,11 @@ namespace MMBot.Modules.Clan
     public class ClanModule : MMBotModule, IClanModule
     {
         private ILogger<ClanModule> _logger;
-        private InteractiveService _interactiveService;
 
-        public ClanModule(IDatabaseService databaseService, ILogger<ClanModule> logger, IGuildSettingsService guildSettings, ICommandHandler commandHandler, InteractiveService interactiveService)
+        public ClanModule(IDatabaseService databaseService, ILogger<ClanModule> logger, IGuildSettingsService guildSettings, ICommandHandler commandHandler)
             : base(databaseService, guildSettings, commandHandler)
         {
             _logger = logger;
-            _interactiveService = interactiveService;
         }
 
         [Command("List")]
@@ -88,7 +86,7 @@ namespace MMBot.Modules.Clan
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         [Command("Set")]
         [Summary("Set [Clan tag] [Property name] [Value]")]
-        public async Task<RuntimeResult> SetCommand(string tag, string propertyName, [Remainder] string value)
+        public async Task<RuntimeResult> Set(string tag, string propertyName, [Remainder] string value)
         {
             string m;
 
@@ -137,7 +135,7 @@ namespace MMBot.Modules.Clan
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         [Command("AddMember")]
         [Summary("Adds a member with name to clan with tag")]
-        public async Task<RuntimeResult> AddMember(string tag, string memberName)
+        public async Task<RuntimeResult> AddMember(string tag, [Remainder] string memberName)
         {
             var cs = await _databaseService.LoadClansAsync(Context.Guild.Id);
             var ms = await _databaseService.LoadMembersAsync(Context.Guild.Id);

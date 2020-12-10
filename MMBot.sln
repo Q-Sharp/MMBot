@@ -10,7 +10,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Tests", "MMBot.Tests\
 		{B04B3027-6833-491D-A2FD-B7AD93F12028} = {B04B3027-6833-491D-A2FD-B7AD93F12028}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMBot.DataModel", "MMBot.DataModel\MMBot.DataModel.csproj", "{B04B3027-6833-491D-A2FD-B7AD93F12028}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.DataModel", "MMBot.DataModel\MMBot.DataModel.csproj", "{B04B3027-6833-491D-A2FD-B7AD93F12028}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
