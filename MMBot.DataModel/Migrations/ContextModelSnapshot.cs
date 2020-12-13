@@ -14,7 +14,7 @@ namespace MMBot.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.0");
+                .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("MMBot.Data.Entities.Channel", b =>
                 {
@@ -204,9 +204,6 @@ namespace MMBot.Migrations
 
                     b.HasIndex("MemberGroupId");
 
-                    b.HasIndex("Name", "GuildId")
-                        .IsUnique();
-
                     b.ToTable("Member");
                 });
 
@@ -302,7 +299,6 @@ namespace MMBot.Migrations
                     b.HasOne("MMBot.Data.Entities.Member", "Member")
                         .WithMany("Strikes")
                         .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Member");
@@ -313,7 +309,6 @@ namespace MMBot.Migrations
                     b.HasOne("MMBot.Data.Entities.Member", "Member")
                         .WithMany("Vacation")
                         .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Member");

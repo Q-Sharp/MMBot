@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
@@ -12,6 +11,7 @@ using MMBot.Data;
 using MMBot.Data.Entities;
 using MMBot.Data.Enums;
 using MMBot.Services.Interfaces;
+using MMBot.Data.Helpers;
 
 namespace MMBot.Services.IE
 {
@@ -77,8 +77,7 @@ namespace MMBot.Services.IE
                     .ToList();
 
                 var c = _context.Clan.AsQueryable().Where(x => x.GuildId == guildId).ToList();
-
-                if (!c.Any(x => !clanTags.Contains(x.Tag)))
+                if (c.Any(x => !clanTags.Contains(x.Tag)))
                 {   
                     var i =  c.Any() ? c.Select(x => x.SortOrder).Max() + 1 : 1;
 
@@ -92,7 +91,7 @@ namespace MMBot.Services.IE
                             GuildId = guildId
                         };
 
-                        await _context.AddAsync(clan);
+                        await _context.Clan.ImportOrUpgradeWithIdentifier(clan, guildId);
                         await _context.SaveChangesAsync();
                     }
                 }
@@ -122,7 +121,13 @@ namespace MMBot.Services.IE
 
                     if (row.Table.Columns.Contains("ClanTag") && row["ClanTag"] != DBNull.Value && !string.IsNullOrEmpty((string)row["ClanTag"]))
                     {
-                        me.Clan = _context.Clan.FirstOrDefault(x => x.Tag == (string)row["ClanTag"]);
+                        var tag = (string)row["ClanTag"];
+                        string clanName = null;
+
+                        if (row.Table.Columns.Contains("ClanName") && row["ClanName"] != DBNull.Value && !string.IsNullOrEmpty((string)row["ClanName"]))
+                            clanName = (string)row["ClanName"];
+
+                        me.Clan = _context.Clan.FirstOrDefault(x => x.Tag == tag && (clanName == null || x.Name == clanName));
                         me.ClanId =  me.Clan?.Id;
                     }
 

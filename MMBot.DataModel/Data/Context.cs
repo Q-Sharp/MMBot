@@ -1,7 +1,9 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MMBot.Data.Entities;
+using MMBot.Data.Interfaces;
 
 namespace MMBot.Data
 {
@@ -22,6 +24,9 @@ namespace MMBot.Data
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Channel>()
+                .HasKey(c => c.Id);
+
             modelBuilder.Entity<Clan>()
                 .HasKey(c => c.Id);
 
@@ -32,24 +37,23 @@ namespace MMBot.Data
             modelBuilder.Entity<Clan>()
                 .HasMany(c => c.Member)
                 .WithOne(m => m.Clan)
-                .HasForeignKey(m => m.ClanId);
+                .HasForeignKey(m => m.ClanId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
              modelBuilder.Entity<Member>()
                 .HasKey(c => c.Id);
 
             modelBuilder.Entity<Member>()
-                .HasIndex(m => new { m.Name, m.GuildId })
-                .IsUnique();
-
-            modelBuilder.Entity<Member>()
                 .HasMany(v => v.Vacation)
                 .WithOne(m => m.Member)
-                .HasForeignKey(v => v.MemberId);
+                .HasForeignKey(v => v.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             modelBuilder.Entity<Member>()
                 .HasMany(v => v.Strikes)
                 .WithOne(m => m.Member)
-                .HasForeignKey(v => v.MemberId);
+                .HasForeignKey(v => v.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             modelBuilder.Entity<MemberGroup>()
                 .HasKey(c => c.Id);
@@ -57,7 +61,8 @@ namespace MMBot.Data
             modelBuilder.Entity<MemberGroup>()
                 .HasMany(m => m.Members)
                 .WithOne(m => m.MemberGroup)
-                .HasForeignKey(x => x.MemberGroupId);
+                .HasForeignKey(x => x.MemberGroupId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             modelBuilder.Entity<GuildSettings>()
                 .HasIndex(m => m.GuildId)

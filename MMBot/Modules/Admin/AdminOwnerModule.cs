@@ -88,7 +88,8 @@ namespace MMBot.Modules.Admin
                     return dict;
                 });
 
-                var result = await _jsonService.ImportJsonToDB(dict);
+                var context = await DeleteDb();
+                var result = await _jsonService.ImportJsonToDB(dict, await _adminService.DeleteDb());
                 File.Delete(_import);
                 await ReplyAsync(result ? "db import completed!" : "error in db import!");
 
@@ -125,8 +126,7 @@ namespace MMBot.Modules.Admin
         public async Task<RuntimeResult> DeleteDb()
         {
             await _adminService.DeleteDb();
-            await ReplyAsync($"db file has been deleted.");
-            await Restart(false);
+            await ReplyAsync($"db is empty now.");
             return FromSuccess();
         }
 

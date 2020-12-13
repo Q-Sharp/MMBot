@@ -9,14 +9,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MMBot.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20201102184342_v2")]
-    partial class v2
+    [Migration("20201213211857_Initial-Create")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.9");
+                .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("MMBot.Data.Entities.Channel", b =>
                 {
@@ -62,10 +62,7 @@ namespace MMBot.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SortOrder")
-                        .IsUnique();
-
-                    b.HasIndex("Tag")
+                    b.HasIndex("Tag", "Name", "GuildId", "SortOrder")
                         .IsUnique();
 
                     b.ToTable("Clan");
@@ -157,6 +154,9 @@ namespace MMBot.Migrations
                     b.Property<int?>("ClanId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("Current")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Discord")
                         .HasColumnType("TEXT");
 
@@ -206,9 +206,6 @@ namespace MMBot.Migrations
 
                     b.HasIndex("MemberGroupId");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.ToTable("Member");
                 });
 
@@ -238,6 +235,28 @@ namespace MMBot.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Restart");
+                });
+
+            modelBuilder.Entity("MMBot.Data.Entities.Strike", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MemberId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("StrikeDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("Strike");
                 });
 
             modelBuilder.Entity("MMBot.Data.Entities.Vacation", b =>
@@ -271,6 +290,20 @@ namespace MMBot.Migrations
                     b.HasOne("MMBot.Data.Entities.MemberGroup", "MemberGroup")
                         .WithMany("Members")
                         .HasForeignKey("MemberGroupId");
+
+                    b.Navigation("Clan");
+
+                    b.Navigation("MemberGroup");
+                });
+
+            modelBuilder.Entity("MMBot.Data.Entities.Strike", b =>
+                {
+                    b.HasOne("MMBot.Data.Entities.Member", "Member")
+                        .WithMany("Strikes")
+                        .HasForeignKey("MemberId")
+                        .IsRequired();
+
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("MMBot.Data.Entities.Vacation", b =>
@@ -278,8 +311,26 @@ namespace MMBot.Migrations
                     b.HasOne("MMBot.Data.Entities.Member", "Member")
                         .WithMany("Vacation")
                         .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("MMBot.Data.Entities.Clan", b =>
+                {
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("MMBot.Data.Entities.Member", b =>
+                {
+                    b.Navigation("Strikes");
+
+                    b.Navigation("Vacation");
+                });
+
+            modelBuilder.Entity("MMBot.Data.Entities.MemberGroup", b =>
+                {
+                    b.Navigation("Members");
                 });
 #pragma warning restore 612, 618
         }

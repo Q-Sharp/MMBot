@@ -4,5 +4,6 @@
     {
         string Identitfier { get; }
         string Name { get; }
+        ulong GuildId { get; }
     }
 }

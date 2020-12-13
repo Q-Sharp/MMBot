@@ -7,12 +7,13 @@ using MMBot.Data;
 using MMBot.Data.Entities;
 using MMBot.Helpers;
 using MMBot.Services.Interfaces;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace MMBot.Services
 {
     public class DatabaseService : IDatabaseService
     {
-        private readonly Context _context;
+        private Context _context;
 
         public DatabaseService(Context context) => _context = context;
         public async Task MigrateAsync() => await _context?.MigrateAsync();
@@ -43,10 +44,16 @@ namespace MMBot.Services
             try
             {
                 var r = await _context.Restart.FirstOrDefaultAsync();
-                var t = new Tuple<ulong, ulong>(r.Guild, r.Channel);
-                _context.Restart.Remove(r);
-                await _context.SaveChangesAsync(new CancellationToken());
-                return t;
+
+                if(r != null)
+                {
+                    var t = new Tuple<ulong, ulong>(r.Guild, r.Channel);
+                    _context.Restart.Remove(r);
+                    await _context.SaveChangesAsync(new CancellationToken());
+                    return t;
+                }
+                else
+                    return default;
             }
             catch
             {
@@ -57,6 +64,15 @@ namespace MMBot.Services
         public async Task<Channel> CreateChannelAsync(ulong guildId) => (await _context.AddAsync(new Channel(), new CancellationToken())).Entity;
         public async Task<IList<Channel>> LoadChannelsAsync(ulong? guildId = null) => await _context.Channel.AsAsyncEnumerable().Where(x => guildId is null || x.GuildId == guildId).ToListAsync();
         public void DeleteChannel(Channel c) => _context.Remove(c);
+
+        public async Task<Context> DeleteDB()
+        {
+            _context.Database.EnsureDeleted();
+            
+            var context = new Context();
+            await context.MigrateAsync();
+            return context;
+        }
 
         public async Task CleanDB(IEnumerable<ulong> guildIds)
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MMBot.Data;
 using MMBot.Data.Entities;
 
 namespace MMBot.Services.Interfaces
@@ -31,6 +32,7 @@ namespace MMBot.Services.Interfaces
 
         Task SaveDataAsync();
         Task MigrateAsync();
+        Task<Context> DeleteDB();
         Task CleanDB(IEnumerable<ulong> guildIds = null);
     }
 }

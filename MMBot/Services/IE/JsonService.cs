@@ -10,6 +10,7 @@ using MMBot.Data.Entities;
 using MMBot.Services.Interfaces;
 using MMBot.Data.Interfaces;
 using System.Text.Json.Serialization;
+using MMBot.Data.Helpers;
 
 namespace MMBot.Services.IE
 {
@@ -56,80 +57,66 @@ namespace MMBot.Services.IE
             return dict;
         }
 
-        public async Task<bool> ImportJsonToDB(IDictionary<string, string> importJson)
+        public async Task<bool> ImportJsonToDB(IDictionary<string, string> importJson, Context context = null)
         {
             try
             {
                 if(importJson.TryGetValue("Channel", out var channel))
                 {
                     var am = JsonSerializer.Deserialize<IList<Channel>>(channel, _jsonSerializerOptions);
-                    await ImportOrUpgrade(_context.Channel, am);
-                    await _context.SaveChangesAsync();
+                    await context.Channel.ImportOrUpgrade(am);
+                    await context.SaveChangesAsync();
                 }
 
                 if(importJson.TryGetValue("GuildSettings", out var guild))
                 {
                     var ac = JsonSerializer.Deserialize<IList<GuildSettings>>(guild, _jsonSerializerOptions);
-                    await ImportOrUpgrade(_context.GuildSettings, ac);
-                    await _context.SaveChangesAsync();
+                    await context.GuildSettings.ImportOrUpgrade(ac);
+                    await context.SaveChangesAsync();
                 }
 
                 if(importJson.TryGetValue("Clan", out var clan))
                 {
                     var ags = JsonSerializer.Deserialize<IList<Clan>>(clan, _jsonSerializerOptions);
-                    await ImportOrUpgrade(_context.Clan, ags);
-                    await _context.SaveChangesAsync();
-                }
-
-                if(importJson.TryGetValue("Member", out var member))
-                {
-                    var aca = JsonSerializer.Deserialize<IList<Member>>(member, _jsonSerializerOptions);
-                    await ImportOrUpgrade(_context.Member, aca);
-                    await _context.SaveChangesAsync();
+                    await context.Clan.ImportOrUpgrade(ags);
+                    await context.SaveChangesAsync();
                 }
 
                 if(importJson.TryGetValue("Vacation", out var vac))
                 {
                     var av = JsonSerializer.Deserialize<IList<Vacation>>(vac, _jsonSerializerOptions);
-                    await ImportOrUpgrade(_context.Vacation, av);
-                    await _context.SaveChangesAsync();
+                    await context.Vacation.ImportOrUpgrade(av);
+                    await context.SaveChangesAsync();
                 }
 
                 if(importJson.TryGetValue("MemberGroup", out var mgroup))
                 {
                     var amg = JsonSerializer.Deserialize<IList<MemberGroup>>(mgroup, _jsonSerializerOptions);
-                    await ImportOrUpgrade(_context.MemberGroup, amg);
-                    await _context.SaveChangesAsync();
+                    await context.MemberGroup.ImportOrUpgrade(amg);
+                    await context.SaveChangesAsync();
+                }
+
+                if(importJson.TryGetValue("Member", out var member))
+                {
+                    var aca = JsonSerializer.Deserialize<IList<Member>>(member, _jsonSerializerOptions);
+                    await context.Member.ImportOrUpgrade(aca);
+                    await context.SaveChangesAsync();
                 }
                 
                 if(importJson.TryGetValue("MMTimer", out var timer))
                 {
                     var mmt = JsonSerializer.Deserialize<IList<MMTimer>>(timer, _jsonSerializerOptions);
-                    await ImportOrUpgrade(_context.Timer, mmt);
-                    await _context.SaveChangesAsync();
+                    await context.Timer.ImportOrUpgrade(mmt);
+                    await context.SaveChangesAsync();
                 }
                 
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
                 return true;
             }
             catch(Exception e)
             {
                  _logger.LogError(e.Message, e);
                 return false;
-            }
-        }
-
-        private async static Task ImportOrUpgrade<T>(DbSet<T> currentData, IList<T> updateWithData) 
-            where T : class, IHaveId
-        {
-            foreach(var uwd in updateWithData)
-            {
-                var found = await currentData.FindAsync(uwd.Id);
-
-                if(found is not null)
-                    found.Update(uwd);
-                else
-                    await currentData.AddAsync(uwd);
             }
         }
     }

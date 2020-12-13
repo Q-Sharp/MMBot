@@ -15,13 +15,15 @@ namespace MMBot.Services
         private Context _context;
         private IGuildSettingsService _settings;
         private ICommandHandler _commandHandler;
+        private IDatabaseService _databaseService;
         private ulong _guildId;
 
-        public AdminService(Context context, IGuildSettingsService settings, ICommandHandler commandHandler)
+        public AdminService(Context context, IGuildSettingsService settings, ICommandHandler commandHandler, IDatabaseService databaseService)
         {
             _context = context;
             _settings = settings;
             _commandHandler = commandHandler;
+            _databaseService = databaseService;
         }
 
         public class JoinComparer : IComparer<int>
@@ -67,12 +69,7 @@ namespace MMBot.Services
 
         public void SetGuild(ulong id) => _guildId = id;
 
-        public async Task DeleteDb() 
-            => await Task.Run(() =>
-               {
-                   var db = $"{Path.Combine(Directory.GetCurrentDirectory(), "MMBot.db")}";
-                   File.Delete(db);
-               });
+        public async Task<Context> DeleteDb() => await _databaseService.DeleteDB();
 
         public Task Restart()
         {
