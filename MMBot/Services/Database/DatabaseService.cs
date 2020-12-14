@@ -76,39 +76,41 @@ namespace MMBot.Services
 
         public async Task CleanDB(IEnumerable<ulong> guildIds)
         {
-            await Task.Delay(1);
-            //var c = await LoadClansAsync();
-            //var m = await LoadMembersAsync();
+            var c = await _context.Clan.ToListAsync();
+            var m = await _context.Member.ToListAsync();
 
-            //// clean dead member data
-            //if(c is null || c.Count == 0 || m is null || m.Count == 0)
-            //    return;
+            // clean dead member data
+            if (c is null || c.Count == 0 || m is null || m.Count == 0)
+                return;
 
-            //m.Where(x => x.ClanId == 0 || x.Name == string.Empty).ForEach(x =>
-            //{
-            //    var id = x.ClanId;
-            //    _context.Remove(x);
+            m.Where(x => x.ClanId == 0 || x.Name == string.Empty).ForEach(x =>
+            {
+                var id = x.ClanId;
+                _context.Remove(x);
 
-            //    if(id.HasValue)
-            //        _context.Remove(c.FirstOrDefault(y => y.Id == id));
-            //});
-            //await _context.SaveChangesAsync();
+                if (id.HasValue)
+                    _context.Remove(c.FirstOrDefault(y => y.Id == id));
+            });
+            await _context.SaveChangesAsync();
 
-            //m.Where(x => !x.IsActive || x.ClanId == null || x.Role == Data.Enums.Role.ExMember).ForEach(x =>
-            //{
-            //    x.IsActive = false;
-            //    x.ClanId = null;
-            //    x.Role = Data.Enums.Role.ExMember;
-            //});
-            //await _context.SaveChangesAsync();
+            m.Where(x => !x.IsActive || x.ClanId == null || x.Role == Data.Enums.Role.ExMember).ForEach(x =>
+            {
+                x.IsActive = false;
+                x.ClanId = null;
+                x.Role = Data.Enums.Role.ExMember;
+            });
+            await _context.SaveChangesAsync();
 
-            //// clean dead channel data
-            //if(guildIds is not null)
-            //{
-            //    var ch = await LoadChannelsAsync();
-            //    ch.Where(x => !guildIds.Contains(x.GuildId)).ForEach(cha => _context.Remove(cha));
-            //    await _context.SaveChangesAsync();
-            //}
+            m.Where(x => string.IsNullOrWhiteSpace(x.Name)).ForEach(x => _context.Remove(x));
+            await _context.SaveChangesAsync();
+
+            // clean dead channel data
+            if (guildIds is not null)
+            {
+                var ch = await LoadChannelsAsync();
+                ch.Where(x => !guildIds.Contains(x.GuildId)).ForEach(cha => _context.Remove(cha));
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

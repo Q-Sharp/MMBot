@@ -39,9 +39,9 @@ namespace MMBot.Services.IE
             csvReader.Configuration.BadDataFound = null;
             csvReader.Configuration.Delimiter = ",";
 
-             using var dr = new CsvDataReader(csvReader);
-             var dt = new DataTable();
-             dt.Load(dr);
+            using var dr = new CsvDataReader(csvReader);
+            var dt = new DataTable();
+            dt.Load(dr);
 
             try
             {
@@ -105,8 +105,11 @@ namespace MMBot.Services.IE
             {
                 foreach (DataRow row in dt.Rows)
                 {
+                     if(!row.Table.Columns.Contains("Name") || row["Name"] == DBNull.Value || string.IsNullOrWhiteSpace((string)row["Name"]))
+                        continue;
+
                     var me = row["Name"] != DBNull.Value && _context.Member.Any() ? _context.Member.FirstOrDefault(
-                        x => x.Name.ToLower() == ((string)row["Name"]).ToLower()) : null;
+                        x => x.Name.ToLower() == ((string)row["Name"]).ToLower() && x.GuildId == guildId) : null;
 
                     if(me is null)
                     {
