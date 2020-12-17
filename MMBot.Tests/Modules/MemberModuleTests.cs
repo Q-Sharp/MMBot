@@ -1,8 +1,8 @@
 ﻿using FakeItEasy;
 using System.Linq;
 using System.Threading.Tasks;
-using MMBot.Modules.Member;
-using MMBot.Services.Interfaces;
+using MMBot.Discord.Modules.Member;
+using MMBot.Discord.Services.Interfaces;
 using Xunit;
 using Discord.Commands;
 

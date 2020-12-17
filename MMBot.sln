@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30309.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot", "MMBot\MMBot.csproj", "{91D3C09B-60AA-476A-A68D-A861598C7CCB}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Tests", "MMBot.Tests\MMBot.Tests.csproj", "{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B04B3027-6833-491D-A2FD-B7AD93F12028} = {B04B3027-6833-491D-A2FD-B7AD93F12028}
@@ -12,16 +10,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Tests", "MMBot.Tests\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.DataModel", "MMBot.DataModel\MMBot.DataModel.csproj", "{B04B3027-6833-491D-A2FD-B7AD93F12028}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Discord", "MMBot.Discord\MMBot.Discord.csproj", "{03161B12-D305-46C6-AC31-47A7027E6AA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMBot", "MMBot\MMBot.csproj", "{B1D35D1C-C0C0-4B3A-9E5A-194B03FD8F1F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{91D3C09B-60AA-476A-A68D-A861598C7CCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91D3C09B-60AA-476A-A68D-A861598C7CCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{91D3C09B-60AA-476A-A68D-A861598C7CCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{91D3C09B-60AA-476A-A68D-A861598C7CCB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -30,6 +28,14 @@ Global
 		{B04B3027-6833-491D-A2FD-B7AD93F12028}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B04B3027-6833-491D-A2FD-B7AD93F12028}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B04B3027-6833-491D-A2FD-B7AD93F12028}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03161B12-D305-46C6-AC31-47A7027E6AA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03161B12-D305-46C6-AC31-47A7027E6AA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03161B12-D305-46C6-AC31-47A7027E6AA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03161B12-D305-46C6-AC31-47A7027E6AA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1D35D1C-C0C0-4B3A-9E5A-194B03FD8F1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1D35D1C-C0C0-4B3A-9E5A-194B03FD8F1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1D35D1C-C0C0-4B3A-9E5A-194B03FD8F1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1D35D1C-C0C0-4B3A-9E5A-194B03FD8F1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

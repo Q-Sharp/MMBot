@@ -1,7 +1,7 @@
 ﻿using FakeItEasy;
-using MMBot.Services;
-using MMBot.Services.Interfaces;
-using MMBot.Services.MemberSort;
+using MMBot.Discord.Services;
+using MMBot.Discord.Services.Interfaces;
+using MMBot.Discord.Services.MemberSort;
 using Xunit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
