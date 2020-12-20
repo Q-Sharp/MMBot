@@ -6,8 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MMBot.DataModel\MMBot.DataModel.csproj" />
+    <ProjectReference Include="..\MMBot.Blazor\MMBot.Blazor.csproj" />
+    <ProjectReference Include="..\MMBot.Data\MMBot.Data.csproj" />
     <ProjectReference Include="..\MMBot.Discord\MMBot.Discord.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="..\MMBot.Blazor\wwwroot\**" Link="wwwroot\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>

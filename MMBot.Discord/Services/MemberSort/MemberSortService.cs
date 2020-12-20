@@ -8,6 +8,7 @@ using MMBot.Helpers;
 using MMBot.Discord.Enums;
 using MMBot.Discord.Services.Interfaces;
 using Microsoft.Extensions.Logging;
+using MMBot.Data.Services.Interfaces;
 
 namespace MMBot.Discord.Services.MemberSort
 {
