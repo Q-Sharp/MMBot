@@ -1,0 +1,46 @@
+﻿@page "/clan"
+
+@using MMBot.Data.Services.Interfaces
+@inject IDatabaseService DatabaseService
+
+<h1>Clans</h1>
+
+@if (clans == null)
+{
+<p><em>Loading...</em></p>
+}
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tag</th>
+            <th>Name</th>
+            <th>SortOrder</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var clan in clans)
+        {
+            <tr>
+                <td>@clan.Tag</td>
+                <td>@clan.Name</td>
+                <td>@clan.SortOrder</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+
+</div>
+}
+
+@code {
+    private MMBot.Data.Entities.Clan[] clans;
+
+    protected override async Task OnInitializedAsync()
+    {
+        clans = (await DatabaseService.LoadClansAsync(1)).ToArray();
+    }
+}

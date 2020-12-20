@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>MMBot</RootNamespace>
+    <RootNamespace>MMBot.Data</RootNamespace>
     <PublishReadyToRun>true</PublishReadyToRun>
   </PropertyGroup>
 

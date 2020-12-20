@@ -5,6 +5,7 @@ using MMBot.Discord.Services.MemberSort;
 using Xunit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MMBot.Data.Services.Interfaces;
 
 namespace MMBot.Tests.Services
 {

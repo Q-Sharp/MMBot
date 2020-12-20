@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MMBot.Data;
 using MMBot.Data.Entities;
 
-namespace MMBot.Discord.Services.Interfaces
+namespace MMBot.Data.Services.Interfaces
 {
     public interface IDatabaseService
     {

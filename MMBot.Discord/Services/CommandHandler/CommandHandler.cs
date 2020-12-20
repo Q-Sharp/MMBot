@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using MMBot.Helpers;
 using MMBot.Discord.Services.Interfaces;
 using MMBot.Discord.Modules;
+using MMBot.Data.Services.Interfaces;
 
 namespace MMBot.Discord.Services.CommandHandler
 {
