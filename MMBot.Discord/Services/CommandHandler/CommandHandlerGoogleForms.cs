@@ -14,13 +14,16 @@ namespace MMBot.Discord.Services.CommandHandler
 {
     public partial class CommandHandler : ICommandHandler
     {
-        private async Task CheckForUseableLinks(SocketMessage arg, ulong guildId)
+        private void CheckForUseableLinks(SocketMessage arg, ulong guildId)
         {
-            if (_formsChannelList.Select(x => x.Item1).Contains(arg.Channel))
+            _ = Task.Run(async () =>
             {
-                await HandleGoogleForms(guildId, arg, _formsChannelList.Where(x => x.Item1 == arg.Channel).FirstOrDefault().Item2);
-                await HandleYoutubeStream(guildId, arg, _formsChannelList.Where(x => x.Item1 == arg.Channel).FirstOrDefault().Item2);
-            }     
+                if (_formsChannelList.Select(x => x.Item1).Contains(arg.Channel))
+                {
+                    await HandleGoogleForms(guildId, arg, _formsChannelList.Where(x => x.Item1 == arg.Channel).FirstOrDefault().Item2);
+                    await HandleYoutubeStream(guildId, arg, _formsChannelList.Where(x => x.Item1 == arg.Channel).FirstOrDefault().Item2);
+                }
+            });
         }
 
         private Task HandleYoutubeStream(ulong guildId, SocketMessage arg, ISocketMessageChannel item2)

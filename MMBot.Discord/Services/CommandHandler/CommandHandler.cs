@@ -117,13 +117,13 @@ namespace MMBot.Discord.Services.CommandHandler
         public async Task Client_HandleCommandAsync(SocketMessage arg)
         {
             if(arg.Author.IsWebhook && arg.Author is SocketWebhookUser whu)
-                await CheckForUseableLinks(arg, whu.Guild.Id);
+                CheckForUseableLinks(arg, whu.Guild.Id);
 
             if (arg is not SocketUserMessage msg)
                 return;
 
             var context = new SocketCommandContext(_client, msg);
-            await CheckForUseableLinks(arg, context.Guild.Id);
+                CheckForUseableLinks(arg, context.Guild.Id);
 
             if (msg.Author.Id == _client.CurrentUser.Id || msg.Author.IsBot) 
                 return;
@@ -132,7 +132,7 @@ namespace MMBot.Discord.Services.CommandHandler
             var pos = 0;
 
             if (msg.HasStringPrefix(settings.Prefix, ref pos) || msg.HasMentionPrefix(_client.CurrentUser, ref pos) || msg.Content.ToLower().StartsWith(settings.Prefix.ToLower()))
-                await _commands.ExecuteAsync(context, pos, _services);
+                _ = _commands.ExecuteAsync(context, pos, _services);
         }
 
         public async Task Client_Disconnected(Exception arg)
