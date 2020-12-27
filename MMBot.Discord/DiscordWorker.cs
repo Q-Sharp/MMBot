@@ -9,7 +9,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MMBot.Discord.Services.Interfaces;
-using MMBot.Data.Services.Interfaces;
 
 namespace MMBot.Discord
 {

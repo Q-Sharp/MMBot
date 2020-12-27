@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
 using MMBot.Data.Entities;
-using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Services.Interfaces;
 
 namespace MMBot.Discord.Services.Timer

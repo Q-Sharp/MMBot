@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using MMBot.Helpers;
 using MMBot.Discord.Modules.Interfaces;
 using MMBot.Discord.Services.Interfaces;
-using MMBot.Data.Services.Interfaces;
 
 namespace MMBot.Discord.Modules.Clan
 {

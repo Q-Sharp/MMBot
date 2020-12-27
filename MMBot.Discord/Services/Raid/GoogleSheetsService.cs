@@ -12,7 +12,6 @@ using Google.Apis.Sheets.v4.Data;
 using Google.Apis.Util.Store;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Services.Interfaces;
 
 namespace MMBot.Discord.Services.Raid

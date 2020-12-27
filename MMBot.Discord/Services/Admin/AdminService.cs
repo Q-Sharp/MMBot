@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using MMBot.Data;
 using MMBot.Data.Entities;
-using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Services.Interfaces;
 
 namespace MMBot.Discord.Services

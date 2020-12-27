@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
 using System;
 using MMBot.Data;
 using MMBot.Discord.Services;
@@ -17,22 +18,20 @@ using MMBot.Discord.Services.Interfaces;
 using MMBot.Discord.Services.MemberSort;
 using MMBot.Discord.Services.Timer;
 using System.IO;
-using Microsoft.EntityFrameworkCore;
-using MMBot.Data.Services;
-using MMBot.Data.Services.Interfaces;
+using Serilog.Events;
+using System.Threading.Tasks;
 
 namespace MMBot.Discord
 {
     public static class DiscordSocketHost
     {
-         public static IHostBuilder CreateDiscordSocketHost(string[] args, string dbFilePath) =>
+         public static IHostBuilder CreateDiscordSocketHost(string[] args) =>
            Host.CreateDefaultBuilder(args)
                 .ConfigureLogging(x => x.ClearProviders().AddSerilog(Log.Logger))
                 .UseSystemd()
                 .ConfigureAppConfiguration((hostContext, configBuilder) =>
                 {
-                    configBuilder.AddEnvironmentVariables("MMBot_")
-                                 .AddCommandLine(args);        
+                    configBuilder.AddEnvironmentVariables("MMBot_");          
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
@@ -60,7 +59,7 @@ namespace MMBot.Discord
                     services
                         .AddHostedService<DiscordWorker>()
                         .AddSingleton<GuildSettingsService>()
-                        .AddDbContext<Context>(o => o.UseSqlite($"Data Source={dbFilePath}"))
+                        .AddDbContext<Context>()
                         .AddSingleton<IGuildSettingsService, GuildSettingsService>()
                         .AddSingleton(dsc)
                         .AddSingleton(cs)

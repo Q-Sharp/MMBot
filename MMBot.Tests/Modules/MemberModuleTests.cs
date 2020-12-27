@@ -5,7 +5,6 @@ using MMBot.Discord.Modules.Member;
 using MMBot.Discord.Services.Interfaces;
 using Xunit;
 using Discord.Commands;
-using MMBot.Data.Services.Interfaces;
 
 namespace MMBot.Tests.Modules
 {

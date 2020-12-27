@@ -9,7 +9,6 @@ using Discord.Commands;
 using MMBot.Helpers;
 using MMBot.Discord.Modules.Interfaces;
 using MMBot.Discord.Services.Interfaces;
-using MMBot.Data.Services.Interfaces;
 
 namespace MMBot.Discord.Modules.Admin
 {
@@ -42,28 +41,41 @@ namespace MMBot.Discord.Modules.Admin
         {
             var csvFile = Context.Message.Attachments.FirstOrDefault();
             var myWebClient = _clientFactory.CreateClient();
-            string fileName = null;
-
-            if (csvFile is not null && _csvService is not null)
+            if (csvFile is not null)
             {
-                try
+                var csv = await myWebClient.GetAsync(csvFile.Url);
+                if (_csvService is not null)
                 {
-                    var csv = await myWebClient.GetAsync(csvFile.Url);
                     var csvByte = await csv.Content.ReadAsByteArrayAsync();
                     var result = await _csvService.ImportCsv(csvByte, Context.Guild.Id);
-                    fileName = $"{Context.Guild.Id}lastImport.csv";
 
                     if(result is null)
-                        File.WriteAllBytes(Path.Combine(Environment.CurrentDirectory, fileName), csvByte);
+                        File.WriteAllBytes(Path.Combine(Environment.CurrentDirectory, "lastImport.csv"), csvByte);
 
                     await ReplyAsync(result is null
                         ? "CSV file import was successful"
                         : $"ERROR: {result.Message}");
                 }
-                finally
-                {
-                    File.Delete(fileName);
-                }
+            }
+
+            await _databaseService.CleanDB();
+            return FromSuccess();
+        }
+
+        [Command("ReImportCSV")]
+        [Alias("Reimport")]
+        [Summary("Reimport last csv file")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
+        public async Task<RuntimeResult> ReImportCSV()
+        {
+            var csv = File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, "lastImport.csv"));
+            if (_csvService is not null)
+            {
+                var result = await _csvService.ImportCsv(csv, Context.Guild.Id);
+
+                await ReplyAsync(result is null
+                    ? "CSV file import was successful"
+                    : $"ERROR: {result.Message}");
             }
 
             await _databaseService.CleanDB();

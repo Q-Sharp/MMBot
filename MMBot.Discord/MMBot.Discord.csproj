@@ -52,7 +52,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\MMBot.Data\MMBot.Data.csproj" />
+    <ProjectReference Include="..\MMBot.DataModel\MMBot.DataModel.csproj" />
   </ItemGroup>
 
   <ItemGroup>

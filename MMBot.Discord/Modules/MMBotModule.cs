@@ -1,6 +1,5 @@
 ﻿using Discord.Addons.Interactive;
 using Discord.Commands;
-using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Services.Interfaces;
 
 namespace MMBot.Discord.Modules
