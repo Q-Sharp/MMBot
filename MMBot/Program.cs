@@ -32,11 +32,11 @@ namespace MMBot
             {
                 var hb = DiscordSocketHost.CreateDiscordSocketHost(args, dbFilePath);
                 using var bh = BlazorHost.CreateHostBuilder(args, dbFilePath, hb)?.Build();
-                var t = new Task[] { /*h.RunAsync(),*/ bh.RunAsync() };
+                var t = new Task[] { bh.RunAsync() };
                 Task.WaitAll(t);
             }
             catch (Exception e)
-            {
+            { 
                 Log.Fatal(e, logTemplate);
             }
             finally

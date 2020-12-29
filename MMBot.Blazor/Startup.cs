@@ -12,10 +12,8 @@ namespace MMBot.Blazor
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) 
+            => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
 
@@ -27,6 +25,7 @@ namespace MMBot.Blazor
             services.AddServerSideBlazor();
             services.AddDbContext<Context>(o => o.UseSqlite($"Data Source={Configuration.GetValue<string>("db")}"));
             services.AddScoped<IDatabaseService, DatabaseService>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +51,7 @@ namespace MMBot.Blazor
             {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
+                endpoints.Map("http://localhost:5000/");
             });
         }
     }

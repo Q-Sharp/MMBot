@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -9,10 +9,6 @@
     <ProjectReference Include="..\MMBot.Blazor\MMBot.Blazor.csproj" />
     <ProjectReference Include="..\MMBot.Data\MMBot.Data.csproj" />
     <ProjectReference Include="..\MMBot.Discord\MMBot.Discord.csproj" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Content Include="..\MMBot.Blazor\wwwroot\**" Link="wwwroot\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>

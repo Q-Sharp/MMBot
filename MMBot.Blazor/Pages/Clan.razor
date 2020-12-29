@@ -2,38 +2,42 @@
 
 @using MMBot.Data.Services.Interfaces
 @inject IDatabaseService DatabaseService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime js
 
 <h1>Clans</h1>
 
 @if (clans == null)
 {
-<p><em>Loading...</em></p>
+    <p><em>Loading...</em></p>
 }
 else
 {
-<table class="table">
-    <thead>
-        <tr>
-            <th>Tag</th>
-            <th>Name</th>
-            <th>SortOrder</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var clan in clans)
-        {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tag</th>
+                <th>Name</th>
+                <th>SortOrder</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var clan in clans)
+            {
             <tr>
                 <td>@clan.Tag</td>
                 <td>@clan.Name</td>
                 <td>@clan.SortOrder</td>
+                <!--<td><a href="/EditAccount/@account.id" class="btn btn-info">Edit</a></td>-->
+                <td><a @onclick="(() => DeleteClan(clan.Id))" class="btn btn-danger">Delete</a></td>
             </tr>
-        }
-    </tbody>
-</table>
+            }
+        </tbody>
+    </table>
 
-<div>
+    <div>
 
-</div>
+    </div>
 }
 
 @code {
@@ -42,5 +46,21 @@ else
     protected override async Task OnInitializedAsync()
     {
         clans = (await DatabaseService.LoadClansAsync(1)).ToArray();
+    }
+
+    public async Task DeleteClan(int? id)
+    {
+        bool confirm = await js.InvokeAsync<bool>("confirm", "Do you want to delete this clan?");
+        if (confirm && id.HasValue)
+        {
+            try
+            {
+                DatabaseService.DeleteClan(id.Value);
+            }
+            finally
+            {
+                NavigationManager.NavigateTo("/");
+            }
+        }
     }
 }
