@@ -6,9 +6,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MMBot.Blazor\MMBot.Blazor.csproj" />
     <ProjectReference Include="..\MMBot.Data\MMBot.Data.csproj" />
     <ProjectReference Include="..\MMBot.Discord\MMBot.Discord.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="..\MMBot.Blazor\bin\Release\net5.0\publish\wwwroot\wwwroot\**" Link="wwwroot\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
+    
+   
   </ItemGroup>
 
 </Project>

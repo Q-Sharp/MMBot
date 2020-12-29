@@ -38,7 +38,7 @@ namespace MMBot.Data.Services
         
 
         public async Task<Restart> AddRestart() => (await _context.AddAsync(new Restart(), new CancellationToken())).Entity;
-        public async Task<Tuple<ulong, ulong>> ConsumeRestart()
+        public async Task<Restart> ConsumeRestart()
         {
             try
             {
@@ -46,10 +46,9 @@ namespace MMBot.Data.Services
 
                 if(r != null)
                 {
-                    var t = new Tuple<ulong, ulong>(r.Guild, r.Channel);
                     _context.Restart.Remove(r);
                     await _context.SaveChangesAsync(new CancellationToken());
-                    return t;
+                    return r;
                 }
                 else
                     return default;
@@ -65,14 +64,8 @@ namespace MMBot.Data.Services
         public void DeleteChannel(Channel c) => _context.Remove(c);
         public void DeleteChannel(int id) => DeleteChannel(_context.Channel.FirstOrDefault(c => c.Id == id));
 
-        public async Task<Context> DeleteDB()
-        {
-            _context.Database.EnsureDeleted();
-            
-            //var context = new Context(_context.Options);
-            //await context.MigrateAsync();
-            return _context;
-        }
+        public void DeleteDB()
+            => _context.Database.EnsureDeleted();
 
         public async Task CleanDB(IEnumerable<ulong> guildIds)
         {

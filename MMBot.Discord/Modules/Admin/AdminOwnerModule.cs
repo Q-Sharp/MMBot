@@ -17,7 +17,7 @@ namespace MMBot.Discord.Modules.Admin
     {
         private readonly string _backupDir = Path.Combine(".", "backup");
         private readonly string _export = "dataexport.zip";
-        private readonly string _import = "dataexport.zip";
+        private readonly string _import = "dataimport.zip";
 
         [Command("ExportDb")]
         [Summary("Exports db data as json files in zip archive")]
@@ -72,29 +72,9 @@ namespace MMBot.Discord.Modules.Admin
                 var zipByte = await zip.Content.ReadAsByteArrayAsync();
 
                 await File.WriteAllBytesAsync(_import, zipByte);
-
-                var dict = await Task.Run(async () =>
-                {
-                    Directory.CreateDirectory(_backupDir);
-
-                    ZipFile.ExtractToDirectory(_import, _backupDir);
-
-                    var dict = new Dictionary<string, string>();
-
-                    foreach (var entry in Directory.GetFiles(_backupDir))
-                        dict.Add(Path.GetFileNameWithoutExtension(entry), await File.ReadAllTextAsync(entry));
-
-                    Directory.Delete(_backupDir, true);
-                    return dict;
-                });
-
-                var context = await DeleteDb();
-                var result = await _jsonService.ImportJsonToDB(dict, await _adminService.DeleteDb());
-                File.Delete(_import);
-                await ReplyAsync(result ? "db import completed!" : "error in db import!");
-
-                if(result)
-                    await Restart();
+                _adminService.DeleteDb();
+                await ReplyAsync($"db is empty now.");
+                await _adminService.InitDataImport(Context.Guild.Id, Context.Channel.Id);
             }
 
             return FromSuccess();
@@ -107,16 +87,7 @@ namespace MMBot.Discord.Modules.Admin
         [RequireOwner]
         public async Task<RuntimeResult> Restart(bool saveRestart = true)
         {
-            if (saveRestart)
-            {
-                var r = await _databaseService?.AddRestart();
-                r.Guild = Context.Guild.Id;
-                r.Channel = Context.Channel.Id;
-                await _databaseService?.SaveDataAsync();
-            }
-
-            await ReplyAsync($"Bot service is restarting...");
-            _adminService.Restart();
+            await _adminService.Restart(saveRestart, Context.Guild.Id, Context.Channel.Id);
             return FromSuccess();
         }
 
@@ -125,7 +96,7 @@ namespace MMBot.Discord.Modules.Admin
         [RequireOwner]
         public async Task<RuntimeResult> DeleteDb()
         {
-            await _adminService.DeleteDb();
+            _adminService.DeleteDb();
             await ReplyAsync($"db is empty now.");
             return FromSuccess();
         }

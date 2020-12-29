@@ -14,15 +14,16 @@ namespace MMBot
     {
         private const string logTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
 
-        private static readonly string logFilePath = Path.Combine(Environment.CurrentDirectory, "mmbot.log");
-        private static readonly string dbFilePath = Path.Combine(Environment.CurrentDirectory, "mmbot.db");
+        private static readonly string _logFilePath = Path.Combine(Environment.CurrentDirectory, "mmbot.log");
+        private static readonly string _dbFilePath = Path.Combine(Environment.CurrentDirectory, "mmbot.db");
+        private static readonly string _wwwRootPath = Path.Combine(Environment.CurrentDirectory, @".\wwwroot\");
 
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
                  .Enrich.FromLogContext()
                  .WriteTo.Console(theme: AnsiConsoleTheme.Literate, outputTemplate: logTemplate, restrictedToMinimumLevel: LogEventLevel.Verbose)
-                 .WriteTo.File(path: logFilePath, outputTemplate: logTemplate, rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Warning)
+                 .WriteTo.File(path: _logFilePath, outputTemplate: logTemplate, rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Warning)
                  .CreateLogger();
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -30,9 +31,9 @@ namespace MMBot
 
             try
             {
-                var hb = DiscordSocketHost.CreateDiscordSocketHost(args, dbFilePath);
-                using var bh = BlazorHost.CreateHostBuilder(args, dbFilePath, hb)?.Build();
-                var t = new Task[] { bh.RunAsync() };
+                using var hb = DiscordSocketHost.CreateDiscordSocketHost(args, _dbFilePath)?.Build();
+                using var bh = BlazorHost.CreateHostBuilder(args, _dbFilePath, _wwwRootPath)?.Build();
+                var t = new Task[] { bh.RunAsync(), hb.RunAsync() };
                 Task.WaitAll(t);
             }
             catch (Exception e)

@@ -9,12 +9,19 @@ namespace MMBot.Data
 {
     public class Context : DbContext
     {
-        //private readonly string _dbname = $"{Path.Combine(Directory.GetCurrentDirectory(), "MMBot.db")}";
-        //protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={_dbname}");
-
-        public Context(DbContextOptions<Context> options) : base(options)
+        private readonly string _dbname = $"{Path.Combine(Directory.GetCurrentDirectory(), "MMBot.db")}";
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            Database.Migrate();
+            if(!options.IsConfigured)
+                options.UseSqlite($"Data Source={_dbname}");
+        }
+
+        public Context() : base()
+        {
+        }
+
+        public Context(DbContextOptions opt) : base(opt)
+        {
         }
 
         public DbSet<Member> Member { get; set; }

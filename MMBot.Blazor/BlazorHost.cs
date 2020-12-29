@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -12,8 +9,8 @@ namespace MMBot.Blazor
 {
     public static class BlazorHost
     {
-        public static IHostBuilder CreateHostBuilder(string[] args, string dbFilePath, IHostBuilder builder = null) =>
-            (builder ?? Host.CreateDefaultBuilder(args))
+        public static IHostBuilder CreateHostBuilder(string[] args, string dbFilePath, string wwwRootPath) =>
+            (Host.CreateDefaultBuilder(args))
                 .ConfigureLogging(x => x.ClearProviders().AddSerilog(Log.Logger))
                 .ConfigureAppConfiguration(c => 
                 {
@@ -22,7 +19,8 @@ namespace MMBot.Blazor
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>()
+                              .UseContentRoot(wwwRootPath);
                 });
     }
 }

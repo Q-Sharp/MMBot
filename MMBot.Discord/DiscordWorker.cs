@@ -52,8 +52,8 @@ namespace MMBot.Discord
             catch (Exception e)
             {
                 _logger.LogError(e.Message, e, "Migration failed");
-                await ads.DeleteDb();
-                ads.Restart();
+                ads.DeleteDb();
+                await ads.Restart();
                 return;
             }
 

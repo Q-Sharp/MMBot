@@ -27,6 +27,7 @@ namespace MMBot.Discord.Services.CommandHandler
         
         private IGuildSettingsService _gs;
         private IDatabaseService _databaseService;
+        private IAdminService _adminService;
         private IGoogleFormsService _googleFormsSubmissionService;
         private InteractiveService _interactiveService;
         private ITimerService _timerService;
@@ -48,6 +49,7 @@ namespace MMBot.Discord.Services.CommandHandler
             _googleFormsSubmissionService = _services.GetService<IGoogleFormsService>();
             _interactiveService = _services.GetService<InteractiveService>();
             _timerService = _services.GetService<ITimerService>();
+            _adminService = _services.GetService<IAdminService>();
 
             _commands.CommandExecuted += CommandExecutedAsync;
             _commands.Log += LogAsync;
@@ -98,9 +100,15 @@ namespace MMBot.Discord.Services.CommandHandler
             // handle restart information
             var r = await _databaseService.ConsumeRestart();
             if (r is not null)
-                await _client.GetGuild(r.Item1)
-                    .GetTextChannel(r.Item2)
-                    .SendMessageAsync("Bot service has been restarted!");
+            {
+                var dest = _client.GetGuild(r.Guild).GetTextChannel(r.Channel);
+                
+                if(r.DBImport && await _adminService.FinishDataImport())
+                    await dest.SendMessageAsync("Database imported!");
+                else
+                    await dest.SendMessageAsync("Bot service has been restarted!");
+            }
+               
 
             // load channels for google forms scan
             await ReInitGoogleFormsAsync();

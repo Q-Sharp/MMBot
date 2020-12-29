@@ -10,6 +10,8 @@ namespace MMBot.Data.Entities
         public ulong Guild { get; set; }
         public ulong Channel { get; set; }
 
+        public bool DBImport { get; set; }
+
         public void Update(object restart)
         {
             if(restart is Restart r && Id == r.Id)

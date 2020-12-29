@@ -20,7 +20,7 @@ namespace MMBot.Data.Services.Interfaces
         Task<GuildSettings> LoadGuildSettingsAsync(ulong guildId);
 
         Task<Restart> AddRestart();
-        Task<Tuple<ulong, ulong>> ConsumeRestart();
+        Task<Restart> ConsumeRestart();
 
         Task<Channel> CreateChannelAsync(ulong guildId);
         Task<IList<Channel>> LoadChannelsAsync(ulong? guildId = null);
@@ -35,7 +35,7 @@ namespace MMBot.Data.Services.Interfaces
 
         Task SaveDataAsync();
         Task MigrateAsync();
-        Task<Context> DeleteDB();
+        void DeleteDB();
         Task CleanDB(IEnumerable<ulong> guildIds = null);
     }
 }
