@@ -20,7 +20,7 @@ namespace MMBot.Data
         {
         }
 
-        public Context(DbContextOptions opt) : base(opt)
+        public Context(DbContextOptions opt = null) : base(opt)
         {
         }
 
