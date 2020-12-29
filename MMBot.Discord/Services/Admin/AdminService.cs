@@ -72,14 +72,10 @@ namespace MMBot.Discord.Services
 
         public async Task<Context> DeleteDb() => await _databaseService.DeleteDB();
 
-        public Task Restart()
+        public void Restart()
         {
             Process.Start(AppDomain.CurrentDomain.FriendlyName);
-            return Task.Run(async () => 
-            {
-                await Task.Delay(100);
-                Environment.Exit(0);
-            });
+            Environment.Exit(0);
         }
     }
 }

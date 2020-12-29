@@ -53,7 +53,7 @@ namespace MMBot.Discord
             {
                 _logger.LogError(e.Message, e, "Migration failed");
                 await ads.DeleteDb();
-                await ads.Restart();
+                ads.Restart();
                 return;
             }
 

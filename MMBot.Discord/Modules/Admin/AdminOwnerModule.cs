@@ -116,7 +116,7 @@ namespace MMBot.Discord.Modules.Admin
             }
 
             await ReplyAsync($"Bot service is restarting...");
-            await _adminService.Restart();
+            _adminService.Restart();
             return FromSuccess();
         }
 

@@ -7,6 +7,6 @@ namespace MMBot.Discord.Services.Interfaces
     {
         Task Reorder(ulong guildId);
         Task<Context> DeleteDb();
-        Task Restart();
+        void Restart();
     }
 }
