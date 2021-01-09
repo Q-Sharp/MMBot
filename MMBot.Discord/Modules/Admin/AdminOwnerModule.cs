@@ -72,7 +72,7 @@ namespace MMBot.Discord.Modules.Admin
                 var zipByte = await zip.Content.ReadAsByteArrayAsync();
 
                 await File.WriteAllBytesAsync(_import, zipByte);
-                _adminService.DeleteDb();
+                _adminService.Truncate();
                 await ReplyAsync($"db is empty now.");
                 await _adminService.InitDataImport(Context.Guild.Id, Context.Channel.Id);
             }
@@ -91,12 +91,12 @@ namespace MMBot.Discord.Modules.Admin
             return FromSuccess();
         }
 
-        [Command("DeleteDB")]
+        [Command("TruncateDb")]
         [Summary("Deletes sqlite db file")]
         [RequireOwner]
-        public async Task<RuntimeResult> DeleteDb()
+        public async Task<RuntimeResult> TruncateDb()
         {
-            _adminService.DeleteDb();
+            _adminService.Truncate();
             await ReplyAsync($"db is empty now.");
             return FromSuccess();
         }

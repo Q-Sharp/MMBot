@@ -17,11 +17,5 @@
     <ProjectReference Include="..\MMBot.Data\MMBot.Data.csproj" />
     <ProjectReference Include="..\MMBot.Discord\MMBot.Discord.csproj" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <Content Include="..\MMBot.Blazor\bin\Release\net5.0\publish\wwwroot\wwwroot\**" Link="wwwroot\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
-    
-   
-  </ItemGroup>
 
 </Project>

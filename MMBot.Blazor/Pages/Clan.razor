@@ -1,18 +1,25 @@
 ﻿@page "/clan"
 
 @using MMBot.Data.Services.Interfaces
+@using System.Security.Principal
+@using MMBot.Blazor.Services
 @inject IDatabaseService DatabaseService
+@inject AccountService AccountService
+@inject AuthenticationStateProvider  AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 @inject IJSRuntime js
 
 <h1>Clans</h1>
 
-@if (clans == null)
+
+@if (_clans == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
+    <button @onclick="(() => CreateClan())">Create</button>
+
     <table class="table">
         <thead>
             <tr>
@@ -22,15 +29,15 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var clan in clans)
+            @foreach (var clan in _clans)
             {
-            <tr>
-                <td>@clan.Tag</td>
-                <td>@clan.Name</td>
-                <td>@clan.SortOrder</td>
-                <!--<td><a href="/EditAccount/@account.id" class="btn btn-info">Edit</a></td>-->
-                <td><a @onclick="(() => DeleteClan(clan.Id))" class="btn btn-danger">Delete</a></td>
-            </tr>
+                <tr>
+                    <td>@clan.Tag</td>
+                    <td>@clan.Name</td>
+                    <td>@clan.SortOrder</td>
+                    <!--<td><a href="/EditAccount/@account.id" class="btn btn-info">Edit</a></td>-->
+                    <td><a @onclick="(() => DeleteClan(clan.Id))" class="btn btn-danger">Delete</a></td>
+                </tr>
             }
         </tbody>
     </table>
@@ -41,11 +48,22 @@ else
 }
 
 @code {
-    private MMBot.Data.Entities.Clan[] clans;
+    private ulong GuildId { get; set; }
+    private MMBot.Data.Entities.Clan[] _clans;
+    private IIdentity _loggedUser;
 
     protected override async Task OnInitializedAsync()
     {
-        clans = (await DatabaseService.LoadClansAsync(1)).ToArray();
+        NavigationManager.NavigateTo("Account/GetGuildIds");
+
+
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _loggedUser = authState.User.Identity;
+
+        //var test = await AccountService.GetGuildIds(null);
+
+        _clans = (await DatabaseService.LoadClansAsync(1)).ToArray();
     }
 
     public async Task DeleteClan(int? id)
@@ -61,6 +79,18 @@ else
             {
                 NavigationManager.NavigateTo("/");
             }
+        }
+    }
+
+    public async Task CreateClan()
+    {
+        try
+        {
+            await DatabaseService.CreateClanAsync(1);
+        }
+        finally
+        {
+            NavigationManager.NavigateTo("/");
         }
     }
 }

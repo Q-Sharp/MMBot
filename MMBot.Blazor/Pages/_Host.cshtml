@@ -17,7 +17,7 @@
     <link href="MMBot.Blazor.styles.css" rel="stylesheet" />
 </head>
 <body>
-    <component type="typeof(App)" render-mode="ServerPrerendered" />
+    @(await Html.RenderComponentAsync<App>(RenderMode.Server))
 
     <div id="blazor-error-ui">
         <environment include="Staging,Production">

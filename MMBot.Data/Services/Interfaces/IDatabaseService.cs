@@ -35,7 +35,7 @@ namespace MMBot.Data.Services.Interfaces
 
         Task SaveDataAsync();
         Task MigrateAsync();
-        void DeleteDB();
+        void Truncate();
         Task CleanDB(IEnumerable<ulong> guildIds = null);
     }
 }

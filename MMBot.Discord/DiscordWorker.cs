@@ -52,7 +52,7 @@ namespace MMBot.Discord
             catch (Exception e)
             {
                 _logger.LogError(e.Message, e, "Migration failed");
-                ads.DeleteDb();
+                ads.Truncate();
                 await ads.Restart();
                 return;
             }
@@ -69,7 +69,7 @@ namespace MMBot.Discord
             //_config.GetProperty("DiscordToken");
             "DiscordToken";
 #endif
-
+            
             await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable(token));
             await client.StartAsync();
 

@@ -9,18 +9,19 @@ namespace MMBot.Data
 {
     public class Context : DbContext
     {
-        private readonly string _dbname = $"{Path.Combine(Directory.GetCurrentDirectory(), "MMBot.db")}";
+        public const string DbName = "MMBot.db";
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             if(!options.IsConfigured)
-                options.UseSqlite($"Data Source={_dbname}");
+                options.UseNpgsql($@"Server=127.0.0.1;Port=5433;Database=MMBotDB;Username=postgres;Password=P0stGresSQL2021");
         }
 
-        public Context() : base()
+        public Context()
         {
+
         }
 
-        public Context(DbContextOptions opt = null) : base(opt)
+        public Context(DbContextOptions<Context> options = null) : base(options)
         {
         }
 

@@ -64,8 +64,16 @@ namespace MMBot.Data.Services
         public void DeleteChannel(Channel c) => _context.Remove(c);
         public void DeleteChannel(int id) => DeleteChannel(_context.Channel.FirstOrDefault(c => c.Id == id));
 
-        public void DeleteDB()
-            => _context.Database.EnsureDeleted();
+        public void Truncate()
+        {
+            var lookup = typeof(DbSet<>);
+            var dbSets = typeof(DatabaseService).Assembly.GetTypes()
+                .Where(x => x.IsClass && !x.IsAbstract && x.IsInheritedFrom(lookup))
+                .ToList();
+
+            foreach(var dbSet in dbSets)
+                _context.Database.ExecuteSqlRaw($"TRUNCATE TABLE {dbSet.Name}");         
+        }
 
         public async Task CleanDB(IEnumerable<ulong> guildIds)
         {

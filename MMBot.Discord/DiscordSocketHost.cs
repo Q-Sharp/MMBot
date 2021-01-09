@@ -20,18 +20,21 @@ using System.IO;
 using Microsoft.EntityFrameworkCore;
 using MMBot.Data.Services;
 using MMBot.Data.Services.Interfaces;
+using System.Data.Common;
 
 namespace MMBot.Discord
 {
     public static class DiscordSocketHost
     {
-         public static IHostBuilder CreateDiscordSocketHost(string[] args, string dbFilePath) =>
+         public static IHostBuilder CreateDiscordSocketHost(string[] args) =>
            Host.CreateDefaultBuilder(args)
                 .ConfigureLogging(x => x.ClearProviders().AddSerilog(Log.Logger))
                 .UseSystemd()
                 .ConfigureAppConfiguration((hostContext, configBuilder) =>
                 {
                     configBuilder.AddEnvironmentVariables("MMBot_")
+                                 .AddJsonFile("appsettings.json", false, true)
+                                 .AddUserSecrets<DiscordWorker>()
                                  .AddCommandLine(args);        
                 })
                 .ConfigureServices((hostContext, services) =>
@@ -57,10 +60,13 @@ namespace MMBot.Discord
                         c.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");
                     });
 
+                    var connectionString = hostContext.Configuration.GetConnectionString("Context");
+
                     services
                         .AddHostedService<DiscordWorker>()
                         .AddSingleton<GuildSettingsService>()
-                        .AddDbContext<Context>(o => o.UseSqlite($"Data Source={dbFilePath}"))
+                        .AddDbContext<Context>(o => o.UseNpgsql(connectionString))
+                        //.AddDbContext<Context>(o => o.UseSqlite($"Data Source={dbFilePath}"))
                         .AddSingleton<IGuildSettingsService, GuildSettingsService>()
                         .AddSingleton(dsc)
                         .AddSingleton(cs)

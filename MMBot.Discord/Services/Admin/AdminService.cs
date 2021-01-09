@@ -104,8 +104,8 @@ namespace MMBot.Discord.Services
         public void SetGuild(ulong id) 
             => _guildId = id;
 
-        public void DeleteDb() 
-            => _databaseService.DeleteDB();
+        public void Truncate() 
+            => _databaseService.Truncate();
 
         public async Task Restart(bool saveRestart = false, ulong? guildId = null, ulong? channelId = null, bool isDataImport = false)
         {

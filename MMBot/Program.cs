@@ -15,8 +15,7 @@ namespace MMBot
         private const string logTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
 
         private static readonly string _logFilePath = Path.Combine(Environment.CurrentDirectory, "mmbot.log");
-        private static readonly string _dbFilePath = Path.Combine(Environment.CurrentDirectory, "mmbot.db");
-        private static readonly string _wwwRootPath = Path.Combine(Environment.CurrentDirectory, @".\wwwroot\");
+        private static readonly string _wwwRootPath = Path.Combine(Environment.CurrentDirectory, "wwwroot");
 
         public static void Main(string[] args)
         {
@@ -31,9 +30,9 @@ namespace MMBot
 
             try
             {
-                using var hb = DiscordSocketHost.CreateDiscordSocketHost(args, _dbFilePath)?.Build();
-                using var bh = BlazorHost.CreateHostBuilder(args, _dbFilePath, _wwwRootPath)?.Build();
-                var t = new Task[] { bh.RunAsync(), hb.RunAsync() };
+                using var hb = DiscordSocketHost.CreateDiscordSocketHost(args)?.Build();
+                //using var bh = BlazorHost.CreateHostBuilder(args)?.Build();
+                var t = new Task[] { /*bh.RunAsync(),*/ hb.RunAsync() };
                 Task.WaitAll(t);
             }
             catch (Exception e)
