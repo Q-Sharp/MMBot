@@ -67,12 +67,23 @@ namespace MMBot.Data.Services
         public void Truncate()
         {
             var lookup = typeof(DbSet<>);
-            var dbSets = typeof(DatabaseService).Assembly.GetTypes()
-                .Where(x => x.IsClass && !x.IsAbstract && x.IsInheritedFrom(lookup))
-                .ToList();
+            var dbSets = typeof(Context).GetProperties()
+                            .Where(x => x.PropertyType.IsGenericType && x.PropertyType.Name.Contains("DbSet"))
+                            .ToList();
 
             foreach(var dbSet in dbSets)
-                _context.Database.ExecuteSqlRaw($"TRUNCATE TABLE {dbSet.Name}");         
+            {
+                try
+                {
+                     _context.Database.ExecuteSqlRaw($"TRUNCATE TABLE public.\"{dbSet.Name.FirstCharToUpper()}\" CASCADE");
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+            
+            _context.ChangeTracker.DetectChanges();
         }
 
         public async Task CleanDB(IEnumerable<ulong> guildIds)

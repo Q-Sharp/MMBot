@@ -7,7 +7,7 @@
     <RootNamespace>MMBot.Discord</RootNamespace>
     <AssemblyName>MMBot.Discord</AssemblyName>
     <UserSecretsId>b64529cd-ec96-42d6-8eec-66a46688a614</UserSecretsId>
-    <StartupObject>MMBot.Discord.Program</StartupObject>
+    <StartupObject></StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

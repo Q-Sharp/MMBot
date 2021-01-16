@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
 using MMBot.Data;
 using MMBot.Data.Entities;
 using MMBot.Data.Services.Interfaces;
@@ -19,19 +21,21 @@ namespace MMBot.Discord.Services
         private readonly ICommandHandler _commandHandler;
         private readonly IDatabaseService _databaseService;
         private readonly IJsonService _jsonService;
+        private readonly IHostApplicationLifetime  _hostApplicationLifetime;
         private ulong _guildId;
 
         private readonly string _backupDir = Path.Combine(".", "backup");
         //private readonly string _export = "dataexport.zip";
         private readonly string _import = "dataimport.zip";
 
-        public AdminService(Context context, IGuildSettingsService settings, ICommandHandler commandHandler, IDatabaseService databaseService, IJsonService jsonService)
+        public AdminService(Context context, IGuildSettingsService settings, ICommandHandler commandHandler, IDatabaseService databaseService, IJsonService jsonService, IHostApplicationLifetime  hostApplicationLifetime)
         {
             _context = context;
             _settings = settings;
             _commandHandler = commandHandler;
             _databaseService = databaseService;
             _jsonService = jsonService;
+            _hostApplicationLifetime = hostApplicationLifetime;
         }
 
         public class JoinComparer : IComparer<int>
@@ -116,8 +120,7 @@ namespace MMBot.Discord.Services
                 await _databaseService?.SaveDataAsync();
             }
 
-            Process.Start(AppDomain.CurrentDomain.FriendlyName);
-            Environment.Exit(0);
+            _hostApplicationLifetime?.StopApplication();
         }
     }
 }
