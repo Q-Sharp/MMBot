@@ -74,11 +74,10 @@ namespace MMBot.Discord.Services
             await _context?.SaveChangesAsync();
         }
 
-        public async Task InitDataImport(ulong guildId, ulong channelId)
-            => await Restart(true, guildId, channelId, true);
-
-        public async Task<bool> FinishDataImport()
+        public async Task<bool> DataImport(byte[] zipBytes)
         {
+            await File.WriteAllBytesAsync(_import, zipBytes);
+
             var dict = await Task.Run(async () =>
             {
                 Directory.CreateDirectory(_backupDir);
@@ -107,14 +106,13 @@ namespace MMBot.Discord.Services
         public void Truncate() 
             => _databaseService.Truncate();
 
-        public async Task Restart(bool saveRestart = false, ulong? guildId = null, ulong? channelId = null, bool isDataImport = false)
+        public async Task Restart(bool saveRestart = false, ulong? guildId = null, ulong? channelId = null)
         {
             if (saveRestart && guildId.HasValue && channelId.HasValue)
             {
                 var r = await _databaseService?.AddRestart();
                 r.Guild = guildId.Value;
                 r.Channel = channelId.Value;
-                r.DBImport = isDataImport;
                 await _databaseService?.SaveDataAsync();
             }
 

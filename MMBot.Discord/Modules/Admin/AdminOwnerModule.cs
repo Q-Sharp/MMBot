@@ -17,7 +17,6 @@ namespace MMBot.Discord.Modules.Admin
     {
         private readonly string _backupDir = Path.Combine(".", "backup");
         private readonly string _export = "dataexport.zip";
-        private readonly string _import = "dataimport.zip";
 
         [Command("ExportDb")]
         [Summary("Exports db data as json files in zip archive")]
@@ -61,23 +60,26 @@ namespace MMBot.Discord.Modules.Admin
         [RequireOwner()]
         public async Task<RuntimeResult> ImportDb()
         {
-            await ReplyAsync("Starting db import this can take a while...");
-
             var csvFile = Context.Message.Attachments.FirstOrDefault();
             var myWebClient = _clientFactory.CreateClient();
 
             if (csvFile is not null)
             {
+                await ReplyAsync("Starting db import this can take a while...");
+
                 var zip = await myWebClient.GetAsync(csvFile.Url);
                 var zipByte = await zip.Content.ReadAsByteArrayAsync();
 
-                await File.WriteAllBytesAsync(_import, zipByte);
                 _adminService.Truncate();
                 await ReplyAsync($"db is empty now.");
-                await _adminService.InitDataImport(Context.Guild.Id, Context.Channel.Id);
+
+                await ReplyAsync("Importing data now....");
+                await _adminService.DataImport(zipByte);
+
+                return FromSuccess("Database import was successful.");
             }
 
-            return FromSuccess();
+            return FromErrorUnsuccessful("No attachment file found!");
         }
 
 
@@ -92,7 +94,7 @@ namespace MMBot.Discord.Modules.Admin
         }
 
         [Command("TruncateDb")]
-        [Summary("Deletes sqlite db file")]
+        [Summary("Clears db")]
         [RequireOwner]
         public async Task<RuntimeResult> TruncateDb()
         {
