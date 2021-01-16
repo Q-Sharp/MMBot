@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MMBot.Data.Entities;
 using MMBot.Data.Interfaces;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 namespace MMBot.Data
 {
@@ -38,9 +39,11 @@ namespace MMBot.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Channel>()
+                .UseXminAsConcurrencyToken()
                 .HasKey(c => c.Id);
 
             modelBuilder.Entity<Clan>()
+                .UseXminAsConcurrencyToken()
                 .HasKey(c => c.Id);
 
             modelBuilder.Entity<Clan>()
@@ -54,6 +57,7 @@ namespace MMBot.Data
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
              modelBuilder.Entity<Member>()
+                .UseXminAsConcurrencyToken()
                 .HasKey(c => c.Id);
 
             modelBuilder.Entity<Member>()
@@ -69,6 +73,7 @@ namespace MMBot.Data
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
             modelBuilder.Entity<MemberGroup>()
+                .UseXminAsConcurrencyToken()
                 .HasKey(c => c.Id);
 
             modelBuilder.Entity<MemberGroup>()
@@ -82,18 +87,23 @@ namespace MMBot.Data
                 .IsUnique();
 
             modelBuilder.Entity<GuildSettings>()
+                .UseXminAsConcurrencyToken()
                 .HasKey(c => c.Id);
 
             modelBuilder.Entity<MMTimer>()
+                .UseXminAsConcurrencyToken()
                 .HasKey(c => c.Id);
 
             modelBuilder.Entity<Restart>()
+                .UseXminAsConcurrencyToken()
                 .HasKey(c => c.Id);
 
             modelBuilder.Entity<Strike>()
+                .UseXminAsConcurrencyToken()
                 .HasKey(c => c.Id);
 
             modelBuilder.Entity<Vacation>()
+                .UseXminAsConcurrencyToken()
                 .HasKey(c => c.Id);
         }
 

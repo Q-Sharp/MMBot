@@ -34,10 +34,10 @@ namespace MMBot.Discord.Services.IE
             using var reader = new StreamReader(mem, Encoding.UTF8);
             using var csvReader = new CsvReader(reader, CultureInfo.CurrentCulture);
 
-            csvReader.Configuration.HeaderValidated = null;
-            csvReader.Configuration.MissingFieldFound = null;
-            csvReader.Configuration.BadDataFound = null;
-            csvReader.Configuration.Delimiter = ",";
+            //csvReader.Configuration.HeaderValidated = null;
+            //csvReader.Configuration.MissingFieldFound = null;
+            //csvReader.Configuration.BadDataFound = null;
+            //csvReader.Configuration.Delimiter = ",";
 
             using var dr = new CsvDataReader(csvReader);
             var dt = new DataTable();
@@ -199,7 +199,7 @@ namespace MMBot.Discord.Services.IE
             await using var writer = new StreamWriter(mem, Encoding.UTF8);
             await using var csvWriter = new CsvWriter(writer, CultureInfo.CurrentCulture);
 
-            csvWriter.Configuration.Delimiter = ",";
+            //csvWriter.Configuration.Delimiter = ",";
 
             var m = _context.Member.AsEnumerable().Where(x => x.GuildId == guildID).ToList();
             await csvWriter.WriteRecordsAsync(m.ToArray().AsEnumerable());
