@@ -103,13 +103,12 @@ namespace MMBot.Discord.Services.CommandHandler
             {
                 var dest = _client.GetGuild(r.Guild).GetTextChannel(r.Channel);
                 
-                if(r.DBImport && await _adminService.FinishDataImport())
+                if(r.DBImport)
                     await dest.SendMessageAsync("Database imported!");
                 else
                     await dest.SendMessageAsync("Bot service has been restarted!");
             }
                
-
             // load channels for google forms scan
             await ReInitGoogleFormsAsync();
 

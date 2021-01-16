@@ -6,8 +6,7 @@ namespace MMBot.Discord.Services.Interfaces
     {
         Task Reorder(ulong guildId);
         void Truncate();
-        Task Restart(bool saveRestart = false, ulong? guildId = null, ulong? channelId = null, bool isDataImport = false);
-        Task InitDataImport(ulong guildId, ulong channelId);
-        Task<bool> FinishDataImport();
+        Task Restart(bool saveRestart = false, ulong? guildId = null, ulong? channelId = null);
+        Task<bool> DataImport(byte[] zipBytes);
     }
 }
