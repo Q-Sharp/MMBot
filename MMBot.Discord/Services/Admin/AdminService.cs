@@ -2,28 +2,36 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using MMBot.Data;
 using MMBot.Data.Entities;
+using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Services.Interfaces;
 
 namespace MMBot.Discord.Services
 {
     public class AdminService : IAdminService
     {
-        private Context _context;
-        private IGuildSettingsService _settings;
-        private ICommandHandler _commandHandler;
-        private IDatabaseService _databaseService;
+        private readonly Context _context;
+        private readonly IGuildSettingsService _settings;
+        private readonly ICommandHandler _commandHandler;
+        private readonly IDatabaseService _databaseService;
+        private readonly IJsonService _jsonService;
         private ulong _guildId;
 
-        public AdminService(Context context, IGuildSettingsService settings, ICommandHandler commandHandler, IDatabaseService databaseService)
+        private readonly string _backupDir = Path.Combine(".", "backup");
+        //private readonly string _export = "dataexport.zip";
+        private readonly string _import = "dataimport.zip";
+
+        public AdminService(Context context, IGuildSettingsService settings, ICommandHandler commandHandler, IDatabaseService databaseService, IJsonService jsonService)
         {
             _context = context;
             _settings = settings;
             _commandHandler = commandHandler;
             _databaseService = databaseService;
+            _jsonService = jsonService;
         }
 
         public class JoinComparer : IComparer<int>
@@ -66,13 +74,50 @@ namespace MMBot.Discord.Services
             await _context?.SaveChangesAsync();
         }
 
+        public async Task InitDataImport(ulong guildId, ulong channelId)
+            => await Restart(true, guildId, channelId, true);
 
-        public void SetGuild(ulong id) => _guildId = id;
-
-        public async Task<Context> DeleteDb() => await _databaseService.DeleteDB();
-
-        public void Restart()
+        public async Task<bool> FinishDataImport()
         {
+            var dict = await Task.Run(async () =>
+            {
+                Directory.CreateDirectory(_backupDir);
+
+                ZipFile.ExtractToDirectory(_import, _backupDir);
+
+                var dict = new Dictionary<string, string>();
+
+                foreach (var entry in Directory.GetFiles(_backupDir))
+                    dict.Add(Path.GetFileNameWithoutExtension(entry), await File.ReadAllTextAsync(entry));
+
+                Directory.Delete(_backupDir, true);
+                return dict;
+            });
+
+            var result = await _jsonService.ImportJsonToDB(dict, _context);
+            File.Delete(_import);
+
+            return result;
+        }
+
+
+        public void SetGuild(ulong id) 
+            => _guildId = id;
+
+        public void Truncate() 
+            => _databaseService.Truncate();
+
+        public async Task Restart(bool saveRestart = false, ulong? guildId = null, ulong? channelId = null, bool isDataImport = false)
+        {
+            if (saveRestart && guildId.HasValue && channelId.HasValue)
+            {
+                var r = await _databaseService?.AddRestart();
+                r.Guild = guildId.Value;
+                r.Channel = channelId.Value;
+                r.DBImport = isDataImport;
+                await _databaseService?.SaveDataAsync();
+            }
+
             Process.Start(AppDomain.CurrentDomain.FriendlyName);
             Environment.Exit(0);
         }

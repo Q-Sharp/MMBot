@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Sinks.SystemConsole.Themes;
 using System;
 using MMBot.Data;
 using MMBot.Discord.Services;
@@ -18,8 +17,10 @@ using MMBot.Discord.Services.Interfaces;
 using MMBot.Discord.Services.MemberSort;
 using MMBot.Discord.Services.Timer;
 using System.IO;
-using Serilog.Events;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using MMBot.Data.Services;
+using MMBot.Data.Services.Interfaces;
+using System.Data.Common;
 
 namespace MMBot.Discord
 {
@@ -31,7 +32,10 @@ namespace MMBot.Discord
                 .UseSystemd()
                 .ConfigureAppConfiguration((hostContext, configBuilder) =>
                 {
-                    configBuilder.AddEnvironmentVariables("MMBot_");          
+                    configBuilder.AddEnvironmentVariables("MMBot_")
+                                 .AddJsonFile("appsettings.json", false, true)
+                                 .AddUserSecrets<DiscordWorker>()
+                                 .AddCommandLine(args);        
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
@@ -56,10 +60,13 @@ namespace MMBot.Discord
                         c.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");
                     });
 
+                    var connectionString = hostContext.Configuration.GetConnectionString("Context");
+
                     services
                         .AddHostedService<DiscordWorker>()
                         .AddSingleton<GuildSettingsService>()
-                        .AddDbContext<Context>()
+                        .AddDbContext<Context>(o => o.UseNpgsql(connectionString))
+                        //.AddDbContext<Context>(o => o.UseSqlite($"Data Source={dbFilePath}"))
                         .AddSingleton<IGuildSettingsService, GuildSettingsService>()
                         .AddSingleton(dsc)
                         .AddSingleton(cs)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Services;
 using MMBot.Discord.Services.Interfaces;
 using MMBot.Discord.Services.Raid;

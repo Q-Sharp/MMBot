@@ -10,6 +10,6 @@ namespace MMBot.Discord.Modules.Interfaces
         Task<RuntimeResult> ReorderJoin();
         Task<RuntimeResult> Restart(bool saveRestart = true);
         Task<RuntimeResult> FixRoles();
-        Task<RuntimeResult> DeleteDb();
+        Task<RuntimeResult> TruncateDb();
     }
 }

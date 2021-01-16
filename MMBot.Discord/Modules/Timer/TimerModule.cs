@@ -7,6 +7,7 @@ using MMBot.Helpers;
 using MMBot.Discord.Modules.Interfaces;
 using MMBot.Discord.Services.Interfaces;
 using Discord.WebSocket;
+using MMBot.Data.Services.Interfaces;
 
 namespace MMBot.Discord.Modules.Timer
 {

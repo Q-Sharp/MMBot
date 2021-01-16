@@ -9,6 +9,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MMBot.Discord.Services.Interfaces;
+using MMBot.Data.Services.Interfaces;
 
 namespace MMBot.Discord
 {
@@ -51,8 +52,8 @@ namespace MMBot.Discord
             catch (Exception e)
             {
                 _logger.LogError(e.Message, e, "Migration failed");
-                await ads.DeleteDb();
-                ads.Restart();
+                ads.Truncate();
+                await ads.Restart();
                 return;
             }
 
@@ -68,7 +69,7 @@ namespace MMBot.Discord
             //_config.GetProperty("DiscordToken");
             "DiscordToken";
 #endif
-
+            
             await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable(token));
             await client.StartAsync();
 
