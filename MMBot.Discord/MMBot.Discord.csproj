@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <PublishReadyToRun>true</PublishReadyToRun>
     <RootNamespace>MMBot.Discord</RootNamespace>
     <AssemblyName>MMBot.Discord</AssemblyName>
     <UserSecretsId>b64529cd-ec96-42d6-8eec-66a46688a614</UserSecretsId>
+    <StartupObject>MMBot.Discord.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

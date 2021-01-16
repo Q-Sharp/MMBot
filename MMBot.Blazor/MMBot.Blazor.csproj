@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <UserSecretsId>96119697-5939-4efb-bb02-96728fb50f9a</UserSecretsId>
-    <StartupObject>MMBot.Blazor.BlazorHost</StartupObject>
+    <StartupObject>MMBot.Blazor.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

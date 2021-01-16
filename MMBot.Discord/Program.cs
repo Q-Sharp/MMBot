@@ -5,17 +5,14 @@ using System;
 using System.IO;
 using Serilog.Events;
 using System.Threading.Tasks;
-using MMBot.Discord;
-using MMBot.Blazor;
 
-namespace MMBot
+namespace MMBot.Discord
 {
     public class Program
     {
         private const string logTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
 
         private static readonly string _logFilePath = Path.Combine(Environment.CurrentDirectory, "mmbot.log");
-        private static readonly string _wwwRootPath = Path.Combine(Environment.CurrentDirectory, "wwwroot");
 
         public static void Main(string[] args)
         {
@@ -31,9 +28,8 @@ namespace MMBot
             try
             {
                 using var hb = DiscordSocketHost.CreateDiscordSocketHost(args)?.Build();
-                //using var bh = BlazorHost.CreateHostBuilder(args)?.Build();
-                var t = new Task[] { /*bh.RunAsync(),*/ hb.RunAsync() };
-                Task.WaitAll(t);
+                var t = hb.RunAsync();
+                t.Wait();
             }
             catch (Exception e)
             { 
