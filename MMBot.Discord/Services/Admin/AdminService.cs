@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using MMBot.Data;
@@ -25,7 +22,6 @@ namespace MMBot.Discord.Services
         private ulong _guildId;
 
         private readonly string _backupDir = Path.Combine(".", "backup");
-        //private readonly string _export = "dataexport.zip";
         private readonly string _import = "dataimport.zip";
 
         public AdminService(Context context, IGuildSettingsService settings, ICommandHandler commandHandler, IDatabaseService databaseService, IJsonService jsonService, IHostApplicationLifetime  hostApplicationLifetime)

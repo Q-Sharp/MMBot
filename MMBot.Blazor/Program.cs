@@ -12,7 +12,6 @@ namespace MMBot.Blazor
         private const string logTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
 
         private static readonly string _logFilePath = Path.Combine(Environment.CurrentDirectory, "mmbot.log");
-        private static readonly string _wwwRootPath = Path.Combine(Environment.CurrentDirectory, "wwwroot");
 
         public static void Main(string[] args)
         {

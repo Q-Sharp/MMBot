@@ -10,7 +10,6 @@ namespace MMBot.Data
 {
     public class Context : DbContext
     {
-        public const string DbName = "MMBot.db";
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             if(!options.IsConfigured)
@@ -38,6 +37,8 @@ namespace MMBot.Data
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.UseIdentityAlwaysColumns();
+
             modelBuilder.Entity<Channel>()
                 .UseXminAsConcurrencyToken()
                 .HasKey(c => c.Id);

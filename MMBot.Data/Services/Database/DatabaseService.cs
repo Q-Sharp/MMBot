@@ -17,7 +17,7 @@ namespace MMBot.Data.Services
         public DatabaseService(Context context) => _context = context;
         public async Task MigrateAsync() => await _context?.MigrateAsync();
         public async Task SaveDataAsync() => await _context?.SaveChangesAsync(new CancellationToken());
-        public async Task<GuildSettings> LoadGuildSettingsAsync(ulong guildId) => await _context.GuildSettings.Where(x => x.GuildId == guildId).FirstOrDefaultAsync();
+        public async Task<GuildSettings> LoadGuildSettingsAsync(ulong guildId) => await _context.GuildSettings.FirstOrDefaultAsync(x => x.GuildId == guildId);
 
         
         public async Task<Clan> CreateClanAsync(ulong guildId) => (await _context.AddAsync(new Clan{ GuildId = guildId }, new CancellationToken())).Entity;
@@ -42,7 +42,7 @@ namespace MMBot.Data.Services
         {
             try
             {
-                var r = await _context.Restart.FirstOrDefaultAsync();
+                var r = await _context.Restart.OrderBy(r => r.Id).FirstOrDefaultAsync();
 
                 if(r != null)
                 {

@@ -60,7 +60,7 @@ namespace MMBot.Discord.Modules.Admin
         [RequireOwner()]
         public async Task<RuntimeResult> ImportDb()
         {
-            var csvFile = Context.Message.Attachments.FirstOrDefault();
+            var csvFile = Context.Message.Attachments.OrderBy(c => c.Id).FirstOrDefault();
             var myWebClient = _clientFactory.CreateClient();
 
             if (csvFile is not null)
@@ -120,7 +120,7 @@ namespace MMBot.Discord.Modules.Admin
                 dbChannel.AnswerTextChannelId = qChannel.Id;
                 await _databaseService.SaveDataAsync();
 
-                 return FromSuccess($"Successfully added {channel.Name} to UrlScanList and {qChannel.Name} for any questions!");
+                return FromSuccess($"Successfully added {channel.Name} to UrlScanList and {qChannel.Name} for any questions!");
             }
 
             return FromErrorUnsuccessful($"{channel.Name} is already on the UrlScanList!");

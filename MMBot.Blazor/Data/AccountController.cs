@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -40,8 +37,8 @@ namespace MMBot.Blazor.Data
         public async Task<IActionResult> GetGuildIds(string returnUrl = "/")
         {
             var client = _clientFactory.CreateClient();
-            var token1 = await _authenticationService.GetTokenAsync(HttpContext, "Discord");
-            var token2 = await _authenticationService.GetTokenAsync(HttpContext, "Bearer");
+            //var token1 = await _authenticationService.GetTokenAsync(HttpContext, "Discord");
+            //var token2 = await _authenticationService.GetTokenAsync(HttpContext, "Bearer");
 
 
             //var discord = _discordSocketClient.LoginAsync(Discord.TokenType.Bearer, )

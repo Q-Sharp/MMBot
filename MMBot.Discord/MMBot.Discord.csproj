@@ -30,7 +30,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="20.0.0-beta0021" />
+    <PackageReference Include="CsvHelper" Version="21.0.3" />
     <PackageReference Include="Discord.Addons.Interactive" Version="2.0.0" />
     <PackageReference Include="Discord.Net" Version="2.3.0-dev-20201201.2" />
     <PackageReference Include="Discord.Net.Analyzers" Version="2.3.0-dev-20201201.2" />

@@ -139,7 +139,10 @@ namespace MMBot.Discord.Services.CommandHandler
             var pos = 0;
 
             if (msg.HasStringPrefix(settings.Prefix, ref pos) || msg.HasMentionPrefix(_client.CurrentUser, ref pos) || msg.Content.ToLower().StartsWith(settings.Prefix.ToLower()))
+            {
                 await _commands.ExecuteAsync(context, pos, _services);
+                _ = Task.Delay(1000).ContinueWith(c => arg?.DeleteAsync(new RequestOptions { AuditLogReason = "Autoremoved" }));
+            }
         }
 
         public async Task Client_Disconnected(Exception arg)
