@@ -26,10 +26,7 @@ namespace MMBot.Discord.Services.CommandHandler
             });
         }
 
-        private Task HandleYoutubeStream(ulong guildId, SocketMessage arg, ISocketMessageChannel item2)
-        {
-            throw new NotImplementedException();
-        }
+        private Task HandleYoutubeStream(ulong guildId, SocketMessage arg, ISocketMessageChannel item2) => throw new NotImplementedException();
 
         private async Task ReInitGoogleFormsAsync()
         {
@@ -136,6 +133,27 @@ namespace MMBot.Discord.Services.CommandHandler
                     await Task.Delay(TimeSpan.FromSeconds(random.Next(10, 30)));
                 }
             }   
+        }
+
+        public async Task FillForm(string url, string[] playerTags, ISocketMessageChannel questionsChannel)
+        {
+            var gfa = await _googleFormsSubmissionService.LoadAsync(url);
+                
+            if(gfa is null)
+                return;
+
+            await gfa.AnswerQuestionsAuto();
+
+            foreach(var tag in playerTags.Shuffle())
+            {
+                await gfa.AddPlayerTagToAnswers(tag);
+                var success = await _googleFormsSubmissionService.SubmitToGoogleFormAsync(gfa);
+                if(success)
+                    await questionsChannel.SendMessageAsync($"{tag} was successfully added in {gfa.Title}");
+            
+                var random = new Random((int)DateTime.UtcNow.Ticks);
+                await Task.Delay(TimeSpan.FromSeconds(random.Next(2, 5)));
+            }
         }
 
         public async Task AddChannelToGoogleFormsWatchList(IGuildChannel channel, IGuildChannel questionsChannel)

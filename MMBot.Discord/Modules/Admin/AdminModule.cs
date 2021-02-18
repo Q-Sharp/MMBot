@@ -197,5 +197,28 @@ namespace MMBot.Discord.Modules.Admin
             await ReplyAsync(r);
             return FromSuccess();
         }
+
+        [Command("FillForm")]
+        [Summary("Fills the form from the link with playertags")]
+        [RequireUserPermission(ChannelPermission.ManageRoles)]
+        public async Task<RuntimeResult> FillForm(string url)
+        {
+            try
+            {
+                var pt = (await _databaseService.LoadMembersAsync(Context.Guild.Id))
+                                                .Where(x => x.AutoSignUpForFightNight && !string.IsNullOrWhiteSpace(x.PlayerTag))
+                                                .Select(x => x.PlayerTag)
+                                                .ToArray();
+
+                await _commandHandler?.FillForm(url, pt, Context.Channel);
+                return FromSuccess();
+            }
+            catch
+            {
+                // ignore
+            }
+
+            return FromError(CommandError.Unsuccessful, "Something went wrong");
+        }
     }
 }
