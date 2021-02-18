@@ -16,11 +16,9 @@ using MMBot.Discord.Services.IE;
 using MMBot.Discord.Services.Interfaces;
 using MMBot.Discord.Services.MemberSort;
 using MMBot.Discord.Services.Timer;
-using System.IO;
 using Microsoft.EntityFrameworkCore;
 using MMBot.Data.Services;
 using MMBot.Data.Services.Interfaces;
-using System.Data.Common;
 
 namespace MMBot.Discord
 {

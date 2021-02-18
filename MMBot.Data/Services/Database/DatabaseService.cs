@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using MMBot.Data.Entities;
 using MMBot.Data.Helpers;
 using MMBot.Data.Services.Interfaces;
+using static MMBot.Data.Helpers.EFCoreHelpers;
 
 namespace MMBot.Data.Services
 {
@@ -17,27 +18,27 @@ namespace MMBot.Data.Services
         public DatabaseService(Context context) => _context = context;
         public async Task MigrateAsync() => await _context?.MigrateAsync();
         public async Task SaveDataAsync() => await _context?.SaveChangesAsync(new CancellationToken());
-        public async Task<GuildSettings> LoadGuildSettingsAsync(ulong guildId) => await _context.GuildSettings.AsAsyncEnumerable().FirstOrDefaultAsync(x => x.GuildId == guildId);
+        public async Task<GuildSettings> LoadGuildSettingsAsync(ulong guildId) => await _context.GuildSettings.Where(x => x.GuildId == guildId).FirstOrDefaultAsync();
 
-        
-        public async Task<Clan> CreateClanAsync(ulong guildId) => (await _context.AddAsync(new Clan{ GuildId = guildId }, new CancellationToken())).Entity;
-        public async Task<IList<Clan>> LoadClansAsync(ulong guildId) => await _context.Clan.AsAsyncEnumerable().Where(x => x.GuildId == guildId).ToListAsync();
+
+        public Clan CreateClan(ulong guildId) => _context.Add(new Clan { GuildId = guildId }).Entity;
+        public async Task<IList<Clan>> LoadClansAsync(ulong guildId) => await _context.Clan.Where(x => x.GuildId == guildId).ToListAsync();
         public void DeleteClan(Clan c) => _context.Remove(c);
         public void DeleteClan(int id) => DeleteClan(_context.Clan.FirstOrDefault(c => c.Id == id));
 
-        public async Task<Member> CreateMemberAsync(ulong guildId) => (await _context.AddAsync(new Member { GuildId = guildId }, new CancellationToken())).Entity;
-        public async Task<IList<Member>> LoadMembersAsync(ulong guildId) => await _context.Member.AsAsyncEnumerable().Where(x => x.GuildId == guildId).ToListAsync();
+        public Member CreateMember(ulong guildId) => _context.Add(new Member { GuildId = guildId }).Entity;
+        public async Task<IList<Member>> LoadMembersAsync(ulong guildId) => await _context.Member.Where(x => x.GuildId == guildId).ToListAsync();
         public void DeleteMember(Member m) => _context.Remove(m);
         public void DeleteMember(int id) => DeleteMember(_context.Member.FirstOrDefault(c => c.Id == id));
 
-        public async Task<MMTimer> CreateTimerAsync(ulong guildId) => (await _context.AddAsync(new MMTimer { GuildId = guildId }, new CancellationToken())).Entity;
-        public async Task<IList<MMTimer>> LoadTimerAsync(ulong? guildId = null) => await _context.Timer.AsAsyncEnumerable().Where(x => guildId == null || x.GuildId == guildId).ToListAsync();
-        public async Task<MMTimer> GetTimerAsync(string name, ulong guildId) => await _context.Timer.AsAsyncEnumerable().Where(x => x.GuildId == guildId).FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower());
+        public MMTimer CreateTimer(ulong guildId) => _context.Add(new MMTimer { GuildId = guildId }).Entity;
+        public async Task<IList<MMTimer>> LoadTimerAsync(ulong? guildId = null) => await _context.Timer.Where(x => guildId == null || x.GuildId == guildId).ToListAsync();
+        public async Task<MMTimer> GetTimerAsync(string name, ulong guildId) => await _context.Timer.Where(x => x.GuildId == guildId).FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower());
         public void DeleteTimer(MMTimer t) => _context.Remove(t);
         public void DeleteTimer(int id) => DeleteTimer(_context.Timer.FirstOrDefault(c => c.Id == id));
         
 
-        public async Task<Restart> AddRestart() => (await _context.AddAsync(new Restart(), new CancellationToken())).Entity;
+        public Restart AddRestart() => _context.Add(new Restart()).Entity;
         public async Task<Restart> ConsumeRestart()
         {
             try
@@ -59,7 +60,7 @@ namespace MMBot.Data.Services
             }
         }
 
-        public async Task<Channel> CreateChannelAsync(ulong guildId) => (await _context.AddAsync(new Channel(), new CancellationToken())).Entity;
+        public Channel CreateChannel(ulong guildId) => _context.Add(new Channel()).Entity;
         public async Task<IList<Channel>> LoadChannelsAsync(ulong? guildId = null) => await _context.Channel.AsAsyncEnumerable().Where(x => guildId == null || x.GuildId == guildId).ToListAsync();
         public void DeleteChannel(Channel c) => _context.Remove(c);
         public void DeleteChannel(int id) => DeleteChannel(_context.Channel.FirstOrDefault(c => c.Id == id));

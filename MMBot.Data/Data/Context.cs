@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MMBot.Data.Entities;
-using MMBot.Data.Interfaces;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 namespace MMBot.Data
 {
@@ -18,7 +14,6 @@ namespace MMBot.Data
 
         public Context()
         {
-
         }
 
         public Context(DbContextOptions<Context> options = null) : base(options)
@@ -37,7 +32,7 @@ namespace MMBot.Data
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.UseIdentityAlwaysColumns();
+            modelBuilder.UseIdentityByDefaultColumns();
 
             modelBuilder.Entity<Channel>()
                 .UseXminAsConcurrencyToken()

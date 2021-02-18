@@ -114,7 +114,7 @@ namespace MMBot.Discord.Modules.Admin
 
             if(!ch.Any(c => c.GuildId == channel.GuildId && c.TextChannelId == channel.Id))
             {
-                var dbChannel = await _databaseService.CreateChannelAsync(Context.Guild.Id);
+                var dbChannel = _databaseService.CreateChannel(Context.Guild.Id);
                 dbChannel.GuildId = channel.GuildId;
                 dbChannel.TextChannelId = channel.Id;
                 dbChannel.AnswerTextChannelId = qChannel.Id;

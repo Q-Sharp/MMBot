@@ -117,7 +117,7 @@ namespace MMBot.Discord.Modules.Clan
 
             try
             {
-                c = await _databaseService.CreateClanAsync(Context.Guild.Id);
+                c = _databaseService.CreateClan(Context.Guild.Id);
                 c.Tag = tag;
                 c.Name = name;
                 c.SortOrder = gs.Any() ? gs.Max(y => y.SortOrder) + 1 : 1;

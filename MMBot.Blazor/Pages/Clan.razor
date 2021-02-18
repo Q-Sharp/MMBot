@@ -81,11 +81,11 @@ else
         }
     }
 
-    public async Task CreateClan()
+    public void CreateClan()
     {
         try
         {
-            await DatabaseService.CreateClanAsync(1);
+            DatabaseService.CreateClan(1);
         }
         finally
         {

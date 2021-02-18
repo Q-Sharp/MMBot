@@ -110,7 +110,7 @@ namespace MMBot.Discord.Services
         {
             if (saveRestart && guildId.HasValue && channelId.HasValue)
             {
-                var r = await _databaseService?.AddRestart();
+                var r = _databaseService?.AddRestart();
                 r.Guild = guildId.Value;
                 r.Channel = channelId.Value;
                 await _databaseService?.SaveDataAsync();

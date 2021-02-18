@@ -52,7 +52,7 @@ namespace MMBot.Discord.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task<RuntimeResult> Create([Remainder] string name)
         {
-            var m = await _databaseService.CreateMemberAsync(Context.Guild.Id);
+            var m = _databaseService.CreateMember(Context.Guild.Id);
             m.Name = name;
             m.IsActive = true;
             await _databaseService.SaveDataAsync();

@@ -37,7 +37,7 @@ namespace MMBot.Discord.Modules.Timer
                 return FromError(CommandError.Unsuccessful, es);
             }
 
-            var t = await _databaseService.CreateTimerAsync(Context.Guild.Id);
+            var t = _databaseService.CreateTimer(Context.Guild.Id);
             if(t is not null)
             {
                 t.Name = name;
