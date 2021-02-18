@@ -1,11 +1,12 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using Discord.OAuth2;
 using Discord.WebSocket;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MMBot.Blazor.Helpers;
 using MMBot.Blazor.Services;
 using MMBot.Data;
 using MMBot.Data.Services;
@@ -27,16 +29,8 @@ namespace MMBot.Blazor
     {
         private const string _logTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
 
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-            //Log.Logger = new LoggerConfiguration()
-            //     .Enrich.FromLogContext()
-            //     .WriteTo.Console(theme: AnsiConsoleTheme.Literate, outputTemplate: _logTemplate, restrictedToMinimumLevel: LogEventLevel.Verbose)
-            //     .WriteTo.File(path: Configuration.GetValue<string>("logpath"), outputTemplate: _logTemplate, rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Warning)
-            //     .CreateLogger();
-        }
-
+        public Startup(IConfiguration configuration) 
+            => Configuration = configuration;
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -48,8 +42,10 @@ namespace MMBot.Blazor
             services.AddRazorPages();
             services.AddServerSideBlazor().AddHubOptions(c => c.EnableDetailedErrors = true);
 
-            //services.AddDbContext<Context>(o => o.UseSqlite($"Data Source={_fullDbPath}"))
-            //        .AddScoped<IDatabaseService, DatabaseService>();
+            var connectionString = Configuration.GetConnectionString("Context");
+
+            services.AddDbContext<Context>(o => o.UseNpgsql(connectionString))
+                    .AddScoped<IDatabaseService, DatabaseService>();
 
             var c = services.Count;
 
@@ -57,21 +53,31 @@ namespace MMBot.Blazor
             {
                 opt.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 opt.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = DiscordDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = "Discord";
             })
             .AddCookie()
             .AddDiscord(x =>
             {
-                x.AppId = Configuration["Discord:AppId"];
-                x.AppSecret = Configuration["Discord:AppSecret"];
+                x.ClientId = Configuration["Discord:AppId"];
+                x.ClientSecret = Configuration["Discord:AppSecret"];
+
+                x.Events = new OAuthEvents
+                {
+                    OnCreatingTicket = async context =>
+                    {
+                        var guildClaim = await DiscordHelpers.GetGuildClaims(context);
+                        context.Identity.AddClaim(guildClaim);
+                    }
+                };
 
                 x.SaveTokens = true;
-                x.Scope.Add("guilds");
                 x.Validate();
             });
 
-            services.AddTransient<AccountService>();
+            services.AddSession();
 
+            services.AddHttpContextAccessor();
+            services.AddScoped<IAccountService, AccountService>();
             services.AddHttpClient();
             services.AddTransient<DiscordSocketClient>();
         }
@@ -92,17 +98,19 @@ namespace MMBot.Blazor
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            
-            app.UseRouting()
+            app.UseHttpsRedirection()
+               .UseStaticFiles()
+               .UseRouting()
                .UseAuthentication()
+               .UseAuthorization()
+               .UseSession()
+               //.UseAccount()
                .UseEndpoints(endpoints =>
-                {
+               {
                     endpoints.MapBlazorHub();
                     endpoints.MapFallbackToPage("/_Host");
                     endpoints.MapDefaultControllerRoute();
-                });
+               });
         }
     }
 }

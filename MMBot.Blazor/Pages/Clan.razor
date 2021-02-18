@@ -4,7 +4,7 @@
 @using System.Security.Principal
 @using MMBot.Blazor.Services
 @inject IDatabaseService DatabaseService
-@inject AccountService AccountService
+@inject IAccountService AccountService
 @inject AuthenticationStateProvider  AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 @inject IJSRuntime js
@@ -56,14 +56,13 @@ else
     {
         NavigationManager.NavigateTo("Account/GetGuildIds");
 
-
-
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _loggedUser = authState.User.Identity;
 
-        //var test = await AccountService.GetGuildIds(null);
+        var user = AccountService.LoggedUser;
 
-        _clans = (await DatabaseService.LoadClansAsync(1)).ToArray();
+        if(user?.CurrentGuildIdUlong.HasValue ?? false)
+            _clans = (await DatabaseService.LoadClansAsync(user.CurrentGuildIdUlong.Value)).ToArray();
     }
 
     public async Task DeleteClan(int? id)

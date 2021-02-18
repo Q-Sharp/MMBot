@@ -32,23 +32,5 @@ namespace MMBot.Blazor.Data
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return LocalRedirect(returnUrl);
         }
-
-        [HttpGet]
-        public async Task<IActionResult> GetGuildIds(string returnUrl = "/")
-        {
-            var client = _clientFactory.CreateClient();
-            //var token1 = await _authenticationService.GetTokenAsync(HttpContext, "Discord");
-            //var token2 = await _authenticationService.GetTokenAsync(HttpContext, "Bearer");
-
-
-            //var discord = _discordSocketClient.LoginAsync(Discord.TokenType.Bearer, )
-            //authState.User.Identity.
-
-            var rq = new HttpRequestMessage(HttpMethod.Get, "https://discordapp.com/api/users/@me/guilds");
-            //rq.Headers.Add("Authentication", token);
-            var r = await client.SendAsync(rq);
-            return LocalRedirect(returnUrl);
-            //return await r.Content.ReadAsStringAsync();
-        }
     }
 }

@@ -32,16 +32,12 @@
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="21.0.3" />
     <PackageReference Include="Discord.Addons.Interactive" Version="2.0.0" />
-    <PackageReference Include="Discord.Net" Version="2.3.0-dev-20201201.2" />
-    <PackageReference Include="Discord.Net.Analyzers" Version="2.3.0-dev-20201201.2" />
-    <PackageReference Include="Discord.Net.Core" Version="2.3.0-dev-20201201.2" />
-    <PackageReference Include="Discord.Net.Webhook" Version="2.3.0-dev-20201201.2" />
-    <PackageReference Include="Discord.Net.WebSocket" Version="2.3.0-dev-20201201.2" />
-    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.49.0.2175" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.29" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.2">
+    <PackageReference Include="Discord.Net" Version="2.3.1-dev-20210210.1" />
+    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.50.0.2175" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.30" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -55,7 +51,7 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
-    <PackageReference Include="Serilog" Version="2.10.1-dev-01265" />
+    <PackageReference Include="Serilog" Version="2.10.1-dev-01285" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.2-dev-10284" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0-dev-00839" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0-dev-00909" />
