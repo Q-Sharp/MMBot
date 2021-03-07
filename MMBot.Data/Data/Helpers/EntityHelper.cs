@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +39,51 @@ namespace MMBot.Data.Helpers
                     found.Update(uwd);
                 else
                     await currentData.AddAsync(uwd);
+            }
+        }
+
+        public static IEnumerable<string> GetHeader<T>(this T e) => GetHeader<T>();
+        public static IEnumerable<string> GetHeader<T>() => typeof(T).GetProperties().Where(x => x.CustomAttributes.Any(x => x.AttributeType == typeof(DisplayAttribute))).Select(x => x.Name);
+        public static IEnumerable<string> GetValues<T>(this T e)
+        {
+            var p = typeof(T).GetProperties().Where(x => x.CustomAttributes.Any(x => x.AttributeType == typeof(DisplayAttribute)));
+            return p.Select(x => e.GetPropertyValue(x.Name) as string);
+        }
+
+        public static object GetPropertyValue(this object src, string propName)
+        {
+            try
+            {
+                if (src is null || propName is null)
+                    return default;
+
+                if (propName.Contains("."))
+                {
+                    var temp = propName.Split(new char[] { '.' }, 2);
+                    return GetPropertyValue(GetPropertyValue(src, temp[0]), temp[1]);
+                }
+                else
+                {
+                    var prop = src.GetType().GetProperty(propName);
+                    return prop?.GetValue(src, null);
+                }
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        public static TType TryCast<TType>(this object src)
+            where TType : class
+        {
+            try
+            {
+                return src as TType;
+            }
+            catch
+            {
+                return null;
             }
         }
     }

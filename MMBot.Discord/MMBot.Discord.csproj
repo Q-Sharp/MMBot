@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <PublishReadyToRun>true</PublishReadyToRun>
-    <RootNamespace>MMBot.Discord</RootNamespace>
+    <RootNamespace>MMBot</RootNamespace>
     <AssemblyName>MMBot.Discord</AssemblyName>
     <UserSecretsId>b64529cd-ec96-42d6-8eec-66a46688a614</UserSecretsId>
     <StartupObject></StartupObject>
@@ -30,11 +30,11 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="23.0.0" />
+    <PackageReference Include="CsvHelper" Version="26.0.1" />
     <PackageReference Include="Discord.Addons.Interactive" Version="2.0.0" />
     <PackageReference Include="Discord.Net" Version="2.3.1-dev-20210210.1" />
-    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.50.0.2175" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.30" />
+    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.50.0.2245" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.31" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="5.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.3" />
@@ -53,10 +53,10 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
-    <PackageReference Include="Serilog" Version="2.10.1-dev-01285" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.2-dev-10284" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0-dev-00839" />
-    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0-dev-00909" />
+    <PackageReference Include="Serilog" Version="2.10.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
     <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
   </ItemGroup>
   

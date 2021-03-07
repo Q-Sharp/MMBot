@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using MMBot.Data.Interfaces;
@@ -25,7 +26,7 @@ namespace MMBot.Data.Entities
         public ulong GuildId { get; set; }
 
         [JsonIgnore]
-        public virtual IList<Member> Member { get; set; } = new List<Member>();
+        public virtual ICollection<Member> Member { get; set; } = new Collection<Member>();
         public override string ToString() => $"[{Tag}]";
 
         public void Update(object clan)

@@ -1,4 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@inject IAccountService AccountService
+@inject NavigationManager NavigationManager
+@inject ProtectedSessionStorage ProtectedSessionStore
+
+@inherits LayoutComponentBase
 
 <div class="page">
     <div class="sidebar">
@@ -10,6 +14,15 @@
             <AuthorizeView>
                 <Authorized>
                     <a href="#">Hello, @context.User.Identity.Name!</a>
+                    <label class="align-baseline" for="guilds">Choose a guild:</label>
+
+                    <select @bind="SelectedGuild">
+                        @foreach (var guild in AccountService.LoggedUser.Guilds)
+                        {
+                            <option value="@guild.id">@guild.name</option>
+                        }
+                    </select>
+
                     <a href="Account/Logout">Log out</a>
                 </Authorized>
                 <NotAuthorized>
@@ -23,3 +36,24 @@
         </div>
     </div>
 </div>
+
+@code
+{
+    public string SelectedGuild { get; set; }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (SelectedGuild is null)
+            SelectedGuild = await AccountService.LoggedUser.GetCurrentGuildId();
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    public async void ChangeGuild(ChangeEventArgs e)
+    {
+        SelectedGuild = e.Value?.ToString();
+        await AccountService.LoggedUser.SetCurrentGuildId(SelectedGuild);
+        NavigationManager?.NavigateTo("", true);
+    }
+}

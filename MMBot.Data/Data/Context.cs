@@ -29,6 +29,8 @@ namespace MMBot.Data
         public DbSet<MemberGroup> MemberGroup { get; set; }
         public DbSet<MMTimer> Timer { get; set; }
         public DbSet<Strike> Strike { get; set; }
+        public DbSet<RaidBoss> BossRaid { get; set; }
+        public DbSet<RaidParticipation> BossRaider { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -101,6 +103,26 @@ namespace MMBot.Data
             modelBuilder.Entity<Vacation>()
                 .UseXminAsConcurrencyToken()
                 .HasKey(c => c.Id);
+
+             modelBuilder.Entity<RaidBoss>()
+                .UseXminAsConcurrencyToken()
+                .HasKey(c => c.Id);
+
+             modelBuilder.Entity<RaidBoss>()
+                .HasMany(m => m.RaidParticipation)
+                .WithOne(m => m.BossRaid)
+                .HasForeignKey(x => x.RaidParticipationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+             modelBuilder.Entity<RaidParticipation>()
+                .UseXminAsConcurrencyToken()
+                .HasKey(c => c.Id);
+
+            modelBuilder.Entity<Member>()
+                .HasMany(m => m.RaidParticipation)
+                .WithOne(m => m.Member)
+                .HasForeignKey(x => x.RaidParticipationId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
         }
 
         public async Task MigrateAsync() => await Database.MigrateAsync();

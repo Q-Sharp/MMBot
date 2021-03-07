@@ -5,7 +5,16 @@
     <OutputType>Exe</OutputType>
     <UserSecretsId>96119697-5939-4efb-bb02-96728fb50f9a</UserSecretsId>
     <StartupObject>MMBot.Blazor.Program</StartupObject>
+    <RootNamespace>MMBot.Blazor</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="*.log" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="ViewModels\DataViewModel.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AspNet.Security.OAuth.Discord" Version="5.0.1" />
@@ -24,16 +33,17 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="5.0.1" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="Serilog" Version="2.10.1-dev-01285" />
-    <PackageReference Include="Serilog.AspNetCore" Version="3.4.1-dev-00188" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="4.0.0" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.2-dev-10284" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0-dev-00839" />
-    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0-dev-00909" />
+    <PackageReference Include="Serilog" Version="2.10.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="4.0.0" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="4.1.2" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MMBot.Data\MMBot.Data.csproj" />
   </ItemGroup>
+  
 
 </Project>

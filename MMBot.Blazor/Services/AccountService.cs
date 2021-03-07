@@ -5,37 +5,33 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Discord;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Http;
 
 namespace MMBot.Blazor.Services
 {
     public class AccountService : IAccountService
     {
+        private readonly ProtectedSessionStorage _protectedSessionStorage;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
 
-        public AccountService(IHttpContextAccessor httpContextAccessor, AuthenticationStateProvider authenticationStateProvider)
+        public AccountService(IHttpContextAccessor httpContextAccessor, AuthenticationStateProvider authenticationStateProvider, ProtectedSessionStorage protectedSessionStorage, IDCUser user)
         {
             _httpContextAccessor = httpContextAccessor;
             _authenticationStateProvider = authenticationStateProvider;
-
+            _protectedSessionStorage = protectedSessionStorage;
+            LoggedUser = user;
             authenticationStateProvider.AuthenticationStateChanged += AuthenticationStateProvider_AuthenticationStateChanged;
 
             _ = SetLoggedUserAsync();
         }
 
-        private async void AuthenticationStateProvider_AuthenticationStateChanged(Task<AuthenticationState> task)
-        {
-            await SetLoggedUserAsync();
-        }
+        private async void AuthenticationStateProvider_AuthenticationStateChanged(Task<AuthenticationState> task) => await SetLoggedUserAsync();
 
-        //public DCUser LoggedUser => JsonSerializer.Deserialize<DCUser>(_httpContextAccessor.HttpContext?.Items["dcuser"] as string);
-
-        public DCUser LoggedUser { get; set; }
+        public IDCUser LoggedUser { get; set; }
         private async Task SetLoggedUserAsync()
         {
-            var dcuser = new DCUser();
-
             try
             {
                 var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
@@ -43,7 +39,7 @@ namespace MMBot.Blazor.Services
 
                 if (user.Identity.IsAuthenticated)
                 {
-                    dcuser.Name = user.Identity.Name;
+                    LoggedUser.Name = user.Identity.Name;
                     var ids =  user.Claims.FirstOrDefault(c => c.Type == "guilds")?.Value;
 
                     var o = new JsonSerializerOptions
@@ -55,21 +51,19 @@ namespace MMBot.Blazor.Services
 
                     var channel = JsonSerializer.Deserialize<IList<DCChannel>>(ids, o);
 
-                    dcuser.Guilds = channel.Where(x => x.owner ||
+                    LoggedUser.Guilds = channel.Where(x => x.owner ||
                                                        x.PermissionFlags.HasFlag(GuildPermission.Administrator) ||  
                                                        x.PermissionFlags.HasFlag(GuildPermission.ManageChannels) || 
                                                        x.PermissionFlags.HasFlag(GuildPermission.ManageGuild) ||
                                                        x.PermissionFlags.HasFlag(GuildPermission.ManageRoles)).ToList();
 
-                    dcuser.CurrentGuildId = dcuser.Guilds.FirstOrDefault().id; 
+                    await LoggedUser.SetCurrentGuildId(LoggedUser.Guilds.FirstOrDefault().id); 
                 }
             }
             catch
             {
 
             }
-            
-            LoggedUser = dcuser;
         }
     }
 }

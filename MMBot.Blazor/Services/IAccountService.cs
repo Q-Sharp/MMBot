@@ -2,6 +2,6 @@
 {
     public interface IAccountService
     {
-        DCUser LoggedUser { get; }
+        IDCUser LoggedUser { get; }
     }
 }

@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using MMBot.Data.Enums;
 using MMBot.Data.Interfaces;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace MMBot.Data.Entities
 {
@@ -53,7 +54,7 @@ namespace MMBot.Data.Entities
         public virtual Clan Clan { get; set; }
 
         [JsonIgnore]
-        public virtual IList<Vacation> Vacation { get; set; } = new List<Vacation>();
+        public virtual ICollection<Vacation> Vacation { get; set; } = new Collection<Vacation>();
 
         public DateTime? LastUpdated { get; set; }
 
@@ -88,7 +89,10 @@ namespace MMBot.Data.Entities
             => LocalTimeOffSet.HasValue ? DateTime.UtcNow + TimeSpan.FromHours(LocalTimeOffSet.Value) : null;
 
         [JsonIgnore]
-        public virtual IList<Strike> Strikes { get; set; } = new List<Strike>();
+        public virtual ICollection<Strike> Strikes { get; set; } = new Collection<Strike>();
+
+        [JsonIgnore]
+        public virtual ICollection<RaidParticipation> RaidParticipation { get; set; } = new Collection<RaidParticipation>();
 
         public override string ToString() => Clan?.Tag is not null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
 

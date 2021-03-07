@@ -8,9 +8,14 @@
 @using Microsoft.JSInterop
 @using MMBot.Blazor
 @using MMBot.Blazor.Shared
-@using MMBot.Data;
-@using MMBot.Data.Entities;
-@using MMBot.Data.Services;
-@using MMBot.Data.Services.Interfaces;
+@using MMBot.Data
+@using MMBot.Data.Entities
+@using MMBot.Data.Services
+@using MMBot.Data.Services.Interfaces
+@using MMBot.Blazor.Services
+@using static MMBot.Data.Helpers.EntityHelper
+@using MMBot.Blazor.ViewModels
+@using MMBot.Data.Interfaces
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 
 @attribute [Authorize]

@@ -54,95 +54,78 @@ namespace MMBot.Discord.Services.CommandHandler
                 return;
 
             var member = m.Where(z => z.AutoSignUpForFightNight && z.PlayerTag is not null).ToList();
-
-            GoogleFormsAnswers gfa = null;
-
-            foreach(var u in urls)
-            {
-                gfa = await _googleFormsSubmissionService.LoadAsync(u);
-                
-                if(gfa is null)
-                    continue;
             
-                await gfa.AddPlayerTagToAnswers(member.FirstOrDefault().PlayerTag);
-                await gfa.AnswerQuestionsAuto();
-
-                if(!gfa.AllFieldsAreFilledWithAnswers)
-                {
-                    try
-                    {
-                        var users = await questionsChannel.GetUsersAsync(CacheMode.AllowDownload).FlattenAsync();
-                        var mentionAll = string.Join(", ", users.Select(y => y.Mention));
-                        var msg = await questionsChannel.SendMessageAsync($"I have problems to auto fill of the latest form with the tile: {gfa.Title}." + Environment.NewLine + 
-                                                                          $"Wake up and help me out: {mentionAll}" + Environment.NewLine + 
-                                                                          $"What should we do now? (1 = answer, 2 = cancel)");
-
-                        var emojis = new IEmote[] 
-                        {
-                           new Emoji("1️⃣"),
-                           new Emoji("2️⃣")
-                        }
-                        .ToArray();
-
-                        var cancel = false;
-                        IUser qaU = null;
-                        await msg.AddReactionsAsync(emojis);
-                
-                        await AddToReactionList(guildId, msg, async (r, u) =>
-                        {
-                            cancel = r.Name == "2️⃣";
-                            qaU = u;
-                            await msg.DeleteAsync();
-                        }, 
-                        false);
-
-                        if(cancel)
-                            return;
-
-                        await questionsChannel.SendMessageAsync($"Questions for the form: {gfa.Title}");
-                        foreach(var q in gfa.OpenFields)
-                        {
-                            var qMsg = await questionsChannel.SendMessageAsync($"Question: {q.QuestionText}");
-                            var sC = new SocketCommandContext(_client, questionsChannel.GetCachedMessage(qMsg.Id) as SocketUserMessage);
-
-                            var response = await _interactiveService.NextMessageAsync(sC, new EnsureFromUserCriterion(qaU), timeout: TimeSpan.FromHours(2));
-                            if (response is not null)
-                            {
-                                await gfa.AnswerQuestionManual(q.AnswerSubmissionId, response.Content);
-                                await questionsChannel.SendMessageAsync($"Answer added: {response.Content}");
-                            }  
-                            else
-                                return;
-                        }
-                    }
-                    catch(Exception e)
-                    {
-                        // ignore
-                        _logger.LogError(e.Message, e);
-                    }
-                }
-
-                foreach(var me in member.Shuffle())
-                {
-                    await gfa.AddPlayerTagToAnswers(me.PlayerTag);
-                    var success = await _googleFormsSubmissionService.SubmitToGoogleFormAsync(gfa);
-                    if(success)
-                        await questionsChannel.SendMessageAsync($"{me} using {me.PlayerTag} has been successfully joined {gfa.Title}");
-
-                    var random = new Random((int)DateTime.UtcNow.Ticks);
-                    await Task.Delay(TimeSpan.FromSeconds(random.Next(10, 30)));
-                }
-            }   
+            foreach(var u in urls)
+                await FillForm(u, member.Select(x => x.PlayerTag).ToArray(), questionsChannel, guildId);   
         }
 
-        public async Task FillForm(string url, string[] playerTags, ISocketMessageChannel questionsChannel)
+        public async Task FillForm(string url, string[] playerTags, ISocketMessageChannel questionsChannel, ulong guildId)
         {
             var gfa = await _googleFormsSubmissionService.LoadAsync(url);
                 
             if(gfa is null)
+            {
+                await questionsChannel.SendMessageAsync($"Google forms parse error for {url}!");
                 return;
+            }
 
+            await gfa.AddPlayerTagToAnswers(playerTags.FirstOrDefault());
             await gfa.AnswerQuestionsAuto();
+
+            if(!gfa.AllFieldsAreFilledWithAnswers)
+            {
+                try
+                {
+                    var users = await questionsChannel.GetUsersAsync(CacheMode.AllowDownload).FlattenAsync();
+                    var mentionAll = string.Join(", ", users.Select(y => y.Mention));
+                    var msg = await questionsChannel.SendMessageAsync($"I have problems to auto fill of the latest form with the tile: {gfa.Title}." + Environment.NewLine + 
+                                                                      $"Wake up and help me out: {mentionAll}" + Environment.NewLine + 
+                                                                      $"What should we do now? (1 = answer, 2 = cancel)");
+
+                    var emojis = new IEmote[] 
+                    {
+                       new Emoji("1️⃣"),
+                       new Emoji("2️⃣")
+                    }
+                    .ToArray();
+
+                    var cancel = false;
+                    IUser qaU = null;
+                    await msg.AddReactionsAsync(emojis);
+            
+                    await AddToReactionList(guildId, msg, async (r, u) =>
+                    {
+                        cancel = r.Name == "2️⃣";
+                        qaU = u;
+                        await msg.DeleteAsync();
+                    }, 
+                    false);
+
+                    if(cancel)
+                        return;
+
+                    await questionsChannel.SendMessageAsync($"Questions for the form: {gfa.Title}");
+                    foreach(var q in gfa.OpenFields)
+                    {
+                        var qMsg = await questionsChannel.SendMessageAsync($"Question: {q.QuestionText}");
+                        var sC = new SocketCommandContext(_client, questionsChannel.GetCachedMessage(qMsg.Id) as SocketUserMessage);
+
+                        var response = await _interactiveService.NextMessageAsync(sC, new EnsureFromUserCriterion(qaU), timeout: TimeSpan.FromHours(2));
+                        if (response is not null)
+                        {
+                            await gfa.AnswerQuestionManual(q.AnswerSubmissionId, response.Content);
+                            await questionsChannel.SendMessageAsync($"Answer added: {response.Content}");
+                        }  
+                        else
+                            return;
+                    }
+                }
+                catch(Exception e)
+                {
+                    // ignore
+                    _logger.LogError(e.Message, e);
+                }
+            }
 
             foreach(var tag in playerTags.Shuffle())
             {

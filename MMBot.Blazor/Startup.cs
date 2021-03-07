@@ -16,9 +16,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MMBot.Blazor.Helpers;
 using MMBot.Blazor.Services;
+using MMBot.Blazor.ViewModels;
 using MMBot.Data;
+using MMBot.Data.Entities;
 using MMBot.Data.Services;
 using MMBot.Data.Services.Interfaces;
+using MMBot.Services.Database;
+using MMBot.Services.Interfaces;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
@@ -41,11 +45,13 @@ namespace MMBot.Blazor
 
             services.AddRazorPages();
             services.AddServerSideBlazor().AddHubOptions(c => c.EnableDetailedErrors = true);
+            //services.AddRouting();
 
             var connectionString = Configuration.GetConnectionString("Context");
 
             services.AddDbContext<Context>(o => o.UseNpgsql(connectionString))
-                    .AddScoped<IDatabaseService, DatabaseService>();
+                    .AddScoped<IDatabaseService, DatabaseService>()
+                    .AddScoped<IRepository<Clan>, DataRepository<Clan, Context>>();
 
             var c = services.Count;
 
@@ -77,9 +83,9 @@ namespace MMBot.Blazor
             services.AddSession();
 
             services.AddHttpContextAccessor();
-            services.AddScoped<IAccountService, AccountService>();
-            services.AddHttpClient();
-            services.AddTransient<DiscordSocketClient>();
+            services.AddScoped<IAccountService, AccountService>()
+                    .AddScoped<IClanViewModel, ClanViewModel>()
+                    .AddScoped<IDCUser, DCUser>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

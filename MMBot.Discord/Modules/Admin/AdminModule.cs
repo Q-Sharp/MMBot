@@ -210,7 +210,7 @@ namespace MMBot.Discord.Modules.Admin
                                                 .Select(x => x.PlayerTag)
                                                 .ToArray();
 
-                await _commandHandler?.FillForm(url, pt, Context.Channel);
+                await _commandHandler?.FillForm(url, pt, Context.Channel, Context.Guild.Id);
                 return FromSuccess();
             }
             catch

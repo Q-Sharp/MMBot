@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using MMBot.Data.Interfaces;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace MMBot.Data.Entities
 {
@@ -9,7 +10,7 @@ namespace MMBot.Data.Entities
         public int Id { get; set; }
 
         [JsonIgnore]
-        public virtual IList<Member> Members { get; set; } = new List<Member>();
+        public virtual ICollection<Member> Members { get; set; } = new Collection<Member>();
 
         public void Update(object memberGroup)
         {

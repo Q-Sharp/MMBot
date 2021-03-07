@@ -166,7 +166,7 @@ namespace MMBot.Helpers
                 message += ss.FirstOrDefault().header;
                 message += Environment.NewLine;
                 message += string.Join(Environment.NewLine, ss.Select(s => s.values));
-                message.TrimEnd(Environment.NewLine.ToCharArray());
+                message = message.TrimEnd(Environment.NewLine.ToCharArray());
 
                 message += "```";
                 return message; 
