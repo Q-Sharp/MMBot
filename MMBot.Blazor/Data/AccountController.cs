@@ -10,15 +10,9 @@ namespace MMBot.Blazor.Data
     [Route("[controller]/[action]")] // Microsoft.AspNetCore.Mvc.Route
     public class AccountController : ControllerBase
     {
-        private readonly IDataProtectionProvider _provider;
-        private readonly IHttpClientFactory _clientFactory;
-        private readonly IAuthenticationService _authenticationService;
-
-        public AccountController(IDataProtectionProvider provider, IHttpClientFactory clientFactory, IAuthenticationService authenticationService)
+        public AccountController()
         {
-            _provider = provider;
-            _clientFactory = clientFactory;
-            _authenticationService = authenticationService;
+
         }
 
         [HttpGet]

@@ -14,7 +14,7 @@
             <AuthorizeView>
                 <Authorized>
                     <a href="#">Hello, @context.User.Identity.Name!</a>
-                    <label class="align-baseline" for="guilds">Choose a guild:</label>
+                    <label for="guilds">Choose a guild:</label>
 
                     <select @bind="SelectedGuild">
                         @foreach (var guild in AccountService.LoggedUser.Guilds)
@@ -39,7 +39,20 @@
 
 @code
 {
-    public string SelectedGuild { get; set; }
+
+    private string _selectedGuild;
+    public string SelectedGuild
+    {
+        get => _selectedGuild;
+        set
+        {
+            if(_selectedGuild != value)
+            {
+                _selectedGuild = value;
+                OnSelectedGuildChanged();
+            }
+        }
+    }
 
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -50,10 +63,8 @@
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    public async void ChangeGuild(ChangeEventArgs e)
+    public async void OnSelectedGuildChanged()
     {
-        SelectedGuild = e.Value?.ToString();
         await AccountService.LoggedUser.SetCurrentGuildId(SelectedGuild);
-        NavigationManager?.NavigateTo("", true);
     }
 }

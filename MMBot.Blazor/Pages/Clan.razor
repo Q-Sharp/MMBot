@@ -1,14 +1,14 @@
 ﻿@page "/clan"
 @page "/clans"
-@inject IClanViewModel ClanVM
+@inject ICRUDViewModel<MMBot.Data.Entities.Clan> ClanVM
 
 <h1>Clans</h1>
-@if (ClanVM.Clans == null)
+@if (ClanVM.Entities == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
     <button @onclick="() => ClanVM.Create()">Create</button>
-    <DataList Data="@ClanVM.Clans" TItem="MMBot.Data.Entities.Clan" />
+    <DataList CRUDVM="ClanVM" TEntity="MMBot.Data.Entities.Clan" />
 }

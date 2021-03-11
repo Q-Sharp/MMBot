@@ -1,34 +1,31 @@
-﻿@typeparam TItem
+﻿@typeparam TEntity 
 
 <table class="table">
     <thead>
         <tr>
-           @foreach (var h in Data.FirstOrDefault().GetHeader())
+            @foreach (var h in CRUDVM.Entities.FirstOrDefault().GetHeader())
             {
                 <th>@h</th>
             }
         </tr>
     </thead>
     <tbody>
-   @foreach (TItem item in Data ?? Array.Empty<TItem>())
-    {
-        <tr>
-            @foreach (var content in item.GetValues())
-             {
-                <td>@content</td>
-             }
+        @foreach (TEntity item in CRUDVM.Entities ?? Array.Empty<TEntity>())
+        {
+            <tr>
+                @foreach (var content in item.GetValues())
+                {
+                    <td>@content</td>
+                }
 
-            <td @onclick="@(() => (CRUDVM.Delete((item as IHaveId).Id)))">🗙</td>
-        </tr>
-    }
+                <td @onclick="@(() => (CRUDVM.Delete((item as IHaveId).Id)))">🗙</td>
+            </tr>
+        }
     </tbody>
 </table>
 
 @code
 {
     [Parameter]
-    public IEnumerable<TItem> Data { get; set; }
-
-    [Parameter]
-    public ICRUDViewModel CRUDVM { get; set; }
+    public ICRUDViewModel<TEntity> CRUDVM { get; set; }
 }

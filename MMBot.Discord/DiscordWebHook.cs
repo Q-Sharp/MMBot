@@ -12,7 +12,7 @@ namespace MMBot.Discord
                     .ConfigureServices(async (c, x) =>
                     {
                         var client = new DiscordWebhookClient(id, token);
-                        while (1 > 0)
+                        while (true)
                         {
                             await client.SendMessageAsync("Test Description https://forms.gle/CFZ92wrzqntYyemu9");
                             await Task.Delay(TimeSpan.FromSeconds(30));

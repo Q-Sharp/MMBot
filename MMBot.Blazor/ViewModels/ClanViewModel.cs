@@ -10,7 +10,7 @@ using MMBot.Services.Interfaces;
 
 namespace MMBot.Blazor.ViewModels
 {
-    public class ClanViewModel : IClanViewModel
+    public class ClanViewModel : ICRUDViewModel<Clan>
     {
         private readonly IRepository<Clan> _repo;
         private readonly IAccountService _accountService;
@@ -18,11 +18,8 @@ namespace MMBot.Blazor.ViewModels
         private readonly IJSRuntime _jSRuntime;
         private ulong _guildId;
 
-        public IList<Clan> Clans { get; set; }
-
-        [Parameter]
-        public string Entity { get; set; }
-        public IList<object> Entities => Clans.Cast<object>().ToList();
+        public ICollection<Clan> Entities { get; set; }
+        public string Entity => "Clan";
 
         public ClanViewModel(IRepository<Clan> repo, IAccountService accountService, NavigationManager navigationManager, IJSRuntime jSRuntime)
         {
@@ -43,7 +40,7 @@ namespace MMBot.Blazor.ViewModels
             {
                 _guildId = gid.Value;
 
-                 Clans = (await _repo.Get(x => x.GuildId == _guildId,
+                 Entities = (await _repo.Get(x => x.GuildId == _guildId,
                     x => x.OrderBy(y => y.SortOrder)/*,
                     string.Join(',', EntityHelper.GetHeader<Clan>())*/)).ToList();
             }
@@ -59,7 +56,7 @@ namespace MMBot.Blazor.ViewModels
                 try
                 {
                     await _repo.Delete(id.Value);
-                    Clans.Remove(Clans.FirstOrDefault(x => x.Id == id.Value));
+                    Entities.Remove(Entities.FirstOrDefault(x => x.Id == id.Value));
                 }
                 catch
                 {
@@ -74,7 +71,7 @@ namespace MMBot.Blazor.ViewModels
             {
                 var c = new Clan { GuildId = _guildId };
                 c = await _repo.Insert(c);
-                Clans.Add(c);
+                Entities.Add(c);
             }
             catch (Exception e)
             {

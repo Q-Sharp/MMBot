@@ -12,16 +12,13 @@ namespace MMBot.Blazor.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly ProtectedSessionStorage _protectedSessionStorage;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
 
-        public AccountService(IHttpContextAccessor httpContextAccessor, AuthenticationStateProvider authenticationStateProvider, ProtectedSessionStorage protectedSessionStorage, IDCUser user)
+        public AccountService(AuthenticationStateProvider authenticationStateProvider, IDCUser user)
         {
-            _httpContextAccessor = httpContextAccessor;
             _authenticationStateProvider = authenticationStateProvider;
-            _protectedSessionStorage = protectedSessionStorage;
             LoggedUser = user;
+
             authenticationStateProvider.AuthenticationStateChanged += AuthenticationStateProvider_AuthenticationStateChanged;
 
             _ = SetLoggedUserAsync();
