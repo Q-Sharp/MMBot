@@ -16,7 +16,7 @@
                     <a href="#">Hello, @context.User.Identity.Name!</a>
                     <label for="guilds">Choose a guild:</label>
 
-                    <select @bind="SelectedGuild">
+                    <select @onchange="OnSelectedGuildChanged">
                         @foreach (var guild in AccountService.LoggedUser.Guilds)
                         {
                             <option value="@guild.id">@guild.name</option>
@@ -39,32 +39,15 @@
 
 @code
 {
+    public string SelectedGuild { get; set; }
 
-    private string _selectedGuild;
-    public string SelectedGuild
+    protected override void OnAfterRender(bool firstRender)
     {
-        get => _selectedGuild;
-        set
-        {
-            if(_selectedGuild != value)
-            {
-                _selectedGuild = value;
-                OnSelectedGuildChanged();
-            }
-        }
+        SelectedGuild = AccountService.LoggedUser.CurrentGuildId;
     }
 
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    public void OnSelectedGuildChanged(ChangeEventArgs args)
     {
-        if (SelectedGuild is null)
-            SelectedGuild = await AccountService.LoggedUser.GetCurrentGuildId();
-
-        await base.OnAfterRenderAsync(firstRender);
-    }
-
-    public async void OnSelectedGuildChanged()
-    {
-        await AccountService.LoggedUser.SetCurrentGuildId(SelectedGuild);
+        AccountService.LoggedUser.CurrentGuildId = SelectedGuild;
     }
 }

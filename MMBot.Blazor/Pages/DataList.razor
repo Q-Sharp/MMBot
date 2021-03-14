@@ -12,14 +12,15 @@
     <tbody>
         @foreach (TEntity item in CRUDVM.Entities ?? Array.Empty<TEntity>())
         {
-            <tr>
-                @foreach (var content in item.GetValues())
-                {
-                    <td>@content</td>
-                }
+        <tr>
+            @foreach (var content in item.GetValues())
+            {
+                <td>@content</td>
+            }
 
-                <td @onclick="@(() => (CRUDVM.Delete((item as IHaveId).Id)))">🗙</td>
-            </tr>
+            <td><button @onclick="@(() => Task.Delay(1))" class="btn btn-primary">✎</button></td>
+            <td><button @onclick="@(() => (CRUDVM.Delete((item as IHaveId).Id)))" class="btn btn-primary">🗙</button></td>
+        </tr>
         }
     </tbody>
 </table>

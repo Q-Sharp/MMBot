@@ -54,7 +54,7 @@ namespace MMBot.Blazor.Services
                                                        x.PermissionFlags.HasFlag(GuildPermission.ManageGuild) ||
                                                        x.PermissionFlags.HasFlag(GuildPermission.ManageRoles)).ToList();
 
-                    await LoggedUser.SetCurrentGuildId(LoggedUser.Guilds.FirstOrDefault().id); 
+                    LoggedUser.CurrentGuildId = LoggedUser.Guilds.FirstOrDefault().id; 
                 }
             }
             catch

@@ -32,7 +32,7 @@ namespace MMBot.Services.Database
             _logger = logger;
         }
 
-         public virtual async Task<IEnumerable<TEntity>> Get(
+         public async virtual Task<IEnumerable<TEntity>> Get(
              Expression<Func<TEntity, bool>> filter = null, 
              Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, 
              string IncludeProperties = "")
@@ -55,9 +55,9 @@ namespace MMBot.Services.Database
             }
         }
 
-        public virtual async Task<TEntity> GetById(object id) => await dbSet.FindAsync(id);
+        public async virtual Task<TEntity> GetById(object id) => await dbSet.FindAsync(id);
 
-        public virtual async Task<bool> Delete(TEntity entityToDelete)
+        public async virtual Task<bool> Delete(TEntity entityToDelete)
         {
             if(context.Entry(entityToDelete).State == EntityState.Detached)
                 dbSet.Attach(entityToDelete);
@@ -66,22 +66,20 @@ namespace MMBot.Services.Database
             return await context.SaveChangesAsync() >= 1;
         }
 
-        public virtual async Task<bool> Delete(object id)
+        public async virtual Task<bool> Delete(object id)
         {
             var e = await dbSet.FindAsync(id);
             return await Delete(e);
         }
        
-        
-        public virtual async Task<TEntity> Insert(TEntity entity)
+        public async virtual Task<TEntity> Insert(TEntity entity)
         {
             await dbSet.AddAsync(entity);
             await context.SaveChangesAsync();
             return entity;
         }
 
-
-        public virtual async Task<TEntity> Update(TEntity entityToUpdate)
+        public async virtual Task<TEntity> Update(TEntity entityToUpdate)
         {
             var dbSet = context.Set<TEntity>();
             dbSet.Attach(entityToUpdate);

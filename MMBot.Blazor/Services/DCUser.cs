@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
@@ -6,23 +8,32 @@ namespace MMBot.Blazor.Services
 {
     public class DCUser : IDCUser
     {
-        private ProtectedSessionStorage _protectedSessionStorage;
-
-        public DCUser(ProtectedSessionStorage protectedSessionStorage)
+        public DCUser()
         {
-            _protectedSessionStorage = protectedSessionStorage;
         }
+
+        protected void SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null) 
+        {
+            if(!EqualityComparer<T>.Default.Equals(field, value)) 
+            {
+                field = value;
+                OnPropertyChanged(propertyName);
+            }
+        }
+
+        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        public event PropertyChangedEventHandler PropertyChanged;
         
         public string Name { get; set; }
-        public string CurrentGuildId { get; set; }
 
-        public async Task SetCurrentGuildId(string guildId)
+        private string _currentGuildId;
+        public string CurrentGuildId
         {
-            await _protectedSessionStorage.SetAsync(nameof(CurrentGuildId), guildId);
-            CurrentGuildId = guildId;
+            get => _currentGuildId;
+            set => SetProperty(ref _currentGuildId, value);
         }
 
-        public async Task<string> GetCurrentGuildId() => (await _protectedSessionStorage.GetAsync<string>(nameof(CurrentGuildId))).Value;
         public ulong? CurrentGuildIdUlong
         {
             get

@@ -32,20 +32,15 @@ namespace MMBot.Blazor
     {
         private const string _logTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
 
-        public Startup(IConfiguration configuration) 
-            => Configuration = configuration;
+        public Startup(IConfiguration configuration) => Configuration = configuration;
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddLogging(c => c.ClearProviders().AddSerilog(Log.Logger));
 
             services.AddRazorPages();
-            services.AddServerSideBlazor()
-                    .AddHubOptions(c => c.EnableDetailedErrors = true)
-                    .AddCircuitOptions(c => c.DetailedErrors = true);
+            services.AddServerSideBlazor();
             services.AddRouting();
 
             var connectionString = Configuration.GetConnectionString("Context");
@@ -53,8 +48,6 @@ namespace MMBot.Blazor
             services.AddDbContext<Context>(o => o.UseNpgsql(connectionString))
                     .AddScoped<IDatabaseService, DatabaseService>()
                     .AddScoped<IRepository<Clan>, DataRepository<Clan, Context>>();
-
-            var c = services.Count;
 
             services.AddAuthentication(opt =>
             {
@@ -81,8 +74,7 @@ namespace MMBot.Blazor
                 x.Validate();
             });
 
-            //services.AddSession();
-
+            services.AddSession();
             services.AddHttpContextAccessor();
             services.AddScoped<IAccountService, AccountService>()
                     .AddScoped<ICRUDViewModel<Clan>, ClanViewModel>()
@@ -100,9 +92,11 @@ namespace MMBot.Blazor
             }
             else
             {
+                app.UseForwardedHeaders();
+
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                //app.UseHsts();
             }
 
             app.UseHttpsRedirection()
@@ -110,8 +104,7 @@ namespace MMBot.Blazor
                .UseRouting()
                .UseAuthentication()
                .UseAuthorization()
-               //.UseSession()
-               //.UseAccount()
+               .UseSession()
                .UseEndpoints(endpoints =>
                {
                     endpoints.MapBlazorHub();
