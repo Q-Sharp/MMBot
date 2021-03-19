@@ -26,8 +26,7 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal
     - name: .NET Publish
-      run: |
-        dotnet publish -c Release -r linux-x64 /p:PublishReadyToRun=true
+      run: dotnet publish -c Release -r linux-x64 /p:PublishReadyToRun=false
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v2.1.5
       env:
@@ -38,3 +37,15 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
+          
+    - name: Deploy to Server
+      uses: easingthemes/ssh-deploy@v2.1.5
+      env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltgoDzvO --delete-excluded --filter 'protect *.db' --filter 'protect *.log' --filter 'protect *.json'"
+          SOURCE: MMBot.Blazor/bin/Release/net5.0/linux-x64/publish/
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
+          TARGET: ${{ secrets.REMOTE_TARGET2 }}
+
