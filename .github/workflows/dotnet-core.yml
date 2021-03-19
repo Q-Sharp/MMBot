@@ -26,7 +26,7 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal
     - name: .NET Publish
-      run: dotnet publish -c Release -r linux-x64 /p:PublishReadyToRun=false
+      run: dotnet publish ./MMBot.Discord/MMBot.Discord.csproj -c Release -r linux-x64 /p:PublishReadyToRun=false
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v2.1.5
       env:
@@ -36,8 +36,9 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
-          TARGET: ${{ secrets.REMOTE_TARGET }}
-          
+          TARGET: ${{ secrets.REMOTE_TARGET }}    
+    - name: .NET Publish
+      run: dotnet publish ./MMBot.Discord/MMBot.Discord.csproj -c Release -r linux-x64 /p:PublishReadyToRun=false,PublishProfile=FolderProfile      
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v2.1.5
       env:
