@@ -4,7 +4,7 @@ using MMBot.Data.Interfaces;
 
 namespace MMBot.Data.Entities
 {
-    public class GuildSettings : IHaveId
+    public class GuildSettings : IHaveId, IHaveGuildId
     {
         public int Id { get; set; }
 

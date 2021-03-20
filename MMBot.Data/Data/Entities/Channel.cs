@@ -3,7 +3,7 @@ using MMBot.Data.Interfaces;
 
 namespace MMBot.Data.Entities
 {
-    public class Channel : IHaveId
+    public class Channel : IHaveId, IHaveGuildId
     {
         public int Id { get; set; }
 

@@ -17,6 +17,7 @@ using MMBot.Data.Services;
 using MMBot.Data.Services.Interfaces;
 using MMBot.Services.Database;
 using MMBot.Services.Interfaces;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 namespace MMBot.Blazor
 {
@@ -77,8 +78,11 @@ namespace MMBot.Blazor
             services.AddSession();
             services.AddHttpContextAccessor();
             services.AddScoped<IAccountService, AccountService>()
-                    .AddScoped<ICRUDViewModel<Clan>, ClanViewModel>()
                     .AddScoped<IDCUser, DCUser>();
+
+            services.AddSingleton<StateContainer>();
+
+            services.AddCRUDViewModels();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

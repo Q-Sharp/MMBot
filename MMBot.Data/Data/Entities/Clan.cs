@@ -6,7 +6,7 @@ using MMBot.Data.Interfaces;
 
 namespace MMBot.Data.Entities
 {
-    public class Clan : IHaveId, IHaveIdentifier
+    public class Clan : IHaveId, IHaveIdentifier, IHaveGuildId
     {
         public int Id { get; set; }
 

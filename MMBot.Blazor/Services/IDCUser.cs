@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace MMBot.Blazor.Services
 {
-    public interface IDCUser : INotifyPropertyChanged 
+    public interface IDCUser
     {
-        string CurrentGuildId { get; set; }
-        ulong? CurrentGuildIdUlong { get; }
         IList<DCChannel> Guilds { get; set; }
         string Name { get; set; }
+        ulong Id { get; set; }
+        string AvatarUrl { get; set; }
     }
 }

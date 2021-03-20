@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MMBot.Data.Interfaces;
@@ -46,7 +47,7 @@ namespace MMBot.Data.Helpers
         public static IEnumerable<string> GetHeader<T>() => typeof(T).GetProperties().Where(x => x.CustomAttributes.Any(x => x.AttributeType == typeof(DisplayAttribute))).Select(x => x.Name);
         public static IEnumerable<string> GetValues<T>(this T e)
         {
-            var p = typeof(T).GetProperties().Where(x => x.CustomAttributes.Any(x => x.AttributeType == typeof(DisplayAttribute)));
+            var p = typeof(T).GetProperties().Where(x => x.CustomAttributes.Any(x => x.AttributeType == typeof(DisplayAttribute) && x.AttributeType != typeof(IgnoreDataMemberAttribute)));
             return p.Select(x => e.GetPropertyValue(x.Name) as string);
         }
 

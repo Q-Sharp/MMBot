@@ -4,7 +4,7 @@ using MMBot.Data.Interfaces;
 
 namespace MMBot.Data.Entities
 {
-    public class MMTimer : IHaveId
+    public class MMTimer : IHaveId, IHaveGuildId
     {
         public int Id { get; set; }
 

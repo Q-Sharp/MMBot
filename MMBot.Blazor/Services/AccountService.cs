@@ -13,14 +13,15 @@ namespace MMBot.Blazor.Services
     public class AccountService : IAccountService
     {
         private readonly AuthenticationStateProvider _authenticationStateProvider;
+        private readonly StateContainer _stateContainer;
 
-        public AccountService(AuthenticationStateProvider authenticationStateProvider, IDCUser user)
+        public AccountService(AuthenticationStateProvider authenticationStateProvider, IDCUser user, StateContainer stateContainer)
         {
             _authenticationStateProvider = authenticationStateProvider;
             LoggedUser = user;
 
             authenticationStateProvider.AuthenticationStateChanged += AuthenticationStateProvider_AuthenticationStateChanged;
-
+            _stateContainer = stateContainer;
             _ = SetLoggedUserAsync();
         }
 
@@ -37,6 +38,8 @@ namespace MMBot.Blazor.Services
                 if (user.Identity.IsAuthenticated)
                 {
                     LoggedUser.Name = user.Identity.Name;
+                    LoggedUser.Id = ulong.Parse(user.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value ?? "0");
+                    LoggedUser.AvatarUrl = user.Claims.FirstOrDefault(c => c.Type == "urn:discord:avatar:url")?.Value;
                     var ids =  user.Claims.FirstOrDefault(c => c.Type == "guilds")?.Value;
 
                     var o = new JsonSerializerOptions
@@ -54,7 +57,7 @@ namespace MMBot.Blazor.Services
                                                        x.PermissionFlags.HasFlag(GuildPermission.ManageGuild) ||
                                                        x.PermissionFlags.HasFlag(GuildPermission.ManageRoles)).ToList();
 
-                    LoggedUser.CurrentGuildId = LoggedUser.Guilds.FirstOrDefault().id; 
+                    _stateContainer.SetSelectedGuildId(LoggedUser.Guilds.FirstOrDefault().id);
                 }
             }
             catch

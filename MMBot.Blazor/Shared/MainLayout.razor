@@ -1,6 +1,7 @@
 ﻿@inject IAccountService AccountService
 @inject NavigationManager NavigationManager
-@inject ProtectedSessionStorage ProtectedSessionStore
+@inject StateContainer StateContainer
+@implements IDisposable
 
 @inherits LayoutComponentBase
 
@@ -13,17 +14,18 @@
         <div class="top-row px-4">
             <AuthorizeView>
                 <Authorized>
-                    <a href="#">Hello, @context.User.Identity.Name!</a>
-                    <label for="guilds">Choose a guild:</label>
+                    <a class="align-baseline" href="#">Hello, @context.User.Identity.Name! </a>
 
-                    <select @onchange="OnSelectedGuildChanged">
-                        @foreach (var guild in AccountService.LoggedUser.Guilds)
-                        {
-                            <option value="@guild.id">@guild.name</option>
-                        }
-                    </select>
+                        <p class="align-baseline">Choose a guild: </p>
 
-                    <a href="Account/Logout">Log out</a>
+                        <select @onchange="OnSelectedGuildChanged" class="custom-select-lg">
+                            @foreach (var guild in AccountService.LoggedUser.Guilds)
+                            {
+                                <option value="@guild.id">@guild.name</option>
+                            }
+                        </select>
+                   
+                    <a class="align-baseline" href="Account/Logout">Log out</a>
                 </Authorized>
                 <NotAuthorized>
                     <a href="Account/Login">Log in</a>
@@ -41,13 +43,18 @@
 {
     public string SelectedGuild { get; set; }
 
-    protected override void OnAfterRender(bool firstRender)
-    {
-        SelectedGuild = AccountService.LoggedUser.CurrentGuildId;
-    }
-
     public void OnSelectedGuildChanged(ChangeEventArgs args)
     {
-        AccountService.LoggedUser.CurrentGuildId = SelectedGuild;
+        StateContainer.SetSelectedGuildId(args.Value?.ToString());
+    }
+
+    protected override void OnInitialized()
+    {
+        StateContainer.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
     }
 }

@@ -12,18 +12,17 @@ using MMBot.Services.Interfaces;
 
 namespace MMBot.Blazor.ViewModels
 {
-    public class ClanViewModel : CRUDBaseViewModel<Clan>
+    public class MemberViewModel : CRUDBaseViewModel<Member>
     {
-        public override string Entity => "Clan";
+        public override string Entity => "Member";
 
-        public ClanViewModel(IRepository<Clan> repo, StateContainer stateContainer, IJSRuntime jSRuntime)
+        public MemberViewModel(IRepository<Member> repo, StateContainer stateContainer, IJSRuntime jSRuntime)
             : base(repo, stateContainer, jSRuntime)
         {
 
         }
 
-
-        public override async Task Init() => Entities = await Load(x => x.GuildId == gid, x => x.OrderBy(y => y.SortOrder));
+        public override async Task Init() => Entities = await Load(x => x.GuildId == gid, x => x.OrderBy(y => y.AHigh));
 
         public override async Task Delete(int id)
         {
@@ -43,7 +42,7 @@ namespace MMBot.Blazor.ViewModels
             }
         }
 
-        public override async Task Create(Clan newEntity)
+        public override async Task Create(Member newEntity)
         {
             try
             {
@@ -56,9 +55,9 @@ namespace MMBot.Blazor.ViewModels
             }
         }
 
-        public override async Task<Clan> Update(Clan clan) => await _repo.Update(clan);
+        public override async Task<Member> Update(Member member) => await _repo.Update(member);
 
-        public override async Task<IList<Clan>> Load(Expression<Func<Clan, bool>> filter = null, Func<IQueryable<Clan>, IOrderedQueryable<Clan>> orderBy = null)
-            => (await _repo.Get(filter,orderBy)).ToList();
+        public override async Task<IList<Member>> Load(Expression<Func<Member, bool>> filter = null, Func<IQueryable<Member>, IOrderedQueryable<Member>> orderBy = null)
+            => (await _repo.Get(filter, orderBy)).ToList();
     }
 }

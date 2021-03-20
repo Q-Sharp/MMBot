@@ -3,7 +3,7 @@ using MMBot.Data.Interfaces;
 
 namespace MMBot.Data.Entities
 {
-    public class RaidParticipation : IHaveId
+    public class RaidParticipation : IHaveId, IHaveGuildId
     {
         public int Id { get; set; }
 
@@ -16,6 +16,7 @@ namespace MMBot.Data.Entities
         public ulong DamageDone { get; set; }
         public int HeartQty { get; set; }
         public int AttackQty { get; set; }
+        public ulong GuildId { get; set; }
 
         public void Update(object bossRaider) => throw new NotImplementedException();
     }

@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 
 namespace MMBot.Data.Entities
 {
-    public class Member : IHaveId, IHaveIdentifier
+    public class Member : IHaveId, IHaveIdentifier, IHaveGuildId
     {
         public int Id { get; set; }
 
