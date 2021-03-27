@@ -13,7 +13,7 @@
 }
 else
 {
-    <button @onclick="() => MemberVM.Create(new MMBot.Data.Entities.Member())">Create</button>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="() => MemberVM.Create(new MMBot.Data.Entities.Member())">Create</MudButton>
     <DataList CRUDVM="MemberVM" TEntity="MMBot.Data.Entities.Member" />
 }
 

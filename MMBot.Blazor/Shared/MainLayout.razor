@@ -4,43 +4,76 @@
 @implements IDisposable
 
 @inherits LayoutComponentBase
+<MudThemeProvider />
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<MudLayout>
+    <MudAppBar Elevation="2">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudText Typo="Typo.h5" Class="ml-3">MMBot</MudText>
 
-    <div class="main">
-        <div class="top-row px-4">
-            <AuthorizeView>
-                <Authorized>
-                    <a class="align-baseline" href="#">Hello, @context.User.Identity.Name! </a>
-
-                        <p class="align-baseline">Choose a guild: </p>
-
-                        <select @onchange="OnSelectedGuildChanged" class="custom-select-lg">
-                            @foreach (var guild in AccountService.LoggedUser.Guilds)
-                            {
-                                <option value="@guild.id">@guild.name</option>
-                            }
-                        </select>
-                   
-                    <a class="align-baseline" href="Account/Logout">Log out</a>
-                </Authorized>
-                <NotAuthorized>
-                    <a href="Account/Login">Log in</a>
-                </NotAuthorized>
-            </AuthorizeView>
-        </div>
-
-        <div class="content px-4">
-            @Body
-        </div>
-    </div>
-</div>
+        <AuthorizeView>
+            <Authorized>
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudGrid Spacing="5" Justify="Justify.FlexEnd">
+                            <MudItem>
+                                <MudText Typo="Typo.h6" Class="ml-3">Hello, @context.User.Identity.Name!</MudText>
+                            </MudItem>
+                            <MudItem>
+                                <MudSelect T="string" @onchange="OnSelectedGuildChanged" Label="Guild">
+                                    @foreach (var guild in AccountService.LoggedUser.Guilds)
+                                    {
+                                        <MudSelectItem T="string" value="@guild.id">@guild.name</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem>
+                                <MudLink Typo="Typo.h6" Class="ml-3" Color="Color.Inherit" Href="Account/Logout">Log out</MudLink>
+                            </MudItem>
+                        </MudGrid>
+                    </MudItem>
+                </MudGrid>
+            </Authorized>
+            <NotAuthorized>
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudGrid Spacing="5" Justify="Justify.FlexEnd">
+                            <MudItem>
+                                <MudLink Typo="Typo.h6" Class="ml-3" Href="Account/Login">Log in</MudLink>
+                            </MudItem>
+                        </MudGrid>
+                    </MudItem>
+                </MudGrid>
+            </NotAuthorized>
+        </AuthorizeView>
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <MudPaper Width="Auto" Class="py-3" Square="true">
+            <MudNavMenu>
+                <MudDivider Class="my-2" />
+                <MudNavLink Href="" Match="NavLinkMatch.All">Home</MudNavLink>
+                <MudNavGroup Title="Data" Expanded="true">
+                    <MudNavLink Href="clan">Clan</MudNavLink>
+                    <MudNavLink Href="member">Member</MudNavLink>
+                </MudNavGroup>
+                <MudNavLink Href="/about">About</MudNavLink>
+            </MudNavMenu>
+        </MudPaper>
+    </MudDrawer>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
 
 @code
 {
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
     public string SelectedGuild { get; set; }
 
     public void OnSelectedGuildChanged(ChangeEventArgs args)

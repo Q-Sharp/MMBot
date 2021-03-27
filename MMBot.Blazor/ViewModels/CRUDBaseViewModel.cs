@@ -33,24 +33,7 @@ namespace MMBot.Blazor.ViewModels
             Init().GetAwaiter().GetResult();
         }
 
-        public virtual async Task Delete(int id)
-        {
-            var confirm = await _jSRuntime.InvokeAsync<bool>("confirm", "Do you want to delete this?");
-
-            if (confirm)
-            {
-                try
-                {
-                    await _repo.Delete(id);
-                    Entities.Remove(Entities.FirstOrDefault(x => x.Id == id));
-                }
-                catch
-                {
-                    //
-                }
-            }
-        }
-
+        public abstract Task Delete(int id);
         public abstract Task Init();
         public abstract Task Create(TEntity entity);
         public abstract Task<TEntity> Update(TEntity entity);

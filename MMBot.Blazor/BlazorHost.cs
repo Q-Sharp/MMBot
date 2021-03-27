@@ -18,6 +18,7 @@ using MMBot.Data.Services.Interfaces;
 using MMBot.Services.Database;
 using MMBot.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using MudBlazor.Services;
 
 namespace MMBot.Blazor
 {
@@ -47,8 +48,8 @@ namespace MMBot.Blazor
             var connectionString = Configuration.GetConnectionString("Context");
             
             services.AddDbContext<Context>(o => o.UseNpgsql(connectionString))
-                    .AddScoped<IDatabaseService, DatabaseService>()
-                    .AddScoped<IRepository<Clan>, DataRepository<Clan, Context>>();
+                    .AddScoped<IDatabaseService, DatabaseService>();
+                    
 
             services.AddAuthentication(opt =>
             {
@@ -83,6 +84,7 @@ namespace MMBot.Blazor
             services.AddSingleton<StateContainer>();
 
             services.AddCRUDViewModels();
+            services.AddMudServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

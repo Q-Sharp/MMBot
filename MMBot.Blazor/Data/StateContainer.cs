@@ -1,5 +1,6 @@
 ﻿using System;
 
+
 public class StateContainer
 {
     public string SelectedGuildId { get; set; } = "0";

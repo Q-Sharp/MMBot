@@ -22,9 +22,9 @@ namespace MMBot.Blazor.ViewModels
 
         }
 
-        public override async Task Init() => Entities = await Load(x => x.GuildId == gid, x => x.OrderBy(y => y.AHigh));
+        public async override Task Init() => Entities = await Load(x => x.GuildId == gid, x => x.OrderBy(y => y.AHigh));
 
-        public override async Task Delete(int id)
+        public async override Task Delete(int id)
         {
             var confirm = await _jSRuntime.InvokeAsync<bool>("confirm", "Do you want to delete this?");
 
@@ -42,7 +42,7 @@ namespace MMBot.Blazor.ViewModels
             }
         }
 
-        public override async Task Create(Member newEntity)
+        public async override Task Create(Member newEntity)
         {
             try
             {
@@ -55,9 +55,9 @@ namespace MMBot.Blazor.ViewModels
             }
         }
 
-        public override async Task<Member> Update(Member member) => await _repo.Update(member);
+        public async override Task<Member> Update(Member member) => await _repo.Update(member);
 
-        public override async Task<IList<Member>> Load(Expression<Func<Member, bool>> filter = null, Func<IQueryable<Member>, IOrderedQueryable<Member>> orderBy = null)
+        public async override Task<IList<Member>> Load(Expression<Func<Member, bool>> filter = null, Func<IQueryable<Member>, IOrderedQueryable<Member>> orderBy = null)
             => (await _repo.Get(filter, orderBy)).ToList();
     }
 }
