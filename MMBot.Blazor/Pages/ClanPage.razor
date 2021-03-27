@@ -1,0 +1,88 @@
+﻿@page "/clans"
+@page "/clan"
+
+@inject ICRUDViewModel<Clan> ClanVM
+@inject StateContainer StateContainer
+@inject ISnackbar Snackbar
+@implements IDisposable
+
+@attribute [Authorize]
+
+@if (ClanVM.Entities == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MudTable Items="@ClanVM.Entities" Dense="true" Hover="true" ReadOnly="false" Filter="new Func<Clan,bool>(FilterFunc)" @bind-SelectedItem="ClanVM.CurrentEntity" SortLabel="Sort By" 
+              CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => ClanVM.Update(ClanVM.CurrentEntity))">
+        <ToolBarContent>
+            <MudText Typo="Typo.h2">Clans</MudText>
+            <MudToolBarSpacer />
+            <MudButton @onclick="() => ClanVM.Add()">New</MudButton>
+            <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <ColGroup>
+            <col style="width:50px;" />
+            <col style="width:80px;" />
+            <col style="width:50%;" />
+        </ColGroup>
+        <HeaderContent>
+            @*<MudTh><MudTableSortLabel SortBy="new Func<Clan, object>(x=>x.Id)">Id</MudTableSortLabel></MudTh>*@
+            <MudTh><MudTableSortLabel SortBy="new Func<Clan, object>(x => x.SortOrder)" InitialDirection="SortDirection.Ascending">SortOrder</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Clan, object>(x=>x.Tag)">Tag</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Clan, object>(x=>x.Name)">Name</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            @*<MudTd DataLabel="Id">@context.Id</MudTd>*@
+            <MudTd DataLabel="SortOrder">@context.SortOrder</MudTd>
+            <MudTd DataLabel="Tag">@context.Tag</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd></MudTd>
+        </RowTemplate>
+        <RowEditingTemplate>
+            @*<MudTd DataLabel="Id">@context.Id</MudTd>*@
+            <MudTd DataLabel="SortOrder">
+                <MudTextField @bind-Value="@context.SortOrder" Required />
+            </MudTd>
+            <MudTd DataLabel="Tag">
+                <MudTextField @bind-Value="@context.Tag" Required />
+            </MudTd>
+            <MudTd DataLabel="Name">
+                <MudTextField @bind-Value="@context.Name" Required />
+            </MudTd>
+            <MudTd>
+                <MudButton @onclick="() => ClanVM.Delete(context.Id)">🗙 </MudButton>
+            </MudTd>
+        </RowEditingTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+    <MudText Inline="true">Selected: @ClanVM?.CurrentEntity?.Name</MudText>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        StateContainer.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+
+    private string searchString = "";
+
+    private bool FilterFunc(MMBot.Data.Entities.Clan clan)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (clan.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (clan.Tag.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+}

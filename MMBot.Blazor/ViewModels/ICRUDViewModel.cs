@@ -13,8 +13,9 @@ namespace MMBot.Blazor.ViewModels
         Task Delete(int id);
         Task<IList<TEntity>> Load(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null);
         Task<TEntity> Update(TEntity updated);
-        string Entity { get; }
-        ICollection<TEntity> Entities { get; }
-        TEntity CurrentEntity { get; }
+        TEntity Add();
+
+        ICollection<TEntity> Entities { get; set;  }
+        TEntity CurrentEntity { get; set; }
     }
 }

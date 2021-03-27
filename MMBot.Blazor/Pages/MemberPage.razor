@@ -1,0 +1,88 @@
+﻿@page "/members"
+@page "/member"
+
+@inject ICRUDViewModel<Member> MemberVM
+@inject StateContainer StateContainer
+@inject ISnackbar Snackbar
+@implements IDisposable
+
+@attribute [Authorize]
+
+@if (MemberVM.Entities == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MudTable Items="@MemberVM.Entities" Dense="true" Hover="true" ReadOnly="false" Filter="new Func<Member,bool>(FilterFunc)" @bind-SelectedItem="MemberVM.CurrentEntity" SortLabel="Sort By"
+              CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => MemberVM.Update(MemberVM.CurrentEntity))">
+        <ToolBarContent>
+            <MudText Typo="Typo.h2">Members</MudText>
+            <MudToolBarSpacer />
+            <MudButton @onclick="() => MemberVM.Add()">New</MudButton>
+            <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <ColGroup>
+            <col style="width:50px;" />
+            <col style="width:80px;" />
+            <col style="width:50%;" />
+        </ColGroup>
+        <HeaderContent>
+            @*<MudTh><MudTableSortLabel SortBy="new Func<Member, object>(x=>x.Id)">Id</MudTableSortLabel></MudTh
+        <MudTh><MudTableSortLabel SortBy="new Func<Member, object>(x => x.SortOrder)" InitialDirection="SortDirection.Ascending">SortOrder</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Member, object>(x=>x.Tag)">Tag</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Member, object>(x=>x.Name)">Name</MudTableSortLabel></MudTh>>*@
+        </HeaderContent>
+        <RowTemplate>
+            @*<MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="SortOrder">@context.SortOrder</MudTd>
+        <MudTd DataLabel="Tag">@context.Tag</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd></MudTd>*@
+        </RowTemplate>
+        <RowEditingTemplate>
+            @*<MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="SortOrder">
+            <MudTextField @bind-Value="@context.SortOrder" Required />
+        </MudTd>
+        <MudTd DataLabel="Tag">
+            <MudTextField @bind-Value="@context.Tag" Required />
+        </MudTd>
+        <MudTd DataLabel="Name">
+            <MudTextField @bind-Value="@context.Name" Required />
+        </MudTd>*@
+            <MudTd>
+                <MudButton @onclick="() => MemberVM.Delete(context.Id)">🗙 </MudButton>
+            </MudTd>
+        </RowEditingTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+    <MudText Inline="true">Selected: @MemberVM?.CurrentEntity?.Name</MudText>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        StateContainer.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+
+    private string searchString = "";
+
+    private bool FilterFunc(MMBot.Data.Entities.Member Member)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (Member.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        //if (Member.Tag.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        //    return true;
+        return false;
+    }
+}

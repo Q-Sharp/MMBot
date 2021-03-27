@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MMBot.Blazor.Data;
 using MMBot.Blazor.Services;
 using MMBot.Data.Entities;
 using MMBot.Services.Interfaces;
@@ -56,7 +57,12 @@ namespace MMBot.Blazor.ViewModels
             }
         }
 
-        public async override Task<Clan> Update(Clan clan) => await _repo.Update(clan);
+        public async override Task<Clan> Update(Clan clan) 
+            => clan.Id switch
+            {
+                0 => await _repo.Insert(clan),
+                _ => await _repo.Update(clan),
+            };
 
         public async override Task<IList<Clan>> Load(Expression<Func<Clan, bool>> filter = null, Func<IQueryable<Clan>, IOrderedQueryable<Clan>> orderBy = null)
             => (await _repo.Get(filter,orderBy)).ToList();

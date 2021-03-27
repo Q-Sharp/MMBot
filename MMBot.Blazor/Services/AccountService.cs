@@ -7,6 +7,7 @@ using Discord;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Http;
+using MMBot.Blazor.Data;
 
 namespace MMBot.Blazor.Services
 {
@@ -57,7 +58,7 @@ namespace MMBot.Blazor.Services
                                                        x.PermissionFlags.HasFlag(GuildPermission.ManageGuild) ||
                                                        x.PermissionFlags.HasFlag(GuildPermission.ManageRoles)).ToList();
 
-                    _stateContainer.SetSelectedGuildId(LoggedUser.Guilds.FirstOrDefault().id);
+                    _stateContainer.SelectedGuildId = LoggedUser.Guilds.FirstOrDefault().id;
                 }
             }
             catch

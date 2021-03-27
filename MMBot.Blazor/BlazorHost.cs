@@ -19,6 +19,7 @@ using MMBot.Services.Database;
 using MMBot.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using MudBlazor.Services;
+using MMBot.Blazor.Data;
 
 namespace MMBot.Blazor
 {

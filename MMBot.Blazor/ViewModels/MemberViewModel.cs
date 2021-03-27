@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MMBot.Blazor.Data;
 using MMBot.Blazor.Services;
 using MMBot.Data.Entities;
 using MMBot.Services.Interfaces;
