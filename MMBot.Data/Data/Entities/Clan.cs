@@ -8,22 +8,22 @@ namespace MMBot.Data.Entities
 {
     public class Clan : IHaveId, IHaveIdentifier, IHaveGuildId
     {
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
-        public int SortOrder { get; set; }
+        public virtual int SortOrder { get; set; }
 
         [Required]
         [Display]
-        public string Tag { get; set; }
+        public virtual string Tag { get; set; }
 
         [JsonIgnore]
-        public string Identitfier => Tag;
+        public virtual string Identitfier => Tag;
 
         [Display]
-        public string Name { get; set; }
-        public string DiscordRole { get; set; }
+        public virtual string Name { get; set; }
+        public virtual string DiscordRole { get; set; }
 
-        public ulong GuildId { get; set; }
+        public virtual ulong GuildId { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<Member> Member { get; set; } = new Collection<Member>();

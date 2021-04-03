@@ -1,7 +1,7 @@
 ﻿@page "/members"
 @page "/member"
 
-@inject ICRUDViewModel<Member> MemberVM
+@inject ICRUDViewModel<MemberModel, Member> MemberVM
 @inject StateContainer StateContainer
 @inject ISnackbar Snackbar
 @implements IDisposable
@@ -10,11 +10,11 @@
 
 @if (MemberVM.Entities == null)
 {
-    <p><em>Loading...</em></p>
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
 }
 else
 {
-    <MudTable Items="@MemberVM.Entities" Dense="true" Hover="true" ReadOnly="false" Filter="new Func<Member,bool>(FilterFunc)" @bind-SelectedItem="MemberVM.CurrentEntity" SortLabel="Sort By"
+    <MudTable Items="@MemberVM.Entities" Dense="true" Hover="true" ReadOnly="false" Filter="new Func<MemberModel,bool>(FilterFunc)" @bind-SelectedItem="MemberVM.CurrentEntity" SortLabel="Sort By"
               CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => MemberVM.Update(MemberVM.CurrentEntity))">
         <ToolBarContent>
             <MudText Typo="Typo.h2">Members</MudText>
@@ -75,7 +75,7 @@ else
 
     private string searchString = "";
 
-    private bool FilterFunc(MMBot.Data.Entities.Member Member)
+    private bool FilterFunc(MMBot.Data.Entities.MemberModel Member)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;

@@ -14,8 +14,8 @@ namespace MMBot.Blazor.Helpers
         {
              serviceCollection.AddScoped<IRepository<Clan>, DataRepository<Clan, Context>>()
                               .AddScoped<IRepository<Member>, DataRepository<Member, Context>>()
-                              .AddTransient<ICRUDViewModel<Clan>, ClanViewModel>()
-                              .AddTransient<ICRUDViewModel<Member>, MemberViewModel>();
+                              .AddTransient<ICRUDViewModel<ClanModel, Clan>, ClanViewModel>()
+                              .AddTransient<ICRUDViewModel<MemberModel, Member>, MemberViewModel>();
 
             return serviceCollection;
         }

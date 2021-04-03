@@ -8,7 +8,7 @@ namespace MMBot.Data
     {
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            if(!options.IsConfigured)
+            if (!options.IsConfigured)
                 options.UseNpgsql($@"Server=127.0.0.1;Port=5433;Database=MMBotDB;Username=postgres;Password=P0stGresSQL2021");
         }
 
@@ -22,6 +22,7 @@ namespace MMBot.Data
 
         public DbSet<Member> Member { get; set; }
         public DbSet<Clan> Clan { get; set; }
+        public DbSet<Season> Season { get; set; }
         public DbSet<GuildSettings> GuildSettings { get; set; }
         public DbSet<Restart> Restart { get; set; }
         public DbSet<Vacation> Vacation { get; set; }
@@ -69,6 +70,15 @@ namespace MMBot.Data
                 .WithOne(m => m.Member)
                 .HasForeignKey(v => v.MemberId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
+
+            modelBuilder.Entity<Season>()
+                .UseXminAsConcurrencyToken()
+                .HasKey(c => c.Id);
+
+            modelBuilder.Entity<Member>()
+                .HasMany(p => p.Season)
+                .WithMany(p => p.Member)
+                .UsingEntity(j => j.ToTable("MemberSeason"));
 
             modelBuilder.Entity<MemberGroup>()
                 .UseXminAsConcurrencyToken()

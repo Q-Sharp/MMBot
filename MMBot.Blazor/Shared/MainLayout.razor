@@ -9,7 +9,7 @@
 <MudLayout>
     <MudAppBar Elevation="2">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <MudText Typo="Typo.h5" Class="ml-3">MMBot</MudText>
+        <MudText Typo="Typo.h5">MMBot</MudText>
 
         <AuthorizeView>
             <Authorized>
@@ -17,10 +17,10 @@
                     <MudItem xs="12">
                         <MudGrid Spacing="5" Justify="Justify.FlexEnd">
                             <MudItem>
-                                <MudText Typo="Typo.h6" Class="ml-3">Hello, @context.User.Identity.Name!</MudText>
+                                <MudText Typo="Typo.h6">Hello, @context.User.Identity.Name!</MudText>
                             </MudItem>
-                            <MudItem>
-                                <MudSelect T="string" Label="Guild" Value="StateContainer.SelectedGuildId">
+                            <MudItem >
+                                <MudSelect T="string" Label="Guild" @bind-Value="@StateContainer.SelectedGuildId" FullWidth="true">
                                     @foreach (var guild in AccountService.LoggedUser.Guilds)
                                     {
                                         <MudSelectItem T="string" value="@guild.id">@guild.name</MudSelectItem>
@@ -28,7 +28,7 @@
                                 </MudSelect>
                             </MudItem>
                             <MudItem>
-                                <MudLink Typo="Typo.h6" Class="ml-3" Color="Color.Inherit" Href="Account/Logout">Log out</MudLink>
+                                <MudLink Typo="Typo.h6" Color="Color.Inherit" Href="Account/Logout">Log out</MudLink>
                             </MudItem>
                         </MudGrid>
                     </MudItem>
