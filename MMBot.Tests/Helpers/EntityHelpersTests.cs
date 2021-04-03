@@ -31,15 +31,15 @@ namespace MMBot.Tests.Helpers
             Assert.Equal("The Member Member now uses Member instead of ReMember as Name.", msg);
         }
 
-        [Fact]
-        public void ChangePropertyIntTest()
-        {
-            var m = M;
+        //[Fact]
+        //public void ChangePropertyIntTest()
+        //{
+        //    var m = M;
 
-            var msg = m.ChangeProperty(nameof(m.SHigh), "1337");
+        //    var msg = m.ChangeProperty(nameof(m.SHigh), "1337");
 
-            Assert.Equal(1337, m.SHigh);
-            Assert.Equal("The Member ReMember now uses 1337 instead of 9999 as SHigh.", msg);
-        }
+        //    Assert.Equal(1337, m.SHigh);
+        //    Assert.Equal("The Member ReMember now uses 1337 instead of 9999 as SHigh.", msg);
+        //}
     }
 }
