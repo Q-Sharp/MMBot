@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -44,12 +45,17 @@ namespace MMBot.Data.Helpers
         }
 
         public static IEnumerable<string> GetHeader<T>(this T e) => GetHeader<T>();
-        public static IEnumerable<string> GetHeader<T>() => typeof(T).GetProperties().Where(x => x.CustomAttributes.Any(x => x.AttributeType == typeof(DisplayAttribute))).Select(x => x.Name);
+        public static IEnumerable<string> GetHeader<T>() => GetProperties<T>()
+            .Select(x => x.Name);
+
         public static IEnumerable<string> GetValues<T>(this T e)
         {
-            var p = typeof(T).GetProperties().Where(x => x.CustomAttributes.Any(x => x.AttributeType == typeof(DisplayAttribute) && x.AttributeType != typeof(IgnoreDataMemberAttribute)));
+            var p = GetProperties<T>();
             return p.Select(x => e.GetPropertyValue(x.Name) as string);
         }
+
+        public static IEnumerable<PropertyInfo> GetProperties<T>() 
+            => typeof(T).GetProperties().Where(x => x.CustomAttributes.Any(y => y.AttributeType == typeof(DisplayAttribute) && y.AttributeType != typeof(IgnoreDataMemberAttribute)));
 
         public static object GetPropertyValue(this object src, string propName)
         {

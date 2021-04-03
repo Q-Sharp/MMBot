@@ -7,7 +7,7 @@ namespace MMBot.Tests.Helpers
 {
     public class EntityHelpersTests
     {
-        private static Member M => new Member { Id = 1, Name = "ReMember", Role = Role.Member, SHigh = 9999 };
+        private static Member M => new() { Id = 1, Name = "ReMember", Role = Role.Member/*, SHigh = 9999*/ };
 
         [Fact]
         public void ChangePropertyEnumTest()

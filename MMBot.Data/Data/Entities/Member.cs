@@ -16,39 +16,32 @@ namespace MMBot.Data.Entities
 
         [Required]
         [Display]
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
 
         [JsonIgnore]
-        public string Identitfier => Name;
+        public virtual string Identitfier => Name;
 
         [Display]
         [IgnoreDataMember]
         [JsonIgnore]
-        public string ClanTag => Clan?.Tag;
+        public virtual string ClanTag => Clan?.Tag;
 
         [Display]
-        public string Discord { get; set; }
+        public virtual string Discord { get; set; }
 
         [Display]
-        public int? AHigh { get; set; }
+        public virtual int? AHigh { get; set; }
+        public virtual int? Current { get; set; }
 
         [Display]
-        public int? SHigh { get; set; }
+        public virtual Role Role { get; set; }
 
-        public int? Current { get; set; }
-
-        [Display]
-        public int? Donations { get; set; }
+        public virtual DiscordStatus DiscordStatus { get; set; } = DiscordStatus.Active;
 
         [Display]
-        public Role Role { get; set; }
+        public virtual bool IsActive { get; set; }
 
-        public DiscordStatus DiscordStatus { get; set; } = DiscordStatus.Active;
-
-        [Display]
-        public bool IsActive { get; set; }
-
-        public int? ClanId { get; set; }
+        public virtual int? ClanId { get; set; }
 
         [JsonIgnore]
         public virtual Clan Clan { get; set; }
@@ -56,31 +49,35 @@ namespace MMBot.Data.Entities
         [JsonIgnore]
         public virtual ICollection<Vacation> Vacation { get; set; } = new Collection<Vacation>();
 
-        public DateTime? LastUpdated { get; set; }
+        public virtual DateTime? LastUpdated { get; set; }
 
-        public int Join { get; set; }
-
-        [Display]
-        public bool IgnoreOnMoveUp { get; set; }
+        public virtual int Join { get; set; }
 
         [Display]
-        public string PlayerTag { get; set; }
+        public virtual bool IgnoreOnMoveUp { get; set; }
 
-        public bool AutoSignUpForFightNight { get; set; }
+        [Display]
+        public virtual string PlayerTag { get; set; }
 
-        public ulong GuildId { get; set; }
+        public virtual bool AutoSignUpForFightNight { get; set; }
 
-        public int? MemberGroupId { get; set; }
+        public virtual ulong GuildId { get; set; }
+
+        public virtual int? MemberGroupId { get; set; }
 
         [JsonIgnore]
         public virtual MemberGroup MemberGroup { get; set; }
 
         [JsonIgnore]
         [Display]
-        public int? SHighLowest => MemberGroup?.Members?.Min(x => x.SHigh);
+        public virtual int? SHighLowest => MemberGroup?.Members.Min(x => x?.Season?.LastOrDefault()?.SHigh);
+
+        [JsonIgnore]
+        [Display]
+        public virtual int? SHigh => Season?.LastOrDefault()?.SHigh;
 
         [Display]
-        public double? LocalTimeOffSet { get; set; }
+        public virtual double? LocalTimeOffSet { get; set; }
 
         [Display]
         [IgnoreDataMember]
@@ -94,6 +91,9 @@ namespace MMBot.Data.Entities
         [JsonIgnore]
         public virtual ICollection<RaidParticipation> RaidParticipation { get; set; } = new Collection<RaidParticipation>();
 
+        [JsonIgnore]
+        public virtual ICollection<Season> Season { get; set; } = new Collection<Season>();
+
         public override string ToString() => Clan?.Tag is not null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
 
         public void Update(object member)
@@ -103,8 +103,6 @@ namespace MMBot.Data.Entities
                 Name = m.Name;
                 Discord = m.Discord;
                 AHigh = m.AHigh;
-                SHigh = m.SHigh;
-                Donations = m.Donations;
                 Role = m.Role;
                 DiscordStatus = m.DiscordStatus;
                 IsActive = m.IsActive;

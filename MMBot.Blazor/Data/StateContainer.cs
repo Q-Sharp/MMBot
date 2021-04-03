@@ -1,16 +1,23 @@
 ﻿using System;
+using Microsoft.AspNetCore.Components;
+using MMBot.Blazor.ViewModels;
 
-public class StateContainer
+namespace MMBot.Blazor.Data
 {
-    public string SelectedGuildId { get; set; } = "0";
-
-    public event Action OnChange;
-
-    public void SetSelectedGuildId(string value)
+    public class StateContainer
     {
-        SelectedGuildId = value;
-        NotifyStateChanged();
-    }
+        private string _selectedGuildId;
+        public string SelectedGuildId 
+        {
+            get => _selectedGuildId;
+            set
+            {
+                _selectedGuildId = value;
+                NotifyStateChanged();
+            }
+        }
 
-    private void NotifyStateChanged() => OnChange?.Invoke();
+        public event Action OnChange;
+        private void NotifyStateChanged() => OnChange?.Invoke();
+    }
 }

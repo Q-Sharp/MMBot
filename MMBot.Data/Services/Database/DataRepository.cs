@@ -18,7 +18,7 @@ namespace MMBot.Services.Database
     /// <typeparam name="TEntity"></typeparam>
     /// <typeparam name="TDataContext"></typeparam>
     public class DataRepository<TEntity, TDataContext> : IRepository<TEntity> 
-        where TEntity : class, IHaveId
+        where TEntity : class, IHaveId, new()
         where TDataContext : DbContext
     {
         protected readonly TDataContext context;
@@ -74,16 +74,26 @@ namespace MMBot.Services.Database
        
         public async virtual Task<TEntity> Insert(TEntity entity)
         {
-            await dbSet.AddAsync(entity);
+            var e = dbSet.Add(entity);
+            e.State = EntityState.Added;
+
             await context.SaveChangesAsync();
-            return entity;
+            return e.Entity;
         }
 
         public async virtual Task<TEntity> Update(TEntity entityToUpdate)
         {
-            var dbSet = context.Set<TEntity>();
-            dbSet.Attach(entityToUpdate);
-            context.Entry(entityToUpdate).State = EntityState.Modified;
+            try
+            {
+                dbSet.Attach(entityToUpdate);
+                context.Entry(entityToUpdate).State = EntityState.Modified;
+            }
+            catch
+            {
+                var db = dbSet.FirstOrDefault(x => x.Id == entityToUpdate.Id);
+                db.Update(entityToUpdate);
+            }
+            
             await context.SaveChangesAsync();
             return entityToUpdate;
         }

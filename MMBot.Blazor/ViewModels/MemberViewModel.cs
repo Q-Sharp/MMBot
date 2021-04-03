@@ -6,33 +6,47 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MMBot.Blazor.Data;
 using MMBot.Blazor.Services;
 using MMBot.Data.Entities;
 using MMBot.Services.Interfaces;
 
 namespace MMBot.Blazor.ViewModels
 {
-    public class MemberViewModel : CRUDBaseViewModel<Member>
+    public class MemberViewModel : ViewModelBase, ICRUDViewModel<MemberModel, Member>
     {
-        public override string Entity => "Member";
+        public string Entity => "Member";
+        public IRepository<Member> Repo { get; set; }
+        public StateContainer StateContainer { get; set; }
+        public IJSRuntime JSRuntime { get; set; }
+
+        public MemberModel SelectedEntity { get; set; }
+        public ICollection<MemberModel> Entities { get; set; }
+        public MemberModel CurrentEntity { get; set; }
+        public ulong GID => ulong.Parse(StateContainer.SelectedGuildId);
 
         public MemberViewModel(IRepository<Member> repo, StateContainer stateContainer, IJSRuntime jSRuntime)
-            : base(repo, stateContainer, jSRuntime)
         {
+            Repo = repo;
+            StateContainer = stateContainer;
+            JSRuntime = jSRuntime;
 
+            stateContainer.OnChange += () => _ = Init();
+
+            Init().GetAwaiter().GetResult();
         }
 
-        public override async Task Init() => Entities = await Load(x => x.GuildId == gid, x => x.OrderBy(y => y.AHigh));
+        public async Task Init() => Entities = await Load(x => x.GuildId == GID, x => x.OrderBy(y => y.AHigh));
 
-        public override async Task Delete(int id)
+        public async Task Delete(int id)
         {
-            var confirm = await _jSRuntime.InvokeAsync<bool>("confirm", "Do you want to delete this?");
+            var confirm = await JSRuntime.InvokeAsync<bool>("confirm", "Do you want to delete this?");
 
             if (confirm)
             {
                 try
                 {
-                    await _repo.Delete(id);
+                    await Repo.Delete(id);
                     Entities.Remove(Entities.FirstOrDefault(x => x.Id == id));
                 }
                 catch
@@ -42,12 +56,12 @@ namespace MMBot.Blazor.ViewModels
             }
         }
 
-        public override async Task Create(Member newEntity)
+        public async Task Create(MemberModel newEntity)
         {
             try
             {
-                var c = await _repo.Insert(newEntity);
-                Entities.Add(c);
+                var c = await Repo.Insert(newEntity);
+                Entities.Add(c as MemberModel);
             }
             catch
             {
@@ -55,9 +69,17 @@ namespace MMBot.Blazor.ViewModels
             }
         }
 
-        public override async Task<Member> Update(Member member) => await _repo.Update(member);
+        public MemberModel Add()
+        {
+            var nte = new MemberModel();
+            Entities.Add(nte);
+            SelectedEntity = nte;
+            return nte;
+        }
 
-        public override async Task<IList<Member>> Load(Expression<Func<Member, bool>> filter = null, Func<IQueryable<Member>, IOrderedQueryable<Member>> orderBy = null)
-            => (await _repo.Get(filter, orderBy)).ToList();
+        public async Task<MemberModel> Update(MemberModel member) => await Repo.Update(member) as MemberModel;
+
+        public async Task<IList<MemberModel>> Load(Expression<Func<Member, bool>> filter = null, Func<IQueryable<Member>, IOrderedQueryable<Member>> orderBy = null)
+            => (await Repo.Get(filter, orderBy)).Select(x => x as MemberModel).ToList();
     }
 }
