@@ -133,6 +133,12 @@ namespace MMBot.Data
                 .WithOne(m => m.Member)
                 .HasForeignKey(x => x.RaidParticipationId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
+
+            modelBuilder.Entity<Clan>()
+                .HasMany(c => c.RaidBoss)
+                .WithOne(c => c.Clan)
+                .HasForeignKey(c => c.ClanId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         public async Task MigrateAsync() => await Database.MigrateAsync();

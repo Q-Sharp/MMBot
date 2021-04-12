@@ -17,6 +17,9 @@
                     <MudItem xs="12">
                         <MudGrid Spacing="5" Justify="Justify.FlexEnd">
                             <MudItem>
+                                <MudAvatar Image=""/>
+                            </MudItem>
+                            <MudItem>
                                 <MudText Typo="Typo.h6">Hello, @context.User.Identity.Name!</MudText>
                             </MudItem>
                             <MudItem >
@@ -50,13 +53,20 @@
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <MudPaper Width="Auto" Class="py-3" Square="true">
             <MudNavMenu>
-                <MudDivider Class="my-2" />
-                <MudNavLink Href="" Match="NavLinkMatch.All">Home</MudNavLink>
-                <MudNavGroup Title="Data" Expanded="true">
-                    <MudNavLink Href="clan">Clan</MudNavLink>
-                    <MudNavLink Href="member">Member</MudNavLink>
+                <MudNavLink Href="´/" Match="NavLinkMatch.All">Home</MudNavLink>
+                <MudNavGroup Title="Data" Expanded="@_dataExpanded">
+                    <MudNavLink Href="/clan">Clan</MudNavLink>
+                    <MudNavLink Href="/member">Member</MudNavLink>
+                    <MudNavGroup Title="Raids" @bind-Expanded="_raidsExpanded">
+                        <MudNavLink Href="/results">Add results</MudNavLink>
+                        <MudNavLink Href="/history">History</MudNavLink>
+                    </MudNavGroup>
                 </MudNavGroup>
-                <MudNavLink Href="/about">About</MudNavLink>
+                <MudNavGroup Title="Discord bot" @bind-Expanded="_discordExpanded">
+                    <MudNavLink Href="/commands">Commands</MudNavLink>
+                    <MudNavLink Href="/help">Help</MudNavLink>
+                </MudNavGroup>
+                <MudNavLink Href="about">About</MudNavLink>
             </MudNavMenu>
         </MudPaper>
     </MudDrawer>
@@ -67,6 +77,11 @@
 
 @code
 {
+    private bool _dataExpanded = true;
+    private bool _raidsExpanded = true;
+    private bool _discordExpanded = true;
+    private bool _drawerOpen = true;
+
     private MudTheme currentTheme = new MudTheme()
     {
         Palette = new Palette()
@@ -87,8 +102,6 @@
             ActionDisabledBackground = "rgba(255,255,255, 0.12)"
         }
     };
-
-    bool _drawerOpen = true;
 
     void DrawerToggle()
     {

@@ -17,21 +17,17 @@ namespace MMBot.Blazor.ViewModels
         where TEntity : class, IHaveGuildId, IHaveId, new()
     {
         Task Create(TEntityModel newEntity);
-        Task Delete(int id);
+        Task Delete();
         Task<IList<TEntityModel>> Load(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null);
         Task<TEntityModel> Update(TEntityModel updated);
         TEntityModel Add();
 
         Task Init();
         ICollection<TEntityModel> Entities { get; set;  }
-        TEntityModel CurrentEntity { get; set; }
-
         TEntityModel SelectedEntity { get; set; }
 
         IRepository<TEntity> Repo { get; }
         StateContainer StateContainer { get; }
-        IJSRuntime JSRuntime { get; }
-
         string Entity { get; }
 
         ulong GID { get; }

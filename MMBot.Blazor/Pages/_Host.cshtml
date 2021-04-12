@@ -14,8 +14,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MMBot.Blazor</title>
     <base href="~/" />
-    @*<link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-        <link href="css/site.css" rel="stylesheet" /*@>
     <link href="MMBot.Blazor.styles.css" rel="stylesheet" />
 
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
@@ -24,7 +22,7 @@
 <body>
 
     <app>
-        <component type="typeof(App)" render-mode="Server" />
+        <component type="typeof(App)" render-mode="ServerPrerendered" />
     </app>
 
     <div id="blazor-error-ui">

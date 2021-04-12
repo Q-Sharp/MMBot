@@ -88,6 +88,16 @@ namespace MMBot.Data.Entities
             }
         }
 
+        public override int? ClanId
+        {
+            get => base.ClanId;
+            set
+            {
+                base.ClanId = value;
+                NotifyStateChanged();
+            }
+        }
+
         public static MemberModel Create(Member m)
         {
             return new MemberModel

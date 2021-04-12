@@ -1,0 +1,43 @@
+﻿@inject ICRUDViewModel<ClanModel, Clan> ClanVM
+@inject StateContainer StateContainer
+
+@inherits ComponentBase
+
+<MudSelect T="int?" Label="Clan" @bind-Value="SelectedId" FullWidth="true" Strict="true" Variant="Variant.Outlined" Format="F2">
+    <MudSelectItem T="int?" value="@((int?)null)">None</MudSelectItem>
+    @foreach (var clan in ClanVM.Entities)
+    {
+        <MudSelectItem T="int?" value="@clan.Id">@clan.Name</MudSelectItem>
+    }
+</MudSelect>
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        StateContainer.OnChange += StateHasChanged;
+        ClanVM.SelectedEntity = ClanVM?.Entities.FirstOrDefault(x => x.Id == SelectedId);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+
+    private int? _selectedId;
+
+    [Parameter]
+    public int? SelectedId
+    {
+        get => _selectedId;
+        set
+        {
+            _selectedId = value;
+            ClanVM.SelectedEntity = ClanVM?.Entities.FirstOrDefault(x => x.Id == SelectedId);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<int?> SelectedIdChanged { get; set; }
+}

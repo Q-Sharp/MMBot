@@ -74,11 +74,20 @@ namespace MMBot.Services.Database
        
         public async virtual Task<TEntity> Insert(TEntity entity)
         {
-            var e = dbSet.Add(entity);
-            e.State = EntityState.Added;
+            try
+            {
+                var e = dbSet.Add(entity);
+                e.State = EntityState.Added;
 
-            await context.SaveChangesAsync();
-            return e.Entity;
+                await context.SaveChangesAsync();
+                return e.Entity;
+            }
+            catch(Exception e)
+            {
+                var i = e;
+            }
+
+            return null;
         }
 
         public async virtual Task<TEntity> Update(TEntity entityToUpdate)

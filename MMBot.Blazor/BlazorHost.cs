@@ -10,16 +10,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MMBot.Blazor.Helpers;
 using MMBot.Blazor.Services;
-using MMBot.Blazor.ViewModels;
 using MMBot.Data;
-using MMBot.Data.Entities;
 using MMBot.Data.Services;
 using MMBot.Data.Services.Interfaces;
-using MMBot.Services.Database;
-using MMBot.Services.Interfaces;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using MudBlazor.Services;
 using MMBot.Blazor.Data;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 
 namespace MMBot.Blazor
 {
@@ -27,6 +25,7 @@ namespace MMBot.Blazor
     {
         public static IHostBuilder CreateHostBuilder(string[] args) 
             => Host.CreateDefaultBuilder(args)
+                   .UseSystemd()
                    .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
                    .UseSerilog();
     }
@@ -50,7 +49,14 @@ namespace MMBot.Blazor
             
             services.AddDbContext<Context>(o => o.UseNpgsql(connectionString))
                     .AddScoped<IDatabaseService, DatabaseService>();
-                    
+
+            services.AddDataProtection()
+                    .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration()
+                    {
+                        EncryptionAlgorithm = EncryptionAlgorithm.AES_256_GCM,
+                        ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+                    })
+                    .SetApplicationName("MMBot");
 
             services.AddAuthentication(opt =>
             {

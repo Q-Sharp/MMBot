@@ -8,58 +8,64 @@
 
 @attribute [Authorize]
 
-@if (MemberVM.Entities == null)
+@if (MemberVM?.Entities == null)
 {
     <MudProgressCircular Color="Color.Default" Indeterminate="true" />
 }
 else
 {
-    <MudTable Items="@MemberVM.Entities" Dense="true" Hover="true" ReadOnly="false" Filter="new Func<MemberModel,bool>(FilterFunc)" @bind-SelectedItem="MemberVM.CurrentEntity" SortLabel="Sort By"
-              CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => MemberVM.Update(MemberVM.CurrentEntity))">
+    <MudTable Items="@MemberVM.Entities" Dense="true" Hover="true" ReadOnly="false" Filter="new Func<MemberModel,bool>(FilterFunc)" @bind-SelectedItem="MemberVM.SelectedEntity" SortLabel="Sort By"
+              CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => MemberVM.Update(MemberVM.SelectedEntity))">
         <ToolBarContent>
             <MudText Typo="Typo.h2">Members</MudText>
             <MudToolBarSpacer />
-            <MudButton @onclick="() => MemberVM.Add()">New</MudButton>
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Create" Color="Color.Default" OnClick="() => MemberVM.Add()">Create</MudButton>
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Default" Disabled="(MemberVM?.SelectedEntity?.Id ?? 0) == 0" OnClick="() => MemberVM.Delete()">Delete</MudButton>
+            <MudToolBarSpacer />
             <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         </ToolBarContent>
         <ColGroup>
+            <col style="width:20px;" />
             <col style="width:50px;" />
-            <col style="width:80px;" />
-            <col style="width:50%;" />
+            <col style="width:120px;" />
+            <col style="width:150px;" />
         </ColGroup>
         <HeaderContent>
-            @*<MudTh><MudTableSortLabel SortBy="new Func<Member, object>(x=>x.Id)">Id</MudTableSortLabel></MudTh
-        <MudTh><MudTableSortLabel SortBy="new Func<Member, object>(x => x.SortOrder)" InitialDirection="SortDirection.Ascending">SortOrder</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<Member, object>(x=>x.Tag)">Tag</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<Member, object>(x=>x.Name)">Name</MudTableSortLabel></MudTh>>*@
+            @*<MudTh><MudTableSortLabel SortBy="new Func<Member, object>(x => x.Id)">Id</MudTableSortLabel></MudTh>*@
+            <MudTh><MudTableSortLabel SortBy="new Func<Member, object>(x => x.IsActive)">Is active?</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Member, object>(x => x.Name)" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Member, object>(x => x.AHigh)">Alltime high</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Member, object>(x => x.ClanId)">Clan</MudTableSortLabel></MudTh>
         </HeaderContent>
         <RowTemplate>
-            @*<MudTd DataLabel="Id">@context.Id</MudTd>
-        <MudTd DataLabel="SortOrder">@context.SortOrder</MudTd>
-        <MudTd DataLabel="Tag">@context.Tag</MudTd>
-        <MudTd DataLabel="Name">@context.Name</MudTd>
-        <MudTd></MudTd>*@
+            @*<MudTd DataLabel="Id">@context.Id</MudTd>*@
+            <MudTd DataLabel="IsActive">
+                <MudCheckBox T="bool" Checked="@context.IsActive" />
+            </MudTd>
+            <MudTd DataLabel="Tag">@context.Name</MudTd>
+            <MudTd DataLabel="Name">@context.AHigh</MudTd>
+            <MudTd DataLabel="Clan">@context.ClanId</MudTd>
         </RowTemplate>
         <RowEditingTemplate>
-            @*<MudTd DataLabel="Id">@context.Id</MudTd>
-        <MudTd DataLabel="SortOrder">
-            <MudTextField @bind-Value="@context.SortOrder" Required />
-        </MudTd>
-        <MudTd DataLabel="Tag">
-            <MudTextField @bind-Value="@context.Tag" Required />
-        </MudTd>
-        <MudTd DataLabel="Name">
-            <MudTextField @bind-Value="@context.Name" Required />
-        </MudTd>*@
-            <MudTd>
-                <MudButton @onclick="() => MemberVM.Delete(context.Id)">🗙 </MudButton>
+            @*<MudTd DataLabel="Id">@context.Id</MudTd>*@
+            <MudTd DataLabel="IsActive">
+                <MudCheckBox T="bool" @bind-Value="@context.IsActive" Required />
+            </MudTd>
+            <MudTd DataLabel="Tag">
+                <MudTextField @bind-Value="@context.Name" Required />
+            </MudTd>
+            <MudTd DataLabel="Name">
+                <MudTextField @bind-Value="@context.AHigh" />
+            </MudTd>
+            <MudTd DataLabel="Clan">
+                <ClanLookUp @bind-SelectedId="@context.ClanId" />
             </MudTd>
         </RowEditingTemplate>
         <PagerContent>
             <MudTablePager />
         </PagerContent>
     </MudTable>
-    <MudText Inline="true">Selected: @MemberVM?.CurrentEntity?.Name</MudText>
+    <MudText Inline="true">Selected: @MemberVM?.SelectedEntity?.Name</MudText>
 }
 
 @code {

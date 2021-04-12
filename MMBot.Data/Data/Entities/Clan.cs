@@ -27,6 +27,10 @@ namespace MMBot.Data.Entities
 
         [JsonIgnore]
         public virtual ICollection<Member> Member { get; set; } = new Collection<Member>();
+
+        [JsonIgnore]
+        public virtual ICollection<RaidBoss> RaidBoss { get; set; } = new Collection<RaidBoss>();
+
         public override string ToString() => $"[{Tag}]";
 
         public void Update(object clan)
