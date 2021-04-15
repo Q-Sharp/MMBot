@@ -19,7 +19,7 @@ jobs:
         dotnet-version: 5.0.100
     - name: add discord.net feed
       run: dotnet nuget add source https://www.myget.org/F/discord-net/api/v3/index.json
-    - name: Install dependencies
+    - name: Install dependencies2
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
