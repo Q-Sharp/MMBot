@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Discord;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MMBot.Data.Helpers;
@@ -84,7 +85,7 @@ namespace MMBot.Services.Database
             }
             catch(Exception e)
             {
-                var i = e;
+                _logger.LogError(e, "Couldn't insert {0}", entity.ToString());
             }
 
             return null;
@@ -92,17 +93,32 @@ namespace MMBot.Services.Database
 
         public async virtual Task<TEntity> Update(TEntity entityToUpdate)
         {
+            var ex = false;
+
             try
             {
                 dbSet.Attach(entityToUpdate);
                 context.Entry(entityToUpdate).State = EntityState.Modified;
             }
-            catch
+            catch(Exception e)
             {
-                var db = dbSet.FirstOrDefault(x => x.Id == entityToUpdate.Id);
-                db.Update(entityToUpdate);
+                ex = true;
+                _logger.LogError(e, "Couldn't update {0}", entityToUpdate.ToString());
             }
-            
+
+            if (ex)
+            {
+                try
+                {
+                    var db = dbSet.FirstOrDefault(x => x.Id == entityToUpdate.Id);
+                    db.Update(entityToUpdate);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Still couldn't update {0}", entityToUpdate.ToString());
+                }
+            }
+
             await context.SaveChangesAsync();
             return entityToUpdate;
         }
