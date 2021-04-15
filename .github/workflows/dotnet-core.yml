@@ -22,7 +22,7 @@ jobs:
     - name: Install dependencies2
       run: dotnet restore
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build --configuration Release
     - name: Test
       run: dotnet test --no-restore --verbosity normal
     - name: .NET Publish
