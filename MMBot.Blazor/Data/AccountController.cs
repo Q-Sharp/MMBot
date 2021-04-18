@@ -18,18 +18,8 @@ namespace MMBot.Blazor.Data
         }
 
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
-        {
-            if (returnUrl is null)
-            {
-                var path = HttpContext.Request.GetEncodedPathAndQuery();
-                var req = HttpContext.Request;
-                req.IsHttps = true;
-                returnUrl = req.GetDisplayUrl().Replace(path, "");
-            }
-
-            return Challenge(new AuthenticationProperties { RedirectUri = returnUrl, IsPersistent = true }, "Discord");
-        }
+        public IActionResult Login(string returnUrl = "/") 
+            => Challenge(new AuthenticationProperties { RedirectUri = returnUrl, IsPersistent = true }, "Discord");
 
         [HttpGet]
         public async Task<IActionResult> Logout(string returnUrl = "/")
