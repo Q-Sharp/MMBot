@@ -67,7 +67,10 @@ namespace MMBot.Blazor
                 opt.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 opt.DefaultChallengeScheme = "Discord";
             })
-            .AddCookie()
+            .AddCookie(c =>
+            {
+                c.Cookie.SameSite = SameSiteMode.Strict;
+            })
             .AddDiscord(x =>
             {
                 x.ClientId = Configuration["Discord:AppId"];
@@ -79,11 +82,15 @@ namespace MMBot.Blazor
                     {
                         var guildClaim = await DiscordHelpers.GetGuildClaims(context);
                         context.Identity.AddClaim(guildClaim);
+                    },
+                    OnAccessDenied = context =>
+                    {
+                        context.AccessDeniedPath = PathString.FromUriComponent("/");
+                        context.ReturnUrlParameter = string.Empty;
+                        return Task.CompletedTask;
                     }
                 };
 
-                x.AccessDeniedPath = PathString.FromUriComponent("/");
-                x.ReturnUrlParameter = string.Empty;
                 x.DiscordAvatarFormat = Urls.AvatarUrlFormat;
                 x.SaveTokens = true;
                 x.Validate();
