@@ -1,9 +1,9 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
 namespace MMBot.Blazor.Data
 {
@@ -12,12 +12,20 @@ namespace MMBot.Blazor.Data
     {
         public AccountController()
         {
-
+            
         }
 
         [HttpGet]
-        public IActionResult Login(string returnUrl = "/") 
-            => Challenge(new AuthenticationProperties { RedirectUri = returnUrl }, "Discord");
+        public IActionResult Login(string returnUrl = null)
+        {
+            if(returnUrl is null)
+            {
+                var path = HttpContext.Request.GetEncodedPathAndQuery();
+                returnUrl = HttpContext.Request.GetEncodedUrl().Replace(path, "");
+            }
+            
+            return Challenge(new AuthenticationProperties { RedirectUri = returnUrl }, "Discord");
+        }
 
         [HttpGet]
         public async Task<IActionResult> Logout(string returnUrl = "/")

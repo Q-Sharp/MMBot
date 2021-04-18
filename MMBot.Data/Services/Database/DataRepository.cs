@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
-using Discord;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MMBot.Data.Helpers;
@@ -36,8 +34,8 @@ namespace MMBot.Services.Database
          public async virtual Task<IEnumerable<TEntity>> Get(
              Expression<Func<TEntity, bool>> filter = null, 
              Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, 
-             string IncludeProperties = "")
-        {
+             string includeProperties = "")
+         {
             try
             {
                 IQueryable<TEntity> q = dbSet;
@@ -45,7 +43,7 @@ namespace MMBot.Services.Database
                 if(filter != null)
                     q = q.Where(filter);
 
-                IncludeProperties.Split(",", StringSplitOptions.RemoveEmptyEntries).ForEach(x => q = q.Include(x));
+                includeProperties.Split(",", StringSplitOptions.RemoveEmptyEntries).ForEach(x => q = q.Include(x));
 
                 return orderBy != null ? orderBy(q).ToList() : await q.ToListAsync();
             }
@@ -54,7 +52,7 @@ namespace MMBot.Services.Database
                 _logger.LogError(e.Message);
                 return null;
             }
-        }
+         }
 
         public async virtual Task<TEntity> GetById(object id) => await dbSet.FindAsync(id);
 
