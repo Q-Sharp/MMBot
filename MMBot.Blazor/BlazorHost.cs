@@ -1,23 +1,26 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using Serilog;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MMBot.Blazor.Data;
 using MMBot.Blazor.Helpers;
 using MMBot.Blazor.Services;
 using MMBot.Data;
 using MMBot.Data.Services;
 using MMBot.Data.Services.Interfaces;
 using MudBlazor.Services;
-using MMBot.Blazor.Data;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
-using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+using Serilog;
+using static AspNet.Security.OAuth.Discord.DiscordAuthenticationConstants;
 
 namespace MMBot.Blazor
 {
@@ -79,8 +82,16 @@ namespace MMBot.Blazor
                     }
                 };
 
+                x.AccessDeniedPath = PathString.FromUriComponent("/");
+                x.ReturnUrlParameter = string.Empty;
+                x.DiscordAvatarFormat = Urls.AvatarUrlFormat;
                 x.SaveTokens = true;
                 x.Validate();
+            });
+
+            services.AddAuthorization(c =>
+            {
+                c.InvokeHandlersAfterFailure = false;
             });
 
             services.AddSession();

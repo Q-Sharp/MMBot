@@ -28,6 +28,8 @@ namespace MMBot.Blazor.Services
 
         private async void AuthenticationStateProvider_AuthenticationStateChanged(Task<AuthenticationState> task) => await SetLoggedUserAsync();
 
+        public bool IsBptÓwner => LoggedUser != null && LoggedUser.Id == 301764235887902727;
+
         public IDCUser LoggedUser { get; set; }
         private async Task SetLoggedUserAsync()
         {
