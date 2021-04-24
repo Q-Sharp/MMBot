@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using MMBot.Data.Entities;
 
 namespace MMBot.Data.Services.Interfaces
@@ -18,6 +19,8 @@ namespace MMBot.Data.Services.Interfaces
         void DeleteMember(int id);
 
         Task<GuildSettings> LoadGuildSettingsAsync(ulong guildId);
+        Task<IList<GuildSettings>> LoadAllGuildSettingsAsync();
+        void DeleteGuildSettings(GuildSettings gs);
 
         Restart AddRestart();
         Task<Restart> ConsumeRestart();
@@ -36,6 +39,6 @@ namespace MMBot.Data.Services.Interfaces
         Task SaveDataAsync();
         Task MigrateAsync();
         void Truncate();
-        Task CleanDB(IEnumerable<ulong> guildIds = null);
+        Task CleanDB(IEnumerable<Tuple<ulong, string>> guilds = null);
     }
 }

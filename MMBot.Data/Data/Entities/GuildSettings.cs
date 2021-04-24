@@ -12,6 +12,9 @@ namespace MMBot.Data.Entities
         public ulong GuildId { get; set; }
 
         [Display]
+        public string GuildName { get; set; }
+
+        [Display]
         public string Prefix { get; set; }
 
         [Display]

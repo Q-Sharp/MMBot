@@ -18,6 +18,7 @@ using MMBot.Blazor.Services;
 using MMBot.Data;
 using MMBot.Data.Services;
 using MMBot.Data.Services.Interfaces;
+using MMBot.Services.Database;
 using MudBlazor.Services;
 using Serilog;
 using static AspNet.Security.OAuth.Discord.DiscordAuthenticationConstants;
@@ -107,6 +108,7 @@ namespace MMBot.Blazor
                     .AddScoped<IDCUser, DCUser>();
 
             services.AddSingleton<StateContainer>();
+            services.AddScoped<BlazorDatabaseService>();
 
             services.AddCRUDViewModels();
             services.AddMudServices();
@@ -142,7 +144,6 @@ namespace MMBot.Blazor
                     endpoints.MapBlazorHub();
                     endpoints.MapFallbackToPage("/_Host");
                     endpoints.MapDefaultControllerRoute();
-
                });
         }
     }

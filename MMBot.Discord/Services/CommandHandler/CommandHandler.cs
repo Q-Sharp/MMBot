@@ -95,7 +95,16 @@ namespace MMBot.Discord.Services.CommandHandler
             _logger.Log(LogLevel.Information, "Bot is connected!");
 
             // clean db if needed
-            await _databaseService.CleanDB(_client.Guilds.Select(g => g.Id));
+            try
+            {
+                _logger.Log(LogLevel.Information, "Starting CleanUp");
+                await _databaseService.CleanDB(_client.Guilds.Select(g => Tuple.Create(g.Id, g.Name)));
+            }
+            catch(Exception e)
+            {
+                _logger.Log(LogLevel.Error, e, "Error in cleanup");
+            }
+            _logger.Log(LogLevel.Information, "CleanUp finished!");
 
             // handle restart information
             var r = await _databaseService.ConsumeRestart();

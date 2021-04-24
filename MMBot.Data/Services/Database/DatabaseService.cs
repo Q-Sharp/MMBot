@@ -19,7 +19,8 @@ namespace MMBot.Data.Services
         public async Task MigrateAsync() => await _context?.MigrateAsync();
         public async Task SaveDataAsync() => await _context?.SaveChangesAsync(new CancellationToken());
         public async Task<GuildSettings> LoadGuildSettingsAsync(ulong guildId) => await _context.GuildSettings.Where(x => x.GuildId == guildId).FirstOrDefaultAsync();
-
+        public async Task<IList<GuildSettings>> LoadAllGuildSettingsAsync() => await _context.GuildSettings.AsAsyncEnumerable().ToListAsync();
+        public void DeleteGuildSettings(GuildSettings gs) => _context.Remove(gs);
 
         public Clan CreateClan(ulong guildId) => _context.Add(new Clan { GuildId = guildId }).Entity;
         public async Task<IList<Clan>> LoadClansAsync(ulong guildId) => await _context.Clan.Where(x => x.GuildId == guildId).ToListAsync();
@@ -87,7 +88,7 @@ namespace MMBot.Data.Services
             _context.ChangeTracker.DetectChanges();
         }
 
-        public async Task CleanDB(IEnumerable<ulong> guildIds)
+        public async Task CleanDB(IEnumerable<Tuple<ulong, string>> guilds)
         {
             var c = await _context.Clan.AsAsyncEnumerable().ToListAsync();
             var m = await _context.Member.AsAsyncEnumerable().ToListAsync();
@@ -118,10 +119,18 @@ namespace MMBot.Data.Services
             await _context.SaveChangesAsync();
 
             // clean dead channel data
-            if (guildIds is not null)
+            if (guilds is not null)
             {
                 var ch = await LoadChannelsAsync();
-                ch.Where(x => !guildIds.Contains(x.GuildId)).ForEach(cha => _context.Remove(cha));
+                ch.Where(x => !guilds.Select(y => y.Item1).Contains(x.GuildId)).ForEach(cha => _context.Remove(cha));
+                await _context.SaveChangesAsync();
+
+                var gs = await LoadAllGuildSettingsAsync();
+                //gs.Where(x => !guilds.Select(y => y.Item1).Contains(x.GuildId)).ForEach(gss => _context.Remove(gss));
+                //await _context.SaveChangesAsync();
+
+                //gs = await LoadAllGuildSettingsAsync();
+                gs.Where(x => x.GuildName == null).ForEach(gss => gss.GuildName = guilds.FirstOrDefault(y => y.Item1 == gss.GuildId).Item2);
                 await _context.SaveChangesAsync();
             }
         }
