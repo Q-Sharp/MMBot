@@ -19,7 +19,7 @@ namespace MMBot.Blazor.Data
 
         [HttpGet]
         public IActionResult Login(string returnUrl = "/") 
-            => Challenge(new AuthenticationProperties { RedirectUri = returnUrl, IsPersistent = true }, "Discord");
+            => Challenge(new AuthenticationProperties { RedirectUri = returnUrl }, "Discord");
 
         [HttpGet]
         public async Task<IActionResult> Logout(string returnUrl = "/")

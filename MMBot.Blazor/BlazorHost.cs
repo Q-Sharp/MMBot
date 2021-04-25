@@ -1,3 +1,4 @@
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
@@ -7,11 +8,13 @@ using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MMBot.Blazor.Data;
 using MMBot.Blazor.Helpers;
 using MMBot.Blazor.Services;
@@ -102,6 +105,12 @@ namespace MMBot.Blazor
                 c.InvokeHandlersAfterFailure = false;
             });
 
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.KnownProxies.Add(IPAddress.Any);
+                options.ForwardedHeaders = ForwardedHeaders.All;
+            });
+
             services.AddSession();
             services.AddHttpContextAccessor();
             services.AddScoped<IAccountService, AccountService>()
@@ -125,12 +134,11 @@ namespace MMBot.Blazor
             }
             else
             {
-                app.UseForwardedHeaders();
-                app.UseHttpsRedirection();
-                app.UseCertificateForwarding();
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                app.UseForwardedHeaders()
+                   .UseCertificateForwarding()
+                   .UseExceptionHandler("/Error")
+                   .UseHsts()
+                   .UseCookiePolicy();
             }
 
             app.UseHttpsRedirection()
