@@ -33,6 +33,11 @@ namespace MMBot.Blazor
         public static IHostBuilder CreateHostBuilder(string[] args) 
             => Host.CreateDefaultBuilder(args)
                    .UseSystemd()
+                   .ConfigureAppConfiguration((hostContext, configBuilder) =>
+                   {
+                       configBuilder.AddEnvironmentVariables("MMBot_")
+                                    .AddCommandLine(args);
+                   })
                    .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
                    .UseSerilog();
     }
