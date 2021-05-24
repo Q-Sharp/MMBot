@@ -14,7 +14,7 @@
 }
 else
 {
-    <MudTable Items="@ClanVM.Entities" Dense="true" Hover="true" ReadOnly="false" Filter="new Func<ClanModel, bool>(FilterFunc)" @bind-SelectedItem="ClanVM.SelectedEntity" SortLabel="Sort By" 
+    <MudTable FixedHeader="true" Items="@ClanVM.Entities" Dense="true" Hover="true" ReadOnly="false" Filter="new Func<ClanModel, bool>(FilterFunc)" @bind-SelectedItem="ClanVM.SelectedEntity" SortLabel="Sort By" 
               CommitEditTooltip="Commit Edit" OnCommitEditClick="x => ClanVM.Update(ClanVM.SelectedEntity)">
         <ToolBarContent>
             <MudText Typo="Typo.h2">Clans</MudText>
