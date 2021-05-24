@@ -9,8 +9,9 @@ namespace MMBot.Data.Entities
 
         public int RaidParticipationId { get; set; }
         public int MemberId { get; set; }
-        
-        public RaidBoss BossRaid { get; set; }
+        public int RaidBossId { get; set; }
+
+        public RaidBoss RaidBoss { get; set; }
         public Member Member { get; set; }
 
         public ulong DamageDone { get; set; }
@@ -18,6 +19,6 @@ namespace MMBot.Data.Entities
         public int AttackQty { get; set; }
         public ulong GuildId { get; set; }
 
-        public void Update(object bossRaider) => throw new NotImplementedException();
+        public void Update(object raidBoss) => throw new NotImplementedException();
     }
 }

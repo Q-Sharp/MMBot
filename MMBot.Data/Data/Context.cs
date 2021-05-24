@@ -30,115 +30,13 @@ namespace MMBot.Data
         public DbSet<MemberGroup> MemberGroup { get; set; }
         public DbSet<MMTimer> Timer { get; set; }
         public DbSet<Strike> Strike { get; set; }
-        public DbSet<RaidBoss> BossRaid { get; set; }
-        public DbSet<RaidParticipation> BossRaider { get; set; }
+        public DbSet<RaidBoss> RaidBoss { get; set; }
+        public DbSet<RaidParticipation> RaidParticipation { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.UseIdentityByDefaultColumns();
-
-            modelBuilder.Entity<Channel>()
-                .UseXminAsConcurrencyToken()
-                .HasKey(c => c.Id);
-
-            modelBuilder.Entity<Clan>()
-                .UseXminAsConcurrencyToken()
-                .HasKey(c => c.Id);
-
-            modelBuilder.Entity<Clan>()
-                .HasIndex(c => new { c.Tag, c.Name, c.GuildId, c.SortOrder })
-                .IsUnique();
-
-            modelBuilder.Entity<Clan>()
-                .HasMany(c => c.Member)
-                .WithOne(m => m.Clan)
-                .HasForeignKey(m => m.ClanId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-             modelBuilder.Entity<Member>()
-                .UseXminAsConcurrencyToken()
-                .HasKey(c => c.Id);
-
-            modelBuilder.Entity<Member>()
-                .HasMany(v => v.Vacation)
-                .WithOne(m => m.Member)
-                .HasForeignKey(v => v.MemberId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            modelBuilder.Entity<Member>()
-                .HasMany(v => v.Strikes)
-                .WithOne(m => m.Member)
-                .HasForeignKey(v => v.MemberId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            modelBuilder.Entity<Season>()
-                .UseXminAsConcurrencyToken()
-                .HasKey(c => c.Id);
-
-            modelBuilder.Entity<Member>()
-                .HasMany(p => p.Season)
-                .WithMany(p => p.Member)
-                .UsingEntity(j => j.ToTable("MemberSeason"));
-
-            modelBuilder.Entity<MemberGroup>()
-                .UseXminAsConcurrencyToken()
-                .HasKey(c => c.Id);
-
-            modelBuilder.Entity<MemberGroup>()
-                .HasMany(m => m.Members)
-                .WithOne(m => m.MemberGroup)
-                .HasForeignKey(x => x.MemberGroupId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            modelBuilder.Entity<GuildSettings>()
-                .HasIndex(m => m.GuildId)
-                .IsUnique();
-
-            modelBuilder.Entity<GuildSettings>()
-                .UseXminAsConcurrencyToken()
-                .HasKey(c => c.Id);
-
-            modelBuilder.Entity<MMTimer>()
-                .UseXminAsConcurrencyToken()
-                .HasKey(c => c.Id);
-
-            modelBuilder.Entity<Restart>()
-                .UseXminAsConcurrencyToken()
-                .HasKey(c => c.Id);
-
-            modelBuilder.Entity<Strike>()
-                .UseXminAsConcurrencyToken()
-                .HasKey(c => c.Id);
-
-            modelBuilder.Entity<Vacation>()
-                .UseXminAsConcurrencyToken()
-                .HasKey(c => c.Id);
-
-             modelBuilder.Entity<RaidBoss>()
-                .UseXminAsConcurrencyToken()
-                .HasKey(c => c.Id);
-
-             modelBuilder.Entity<RaidBoss>()
-                .HasMany(m => m.RaidParticipation)
-                .WithOne(m => m.BossRaid)
-                .HasForeignKey(x => x.RaidParticipationId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-             modelBuilder.Entity<RaidParticipation>()
-                .UseXminAsConcurrencyToken()
-                .HasKey(c => c.Id);
-
-            modelBuilder.Entity<Member>()
-                .HasMany(m => m.RaidParticipation)
-                .WithOne(m => m.Member)
-                .HasForeignKey(x => x.RaidParticipationId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            modelBuilder.Entity<Clan>()
-                .HasMany(c => c.RaidBoss)
-                .WithOne(c => c.Clan)
-                .HasForeignKey(c => c.ClanId)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(Context).Assembly)
+                        .UseIdentityByDefaultColumns();
         }
 
         public async Task MigrateAsync() => await Database.MigrateAsync();

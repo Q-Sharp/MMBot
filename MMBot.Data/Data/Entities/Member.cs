@@ -70,11 +70,11 @@ namespace MMBot.Data.Entities
 
         [JsonIgnore]
         [Display]
-        public virtual int? SHighLowest => MemberGroup?.Members.Min(x => x?.Season?.LastOrDefault()?.SHigh);
+        public virtual int? SHighLowest => MemberGroup?.Members.Min(x => x?.SeasonResult?.LastOrDefault()?.SHigh ?? 0);
 
         [JsonIgnore]
         [Display]
-        public virtual int? SHigh => Season?.LastOrDefault()?.SHigh;
+        public virtual int? SHigh => SeasonResult?.LastOrDefault()?.SHigh ?? 0;
 
         [Display]
         public virtual double? LocalTimeOffSet { get; set; }
@@ -86,13 +86,13 @@ namespace MMBot.Data.Entities
             => LocalTimeOffSet.HasValue ? DateTime.UtcNow + TimeSpan.FromHours(LocalTimeOffSet.Value) : null;
 
         [JsonIgnore]
-        public virtual ICollection<Strike> Strikes { get; set; } = new Collection<Strike>();
+        public virtual ICollection<Strike> Strike { get; set; } = new Collection<Strike>();
 
         [JsonIgnore]
         public virtual ICollection<RaidParticipation> RaidParticipation { get; set; } = new Collection<RaidParticipation>();
 
         [JsonIgnore]
-        public virtual ICollection<Season> Season { get; set; } = new Collection<Season>();
+        public virtual ICollection<SeasonResult> SeasonResult { get; set; } = new Collection<SeasonResult>();
 
         public override string ToString() => Clan?.Tag is not null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
 
