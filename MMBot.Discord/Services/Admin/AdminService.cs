@@ -104,7 +104,7 @@ namespace MMBot.Discord.Services
             => _guildId = id;
 
         public void Truncate() 
-            => _databaseService.Truncate();
+            => _databaseService?.Truncate();
 
         public async Task Restart(bool saveRestart = false, ulong? guildId = null, ulong? channelId = null)
         {

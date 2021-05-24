@@ -29,6 +29,9 @@ namespace MMBot.Discord.Modules.Admin
             {
                 var json = await _jsonService.ExportDBToJson();
 
+                if (File.Exists(_export))
+                    File.Delete(_export);
+
                 ex = await Task.Run(async () =>
                 {
                     Directory.CreateDirectory(_backupDir);
@@ -44,9 +47,9 @@ namespace MMBot.Discord.Modules.Admin
 
                 return FromSuccess();
             }
-            catch
+            catch(Exception e)
             {
-                 return FromError(CommandError.Unsuccessful, "Export Exception");
+                 return FromError(CommandError.Unsuccessful, $"Export Exception. {e.Message}");
             }
             finally
             {
@@ -89,6 +92,7 @@ namespace MMBot.Discord.Modules.Admin
         [RequireOwner]
         public async Task<RuntimeResult> Restart(bool saveRestart = true)
         {
+            await ReplyAsync("Restarting.....");
             await _adminService.Restart(saveRestart, Context.Guild.Id, Context.Channel.Id);
             return FromSuccess();
         }

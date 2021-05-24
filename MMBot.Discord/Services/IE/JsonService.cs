@@ -11,6 +11,7 @@ using MMBot.Discord.Services.Interfaces;
 using MMBot.Data.Interfaces;
 using System.Text.Json.Serialization;
 using MMBot.Data.Helpers;
+using System.Reflection;
 
 namespace MMBot.Discord.Services.IE
 {
@@ -35,23 +36,19 @@ namespace MMBot.Discord.Services.IE
 
         public async Task<IDictionary<string, string>> ExportDBToJson()
         {
-            var am = await _context.Member.AsAsyncEnumerable().ToListAsync().AsTask();
-            var ac = await _context.Clan.AsAsyncEnumerable().ToListAsync().AsTask();
-            var ags = await _context.GuildSettings.AsAsyncEnumerable().ToListAsync().AsTask();
-            var av = await _context.Vacation.AsAsyncEnumerable().ToListAsync().AsTask();
-            var aca = await _context.Channel.AsAsyncEnumerable().ToListAsync().AsTask();
-            var amg = await _context.MemberGroup.AsAsyncEnumerable().ToListAsync().AsTask();
-            var mmt = await _context.Timer.AsAsyncEnumerable().ToListAsync().AsTask();
-
             var dict = new Dictionary<string, string>
             {
-                { "Member", JsonSerializer.Serialize(am, _jsonSerializerOptions) },
-                { "Clan", JsonSerializer.Serialize(ac, _jsonSerializerOptions) },
-                { "GuildSettings", JsonSerializer.Serialize(ags, _jsonSerializerOptions) },
-                { "Vacation", JsonSerializer.Serialize(av, _jsonSerializerOptions) },
-                { "Channel", JsonSerializer.Serialize(aca, _jsonSerializerOptions) },
-                { "MemberGroup", JsonSerializer.Serialize(amg, _jsonSerializerOptions) },
-                { "MMTimer", JsonSerializer.Serialize(mmt, _jsonSerializerOptions) }
+                { "Member", JsonSerializer.Serialize((await _context.Member.AsAsyncEnumerable().ToListAsync()), _jsonSerializerOptions) },
+                { "Clan", JsonSerializer.Serialize((await _context.Clan.AsAsyncEnumerable().ToListAsync().AsTask()), _jsonSerializerOptions) },
+                { "GuildSettings", JsonSerializer.Serialize((await _context.GuildSettings.AsAsyncEnumerable().ToListAsync().AsTask()), _jsonSerializerOptions) },
+                { "Vacation", JsonSerializer.Serialize((await _context.Vacation.AsAsyncEnumerable().ToListAsync().AsTask()), _jsonSerializerOptions) },
+                { "Channel", JsonSerializer.Serialize((await _context.Channel.AsAsyncEnumerable().ToListAsync().AsTask()), _jsonSerializerOptions) },
+                { "MemberGroup", JsonSerializer.Serialize((await _context.MemberGroup.AsAsyncEnumerable().ToListAsync().AsTask()), _jsonSerializerOptions) },
+                { "Season", JsonSerializer.Serialize((await _context.Season.AsAsyncEnumerable().ToListAsync().AsTask()), _jsonSerializerOptions) },
+                { "Strike", JsonSerializer.Serialize((await _context.Strike.AsAsyncEnumerable().ToListAsync().AsTask()), _jsonSerializerOptions) },
+                { "RaidBoss", JsonSerializer.Serialize((await _context.RaidBoss.AsAsyncEnumerable().ToListAsync().AsTask()), _jsonSerializerOptions) },
+                { "RaidParticipation", JsonSerializer.Serialize((await _context.RaidParticipation.AsAsyncEnumerable().ToListAsync().AsTask()), _jsonSerializerOptions) },
+                { "MMTimer", JsonSerializer.Serialize((await _context.Timer.AsAsyncEnumerable().ToListAsync().AsTask()), _jsonSerializerOptions) },
             };
 
             return dict;
@@ -82,7 +79,14 @@ namespace MMBot.Discord.Services.IE
                     await context.SaveChangesAsync();
                 }
 
-                if(importJson.TryGetValue("Vacation", out var vac))
+                if (importJson.TryGetValue("Season", out var season))
+                {
+                    var s = JsonSerializer.Deserialize<IList<Season>>(season, _jsonSerializerOptions);
+                    await context.Season.ImportOrUpgrade(s);
+                    await context.SaveChangesAsync();
+                }
+
+                if (importJson.TryGetValue("Vacation", out var vac))
                 {
                     var av = JsonSerializer.Deserialize<IList<Vacation>>(vac, _jsonSerializerOptions);
                     await context.Vacation.ImportOrUpgrade(av);
@@ -102,8 +106,22 @@ namespace MMBot.Discord.Services.IE
                     await context.Member.ImportOrUpgrade(aca);
                     await context.SaveChangesAsync();
                 }
-                
-                if(importJson.TryGetValue("MMTimer", out var timer))
+
+                if (importJson.TryGetValue("RaidBoss", out var raidBoss))
+                {
+                    var rb = JsonSerializer.Deserialize<IList<RaidBoss>>(raidBoss, _jsonSerializerOptions);
+                    await context.RaidBoss.ImportOrUpgrade(rb);
+                    await context.SaveChangesAsync();
+                }
+
+                if (importJson.TryGetValue("RaidParticipation", out var raidParticipation))
+                {
+                    var rp = JsonSerializer.Deserialize<IList<RaidParticipation>>(raidParticipation, _jsonSerializerOptions);
+                    await context.RaidParticipation.ImportOrUpgrade(rp);
+                    await context.SaveChangesAsync();
+                }
+
+                if (importJson.TryGetValue("MMTimer", out var timer))
                 {
                     var mmt = JsonSerializer.Deserialize<IList<MMTimer>>(timer, _jsonSerializerOptions);
                     await context.Timer.ImportOrUpgrade(mmt);

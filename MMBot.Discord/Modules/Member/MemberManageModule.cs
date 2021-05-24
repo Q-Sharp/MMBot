@@ -77,10 +77,10 @@ namespace MMBot.Discord.Modules.Member
         {
             var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
             
-            m.Strikes.Add(new Strike { Reason = strikeReason, MemberId = m.Id, Member = m, StrikeDate = DateTime.UtcNow });
+            m.Strike.Add(new Strike { Reason = strikeReason, MemberId = m.Id, Member = m, StrikeDate = DateTime.UtcNow });
             await _databaseService?.SaveDataAsync();
 
-            return FromSuccess($"{m} now has {m?.Strikes?.Count ?? 0} strike(s)!");
+            return FromSuccess($"{m} now has {m?.Strike?.Count ?? 0} strike(s)!");
         }
 
         [Command("RemoveStrike")]
@@ -90,10 +90,10 @@ namespace MMBot.Discord.Modules.Member
         {
             var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
             
-            m.Strikes.Remove(m.Strikes.OrderBy(y => y.StrikeDate).FirstOrDefault());
+            m.Strike.Remove(m.Strike.OrderBy(y => y.StrikeDate).FirstOrDefault());
             await _databaseService?.SaveDataAsync();
 
-            return FromSuccess($"{m} now has {m?.Strikes?.Count ?? 0} strike(s)!");
+            return FromSuccess($"{m} now has {m?.Strike?.Count ?? 0} strike(s)!");
         }
 
         [Command("ShowAllStrikes")]
@@ -101,7 +101,7 @@ namespace MMBot.Discord.Modules.Member
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task<RuntimeResult> ShowAllStrikes()
         {
-            var me = (await _databaseService.LoadMembersAsync(Context.Guild.Id)).Where(x => x.Strikes?.Count > 0)?.ToList();
+            var me = (await _databaseService.LoadMembersAsync(Context.Guild.Id)).Where(x => x.Strike?.Count > 0)?.ToList();
 
             if((me?.Count ?? 0) <= 0)
                 return FromErrorUnsuccessful("No member with strikes found!");
