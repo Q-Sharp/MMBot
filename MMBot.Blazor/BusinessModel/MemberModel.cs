@@ -114,7 +114,6 @@ namespace MMBot.Data.Entities
                 Join = m.Join,
                 IgnoreOnMoveUp = m.IgnoreOnMoveUp,
                 PlayerTag = m.PlayerTag,
-                AutoSignUpForFightNight = m.AutoSignUpForFightNight,
                 GuildId = m.GuildId,
                 MemberGroupId = m.MemberGroupId,
                 LocalTimeOffSet = m.LocalTimeOffSet,

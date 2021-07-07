@@ -117,9 +117,6 @@ namespace MMBot.Discord.Services.CommandHandler
                 else
                     await dest.SendMessageAsync("Bot service has been restarted!");
             }
-               
-            // load channels for google forms scan
-            await ReInitGoogleFormsAsync();
 
             // reinit timers
             (await _databaseService.LoadTimerAsync())?
@@ -132,14 +129,10 @@ namespace MMBot.Discord.Services.CommandHandler
 
         public async Task Client_HandleCommandAsync(SocketMessage arg)
         {
-            if(arg.Author.IsWebhook && arg.Author is SocketWebhookUser whu)
-                CheckForUseableLinks(arg, whu.Guild.Id);
-
             if (arg is not SocketUserMessage msg)
                 return;
 
             var context = new SocketCommandContext(_client, msg);
-            CheckForUseableLinks(arg, context.Guild.Id);
 
             if (msg.Author.Id == _client.CurrentUser.Id || msg.Author.IsBot) 
                 return;

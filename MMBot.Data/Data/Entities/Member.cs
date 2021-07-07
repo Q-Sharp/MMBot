@@ -59,8 +59,6 @@ namespace MMBot.Data.Entities
         [Display]
         public virtual string PlayerTag { get; set; }
 
-        public virtual bool AutoSignUpForFightNight { get; set; }
-
         public virtual ulong GuildId { get; set; }
 
         public virtual int? MemberGroupId { get; set; }
@@ -111,7 +109,6 @@ namespace MMBot.Data.Entities
                 Join = m.Join;
                 IgnoreOnMoveUp = m.IgnoreOnMoveUp;
                 PlayerTag = m.PlayerTag;
-                AutoSignUpForFightNight = m.AutoSignUpForFightNight;
                 GuildId = m.GuildId;
                 MemberGroupId = m.MemberGroupId;
                 LocalTimeOffSet = m.LocalTimeOffSet;
