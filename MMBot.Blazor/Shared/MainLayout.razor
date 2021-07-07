@@ -22,7 +22,7 @@
                             <MudItem>
                                 <MudText Typo="Typo.h6">Hello, @context.User.Identity.Name!</MudText>
                             </MudItem>
-                            <MudItem >
+                            <MudItem Style="min-width: max-content">
                                 <MudSelect T="string" Label="Guild" @bind-Value="@StateContainer.SelectedGuildId" FullWidth="true">
                                     @foreach (var guild in AccountService.LoggedUser.Guilds)
                                     {

@@ -3,8 +3,8 @@
 
 @inherits ComponentBase
 
-<MudSelect T="int?" Label="Clan" @bind-Value="SelectedId" @bind-Text="SelectedClan" @bind:event="oninput" FullWidth="true" Strict="true" Variant="Variant.Outlined" Format="F2"
-           @onchange="UpdateId">
+<MudSelect T="int?" Label="Clan" Value="@SelectedId" Text="@SelectedClan" SelectedValuesChanged="ValueChanged" FullWidth="true" Strict="true" Variant="Variant.Outlined" Format="F2"
+          >
     <MudSelectItem T="int?" value="@((int?)null)">None</MudSelectItem>
     @foreach (var clan in ClanVM.Entities)
     {
@@ -23,7 +23,7 @@
 
     private async Task UpdateId(object changed)
     {
-        await SelectedIdChanged.InvokeAsync((int?)changed);
+        await ValueChanged.InvokeAsync();
     }
 
     public void Dispose()
@@ -38,5 +38,5 @@
     public string SelectedClan { get; set; }
 
     [Parameter]
-    public EventCallback<int?> SelectedIdChanged { get; set; }
+    public EventCallback ValueChanged { get; set; }
 }

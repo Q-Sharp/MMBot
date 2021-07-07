@@ -60,7 +60,7 @@ else
                 <MudTextField @bind-Value="@context.AHigh" />
             </MudTd>
             <MudTd DataLabel="Clan">
-                <ClanLookUp @bind-SelectedId="@context.ClanId" />
+                <ClanLookUp @bind-SelectedId="@context.ClanId" @*@bind-SelectedId:event="onchange"*@/>
             </MudTd>
         </RowEditingTemplate>
         <PagerContent>
