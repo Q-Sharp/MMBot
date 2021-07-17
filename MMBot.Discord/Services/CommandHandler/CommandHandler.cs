@@ -13,6 +13,7 @@ using MMBot.Helpers;
 using MMBot.Discord.Services.Interfaces;
 using MMBot.Discord.Modules;
 using MMBot.Data.Services.Interfaces;
+using MMBot.Discord.Services.Translation;
 
 namespace MMBot.Discord.Services.CommandHandler
 {
@@ -124,7 +125,7 @@ namespace MMBot.Discord.Services.CommandHandler
                 .ForEach(x => _timerService.Start(x, true));
 
             // set status
-            await _client.SetGameAsync($"Member Manager 2020");
+            await _client.SetGameAsync($"Member Manager 2021");
         }
 
         public async Task Client_HandleCommandAsync(SocketMessage arg)
@@ -143,7 +144,7 @@ namespace MMBot.Discord.Services.CommandHandler
             if (msg.HasStringPrefix(settings.Prefix, ref pos) || msg.HasMentionPrefix(_client.CurrentUser, ref pos) || msg.Content.ToLower().StartsWith(settings.Prefix.ToLower()))
             {
                 await _commands.ExecuteAsync(context, pos, _services);
-                _ = Task.Delay(1000).ContinueWith(c => arg?.DeleteAsync(new RequestOptions { AuditLogReason = "Autoremoved" }));
+                _ = Task.Delay(2000).ContinueWith(c => arg?.DeleteAsync(new RequestOptions { AuditLogReason = "Autoremoved" }));
             }
         }
 

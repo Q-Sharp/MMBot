@@ -30,6 +30,6 @@ namespace MMBot.Discord.Modules
         {
         }
 
-        public static MMBotResult Create(CommandError? error, string reason = null) => new MMBotResult(error, reason);
+        public static MMBotResult Create(CommandError? error, string reason = null) => new(error, reason);
     }
 }

@@ -19,6 +19,7 @@ using MMBot.Discord.Services.Timer;
 using Microsoft.EntityFrameworkCore;
 using MMBot.Data.Services;
 using MMBot.Data.Services.Interfaces;
+using MMBot.Discord.Services.Translation;
 
 namespace MMBot.Discord
 {
@@ -78,6 +79,7 @@ namespace MMBot.Discord
                         .AddScoped<IMemberSortService, MemberSortService>()
                         .AddSingleton<InteractiveService, InteractiveService>()
                         .AddSingleton<ITimerService, TimerService>()
+                        .AddTransient<ITranslationService, TranslationService>()
                         //.AddScoped<IGoogleSheetsService, GoogleSheetsService>()
                         //.AddScoped<IRaidService, RaidService>()
                         .BuildServiceProvider();
