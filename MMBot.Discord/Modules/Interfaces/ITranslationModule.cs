@@ -5,6 +5,6 @@ namespace MMBot.Discord.Modules.Interfaces
 {
     public interface ITranslationModule
     {
-        Task<RuntimeResult> CreateTimer([Remainder] string text);
+        Task<RuntimeResult> Translate([Remainder] string text);
     }
 }
