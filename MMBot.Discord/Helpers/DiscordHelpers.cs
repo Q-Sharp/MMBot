@@ -12,7 +12,7 @@ namespace MMBot.Helpers
                 return false;
 
             int endPos = text.IndexOf('>');
-            if (endPos == -1 || text.Length < endPos + 2)
+            if (endPos == -1)
                 return false;
 
             return true;
