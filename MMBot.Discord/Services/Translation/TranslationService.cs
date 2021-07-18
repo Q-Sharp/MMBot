@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
@@ -21,7 +22,7 @@ namespace MMBot.Discord.Services.Translation
                 var httpClient = _clientFactory.CreateClient();
                 var result = await httpClient.GetStringAsync(url);
 
-                return JsonDocument.Parse(result).RootElement[0][0][0].GetString();
+                return string.Concat(JsonDocument.Parse(result).RootElement[0].EnumerateArray().Select(y => y[0].GetString()));
             }
             catch
             {
