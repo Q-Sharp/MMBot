@@ -6,17 +6,8 @@ namespace MMBot.Helpers
     {
         public static string GetUserAndDiscriminator(this IUser sgu) => $"{sgu.Username}#{sgu.Discriminator}";
 
-        public static bool HasMention(string text)
-        {
-            if (string.IsNullOrEmpty(text) || text.Length <= 3 || !text.Contains('<') || !text.Contains('@'))
-                return false;
-
-            int endPos = text.IndexOf('>');
-            if (endPos == -1)
-                return false;
-
-            return true;
-        }
+        public static bool HasMention(string text) 
+            => !string.IsNullOrEmpty(text) && text.Length > 3 && text.Contains('<') && text.Contains('@') && text.Contains('>');
 
         public static string SeperateMention(string text, out string mention)
         {
