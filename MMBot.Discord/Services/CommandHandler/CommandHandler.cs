@@ -126,6 +126,7 @@ namespace MMBot.Discord.Services.CommandHandler
 
             // set status
             await _client.SetGameAsync($"Member Manager 2021");
+            _logger.Log(LogLevel.Information, "Bot is online!");
         }
 
         public async Task Client_HandleCommandAsync(SocketMessage arg)
@@ -141,10 +142,9 @@ namespace MMBot.Discord.Services.CommandHandler
             var settings = await _gs.GetGuildSettingsAsync(context.Guild.Id);
             var pos = 0;
 
-            if (msg.HasStringPrefix(settings.Prefix, ref pos) || msg.HasMentionPrefix(_client.CurrentUser, ref pos) || msg.Content.ToLower().StartsWith(settings.Prefix.ToLower()))
+            if (msg.HasStringPrefix(settings.Prefix, ref pos, StringComparison.OrdinalIgnoreCase) || msg.HasMentionPrefix(_client.CurrentUser, ref pos))
             {
                 await _commands.ExecuteAsync(context, pos, _services);
-                _ = Task.Delay(2000).ContinueWith(c => arg?.DeleteAsync(new RequestOptions { AuditLogReason = "Autoremoved" }));
             }
         }
 
@@ -170,10 +170,19 @@ namespace MMBot.Discord.Services.CommandHandler
 
             if (result is MMBotResult runTimeResult)
             {
+                if (command.Value.Module.Name == "Admin")
+                {
+                    _ = DeleteMessage(context.Message, runTimeResult.AnswerSent);
+                    return;
+                }
+
                 if (result.IsSuccess)
                 {
                     if(runTimeResult.Reason is not null)
-                        await context.Channel.SendMessageAsync(runTimeResult.Reason);
+                    {
+                        var m = await context.Channel.SendMessageAsync(runTimeResult.Reason);
+                        _ = DeleteMessage(context.Message, m);
+                    }
                     return;
                 }
 
@@ -220,6 +229,13 @@ namespace MMBot.Discord.Services.CommandHandler
 
                 _logger.LogError($"{member} tried to use {commandName} (module: {moduleName}) this resultet in a {runTimeResult?.Error?.ToString()}");
             }
+        }
+
+        private async static Task DeleteMessage(IMessage userMsg, IMessage answer)
+        {
+            await Task.Delay(TimeSpan.FromMinutes(2));
+            await userMsg?.DeleteAsync(new RequestOptions { AuditLogReason = "Autoremoved" });
+            await answer?.DeleteAsync(new RequestOptions { AuditLogReason = "Autoremoved" });
         }
     }
 }

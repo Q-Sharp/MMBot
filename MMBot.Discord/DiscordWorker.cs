@@ -63,14 +63,12 @@ namespace MMBot.Discord
 
             var token =
 #if DEBUG
-            //_config.GetProperty("DiscordTokenDev");
-            "DiscordTokenDev";
+            _config.GetValue<string>("DiscordTokenDev") ?? Environment.GetEnvironmentVariable("DiscordTokenDev");
 #else
-            //_config.GetProperty("DiscordToken");
-            "DiscordToken";
+            _config.GetValue<string>("DiscordToken") ?? Environment.GetEnvironmentVariable("DiscordToken");
 #endif
-            
-            await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable(token));
+
+            await client.LoginAsync(TokenType.Bot, token);
             await client.StartAsync();
 
             var ch = _sp.GetRequiredService<ICommandHandler>();

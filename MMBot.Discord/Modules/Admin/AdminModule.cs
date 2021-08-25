@@ -43,6 +43,7 @@ namespace MMBot.Discord.Modules.Admin
             var csvFile = Context.Message.Attachments.FirstOrDefault();
             var myWebClient = _clientFactory.CreateClient();
             string fileName = null;
+            IMessage answer = null;
 
             if (csvFile is not null && _csvService is not null)
             {
@@ -56,7 +57,7 @@ namespace MMBot.Discord.Modules.Admin
                     if(result is null)
                         File.WriteAllBytes(Path.Combine(Environment.CurrentDirectory, fileName), csvByte);
 
-                    await ReplyAsync(result is null
+                    answer = await ReplyAsync(result is null
                         ? "CSV file import was successful"
                         : $"ERROR: {result.Message}");
                 }
@@ -67,7 +68,7 @@ namespace MMBot.Discord.Modules.Admin
             }
 
             await _databaseService.CleanDB();
-            return FromSuccess();
+            return FromSuccess(answer: answer);
         }
 
         [Command("ExportCSV")]
@@ -81,9 +82,9 @@ namespace MMBot.Discord.Modules.Admin
             var result = await _csvService?.ExportCsv(Context.Guild.Id);
             await File.WriteAllBytesAsync(settings.FileName, result);
 
-            await Context.Channel.SendFileAsync(settings.FileName, "Csv db export");
+            var answer = await Context.Channel.SendFileAsync(settings.FileName, "Csv db export");
             File.Delete(settings.FileName);
-            return FromSuccess();
+            return FromSuccess(answer: answer);
         }
 
         [Command("Reorder")]
@@ -93,8 +94,8 @@ namespace MMBot.Discord.Modules.Admin
         public async Task<RuntimeResult> ReorderJoin()
         {
             await Task.Run(() => _adminService.Reorder(Context.Guild.Id));
-            await ReplyAsync("Members join order updated!");
-            return FromSuccess();
+            var answer = await ReplyAsync("Members join order updated!");
+            return FromSuccess(answer: answer);
         }
 
         [Command("FixRoles")]
@@ -103,6 +104,8 @@ namespace MMBot.Discord.Modules.Admin
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task<RuntimeResult> FixRoles()
         {
+            IMessage answer = null;
+
             try
             {
                 if (Interlocked.Read(ref _commandIsRunning) > 0)
@@ -112,8 +115,7 @@ namespace MMBot.Discord.Modules.Admin
                 await ReplyAsync($"Fixing roles of discord members accordingly to their clan membership....");
 
                 var c = await _databaseService.LoadClansAsync(Context.Guild.Id);
-                var ar = Context.Guild.Roles.Where(x => c.Select(clan => clan.DiscordRole).Contains(x.Name))
-                .ToArray();
+                var ar = Context.Guild.Roles.Where(x => c.Select(clan => clan.DiscordRole).Contains(x.Name)).ToArray();
 
                 var clanMessage = await ReplyAsync("...");
                 foreach (var clan in c)
@@ -125,12 +127,12 @@ namespace MMBot.Discord.Modules.Admin
                     foreach (var member in clan.Member)
                     {
                         await memberMessage.ModifyAsync(m => m.Content = $"Fixing roles of {member}...");
-                        var user = await Task.Run(() =>
-                        Context.Guild.Users.FirstOrDefault(x =>
-                        $"{x.Username}#{x.Discriminator}" == member.Discord));
+
+                        var user = await Task.Run(() => 
+                            Context.Guild.Users.FirstOrDefault(x => $"{x.Username}#{x.Discriminator}" == member.Discord));
 
                         if (user is null || member.ClanId is null || clan.DiscordRole is null)
-                        continue;
+                            continue;
 
                         try
                         {
@@ -162,7 +164,7 @@ namespace MMBot.Discord.Modules.Admin
                 Interlocked.Decrement(ref _commandIsRunning);
             }
 
-            return FromSuccess();
+            return FromSuccess(answer: answer);
         }
 
         [Command("Show")]
@@ -172,8 +174,8 @@ namespace MMBot.Discord.Modules.Admin
         {
             var gs = (await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id));
             var e = gs.GetEmbedPropertiesWithValues();
-            await ReplyAsync("", false, e as Embed);
-            return FromSuccess();
+            var answer = await ReplyAsync("", false, e as Embed);
+            return FromSuccess(answer: answer);
         }
 
         [Command("Set")]
@@ -194,8 +196,8 @@ namespace MMBot.Discord.Modules.Admin
         {
             var gs = await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id);
             var r = gs.GetProperty(propertyName);
-            await ReplyAsync(r);
-            return FromSuccess();
+            var answer = await ReplyAsync(r);
+            return FromSuccess(answer: answer);
         }
     }
 }
