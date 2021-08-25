@@ -181,7 +181,9 @@ namespace MMBot.Discord.Services.CommandHandler
                     if(runTimeResult.Reason is not null)
                     {
                         var m = await context.Channel.SendMessageAsync(runTimeResult.Reason);
-                        _ = DeleteMessage(context.Message, m);
+
+                        if (command.Value.Module.Name == "Admin")
+                            _ = DeleteMessage(context.Message, m);
                     }
                     return;
                 }
