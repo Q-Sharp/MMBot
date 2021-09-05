@@ -1,3 +1,6 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -5,11 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using MMBot.Discord.Services.Interfaces;
 using MMBot.Data.Services.Interfaces;
+using MMBot.Discord.Services.Interfaces;
 
 namespace MMBot.Discord
 {
@@ -18,12 +18,14 @@ namespace MMBot.Discord
         private readonly IServiceProvider _sp;
         private readonly ILogger<DiscordWorker> _logger;
         private readonly IConfiguration _config;
+        private readonly IHostEnvironment _env;
 
-        public DiscordWorker(IServiceProvider sp, ILogger<DiscordWorker> logger, IConfiguration config)
+        public DiscordWorker(IServiceProvider sp, ILogger<DiscordWorker> logger, IConfiguration config, IHostEnvironment env)
         {
             _sp = sp;
             _logger = logger;
             _config = config;
+            _env = env;
         }
 
         protected async override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -61,11 +63,11 @@ namespace MMBot.Discord
             _sp.GetRequiredService<CommandService>().Log += LogAsync;
             client.Log += LogAsync;
 
-            var token =
+            var token = _env.IsDevelopment() ? _config.GetSection("Discord").GetValue<string>("DevToken") 
+                : _config.GetSection("Discord").GetValue<string>("Token");
+
 #if DEBUG
-            _config.GetValue<string>("DiscordTokenDev") ?? Environment.GetEnvironmentVariable("DiscordTokenDev");
-#else
-            _config.GetValue<string>("DiscordToken") ?? Environment.GetEnvironmentVariable("DiscordToken");
+            token = _config.GetSection("Discord").GetValue<string>("DevToken");
 #endif
 
             await client.LoginAsync(TokenType.Bot, token);

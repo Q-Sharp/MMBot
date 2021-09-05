@@ -14,7 +14,7 @@ namespace MMBot.Discord
 
         private static readonly string _logFilePath = Path.Combine(Environment.CurrentDirectory, "mmbot.log");
 
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
                  .Enrich.FromLogContext()
@@ -28,8 +28,7 @@ namespace MMBot.Discord
             try
             {
                 using var hb = DiscordSocketHost.CreateDiscordSocketHost(args)?.Build();
-                var t = hb.RunAsync();
-                t.Wait();
+                await hb.RunAsync();
             }
             catch (Exception e)
             { 

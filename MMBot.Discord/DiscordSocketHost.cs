@@ -1,14 +1,18 @@
-﻿using Discord;
+﻿using System;
+using System.Configuration;
+using System.Linq;
+using Discord;
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Serilog;
-using System;
 using MMBot.Data;
+using MMBot.Data.Services;
+using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Services;
 using MMBot.Discord.Services.CommandHandler;
 using MMBot.Discord.Services.GoogleForms;
@@ -16,10 +20,8 @@ using MMBot.Discord.Services.IE;
 using MMBot.Discord.Services.Interfaces;
 using MMBot.Discord.Services.MemberSort;
 using MMBot.Discord.Services.Timer;
-using Microsoft.EntityFrameworkCore;
-using MMBot.Data.Services;
-using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Services.Translation;
+using Serilog;
 
 namespace MMBot.Discord
 {
@@ -31,44 +33,34 @@ namespace MMBot.Discord
                 .UseSystemd()
                 .ConfigureAppConfiguration((hostContext, configBuilder) =>
                 {
-                    configBuilder.AddEnvironmentVariables("MMBot_")
-                                 .AddJsonFile("appsettings.json", false, true)
-                                 .AddUserSecrets<DiscordWorker>()
-                                 .AddCommandLine(args);        
+                    configBuilder
+                                 .AddEnvironmentVariables("MMBot_")
+                                 //.AddJsonFile("appsettings.json", false, true)
+                                 .AddUserSecrets<DiscordWorker>();
+                                 /*.AddCommandLine(args)*/;
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
-                    var dsc = new DiscordSocketClient(new DiscordSocketConfig
-                    {
-                        LogLevel = LogSeverity.Warning,
-                        MessageCacheSize = 1000
-                    });
-
-                    var cs = new CommandService(new CommandServiceConfig
-                    {
-                        LogLevel = LogSeverity.Warning,
-                        CaseSensitiveCommands = false,
-                        DefaultRunMode = RunMode.Async,
-                        SeparatorChar = ' '
-                    });
-
-                    var hc = services.AddHttpClient("forms", c =>
-                    {
-                        c.BaseAddress = new Uri("https://docs.google.com");
-                        c.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
-                        c.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");
-                    });
-
-                    var connectionString = hostContext.Configuration.GetConnectionString("Context");
+                    var config = hostContext.Configuration;
+                    var discordConfig = config.GetSection("Discord").GetSection("Settings");
 
                     services
                         .AddHostedService<DiscordWorker>()
                         .AddSingleton<GuildSettingsService>()
-                        .AddDbContext<Context>(o => o.UseNpgsql(connectionString))
-                        //.AddDbContext<Context>(o => o.UseSqlite($"Data Source={dbFilePath}"))
+                        .AddDbContext<Context>(o => o.UseNpgsql(config.GetConnectionString("Context")))
                         .AddSingleton<IGuildSettingsService, GuildSettingsService>()
-                        .AddSingleton(dsc)
-                        .AddSingleton(cs)
+                        .AddSingleton<DiscordSocketClient>(o => new DiscordSocketClient(new DiscordSocketConfig
+                        {
+                            LogLevel = Enum.Parse<LogSeverity>(discordConfig.GetValue<string>("LogLevel"), true),
+                            MessageCacheSize = discordConfig.GetValue<int>("MessageCacheSize")
+                        }))
+                        .AddSingleton<CommandService>(s => new CommandService(new CommandServiceConfig
+                        {
+                            LogLevel = Enum.Parse<LogSeverity>(discordConfig["LogLevel"], true),
+                            CaseSensitiveCommands = discordConfig.GetValue<bool>("CaseSensitiveCommands"),
+                            DefaultRunMode = Enum.Parse<RunMode>(discordConfig.GetValue<string>("DefaultRunMode"), true),
+                            SeparatorChar = discordConfig.GetValue<string>("SeparatorChar").FirstOrDefault(),
+                        }))
                         .AddScoped<IGoogleFormsService, GoogleFormsService>()
                         .AddSingleton<ICommandHandler, CommandHandler>()
                         .AddScoped<IGuildSettingsService, GuildSettingsService>()
@@ -80,6 +72,7 @@ namespace MMBot.Discord
                         .AddSingleton<InteractiveService, InteractiveService>()
                         .AddSingleton<ITimerService, TimerService>()
                         .AddTransient<ITranslationService, TranslationService>()
+                        .AddHttpClient()
                         //.AddScoped<IGoogleSheetsService, GoogleSheetsService>()
                         //.AddScoped<IRaidService, RaidService>()
                         .BuildServiceProvider();

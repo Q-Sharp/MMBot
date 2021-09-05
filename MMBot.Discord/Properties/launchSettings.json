@@ -1,0 +1,17 @@
+{
+  "profiles": {
+    "MMBot.Discord.Production": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      },
+      "dotnetRunMessages": "true"
+    },
+    "Development": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "lopment": "Deve"
+      }
+    }
+  }
+}
