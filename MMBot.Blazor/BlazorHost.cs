@@ -44,8 +44,6 @@ namespace MMBot.Blazor
 
     public class Startup
     {
-        private const string _logTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
-
         public Startup(IConfiguration configuration) => Configuration = configuration;
         public IConfiguration Configuration { get; }
 

@@ -44,7 +44,7 @@ namespace MMBot.Data.Helpers
             }
         }
 
-        public static IEnumerable<string> GetHeader<T>(this T e) => GetHeader<T>();
+        public static IEnumerable<string> GetHeader<T>(this T e) => e.GetHeader();
         public static IEnumerable<string> GetHeader<T>() => GetProperties<T>()
             .Select(x => x.Name);
 
