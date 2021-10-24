@@ -11,8 +11,8 @@ namespace MMBot.Discord.Services.CommandHandler
     public partial class CommandHandler : ICommandHandler
     {
         private readonly IDictionary<ulong, Func<IEmote, IUser, Task>> _messageIdWithReaction = new Dictionary<ulong, Func<IEmote, IUser, Task>>();
-        private static readonly AsyncLock _mutex = new AsyncLock();
-        private static readonly AsyncMonitor _monitor = new AsyncMonitor();
+        private static readonly AsyncLock _mutex = new();
+        private static readonly AsyncMonitor _monitor = new();
 
         private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
             => await Task.Run(async () =>

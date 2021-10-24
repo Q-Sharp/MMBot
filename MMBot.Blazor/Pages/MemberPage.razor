@@ -18,10 +18,10 @@ else
               CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => MemberVM.Update(MemberVM.SelectedEntity))">
         <ToolBarContent>
             <MudText Typo="Typo.h2">Members</MudText>
-            <MudToolBarSpacer />
+            <MudSpacer />
             <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Create" Color="Color.Default" OnClick="() => MemberVM.Add()">Create</MudButton>
             <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Default" Disabled="(MemberVM?.SelectedEntity?.Id ?? 0) == 0" OnClick="() => MemberVM.Delete()">Delete</MudButton>
-            <MudToolBarSpacer />
+            <MudSpacer />
             <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         </ToolBarContent>
         <ColGroup>

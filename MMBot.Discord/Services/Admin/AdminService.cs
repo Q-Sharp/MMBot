@@ -39,7 +39,7 @@ namespace MMBot.Discord.Services
             private readonly int _maxSize;
 
             public JoinComparer(int maxSize) => _maxSize = maxSize;
-            public static JoinComparer Create(int maxSize) => new JoinComparer(maxSize);
+            public static JoinComparer Create(int maxSize) => new(maxSize);
 
             public int Compare(int x, int y)
             {

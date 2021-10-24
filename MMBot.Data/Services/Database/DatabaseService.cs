@@ -13,7 +13,7 @@ namespace MMBot.Data.Services
 {
     public class DatabaseService : IDatabaseService
     {
-        private Context _context;
+        private readonly Context _context;
 
         public DatabaseService(Context context) => _context = context;
         public async Task MigrateAsync() => await _context?.MigrateAsync();
