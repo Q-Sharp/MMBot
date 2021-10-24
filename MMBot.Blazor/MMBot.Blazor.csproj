@@ -56,6 +56,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Pages\ClanPage - Copy.razor.css">
       <DependentUpon>ClanPage.razor.css</DependentUpon>
     </None>
