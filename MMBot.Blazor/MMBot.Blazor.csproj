@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="ViewModels\DataViewModel.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AspNet.Security.OAuth.Discord" Version="5.0.16" />
     <PackageReference Include="Discord.Net" Version="2.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
@@ -50,16 +46,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Pages\ClanPage - Copy.razor.cs">
-      <DependentUpon>ClanPage.razor.cs</DependentUpon>
-    </Compile>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Pages\ClanPage - Copy.razor.css">
-      <DependentUpon>ClanPage.razor.css</DependentUpon>
-    </None>
-  </ItemGroup>
-  
-
 </Project>

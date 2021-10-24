@@ -1,0 +1,46 @@
+name: .NET Core
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.402
+    - name: add discord.net feed
+      run: dotnet nuget add source https://www.myget.org/F/discord-net/api/v3/index.json
+    - name: Install dependencies2
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release
+    - name: .NET Publish
+      run: dotnet publish ./MMBot.Discord/MMBot.Discord.csproj -c Release -r linux-x64 /p:PublishReadyToRun=false
+    - name: Deploy to Server
+      uses: easingthemes/ssh-deploy@v2.1.5
+      env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltgoDzvO --delete-excluded --filter 'protect *.db' --filter 'protect *.log' --filter 'protect *.json'"
+          SOURCE: MMBot.Discord/bin/Release/net5.0/linux-x64/publish/
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}    
+    - name: .NET Publish
+      run: dotnet publish ./MMBot.Blazor/MMBot.Blazor.csproj -c Release -r linux-x64 /p:PublishReadyToRun=false,PublishProfile=FolderProfile      
+    - name: Deploy to Server
+      uses: easingthemes/ssh-deploy@v2.1.5
+      env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltgoDzvO --delete-excluded --filter 'protect *.db' --filter 'protect *.log' --filter 'protect *.json'"
+          SOURCE: MMBot.Blazor/bin/Release/net5.0/linux-x64/publish/
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
+          TARGET: ${{ secrets.REMOTE_TARGET2 }}

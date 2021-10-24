@@ -7,7 +7,6 @@
     <RootNamespace>MMBot</RootNamespace>
     <AssemblyName>MMBot.Discord</AssemblyName>
     <UserSecretsId>b64529cd-ec96-42d6-8eec-66a46688a614</UserSecretsId>
-    <StartupObject></StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,11 +20,11 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <Content Include="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
+	  <None Include="appsettings.json">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		  <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+	  </None>
   </ItemGroup>
 
   <ItemGroup>
