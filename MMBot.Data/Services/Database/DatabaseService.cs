@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MMBot.Data.Entities;
 using MMBot.Data.Helpers;
 using MMBot.Data.Services.Interfaces;
@@ -14,8 +16,14 @@ namespace MMBot.Data.Services
     public class DatabaseService : IDatabaseService
     {
         private readonly Context _context;
+        private readonly ILogger<IDatabaseService> _logger;
 
-        public DatabaseService(Context context) => _context = context;
+        public DatabaseService(Context context, ILogger<IDatabaseService> logger)
+        {
+            _context = context;
+            _logger = logger;
+        }
+
         public async Task MigrateAsync() => await _context?.MigrateAsync();
         public async Task SaveDataAsync() => await _context?.SaveChangesAsync(new CancellationToken());
         public async Task<GuildSettings> LoadGuildSettingsAsync(ulong guildId) => await _context.GuildSettings.Where(x => x.GuildId == guildId).FirstOrDefaultAsync();
@@ -62,7 +70,9 @@ namespace MMBot.Data.Services
         }
 
         public Channel CreateChannel(ulong guildId) => _context.Add(new Channel()).Entity;
-        public async Task<IList<Channel>> LoadChannelsAsync(ulong? guildId = null) => await _context.Channel.AsAsyncEnumerable().Where(x => guildId == null || x.GuildId == guildId).ToListAsync();
+        public async Task<IList<Channel>> LoadChannelsAsync(ulong? guildId = null, bool loadAll = false) 
+            => await _context.Channel.AsAsyncEnumerable().Where(x => guildId == null || x.GuildId == guildId || loadAll).ToListAsync();
+
         public void DeleteChannel(Channel c) => _context.Remove(c);
         public void DeleteChannel(int id) => DeleteChannel(_context.Channel.FirstOrDefault(c => c.Id == id));
 
@@ -88,7 +98,7 @@ namespace MMBot.Data.Services
             _context.ChangeTracker.DetectChanges();
         }
 
-        public async Task CleanDB(IEnumerable<Tuple<ulong, string>> guilds)
+        public async Task CleanDB(IEnumerable<SocketGuild> guilds = null)
         {
             var c = await _context.Clan.AsAsyncEnumerable().ToListAsync();
             var m = await _context.Member.AsAsyncEnumerable().ToListAsync();
@@ -121,16 +131,21 @@ namespace MMBot.Data.Services
             // clean dead channel data
             if (guilds is not null)
             {
-                var ch = await LoadChannelsAsync();
-                ch.Where(x => !guilds.Select(y => y.Item1).Contains(x.GuildId)).ForEach(cha => _context.Remove(cha));
+                foreach(var g in guilds)
+                {
+                    _logger?.LogInformation($"Name: {g.Name} IsConntected: {g.IsConnected}");
+                }
+
+                var ch = await LoadChannelsAsync(loadAll: true);
+                ch.Where(x => !guilds.Select(y => y.Id).Contains(x.GuildId)).ForEach(cha => _context.Remove(cha));
                 await _context.SaveChangesAsync();
 
                 var gs = await LoadAllGuildSettingsAsync();
-                //gs.Where(x => !guilds.Select(y => y.Item1).Contains(x.GuildId)).ForEach(gss => _context.Remove(gss));
-                //await _context.SaveChangesAsync();
+                gs.Where(x => !guilds.Select(y => y.Id).Contains(x.GuildId)).ForEach(gss => _context.Remove(gss));
+                await _context.SaveChangesAsync();
 
-                //gs = await LoadAllGuildSettingsAsync();
-                gs.Where(x => x.GuildName == null).ForEach(gss => gss.GuildName = guilds.FirstOrDefault(y => y.Item1 == gss.GuildId).Item2);
+                gs = await LoadAllGuildSettingsAsync();
+                gs.Where(x => x.GuildName == null).ForEach(gss => gss.GuildName = guilds.FirstOrDefault(y => y.Id == gss.GuildId).Name);
                 await _context.SaveChangesAsync();
             }
         }

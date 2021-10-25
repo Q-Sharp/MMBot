@@ -43,9 +43,9 @@ namespace MMBot.Discord.Modules.Admin
                     return _export;
                 });
 
-                await Context.Channel.SendFileAsync(ex, "dbExport");
+                var m = await Context.Channel.SendFileAsync(ex, "dbExport");
 
-                return FromSuccess();
+                return FromSuccess(answer: m);
             }
             catch(Exception e)
             {

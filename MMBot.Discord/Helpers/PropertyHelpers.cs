@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Discord;
-using MMBot.Data.Entities;
 using MMBot.Data.Enums;
 using MMBot.Data.Interfaces;
 
