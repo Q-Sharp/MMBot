@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using Discord.WebSocket;
 using MMBot.Data.Entities;
 
 namespace MMBot.Data.Services.Interfaces
@@ -26,7 +25,7 @@ namespace MMBot.Data.Services.Interfaces
         Task<Restart> ConsumeRestart();
 
         Channel CreateChannel(ulong guildId);
-        Task<IList<Channel>> LoadChannelsAsync(ulong? guildId = null);
+        Task<IList<Channel>> LoadChannelsAsync(ulong? guildId = null, bool loadAll = false);
         void DeleteChannel(Channel c);
         void DeleteChannel(int id);
 
@@ -39,6 +38,6 @@ namespace MMBot.Data.Services.Interfaces
         Task SaveDataAsync();
         Task MigrateAsync();
         void Truncate();
-        Task CleanDB(IEnumerable<Tuple<ulong, string>> guilds = null);
+        Task CleanDB(IEnumerable<SocketGuild> guilds = null);
     }
 }

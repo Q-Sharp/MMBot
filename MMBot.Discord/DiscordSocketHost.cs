@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Linq;
 using Discord;
 using Discord.Addons.Interactive;
@@ -9,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using MMBot.Data;
 using MMBot.Data.Services;
 using MMBot.Data.Services.Interfaces;
@@ -27,55 +25,50 @@ namespace MMBot.Discord
 {
     public static class DiscordSocketHost
     {
-         public static IHostBuilder CreateDiscordSocketHost(string[] args) =>
+        public static IHostBuilder CreateDiscordSocketHost(string[] args) =>
            Host.CreateDefaultBuilder(args)
-                .ConfigureLogging(x => x.ClearProviders().AddSerilog(Log.Logger))
-                .UseSystemd()
-                .ConfigureAppConfiguration((hostContext, configBuilder) =>
-                {
-                    configBuilder
-                                 .AddEnvironmentVariables("MMBot_")
-                                 //.AddJsonFile("appsettings.json", false, true)
-                                 .AddUserSecrets<DiscordWorker>();
-                                 /*.AddCommandLine(args)*/;
-                })
-                .ConfigureServices((hostContext, services) =>
-                {
-                    var config = hostContext.Configuration;
-                    var discordConfig = config.GetSection("Discord").GetSection("Settings");
+               .UseSystemd()
+               .ConfigureAppConfiguration((hostContext, configBuilder) =>
+               {
+                   configBuilder.AddEnvironmentVariables("MMBot_")
+                                .AddUserSecrets<DiscordWorker>();
+               })
+               .UseSerilog((h, l) => l.ReadFrom.Configuration(h.Configuration))
+               .ConfigureServices((hostContext, services) =>
+               {
+                   var config = hostContext.Configuration;
+                   var discordConfig = config.GetSection("Discord").GetSection("Settings");
 
-                    services
-                        .AddHostedService<DiscordWorker>()
-                        .AddSingleton<GuildSettingsService>()
-                        .AddDbContext<Context>(o => o.UseNpgsql(config.GetConnectionString("Context")))
-                        .AddSingleton<IGuildSettingsService, GuildSettingsService>()
-                        .AddSingleton<DiscordSocketClient>(o => new DiscordSocketClient(new DiscordSocketConfig
-                        {
-                            LogLevel = Enum.Parse<LogSeverity>(discordConfig.GetValue<string>("LogLevel"), true),
-                            MessageCacheSize = discordConfig.GetValue<int>("MessageCacheSize")
-                        }))
-                        .AddSingleton<CommandService>(s => new CommandService(new CommandServiceConfig
-                        {
-                            LogLevel = Enum.Parse<LogSeverity>(discordConfig["LogLevel"], true),
-                            CaseSensitiveCommands = discordConfig.GetValue<bool>("CaseSensitiveCommands"),
-                            DefaultRunMode = Enum.Parse<RunMode>(discordConfig.GetValue<string>("DefaultRunMode"), true),
-                            SeparatorChar = discordConfig.GetValue<string>("SeparatorChar").FirstOrDefault(),
-                        }))
-                        .AddScoped<IGoogleFormsService, GoogleFormsService>()
-                        .AddSingleton<ICommandHandler, CommandHandler>()
-                        .AddScoped<IGuildSettingsService, GuildSettingsService>()
-                        .AddScoped<IDatabaseService, DatabaseService>()
-                        .AddScoped<ICsvService, CsvService>()
-                        .AddScoped<IJsonService, JsonService>()
-                        .AddScoped<IAdminService, AdminService>()
-                        .AddScoped<IMemberSortService, MemberSortService>()
-                        .AddSingleton<InteractiveService, InteractiveService>()
-                        .AddSingleton<ITimerService, TimerService>()
-                        .AddTransient<ITranslationService, TranslationService>()
-                        .AddHttpClient()
-                        //.AddScoped<IGoogleSheetsService, GoogleSheetsService>()
-                        //.AddScoped<IRaidService, RaidService>()
-                        .BuildServiceProvider();
-                });
+                   services
+                       .AddHostedService<DiscordWorker>()
+                       .AddSingleton<GuildSettingsService>()
+                       .AddDbContext<Context>(o => o.UseNpgsql(config.GetConnectionString("Context")))
+                       .AddSingleton<IGuildSettingsService, GuildSettingsService>()
+                       .AddSingleton<DiscordSocketClient>(o => new DiscordSocketClient(new DiscordSocketConfig
+                       {
+                           LogLevel = Enum.Parse<LogSeverity>(discordConfig.GetValue<string>("LogLevel"), true),
+                           MessageCacheSize = discordConfig.GetValue<int>("MessageCacheSize")
+                       }))
+                       .AddSingleton<CommandService>(s => new CommandService(new CommandServiceConfig
+                       {
+                           LogLevel = Enum.Parse<LogSeverity>(discordConfig["LogLevel"], true),
+                           CaseSensitiveCommands = discordConfig.GetValue<bool>("CaseSensitiveCommands"),
+                           DefaultRunMode = Enum.Parse<RunMode>(discordConfig.GetValue<string>("DefaultRunMode"), true),
+                           SeparatorChar = discordConfig.GetValue<string>("SeparatorChar").FirstOrDefault(),
+                       }))
+                       .AddScoped<IGoogleFormsService, GoogleFormsService>()
+                       .AddSingleton<ICommandHandler, CommandHandler>()
+                       .AddScoped<IGuildSettingsService, GuildSettingsService>()
+                       .AddScoped<IDatabaseService, DatabaseService>()
+                       .AddScoped<ICsvService, CsvService>()
+                       .AddScoped<IJsonService, JsonService>()
+                       .AddScoped<IAdminService, AdminService>()
+                       .AddScoped<IMemberSortService, MemberSortService>()
+                       .AddSingleton<InteractiveService, InteractiveService>()
+                       .AddSingleton<ITimerService, TimerService>()
+                       .AddTransient<ITranslationService, TranslationService>()
+                       .AddHttpClient()
+                       .BuildServiceProvider();
+               });
     }
 }

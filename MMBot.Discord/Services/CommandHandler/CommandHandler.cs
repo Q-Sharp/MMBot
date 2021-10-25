@@ -14,6 +14,7 @@ using MMBot.Discord.Services.Interfaces;
 using MMBot.Discord.Modules;
 using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Services.Translation;
+using System.IO;
 
 namespace MMBot.Discord.Services.CommandHandler
 {
@@ -99,14 +100,14 @@ namespace MMBot.Discord.Services.CommandHandler
             try
             {
                 _logger.Log(LogLevel.Information, "Starting CleanUp");
-                await _databaseService.CleanDB(_client.Guilds.Select(g => Tuple.Create(g.Id, g.Name)));
+                await _databaseService.CleanDB(_client.Guilds);
+                _logger.Log(LogLevel.Information, "CleanUp finished!");
             }
             catch(Exception e)
             {
                 _logger.Log(LogLevel.Error, e, "Error in cleanup");
             }
-            _logger.Log(LogLevel.Information, "CleanUp finished!");
-
+            
             // handle restart information
             var r = await _databaseService.ConsumeRestart();
             if (r is not null)
@@ -153,8 +154,9 @@ namespace MMBot.Discord.Services.CommandHandler
             _logger.LogError(arg.Message, arg);
 
             await Task.Run(() =>
-            { 
-                Process.Start(AppDomain.CurrentDomain.FriendlyName);
+            {
+                var mmBot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppDomain.CurrentDomain.FriendlyName);
+                Process.Start(mmBot);
                 Environment.Exit(0);
             });
         }
@@ -236,8 +238,12 @@ namespace MMBot.Discord.Services.CommandHandler
         private async static Task DeleteMessage(IMessage userMsg, IMessage answer)
         {
             await Task.Delay(TimeSpan.FromMinutes(2));
-            await userMsg?.DeleteAsync(new RequestOptions { AuditLogReason = "Autoremoved" });
-            await answer?.DeleteAsync(new RequestOptions { AuditLogReason = "Autoremoved" });
+
+            if(userMsg is not null)
+                await userMsg.DeleteAsync(new RequestOptions { AuditLogReason = "Autoremoved" });
+
+            if(answer is not null)
+                await answer.DeleteAsync(new RequestOptions { AuditLogReason = "Autoremoved" });
         }
     }
 }

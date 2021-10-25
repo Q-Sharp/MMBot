@@ -14,7 +14,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using MMBot.Blazor.Data;
 using MMBot.Blazor.Helpers;
 using MMBot.Blazor.Services;
@@ -30,7 +29,7 @@ namespace MMBot.Blazor
 {
     public static class BlazorHost
     {
-        public static IHostBuilder CreateHostBuilder(string[] args) 
+        public static IHostBuilder CreateHostBuilder(string[] args)
             => Host.CreateDefaultBuilder(args)
                    .UseSystemd()
                    .ConfigureAppConfiguration((hostContext, configBuilder) =>
@@ -39,7 +38,7 @@ namespace MMBot.Blazor
                                     .AddCommandLine(args);
                    })
                    .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
-                   .UseSerilog();
+                   .UseSerilog((h, l) => l.ReadFrom.Configuration(h.Configuration));
     }
 
     public class Startup
