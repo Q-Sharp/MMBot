@@ -14,6 +14,7 @@ using MMBot.Discord.Services.Interfaces;
 using MMBot.Discord.Modules;
 using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Services.Translation;
+using System.IO;
 
 namespace MMBot.Discord.Services.CommandHandler
 {
@@ -153,8 +154,9 @@ namespace MMBot.Discord.Services.CommandHandler
             _logger.LogError(arg.Message, arg);
 
             await Task.Run(() =>
-            { 
-                Process.Start(AppDomain.CurrentDomain.BaseDirectory + AppDomain.CurrentDomain.FriendlyName);
+            {
+                var mmBot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppDomain.CurrentDomain.FriendlyName);
+                Process.Start(mmBot);
                 Environment.Exit(0);
             });
         }
