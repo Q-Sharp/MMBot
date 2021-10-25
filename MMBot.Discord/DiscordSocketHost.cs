@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Linq;
 using Discord;
 using Discord.Addons.Interactive;
@@ -9,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using MMBot.Data;
 using MMBot.Data.Services;
 using MMBot.Data.Services.Interfaces;
@@ -28,17 +26,14 @@ namespace MMBot.Discord
     public static class DiscordSocketHost
     {
          public static IHostBuilder CreateDiscordSocketHost(string[] args) =>
-           Host.CreateDefaultBuilder(args)
-                .ConfigureLogging(x => x.ClearProviders().AddSerilog(Log.Logger))
+            Host.CreateDefaultBuilder(args)
                 .UseSystemd()
                 .ConfigureAppConfiguration((hostContext, configBuilder) =>
                 {
-                    configBuilder
-                                 .AddEnvironmentVariables("MMBot_")
-                                 //.AddJsonFile("appsettings.json", false, true)
+                    configBuilder.AddEnvironmentVariables("MMBot_")
                                  .AddUserSecrets<DiscordWorker>();
-                                 /*.AddCommandLine(args)*/;
                 })
+                .UseSerilog((h, l) => l.ReadFrom.Configuration(h.Configuration))
                 .ConfigureServices((hostContext, services) =>
                 {
                     var config = hostContext.Configuration;
