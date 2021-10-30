@@ -12,6 +12,13 @@
       "environmentVariables": {
         "lopment": "Deve"
       }
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      },
+      "distributionName": ""
     }
   }
 }
