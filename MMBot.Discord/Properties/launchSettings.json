@@ -10,7 +10,7 @@
     "Development": {
       "commandName": "Project",
       "environmentVariables": {
-        "lopment": "Deve"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "WSL": {
