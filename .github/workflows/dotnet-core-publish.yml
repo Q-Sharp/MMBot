@@ -13,7 +13,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.402
+        dotnet-version: 6.0.100
     - name: add discord.net feed
       run: dotnet nuget add source https://www.myget.org/F/discord-net/api/v3/index.json
     - name: Install dependencies2

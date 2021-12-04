@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using MMBot.Data;
 using MMBot.Data.Entities;
 using MMBot.Discord.Services.Interfaces;
