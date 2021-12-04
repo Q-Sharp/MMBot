@@ -23,7 +23,6 @@ using MMBot.Data.Services.Interfaces;
 using MMBot.Services.Database;
 using MudBlazor.Services;
 using Serilog;
-using static AspNet.Security.OAuth.Discord.DiscordAuthenticationConstants;
 
 namespace MMBot.Blazor
 {
@@ -97,7 +96,6 @@ namespace MMBot.Blazor
                     }
                 };
 
-                x.DiscordAvatarFormat = Urls.AvatarUrlFormat;
                 x.SaveTokens = true;
                 x.Validate();
             });
