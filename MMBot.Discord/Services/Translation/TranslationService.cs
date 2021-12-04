@@ -21,7 +21,7 @@ namespace MMBot.Discord.Services.Translation
             {
                 input = DiscordHelpers.SeperateMention(input, out var mention);
 
-                var url = $"https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q={Uri.EscapeUriString(input)}";
+                var url = $"https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q={Uri.EscapeDataString(input)}";
                 var httpClient = _clientFactory.CreateClient();
                 var result = await httpClient.GetStringAsync(url);
 
