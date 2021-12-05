@@ -31,6 +31,12 @@ namespace MMBot.Data.Entities
         [Display]
         public int MemberMovementQty { get; set; }
 
+        [Display]
+        public ulong CategoryId { get; set; }
+
+        [Display]
+        public ulong MemberRoleId { get; set; }
+
         public void Update(object guildSettings)
         {
             if(guildSettings is GuildSettings gs && Id == gs.Id)

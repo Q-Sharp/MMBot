@@ -45,7 +45,10 @@ namespace MMBot.Data.Services
         public async Task<MMTimer> GetTimerAsync(string name, ulong guildId) => await _context.Timer.Where(x => x.GuildId == guildId).FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower());
         public void DeleteTimer(MMTimer t) => _context.Remove(t);
         public void DeleteTimer(int id) => DeleteTimer(_context.Timer.FirstOrDefault(c => c.Id == id));
-        
+
+        public async Task<IList<MemberRoom>> LoadPersonalRooms(ulong guildId) => await _context.MemberRoom.Where(x => x.GuildId == guildId).ToListAsync();
+        public void DeletePersonalRoom(MemberRoom room) => _context.Remove(room);
+        public MemberRoom CreatePersonalRoom(ulong guildId) => _context.Add(new MemberRoom { GuildId = guildId }).Entity;
 
         public Restart AddRestart() => _context.Add(new Restart()).Entity;
         public async Task<Restart> ConsumeRestart()

@@ -21,6 +21,7 @@ namespace MMBot.Data
         }
 
         public DbSet<Member> Member { get; set; }
+        public DbSet<MemberRoom> MemberRoom { get; set; }
         public DbSet<Clan> Clan { get; set; }
         public DbSet<Season> Season { get; set; }
         public DbSet<GuildSettings> GuildSettings { get; set; }

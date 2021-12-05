@@ -21,6 +21,10 @@ namespace MMBot.Data.Services.Interfaces
         Task<IList<GuildSettings>> LoadAllGuildSettingsAsync();
         void DeleteGuildSettings(GuildSettings gs);
 
+        Task<IList<MemberRoom>> LoadPersonalRooms(ulong guildId);
+        void DeletePersonalRoom(MemberRoom room);
+        MemberRoom CreatePersonalRoom(ulong guildId);
+
         Restart AddRestart();
         Task<Restart> ConsumeRestart();
 
