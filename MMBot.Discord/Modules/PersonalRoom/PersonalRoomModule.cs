@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.Rest;
 using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Modules;
 using MMBot.Discord.Services.Interfaces;
@@ -58,22 +59,26 @@ namespace MMBot.Modules.PersonalRoom
 
             if (!rooms.Any(x => x.UserId == Context.User.Id) && isMember)
             {
+                RestTextChannel c = null;
                 try
                 {
-                    var c = await Context.Guild.CreateTextChannelAsync(roomName, f => f.CategoryId = gs.CategoryId);
+                    c = await Context.Guild.CreateTextChannelAsync(roomName, f => f.CategoryId = gs.CategoryId);
                 }
                 catch (Exception ex)
                 {
                     return FromError(CommandError.Unsuccessful, ex.Message);
                 }
 
-                var room = _databaseService.CreatePersonalRoom(Context.Guild.Id);
-                room.Name = roomName;
-                room.RoomId = c.Id;
-                room.UserId = Context.User.Id;
-                await _databaseService.SaveDataAsync();
+                if(c is not null)
+                {
+                    var room = _databaseService.CreatePersonalRoom(Context.Guild.Id);
+                    room.Name = roomName;
+                    room.RoomId = c.Id;
+                    room.UserId = Context.User.Id;
+                    await _databaseService.SaveDataAsync();
 
-                return FromSuccess($"Room: {roomName} was created!");
+                    return FromSuccess($"Room: {roomName} was created!");
+                }
             }
 
             return FromError(CommandError.Unsuccessful, "Every !member! can ONLY create ONE room....");
