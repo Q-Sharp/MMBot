@@ -51,9 +51,12 @@ namespace MMBot.Modules.PersonalRoom
         [Summary("Creates personal member room!")]
         public async Task<RuntimeResult> CreateRoom([Remainder] string roomName)
         {
-            var rooms = await _databaseService.LoadPersonalRooms(Context.Guild.Id);
             var gs = await _guildSettings.GetGuildSettingsAsync(Context.Guild.Id);
 
+            if (gs.CategoryId == 0 || gs.MemberRoleId == 0)
+                return FromError(CommandError.Unsuccessful, "Member rooms feature has to be configured. Set Category and MemberRole!");
+
+            var rooms = await _databaseService.LoadPersonalRooms(Context.Guild.Id);
             var roles = Context.Guild.Roles.Where(x => x.Members.Select(x => x.Id).Contains(Context.User.Id));
             var isMember = roles.Any(x => x.Id == gs.MemberRoleId);
 
