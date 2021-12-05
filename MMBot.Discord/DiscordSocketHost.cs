@@ -30,8 +30,15 @@ namespace MMBot.Discord
                .UseSystemd()
                .ConfigureAppConfiguration((hostContext, configBuilder) =>
                {
-                   configBuilder.AddEnvironmentVariables("MMBot_")
-                                .AddUserSecrets<DiscordWorker>();
+                   try
+                   {
+                       configBuilder.AddEnvironmentVariables("MMBot_")
+                                    .AddUserSecrets<DiscordWorker>();
+                   }
+                   catch
+                   {
+                       // ignore
+                   }
                })
                .UseSerilog((h, l) => l.ReadFrom.Configuration(h.Configuration))
                .ConfigureServices((hostContext, services) =>
@@ -42,7 +49,6 @@ namespace MMBot.Discord
                    services
                        .AddHostedService<DiscordWorker>()
                        .AddSingleton<GuildSettingsService>()
-                       //.AddDbContext<Context>(o => o.UseSqlite("Filename=MMBot.db"))
                        .AddDbContext<Context>(o => o.UseNpgsql(config.GetConnectionString("Context")))
                        .AddSingleton<IGuildSettingsService, GuildSettingsService>()
                        .AddSingleton(o => new DiscordSocketClient(new DiscordSocketConfig

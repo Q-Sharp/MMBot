@@ -21,7 +21,7 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release
     - name: .NET Publish
-      run: dotnet publish ./MMBot.Discord/MMBot.Discord.csproj -c Release -r linux-x64 --self-contained /p:PublishReadyToRun=false
+      run: dotnet publish ./MMBot.Discord/MMBot.Discord.csproj -c Release -r linux-x64 --no-self-contained /p:PublishReadyToRun=false
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v2.1.5
       env:
@@ -33,7 +33,7 @@ jobs:
           REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
           TARGET: ${{ secrets.REMOTE_TARGET }}    
     - name: .NET Publish
-      run: dotnet publish ./MMBot.Blazor/MMBot.Blazor.csproj -c Release -r linux-x64 --self-contained /p:PublishReadyToRun=false  
+      run: dotnet publish ./MMBot.Blazor/MMBot.Blazor.csproj -c Release -r linux-x64 --no-self-contained /p:PublishReadyToRun=false  
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v2.1.5
       env:
