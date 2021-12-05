@@ -53,7 +53,7 @@ namespace MMBot.Discord
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, e, "Migration failed");
+                _logger.LogError(e.Message);
                 ads.Truncate();
                 await ads.Restart();
                 return;
@@ -83,20 +83,20 @@ namespace MMBot.Discord
             {
                 case LogSeverity.Critical:
                 case LogSeverity.Error:
-                    _logger.LogError(message.Message, message.Exception);
+                    _logger.LogError(message.Message);
                     break;
 
                 case LogSeverity.Warning:
-                    _logger.LogWarning(message.Message, message.Exception);
+                    _logger.LogWarning(message.Message);
                     break;
 
                 case LogSeverity.Info:
-                    _logger.LogInformation(message.Message, message.Exception);
+                    _logger.LogInformation(message.Message);
                     break;
 
                 case LogSeverity.Verbose:
                 case LogSeverity.Debug:
-                    _logger.LogDebug(message.Message, message.Exception);
+                    _logger.LogDebug(message.Message);
                     break;
             }
 

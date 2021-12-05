@@ -42,14 +42,15 @@ namespace MMBot.Discord
                    services
                        .AddHostedService<DiscordWorker>()
                        .AddSingleton<GuildSettingsService>()
+                       //.AddDbContext<Context>(o => o.UseSqlite("Filename=MMBot.db"))
                        .AddDbContext<Context>(o => o.UseNpgsql(config.GetConnectionString("Context")))
                        .AddSingleton<IGuildSettingsService, GuildSettingsService>()
-                       .AddSingleton<DiscordSocketClient>(o => new DiscordSocketClient(new DiscordSocketConfig
+                       .AddSingleton(o => new DiscordSocketClient(new DiscordSocketConfig
                        {
                            LogLevel = Enum.Parse<LogSeverity>(discordConfig.GetValue<string>("LogLevel"), true),
                            MessageCacheSize = discordConfig.GetValue<int>("MessageCacheSize")
                        }))
-                       .AddSingleton<CommandService>(s => new CommandService(new CommandServiceConfig
+                       .AddSingleton(s => new CommandService(new CommandServiceConfig
                        {
                            LogLevel = Enum.Parse<LogSeverity>(discordConfig["LogLevel"], true),
                            CaseSensitiveCommands = discordConfig.GetValue<bool>("CaseSensitiveCommands"),

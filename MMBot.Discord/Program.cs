@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Serilog.Events;
 
 namespace MMBot.Discord
 {
@@ -10,6 +12,11 @@ namespace MMBot.Discord
         private const string logTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
         public static async Task Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.File(path: Path.Combine(Environment.CurrentDirectory, "mmbot.log"), outputTemplate: logTemplate, rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Information)
+                .CreateLogger();
+
             try
             {
                 using var hb = DiscordSocketHost.CreateDiscordSocketHost(args)?.Build();
