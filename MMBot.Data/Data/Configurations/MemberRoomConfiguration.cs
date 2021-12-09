@@ -2,14 +2,13 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MMBot.Data.Entities;
 
-namespace MMBot.Data.Configuration
+namespace MMBot.Data.Configuration;
+
+public class MemberRoomConfiguration : IEntityTypeConfiguration<MemberRoom>
 {
-    public class MemberRoomConfiguration : IEntityTypeConfiguration<MemberRoom>
+    public void Configure(EntityTypeBuilder<MemberRoom> builder)
     {
-        public void Configure(EntityTypeBuilder<MemberRoom> builder)
-        {
-            builder.UseXminAsConcurrencyToken()
-                   .HasKey(c => c.Id);
-        }
+        builder.UseXminAsConcurrencyToken()
+               .HasKey(c => c.Id);
     }
 }

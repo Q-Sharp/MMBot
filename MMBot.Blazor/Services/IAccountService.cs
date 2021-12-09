@@ -1,7 +1,6 @@
-﻿namespace MMBot.Blazor.Services
+﻿namespace MMBot.Blazor.Services;
+
+public interface IAccountService
 {
-    public interface IAccountService
-    {
-        IDCUser LoggedUser { get; }
-    }
+    IDCUser LoggedUser { get; }
 }

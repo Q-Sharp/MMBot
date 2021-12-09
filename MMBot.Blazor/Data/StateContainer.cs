@@ -1,6 +1,4 @@
 ﻿using System;
-using Microsoft.AspNetCore.Components;
-using MMBot.Blazor.ViewModels;
 
 namespace MMBot.Blazor.Data
 {

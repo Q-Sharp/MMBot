@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using MMBot.Blazor.ViewModels;
 using MMBot.Data;
 using MMBot.Data.Entities;

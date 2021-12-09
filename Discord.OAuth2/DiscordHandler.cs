@@ -1,44 +1,42 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System.Text.Json;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
-namespace Discord.OAuth2
+namespace Discord.OAuth2;
+
+internal class DiscordHandler : OAuthHandler<DiscordOptions>
 {
-    internal class DiscordHandler : OAuthHandler<DiscordOptions>
+    public DiscordHandler(IOptionsMonitor<DiscordOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
+        : base(options, logger, encoder, clock)
     {
-        public DiscordHandler(IOptionsMonitor<DiscordOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
-            : base(options, logger, encoder, clock)
-        {
-        }
+    }
 
-        protected async override Task<AuthenticationTicket> CreateTicketAsync(ClaimsIdentity identity, AuthenticationProperties properties, OAuthTokenResponse tokens)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, Options.UserInformationEndpoint);
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokens.AccessToken);
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+    protected async override Task<AuthenticationTicket> CreateTicketAsync(ClaimsIdentity identity, AuthenticationProperties properties, OAuthTokenResponse tokens)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, Options.UserInformationEndpoint);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokens.AccessToken);
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var response = await Backchannel.SendAsync(request, Context.RequestAborted);
-            if (!response.IsSuccessStatusCode)
-                throw new HttpRequestException($"Failed to retrieve Discord user information ({response.StatusCode}).");
+        var response = await Backchannel.SendAsync(request, Context.RequestAborted);
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException($"Failed to retrieve Discord user information ({response.StatusCode}).");
 
+        /// ****
+        properties.Items.Add("token", tokens.AccessToken);
+        /// ****
 
-            /// ****
-            properties.Items.Add("token", tokens.AccessToken);
-            /// ****
+        var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var context = new OAuthCreatingTicketContext(new ClaimsPrincipal(identity), properties, Context, Scheme, Options, Backchannel, tokens, payload.RootElement);
+        context.RunClaimActions();
 
-            var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-            var context = new OAuthCreatingTicketContext(new ClaimsPrincipal(identity), properties, Context, Scheme, Options, Backchannel, tokens, payload.RootElement);
-            context.RunClaimActions();
-
-            await Events.CreatingTicket(context);
-            return new AuthenticationTicket(context.Principal, context.Properties, Scheme.Name);
-        }
+        await Events.CreatingTicket(context);
+        return new AuthenticationTicket(context.Principal, context.Properties, Scheme.Name);
     }
 }
