@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Tests", "MMBot.Tests\MMBot.Tests.csproj", "{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Discord", "MMBot.Discord\MMBot.Discord.csproj", "{03161B12-D305-46C6-AC31-47A7027E6AA5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Blazor", "MMBot.Blazor\MMBot.Blazor.csproj", "{02C84FD5-5BC6-48BE-8AC0-C86B14001F16}"
@@ -24,16 +22,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Discord.Tests", "MMBot.Discord.Tests\MMBot.Discord.Tests.csproj", "{703A5FE2-88BC-4EF3-97D8-03D96C4759DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMBot.Data.Tests", "MMBot.Data.Tests\MMBot.Data.Tests.csproj", "{9B23A18B-F3D3-4137-AA2B-A0BA7E563BD1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMBot.Blazor.Tests", "MMBot.Blazor.Tests\MMBot.Blazor.Tests.csproj", "{365068BC-DC86-47C8-94E8-2919E627C2EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{30ECB9B8-D7D5-4910-A91C-4618D0FBA7C2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{03161B12-D305-46C6-AC31-47A7027E6AA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{03161B12-D305-46C6-AC31-47A7027E6AA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03161B12-D305-46C6-AC31-47A7027E6AA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -50,6 +50,18 @@ Global
 		{19E6FFE7-A8FC-4AC9-B0E3-2BC7A5EBD3C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19E6FFE7-A8FC-4AC9-B0E3-2BC7A5EBD3C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19E6FFE7-A8FC-4AC9-B0E3-2BC7A5EBD3C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{703A5FE2-88BC-4EF3-97D8-03D96C4759DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{703A5FE2-88BC-4EF3-97D8-03D96C4759DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{703A5FE2-88BC-4EF3-97D8-03D96C4759DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{703A5FE2-88BC-4EF3-97D8-03D96C4759DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B23A18B-F3D3-4137-AA2B-A0BA7E563BD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B23A18B-F3D3-4137-AA2B-A0BA7E563BD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B23A18B-F3D3-4137-AA2B-A0BA7E563BD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B23A18B-F3D3-4137-AA2B-A0BA7E563BD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{365068BC-DC86-47C8-94E8-2919E627C2EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{365068BC-DC86-47C8-94E8-2919E627C2EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{365068BC-DC86-47C8-94E8-2919E627C2EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{365068BC-DC86-47C8-94E8-2919E627C2EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
