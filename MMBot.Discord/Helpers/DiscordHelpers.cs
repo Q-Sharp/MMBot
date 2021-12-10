@@ -1,4 +1,7 @@
-﻿using Discord;
+﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Discord;
 
 namespace MMBot.Helpers
 {
@@ -6,28 +9,12 @@ namespace MMBot.Helpers
     {
         public static string GetUserAndDiscriminator(this IUser sgu) => $"{sgu.Username}#{sgu.Discriminator}";
 
-        public static bool HasMention(string text) 
-            => !string.IsNullOrEmpty(text) && text.Length > 3 && text.Contains('<') && text.Contains('@') && text.Contains('>');
-
-        public static string SeperateMention(string text, out string mention)
+        public static string PrepareForTranslate(this string text)
         {
-            mention = null;
+            var newtext = Regex.Replace(text, @"(<[:@].+?>)|`|(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])[^a-zA-Z0-9_.]+", 
+                string.Empty, RegexOptions.Compiled);
 
-            if (!HasMention(text))
-                return text;
-
-            int startPos = text.IndexOf('<');
-            int endPos = text.IndexOf('>');
-
-            if (startPos - 1 >= 0 && text[startPos - 1] == ' ')
-                startPos--;
-
-            if (endPos + 1 < text.Length && text[endPos + 1] == ' ')
-                endPos++;
-
-            mention = text.Substring(startPos, endPos - startPos + 1);
-
-            return text.Replace(mention, string.Empty);
+            return Regex.Replace(newtext.Trim(), @"([^a-zA-Z0-9_.!\s?\?])+", string.Empty, RegexOptions.Compiled).Trim();
         }
     }
 }

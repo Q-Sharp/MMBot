@@ -24,13 +24,12 @@ namespace MMBot.Discord.Modules.Translation
         [Summary("Translates any text to english")]
         public async Task<RuntimeResult> Translate([Remainder] string text)
         {
-            var t = await _translationService.TranslateTextAsync(text);
+            var trans = await _translationService.TranslateTextAsync(text);
 
-            var result = $"{Context.User.Mention} translated ```{DiscordHelpers.SeperateMention(text, out _)}``` to ```{t.Item1}```";
+            if (string.IsNullOrWhiteSpace(trans) || trans.Contains("️"))
+                return FromErrorUnsuccessful("Nothing to translate here.");
 
-            if (t.Item2 != null)
-                result += $" for {t.Item2}";
-
+            var result = $"{Context.User.Mention} your translation: ```{trans}```";
             return FromSuccess(result);
         }
     }

@@ -15,21 +15,24 @@ namespace MMBot.Discord.Services.Translation
 
         public TranslationService(IHttpClientFactory clientFactory, ILogger<TranslationService> logger) : base(logger) => _clientFactory = clientFactory;
 
-        public async Task<Tuple<string, string>> TranslateTextAsync(string input)
+        public async Task<string> TranslateTextAsync(string input)
         {
             try
             {
-                input = DiscordHelpers.SeperateMention(input, out var mention);
+                input = input.PrepareForTranslate();
+
+                if (string.IsNullOrWhiteSpace(input))
+                    return input;
 
                 var url = $"https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q={Uri.EscapeDataString(input)}";
                 var httpClient = _clientFactory.CreateClient();
                 var result = await httpClient.GetStringAsync(url);
 
-                return Tuple.Create(string.Concat(JsonDocument.Parse(result).RootElement[0].EnumerateArray().Select(y => y[0].GetString())), mention);
+                return JsonDocument.Parse(result).RootElement[0].EnumerateArray().Select(y => y[0].GetString()).FirstOrDefault();
             }
             catch
             {
-                return Tuple.Create<string, string>(string.Empty, null);
+                return string.Empty;
             }
         }
     }
