@@ -56,4 +56,14 @@ public class DiscordHelpersTests
 
         Assert.Equal("kiitos qoo", result);
     }
+
+    [Fact]
+    public void PrepareForTranslateReturnsCorrectStringSpecialChars()
+    {
+        var tr = "ÄÜäüß"; // 4k+ invisible chars
+
+        var result = tr.PrepareForTranslate();
+
+        Assert.Equal("ÄÜäüß", result);
+    }
 }
