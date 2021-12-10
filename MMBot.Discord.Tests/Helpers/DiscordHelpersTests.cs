@@ -60,7 +60,7 @@ public class DiscordHelpersTests
     [Fact]
     public void PrepareForTranslateReturnsCorrectStringSpecialChars()
     {
-        var tr = "ÄÜäüß"; // 4k+ invisible chars
+        var tr = "ÄÜäüß";
 
         var result = tr.PrepareForTranslate();
 
