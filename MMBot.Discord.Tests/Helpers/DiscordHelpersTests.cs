@@ -66,4 +66,14 @@ public class DiscordHelpersTests
 
         Assert.Equal("ÄÜäüß", result);
     }
+
+    [Fact]
+    public void PrepareForTranslateReturnsCorrectStringFromLongString()
+    {
+        var tr = "une unité à distance robuste qui tire rapidement en direction d'unités ennemies sur un large angle et les repousse. un groupe d'unités très résistantes et redoutables qui partagent la santé avec toutes les unités alliées actives du même type. toutes vos unités appartiennent désormais à la faction ethereal. vos unités peuvent maintenant se déplacer à travers d'autres unités et obstacles.";
+
+        var result = tr.PrepareForTranslate();
+
+        Assert.Equal("une unité à distance robuste qui tire rapidement en direction d'unités ennemies sur un large angle et les repousse. un groupe d'unités très résistantes et redoutables qui partagent la santé avec toutes les unités alliées actives du même type. toutes vos unités appartiennent désormais à la faction ethereal. vos unités peuvent maintenant se déplacer à travers d'autres unités et obstacles.", result);
+    }
 }
