@@ -28,7 +28,7 @@ namespace MMBot.Discord.Services.Translation
                 var httpClient = _clientFactory.CreateClient();
                 var result = await httpClient.GetStringAsync(url);
 
-                return JsonDocument.Parse(result).RootElement[0].EnumerateArray().Select(y => y[0].GetString()).FirstOrDefault();
+                return string.Join("", JsonDocument.Parse(result).RootElement[0].EnumerateArray().Select(y => y[0].GetString()));
             }
             catch
             {
