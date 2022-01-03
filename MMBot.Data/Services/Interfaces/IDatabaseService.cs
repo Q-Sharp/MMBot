@@ -23,6 +23,7 @@ namespace MMBot.Data.Services.Interfaces
 
         Task<IList<MemberRoom>> LoadPersonalRooms(ulong guildId);
         void DeletePersonalRoom(MemberRoom room);
+        void RenamePersonalRoom(MemberRoom room, string newName);
         MemberRoom CreatePersonalRoom(ulong guildId);
 
         Restart AddRestart();

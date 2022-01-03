@@ -64,7 +64,7 @@ namespace MMBot.Data.Helpers
                 if (src is null || propName is null)
                     return default;
 
-                if (propName.Contains("."))
+                if (propName.Contains('.'))
                 {
                     var temp = propName.Split(new char[] { '.' }, 2);
                     return GetPropertyValue(GetPropertyValue(src, temp[0]), temp[1]);
@@ -78,19 +78,6 @@ namespace MMBot.Data.Helpers
             catch
             {
                 return string.Empty;
-            }
-        }
-
-        public static TType TryCast<TType>(this object src)
-            where TType : class
-        {
-            try
-            {
-                return src as TType;
-            }
-            catch
-            {
-                return null;
             }
         }
     }

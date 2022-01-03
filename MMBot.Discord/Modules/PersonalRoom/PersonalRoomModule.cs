@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.Rest;
+using Discord.WebSocket;
 using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Modules;
 using MMBot.Discord.Services.Interfaces;
@@ -75,12 +76,12 @@ public class PersonalRoomModule : MMBotModule
             if (c is not null)
             {
                 var room = _databaseService.CreatePersonalRoom(Context.Guild.Id);
-                room.Name = roomName;
+                room.Name = c.Name;
                 room.RoomId = c.Id;
                 room.UserId = Context.User.Id;
                 await _databaseService.SaveDataAsync();
 
-                return FromSuccess($"Room: {roomName} was created!");
+                return FromSuccess($"Room: {c.Name} was created!");
             }
         }
 
@@ -88,7 +89,7 @@ public class PersonalRoomModule : MMBotModule
     }
 
     [Command("DeleteRoom")]
-    [Alias("dr", "rr")]
+    [Alias("dr")]
     [Summary("Deletes personal member room!")]
     public async Task<RuntimeResult> DeleteRoom(ITextChannel room)
     {
@@ -118,5 +119,68 @@ public class PersonalRoomModule : MMBotModule
         }
 
         return FromError(CommandError.Unsuccessful, "Room couldn't be deleted!");
+    }
+
+    [Command("RenameRoom")]
+    [Alias("rr")]
+    [Summary("Rename personal member room!")]
+    public async Task<RuntimeResult> RenameRoom(ITextChannel room, string newName)
+    {
+        var dbRooms = await _databaseService.LoadPersonalRooms(Context.Guild.Id);
+
+        var dbFound = dbRooms.FirstOrDefault(r => r.RoomId == room.Id);
+
+        var roles = Context.Guild.Roles.Where(x => x.Members.Select(x => x.Id).Contains(Context.User.Id));
+        var isAdmin = roles.Any(x => x.Permissions.Administrator) || Context.User.Id == Context.Guild.OwnerId;
+
+        if (dbFound is not null && (Context.User.Id == dbFound.UserId || isAdmin))
+        {
+            _databaseService.RenamePersonalRoom(dbFound, newName);
+            await _databaseService.SaveDataAsync();
+
+            var found = Context.Guild.TextChannels.FirstOrDefault(x => x.Id == room.Id);
+            try
+            {
+                await found?.ModifyAsync(f => f.Name = newName);
+            }
+            catch (Exception ex)
+            {
+                return FromError(CommandError.Unsuccessful, ex.Message);
+            }
+
+            return FromSuccess("Room renamed!");
+        }
+
+        return FromError(CommandError.Unsuccessful, "Room couldn't be renamed!");
+    }
+
+    [Command("PinLastMessage")]
+    [Alias("plm")]
+    [Summary("Pin last message in personal member room!")]
+    public async Task<RuntimeResult> PinLastMessage()
+    {
+        var dbRooms = await _databaseService.LoadPersonalRooms(Context.Guild.Id);
+
+        var dbFound = dbRooms.FirstOrDefault(r => r.RoomId == Context.Channel.Id);
+
+        var roles = Context.Guild.Roles.Where(x => x.Members.Select(x => x.Id).Contains(Context.User.Id));
+        var isAdmin = roles.Any(x => x.Permissions.Administrator) || Context.User.Id == Context.Guild.OwnerId;
+
+        if (dbFound is not null && (Context.User.Id == dbFound.UserId || isAdmin))
+        {
+            try
+            {
+                var lm = Context.Channel.CachedMessages.FirstOrDefault(m => m.Author.Id == dbFound.UserId);
+                await (lm as SocketUserMessage)?.PinAsync();
+            }
+            catch (Exception ex)
+            {
+                return FromError(CommandError.Unsuccessful, ex.Message);
+            }
+
+            return FromSuccess("Last message pinned!");
+        }
+
+        return FromError(CommandError.Unsuccessful, "Couldn't pin your last message");
     }
 }

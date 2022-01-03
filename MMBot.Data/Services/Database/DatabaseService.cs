@@ -48,6 +48,7 @@ namespace MMBot.Data.Services
 
         public async Task<IList<MemberRoom>> LoadPersonalRooms(ulong guildId) => await _context.MemberRoom.Where(x => x.GuildId == guildId).ToListAsync();
         public void DeletePersonalRoom(MemberRoom room) => _context.Remove(room);
+        public void RenamePersonalRoom(MemberRoom room, string newName) => room.Name = newName;
         public MemberRoom CreatePersonalRoom(ulong guildId) => _context.Add(new MemberRoom { GuildId = guildId }).Entity;
 
         public Restart AddRestart() => _context.Add(new Restart()).Entity;
