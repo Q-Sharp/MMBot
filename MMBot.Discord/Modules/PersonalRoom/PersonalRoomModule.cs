@@ -124,7 +124,7 @@ public class PersonalRoomModule : MMBotModule
     [Command("RenameRoom")]
     [Alias("rr")]
     [Summary("Rename personal member room!")]
-    public async Task<RuntimeResult> RenameRoom(ITextChannel room, string newName)
+    public async Task<RuntimeResult> RenameRoom(ITextChannel room, [Remainder] string newName)
     {
         var dbRooms = await _databaseService.LoadPersonalRooms(Context.Guild.Id);
 
