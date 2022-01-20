@@ -23,7 +23,7 @@ namespace MMBot.Discord.Modules.Help
         [Command("help")]
         public async Task<RuntimeResult> HelpAsync()
         {
-            var settings = await _guildSettings.GetGuildSettingsAsync(Context.Guild.Id);
+            var settings = await _guildSettingsService.GetGuildSettingsAsync(Context.Guild.Id);
 
             var builder = new EmbedBuilder()
             {

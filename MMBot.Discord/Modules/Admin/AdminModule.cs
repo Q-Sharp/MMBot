@@ -77,7 +77,7 @@ namespace MMBot.Discord.Modules.Admin
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task<RuntimeResult> ExportCsv()
         {
-            var settings = await _guildSettings.GetGuildSettingsAsync(Context.Guild.Id);
+            var settings = await _guildSettingsService.GetGuildSettingsAsync(Context.Guild.Id);
 
             var result = await _csvService?.ExportCsv(Context.Guild.Id);
             await File.WriteAllBytesAsync(settings.FileName, result);
@@ -172,7 +172,7 @@ namespace MMBot.Discord.Modules.Admin
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task<RuntimeResult> Show()
         {
-            var gs = (await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id));
+            var gs = await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id);
             var e = gs.GetEmbedPropertiesWithValues();
             var answer = await ReplyAsync("", false, e as Embed);
             return FromSuccess(answer: answer);
@@ -183,7 +183,7 @@ namespace MMBot.Discord.Modules.Admin
         [RequireUserPermission(ChannelPermission.ManageRoles)]
         public async Task<RuntimeResult> Set(string propertyName, [Remainder] string value)
         {
-            var gs = (await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id));
+            var gs = await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id);
             var r = gs.ChangeProperty(propertyName, value);
             await _databaseService.SaveDataAsync();
             return FromSuccess(r);

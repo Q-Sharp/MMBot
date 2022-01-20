@@ -1,6 +1,8 @@
-﻿using Discord;
+﻿using System.Threading.Tasks;
+using Discord;
 using Discord.Addons.Interactive;
 using Discord.Commands;
+using MMBot.Data.Entities;
 using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Services.Interfaces;
 
@@ -10,14 +12,21 @@ namespace MMBot.Discord.Modules
     {
         protected IDatabaseService _databaseService;
         protected ICommandHandler _commandHandler;
-        protected IGuildSettingsService _guildSettings;
+        protected IGuildSettingsService _guildSettingsService;
 
-        public MMBotModule(IDatabaseService databaseService, IGuildSettingsService guildSettings, ICommandHandler commandHandler)
+        private Task<GuildSettings> _guildSettings;
+
+        public MMBotModule(IDatabaseService databaseService, IGuildSettingsService guildSettingsService, ICommandHandler commandHandler)
         {
             _databaseService = databaseService;
             _commandHandler = commandHandler;
-            _guildSettings = guildSettings;
+            _guildSettingsService = guildSettingsService;
+
+            if (Context?.Guild?.Id is not null)
+                _guildSettings = guildSettingsService?.GetGuildSettingsAsync(Context.Guild.Id);
         }
+
+        public Task<GuildSettings> GetGuildSettings() => _guildSettings;
 
         public static MMBotResult FromSuccess(string successMessage = null, IMessage answer = null) 
             => MMBotResult.Create(null, successMessage, answer);

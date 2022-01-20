@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using MMBot.Discord.Modules.Interfaces;
 using MMBot.Discord.Services.Interfaces;
 using MMBot.Data.Services.Interfaces;
-using MMBot.Helpers;
 
 namespace MMBot.Discord.Modules.Translation
 {

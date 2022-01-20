@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Discord.Commands;
-using MMBot.Discord.Modules.Interfaces;
-using MMBot.Discord.Services.Interfaces;
-using MMBot.Discord.Services.Raid;
-
-namespace MMBot.Discord.Modules.Raid;
+﻿namespace MMBot.Discord.Modules.Raid;
 //[Name("Raid")]
 //[Group("Raid")]
 //[Alias("R")]

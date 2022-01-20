@@ -8,6 +8,7 @@ using Discord.WebSocket;
 using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Modules;
 using MMBot.Discord.Services.Interfaces;
+using MMBot.Helpers;
 
 namespace MMBot.Modules.PersonalRoom;
 
@@ -27,7 +28,7 @@ public class PersonalRoomModule : MMBotModule
     [Summary("Sets category for rooms")]
     public async Task<RuntimeResult> SetCategoryForMemberRooms(ICategoryChannel category)
     {
-        var gs = (await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id));
+        var gs = await GetGuildSettings();
         gs.CategoryId = category.Id;
         await _databaseService.SaveDataAsync();
 
@@ -40,7 +41,7 @@ public class PersonalRoomModule : MMBotModule
     [Summary("Sets member role for creating rooms")]
     public async Task<RuntimeResult> SetMemberRoleForRooms(IRole role)
     {
-        var gs = (await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id));
+        var gs = await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id);
         gs.MemberRoleId = role.Id;
         await _databaseService.SaveDataAsync();
 
@@ -52,7 +53,7 @@ public class PersonalRoomModule : MMBotModule
     [Summary("Creates personal member room!")]
     public async Task<RuntimeResult> CreateRoom([Remainder] string roomName)
     {
-        var gs = await _guildSettings.GetGuildSettingsAsync(Context.Guild.Id);
+        var gs = await _guildSettingsService.GetGuildSettingsAsync(Context.Guild.Id);
 
         if (gs.CategoryId == 0 || gs.MemberRoleId == 0)
             return FromError(CommandError.Unsuccessful, "Member rooms feature has to be configured. Set Category and MemberRole!");
@@ -94,13 +95,9 @@ public class PersonalRoomModule : MMBotModule
     public async Task<RuntimeResult> DeleteRoom(ITextChannel room)
     {
         var dbRooms = await _databaseService.LoadPersonalRooms(Context.Guild.Id);
-
         var dbFound = dbRooms.FirstOrDefault(r => r.RoomId == room.Id);
 
-        var roles = Context.Guild.Roles.Where(x => x.Members.Select(x => x.Id).Contains(Context.User.Id));
-        var isAdmin = roles.Any(x => x.Permissions.Administrator) || Context.User.Id == Context.Guild.OwnerId;
-
-        if (dbFound is not null && (Context.User.Id == dbFound.UserId || isAdmin))
+        if (dbFound is not null && (Context.User.Id == dbFound.UserId || Context.IsAdmin()))
         {
             _databaseService.DeletePersonalRoom(dbFound);
             await _databaseService.SaveDataAsync();
@@ -130,10 +127,7 @@ public class PersonalRoomModule : MMBotModule
 
         var dbFound = dbRooms.FirstOrDefault(r => r.RoomId == room.Id);
 
-        var roles = Context.Guild.Roles.Where(x => x.Members.Select(x => x.Id).Contains(Context.User.Id));
-        var isAdmin = roles.Any(x => x.Permissions.Administrator) || Context.User.Id == Context.Guild.OwnerId;
-
-        if (dbFound is not null && (Context.User.Id == dbFound.UserId || isAdmin))
+        if (dbFound is not null && (Context.User.Id == dbFound.UserId || Context.IsAdmin()))
         {
             _databaseService.RenamePersonalRoom(dbFound, newName);
             await _databaseService.SaveDataAsync();
@@ -155,18 +149,42 @@ public class PersonalRoomModule : MMBotModule
     }
 
     [Command("PinLastMessage")]
-    [Alias("plm")]
+    [Alias("plm", "pin")]
     [Summary("Pin last message in personal member room!")]
     public async Task<RuntimeResult> PinLastMessage()
     {
         var dbRooms = await _databaseService.LoadPersonalRooms(Context.Guild.Id);
 
+        var foundRoom = dbRooms.FirstOrDefault(r => r.RoomId == Context.Channel.Id);
+
+        if (foundRoom is not null && (Context.User.Id == foundRoom.UserId || Context.IsAdmin()))
+        {
+            try
+            {
+                var lm = Context.Channel.CachedMessages.FirstOrDefault(m => m.Author.Id == foundRoom.UserId);
+                await (lm as SocketUserMessage)?.PinAsync();
+            }
+            catch (Exception ex)
+            {
+                return FromError(CommandError.Unsuccessful, ex.Message);
+            }
+
+            return FromSuccess("Last message pinned!");
+        }
+
+        return FromError(CommandError.Unsuccessful, "Couldn't pin your last message");
+    }
+
+    [Command("UnPinLastPin")]
+    [Alias("uplm", "unpin")]
+    [Summary("Unpin last pinned message in personal member room!")]
+    public async Task<RuntimeResult> UnpinLastPin()
+    {
+        var dbRooms = await _databaseService.LoadPersonalRooms(Context.Guild.Id);
+
         var dbFound = dbRooms.FirstOrDefault(r => r.RoomId == Context.Channel.Id);
 
-        var roles = Context.Guild.Roles.Where(x => x.Members.Select(x => x.Id).Contains(Context.User.Id));
-        var isAdmin = roles.Any(x => x.Permissions.Administrator) || Context.User.Id == Context.Guild.OwnerId;
-
-        if (dbFound is not null && (Context.User.Id == dbFound.UserId || isAdmin))
+        if (dbFound is not null && (Context.User.Id == dbFound.UserId || Context.IsAdmin()))
         {
             try
             {

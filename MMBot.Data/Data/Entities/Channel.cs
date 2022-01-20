@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using MMBot.Data.Interfaces;
+﻿using MMBot.Data.Interfaces;
 
 namespace MMBot.Data.Entities
 {

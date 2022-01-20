@@ -1,13 +1,11 @@
 ﻿using Discord;
 using Discord.Commands;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using MMBot.Discord.Modules.Interfaces;
-using MMBot.Helpers;
 using System;
 using MMBot.Discord.Services.CommandHandler;
 

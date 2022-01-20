@@ -1,5 +1,7 @@
+using System;
 using System.Net;
 using System.Threading.Tasks;
+using AspNet.Security.OAuth.Discord;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
@@ -69,12 +71,12 @@ public class Startup
         services.AddAuthentication(opt =>
         {
             opt.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            opt.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            opt.DefaultChallengeScheme = "Discord";
+            opt.DefaultChallengeScheme = DiscordAuthenticationDefaults.AuthenticationScheme;
         })
         .AddCookie(c =>
         {
             c.Cookie.SameSite = SameSiteMode.Strict;
+            c.ExpireTimeSpan = TimeSpan.FromDays(30);
         })
         .AddDiscord(x =>
         {

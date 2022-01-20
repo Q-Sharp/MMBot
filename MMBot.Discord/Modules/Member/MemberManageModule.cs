@@ -114,7 +114,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
     [RequireUserPermission(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> GroupMember(params string[] memberNames)
     {
-        var m = (await _databaseService.LoadMembersAsync(Context.Guild.Id));
+        var m = await _databaseService.LoadMembersAsync(Context.Guild.Id);
         var grouped = await Task.WhenAll(memberNames.Select(x => m.FindAndAskForEntity(Context.Guild.Id, x, Context.Channel, _commandHandler)));
 
         var group = new MemberGroup();
@@ -130,7 +130,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
     [RequireUserPermission(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> UnGroupMember(params string[] memberNames)
     {
-        var m = (await _databaseService.LoadMembersAsync(Context.Guild.Id));
+        var m = await _databaseService.LoadMembersAsync(Context.Guild.Id);
         var grouped = await Task.WhenAll(memberNames.Select(x => m.FindAndAskForEntity(Context.Guild.Id, x, Context.Channel, _commandHandler)));
         grouped.ForEach(x => x.MemberGroupId = null);
         await _databaseService?.SaveDataAsync();

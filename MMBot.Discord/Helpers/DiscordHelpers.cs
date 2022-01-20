@@ -1,5 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Linq;
+using System.Text.RegularExpressions;
 using Discord;
+using Discord.Commands;
 
 namespace MMBot.Helpers
 {
@@ -13,6 +15,12 @@ namespace MMBot.Helpers
                 string.Empty, RegexOptions.Compiled);
 
             return Regex.Replace(newtext.Trim(), @"([^\p{L}0-9_'.!\s?\?])+", string.Empty, RegexOptions.Compiled).Trim();
+        }
+
+        public static bool IsAdmin(this SocketCommandContext ctx)
+        {
+            var roles = ctx.Guild.Roles.Where(x => x.Members.Select(x => x.Id).Contains(ctx.User.Id));
+            return roles.Any(x => x.Permissions.Administrator) || ctx.User.Id == ctx.Guild.OwnerId;
         }
     }
 }

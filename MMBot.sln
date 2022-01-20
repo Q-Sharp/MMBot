@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Blazor", "MMBot.Blazo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Data", "MMBot.Data\MMBot.Data.csproj", "{FD989D65-9C69-413E-867D-58851BBB771A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Discord.OAuth2", "Discord.OAuth2\Discord.OAuth2.csproj", "{19E6FFE7-A8FC-4AC9-B0E3-2BC7A5EBD3C5}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DEFFC1A4-F9E1-424B-948C-9A1751DB073F}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -46,10 +44,6 @@ Global
 		{FD989D65-9C69-413E-867D-58851BBB771A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD989D65-9C69-413E-867D-58851BBB771A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD989D65-9C69-413E-867D-58851BBB771A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{19E6FFE7-A8FC-4AC9-B0E3-2BC7A5EBD3C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{19E6FFE7-A8FC-4AC9-B0E3-2BC7A5EBD3C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{19E6FFE7-A8FC-4AC9-B0E3-2BC7A5EBD3C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{19E6FFE7-A8FC-4AC9-B0E3-2BC7A5EBD3C5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{703A5FE2-88BC-4EF3-97D8-03D96C4759DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{703A5FE2-88BC-4EF3-97D8-03D96C4759DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{703A5FE2-88BC-4EF3-97D8-03D96C4759DA}.Release|Any CPU.ActiveCfg = Release|Any CPU

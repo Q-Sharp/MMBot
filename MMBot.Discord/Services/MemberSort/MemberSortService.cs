@@ -35,7 +35,7 @@ namespace MMBot.Discord.Services.MemberSort
                 .Select(x => x.OrderByDescending(y => y.SHigh).ToList())
                 .ToList();
 
-            var future = m.OrderByDescending(x => (useCurrent ? x.Current : x?.SHighLowest ?? x.SHigh))
+            var future = m.OrderByDescending(x => useCurrent ? x.Current : x?.SHighLowest ?? x.SHigh)
                 .ToList()
                 .ChunkBy(settings.ClanSize);
 
@@ -52,7 +52,7 @@ namespace MMBot.Discord.Services.MemberSort
                     break;
 
                 case ExchangeMode.SkipSteps:
-                    result = await GetSkipStepsMemberMovement(m.OrderByDescending(y => (useCurrent ? y.Current : y?.SHighLowest ?? y.SHigh))
+                    result = await GetSkipStepsMemberMovement(m.OrderByDescending(y => useCurrent ? y.Current : y?.SHighLowest ?? y.SHigh)
                         .Where(x => x.IsActive && x.Role != Role.ExMember).ToList(), moveQty, settings.ClanSize, cqty, useCurrent);
                     break;
             }
@@ -70,7 +70,7 @@ namespace MMBot.Discord.Services.MemberSort
                 var current = allMembersOrdered.OrderBy(x => x.Clan?.Tag)
                     .GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
                     .Select(x => x.Members.ToList() as IList<Member>)
-                    .Select(x => x.OrderByDescending(y => (useCurrent ? y.Current : y?.SHighLowest ?? y.SHigh)).ToList())
+                    .Select(x => x.OrderByDescending(y => useCurrent ? y.Current : y?.SHighLowest ?? y.SHigh).ToList())
                     .ToList();
 
                 var ListOfLists = new List<List<Member>>();
@@ -105,7 +105,7 @@ namespace MMBot.Discord.Services.MemberSort
 
                 return ListOfLists.Select((x, i) => new MemberChanges 
                 { 
-                    SortOrder = (i+1), // index starts at 0 so add 1
+                    SortOrder = i+1, // index starts at 0 so add 1
                     NewMemberList = x,
                     
                     Join = x.Where(y => !current[i].Contains(y)) // All new members which weren't in that clan before
@@ -238,6 +238,6 @@ namespace MMBot.Discord.Services.MemberSort
 
         public int GetSHighRank(IList<Member> allMembers, Member rankOf) => allMembers.OrderByDescending(x => x.SHigh).Select((m, i) => new { i, m }).FirstOrDefault(x => x.m == rankOf).i;
         public int GetFutureClan(IList<Member> allMembers, Member rankOf, int clanSize) => GetFutureClan(GetSHighRank(allMembers, rankOf), clanSize);
-        public int GetFutureClan(int rank, int clanSize) => (int)Math.Ceiling(((double)rank/(double)clanSize));
+        public int GetFutureClan(int rank, int clanSize) => (int)Math.Ceiling((double)rank/(double)clanSize);
     }
 }
