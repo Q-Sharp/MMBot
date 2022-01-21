@@ -63,6 +63,22 @@ namespace MMBot.Discord.Services.CommandHandler
 
             _client.MessageDeleted += Client_MessageDeleted;
             _client.MessagesBulkDeleted += Client_MessagesBulkDeleted;
+
+            _client.ChannelDestroyed += _client_ChannelDestroyed;
+        }
+
+        private async Task _client_ChannelDestroyed(SocketChannel arg)
+        {
+            if(arg is IGuildChannel gc)
+            {
+                var gs = await _databaseService.LoadGuildSettingsAsync(gc.GuildId);
+                var dbRooms = await _databaseService.LoadPersonalRooms(gc.Id);
+
+                var dc = dbRooms.FirstOrDefault(x => x.RoomId == gc.Id);
+
+                if (dc != null)
+                    _databaseService.DeletePersonalRoom(dc);
+            }
         }
 
         public void SetDeletedMessagesChannel(IGuildChannel channel) => _deletedMessagesChannel = channel as ISocketMessageChannel;
@@ -125,7 +141,7 @@ namespace MMBot.Discord.Services.CommandHandler
                 .ForEach(x => _timerService.Start(x, true));
 
             // set status
-            await _client.SetGameAsync($"Member Manager 2021");
+            await _client.SetGameAsync($"Member Manager 2022");
             _logger.Log(LogLevel.Information, "Bot is online!");
         }
 

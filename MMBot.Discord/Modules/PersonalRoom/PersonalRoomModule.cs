@@ -48,6 +48,29 @@ public class PersonalRoomModule : MMBotModule
         return FromSuccess("Member role set");
     }
 
+    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [Command("CleanUpMemberRooms")]
+    [Alias("cumr")]
+    [Summary("Sets member role for creating rooms")]
+    public async Task<RuntimeResult> CleanUpMemberRooms()
+    {
+        var gs = await _guildSettingsService.GetGuildSettingsAsync(Context.Guild.Id);
+        var dbRooms = await _databaseService.LoadPersonalRooms(Context.Guild.Id);
+
+        var rooms = Context.Guild.GetCategoryChannel(gs.CategoryId)?.Channels;
+
+        string cleanedUp = string.Empty;
+        dbRooms.Where(x => !rooms.Select(x => x.Id).Contains(x.RoomId)).ForEach(x =>
+        {
+            _databaseService.DeletePersonalRoom(x);
+            cleanedUp += $"{x.Name}, ";
+        });
+
+        cleanedUp = cleanedUp.TrimEnd(new char[] { ',', ' ' });
+
+        return FromSuccess($"These rooms were removed from db: {cleanedUp}");
+    }
+
     [Command("CreateRoom")]
     [Alias("cr")]
     [Summary("Creates personal member room!")]
