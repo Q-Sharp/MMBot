@@ -1,7 +1,10 @@
-name: Deploy
+name: Compile
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   build:
@@ -20,6 +23,8 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
     - name: .NET Publish
       run: dotnet publish ./MMBot.Discord/MMBot.Discord.csproj -c Release -r linux-x64 --no-self-contained /p:PublishReadyToRun=false
     - name: Deploy to Server
