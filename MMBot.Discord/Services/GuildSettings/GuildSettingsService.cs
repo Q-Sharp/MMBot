@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MMBot.Data;
@@ -26,7 +25,6 @@ namespace MMBot.Discord.Services
             {
                 GuildId = id,
                 Prefix = "m.",
-                WaitForReaction = TimeSpan.FromMinutes(5),
                 FileName = "export.csv",
                 ClanSize = 20,
                 MemberMovementQty = 3

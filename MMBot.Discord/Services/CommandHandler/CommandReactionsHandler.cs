@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MMBot.Discord.Services.Interfaces;
+using MMBot.Data.Entities;
 
 namespace MMBot.Discord.Services.CommandHandler
 {
@@ -27,7 +28,7 @@ namespace MMBot.Discord.Services.CommandHandler
                 }
             });
 
-        public async Task AddToReactionList(ulong guildId,IUserMessage message, Func<IEmote, IUser, Task> fT, bool allowMultiple = true)
+        public async Task AddToReactionList(ulong guildId, IUserMessage message, Func<IEmote, IUser, Task> fT, bool allowMultiple = true)
         {
             var settings = await _gs.GetGuildSettingsAsync(guildId);
 
@@ -36,7 +37,7 @@ namespace MMBot.Discord.Services.CommandHandler
 
             var dis = await _monitor.EnterAsync().ConfigureAwait(false);
 
-            var t1 = Task.Delay(settings.WaitForReaction);
+            var t1 = Task.Delay(GuildSettings.WaitForReaction);
             var t2 = allowMultiple ? Task.Delay(-1) : _monitor.WaitAsync();
 
             await Task.WhenAny(t1, t2).ConfigureAwait(false);

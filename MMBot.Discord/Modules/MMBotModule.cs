@@ -34,8 +34,10 @@ namespace MMBot.Discord.Modules
             => MMBotResult.Create(error, reason, answer);
         public static MMBotResult FromErrorObjectNotFound(string objectname, string searchstring, IMessage answer = null) 
             => MMBotResult.Create(CommandError.ObjectNotFound, $"{objectname}: {searchstring}", answer);
-        public static MMBotResult FromErrorUnsuccessful(string error, IMessage answer = null) 
+        public static MMBotResult FromErrorUnsuccessful(string error, IMessage answer = null)
             => MMBotResult.Create(CommandError.Unsuccessful, error, answer);
+        public static MMBotResult FromIgnore()
+            => MMBotResult.Create(null, null, null);
     }
 
     public class MMBotResult : RuntimeResult

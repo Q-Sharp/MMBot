@@ -70,6 +70,10 @@ public class ClanModule : MMBotModule, IClanModule
         try
         {
             c = await (await _databaseService.LoadClansAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, tag, Context.Channel, _commandHandler);
+
+            if (c is null)
+                return FromIgnore();
+
             _databaseService.DeleteClan(c);
             await _databaseService.SaveDataAsync();
         }
@@ -93,6 +97,10 @@ public class ClanModule : MMBotModule, IClanModule
         try
         {
             var c = await (await _databaseService.LoadClansAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, tag, Context.Channel, _commandHandler);
+
+            if (c is null)
+                return FromIgnore();
+
             m = c.ChangeProperty(propertyName, value);
             await _databaseService.SaveDataAsync();
         }
