@@ -1,12 +1,9 @@
-﻿using System;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using MMBot.Data.Enums;
 using MMBot.Data.Interfaces;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace MMBot.Data.Entities;
 

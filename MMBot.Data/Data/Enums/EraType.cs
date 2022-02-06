@@ -1,6 +1,5 @@
-﻿namespace MMBot.Data.Enums
+﻿namespace MMBot.Data.Enums;
+
+public enum EraType : byte
 {
-    public enum EraType : byte
-    {
-    }
 }

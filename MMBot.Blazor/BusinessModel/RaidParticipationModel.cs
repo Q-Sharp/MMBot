@@ -12,7 +12,7 @@
 
 //        public int RaidParticipationId { get; set; }
 //        public int MemberId { get; set; }
-        
+
 //        public RaidBossModel BossRaid { get; set; }
 //        public MemberModel Member { get; set; }
 

@@ -1,53 +1,50 @@
-﻿using System;
+﻿namespace MMBot.Data.Entities;
 
-namespace MMBot.Data.Entities
+public class ClanModel : Clan
 {
-    public class ClanModel : Clan
+    public event Action StateChanged;
+    private void NotifyStateChanged() => StateChanged?.Invoke();
+
+    public override int SortOrder
     {
-        public event Action StateChanged;
-        private void NotifyStateChanged() => StateChanged?.Invoke();
-
-        public override int SortOrder 
+        get => base.SortOrder;
+        set
         {
-            get => base.SortOrder;
-            set 
-            {
-                base.SortOrder = value;
-                NotifyStateChanged();
-            }
+            base.SortOrder = value;
+            NotifyStateChanged();
         }
+    }
 
-        public override string Tag
+    public override string Tag
+    {
+        get => base.Tag;
+        set
         {
-            get => base.Tag;
-            set
-            {
-                base.Tag = value;
-                NotifyStateChanged();
-            }
+            base.Tag = value;
+            NotifyStateChanged();
         }
+    }
 
-        public override string Name
+    public override string Name
+    {
+        get => base.Name;
+        set
         {
-            get => base.Name;
-            set
-            {
-                base.Name = value;
-                NotifyStateChanged();
-            }
+            base.Name = value;
+            NotifyStateChanged();
         }
+    }
 
-        public static ClanModel Create(Clan c)
+    public static ClanModel Create(Clan c)
+    {
+        return new ClanModel
         {
-            return new ClanModel
-            {
-                Id = c.Id,
-                SortOrder = c.SortOrder,
-                Tag = c.Tag,
-                Name = c.Name,
-                DiscordRole = c.DiscordRole,
-                GuildId = c.GuildId,
-            };
-        }
+            Id = c.Id,
+            SortOrder = c.SortOrder,
+            Tag = c.Tag,
+            Name = c.Name,
+            DiscordRole = c.DiscordRole,
+            GuildId = c.GuildId,
+        };
     }
 }

@@ -1,38 +1,35 @@
-﻿using System.Collections.Generic;
+﻿namespace MMBot.Discord.Services.GoogleForms;
 
-namespace MMBot.Discord.Services.GoogleForms
+/// <summary>
+/// A Question Field in a Google Form
+/// </summary>
+public class GoogleFormField
 {
     /// <summary>
-    /// A Question Field in a Google Form
+    /// Type of the Question Field
     /// </summary>
-    public class GoogleFormField
-    {
-        /// <summary>
-        /// Type of the Question Field
-        /// </summary>
-        public GoogleFormsFieldType QuestionType { get; set; }
+    public GoogleFormsFieldType QuestionType { get; set; }
 
-        /// <summary>
-        /// Question text of the Field
-        /// </summary>
-        public string QuestionText { get; set; }
+    /// <summary>
+    /// Question text of the Field
+    /// </summary>
+    public string QuestionText { get; set; }
 
-        /// <summary>
-        /// The unique Id need to be used 
-        /// when submitting the answer
-        /// I also refer to this as: Field Id
-        /// </summary>
-        public string AnswerSubmissionId { get; set; }
+    /// <summary>
+    /// The unique Id need to be used 
+    /// when submitting the answer
+    /// I also refer to this as: Field Id
+    /// </summary>
+    public string AnswerSubmissionId { get; set; }
 
-        /// <summary>
-        /// Available Answer List for any kind of 
-        /// multiple answer selection field
-        /// </summary>
-        public List<string> AnswerOptionList { get; set; } = new List<string>();
+    /// <summary>
+    /// Available Answer List for any kind of 
+    /// multiple answer selection field
+    /// </summary>
+    public List<string> AnswerOptionList { get; set; } = new List<string>();
 
-        /// <summary>
-        /// If the answer is required to Submit
-        /// </summary>
-        public bool IsAnswerRequired { get; set; }
-    }
+    /// <summary>
+    /// If the answer is required to Submit
+    /// </summary>
+    public bool IsAnswerRequired { get; set; }
 }

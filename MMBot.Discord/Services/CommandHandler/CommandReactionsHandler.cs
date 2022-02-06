@@ -1,51 +1,47 @@
 ﻿using Discord;
 using Discord.WebSocket;
-using Nito.AsyncEx;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using MMBot.Discord.Services.Interfaces;
 using MMBot.Data.Entities;
+using MMBot.Discord.Services.Interfaces;
+using Nito.AsyncEx;
 
-namespace MMBot.Discord.Services.CommandHandler
+namespace MMBot.Discord.Services.CommandHandler;
+
+public partial class CommandHandler : ICommandHandler
 {
-    public partial class CommandHandler : ICommandHandler
-    {
-        private readonly IDictionary<ulong, Func<IEmote, IUser, Task>> _messageIdWithReaction = new Dictionary<ulong, Func<IEmote, IUser, Task>>();
-        private static readonly AsyncLock _mutex = new();
-        private static readonly AsyncMonitor _monitor = new();
+    private readonly IDictionary<ulong, Func<IEmote, IUser, Task>> _messageIdWithReaction = new Dictionary<ulong, Func<IEmote, IUser, Task>>();
+    private static readonly AsyncLock _mutex = new();
+    private static readonly AsyncMonitor _monitor = new();
 
-        private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
-            => await Task.Run(async () =>
-            {
-                using (await _mutex.LockAsync())
-                {
-                    if (_messageIdWithReaction.Keys.Contains(arg3.MessageId) && arg3.UserId != _client.CurrentUser.Id)
-                    {
-                        await _messageIdWithReaction[arg3.MessageId](arg3.Emote, arg3.User.IsSpecified ? arg3.User.Value : null);
-                        _monitor.Pulse();
-                    }   
-                }
-            });
-
-        public async Task AddToReactionList(ulong guildId, IUserMessage message, Func<IEmote, IUser, Task> fT, bool allowMultiple = true)
+    private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
+        => await Task.Run(async () =>
         {
-            var settings = await _gs.GetGuildSettingsAsync(guildId);
-
             using (await _mutex.LockAsync())
-                _messageIdWithReaction.Add(message.Id, fT);
+            {
+                if (_messageIdWithReaction.Keys.Contains(arg3.MessageId) && arg3.UserId != _client.CurrentUser.Id)
+                {
+                    await _messageIdWithReaction[arg3.MessageId](arg3.Emote, arg3.User.IsSpecified ? arg3.User.Value : null);
+                    _monitor.Pulse();
+                }
+            }
+        });
 
-            var dis = await _monitor.EnterAsync().ConfigureAwait(false);
+    public async Task AddToReactionList(ulong guildId, IUserMessage message, Func<IEmote, IUser, Task> fT, bool allowMultiple = true)
+    {
+        var settings = await _gs.GetGuildSettingsAsync(guildId);
 
-            var t1 = Task.Delay(GuildSettings.WaitForReaction);
-            var t2 = allowMultiple ? Task.Delay(-1) : _monitor.WaitAsync();
+        using (await _mutex.LockAsync())
+            _messageIdWithReaction.Add(message.Id, fT);
 
-            await Task.WhenAny(t1, t2).ConfigureAwait(false);
-            
-            using (await _mutex.LockAsync().ConfigureAwait(false))
-                _messageIdWithReaction.Remove(message.Id);
+        var dis = await _monitor.EnterAsync().ConfigureAwait(false);
 
-            dis.Dispose();
-        }
+        var t1 = Task.Delay(GuildSettings.WaitForReaction);
+        var t2 = allowMultiple ? Task.Delay(-1) : _monitor.WaitAsync();
+
+        await Task.WhenAny(t1, t2).ConfigureAwait(false);
+
+        using (await _mutex.LockAsync().ConfigureAwait(false))
+            _messageIdWithReaction.Remove(message.Id);
+
+        dis.Dispose();
     }
 }

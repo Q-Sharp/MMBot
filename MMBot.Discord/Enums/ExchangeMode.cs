@@ -1,9 +1,8 @@
-﻿namespace MMBot.Discord.Enums
+﻿namespace MMBot.Discord.Enums;
+
+public enum ExchangeMode
 {
-    public enum ExchangeMode
-    {
-        OneStepUpAndDown = 1,
-        SkipSteps = 2,
-        PerfectWorld = 3
-    }
+    OneStepUpAndDown = 1,
+    SkipSteps = 2,
+    PerfectWorld = 3
 }

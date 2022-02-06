@@ -1,11 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿namespace MMBot.Discord.Services.Interfaces;
 
-namespace MMBot.Discord.Services.Interfaces
+public interface IGoogleSheetsService
 {
-    public interface IGoogleSheetsService
-    {
-        Task ConnectAsync();
+    Task ConnectAsync();
 
-        Task<byte[]> GetTacticPictureAsync();
-    }
+    Task<byte[]> GetTacticPictureAsync();
 }

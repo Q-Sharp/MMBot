@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using MMBot.Data.Entities;
+﻿using MMBot.Data.Entities;
 
 namespace MMBot.Discord.Services.MemberSort;
 

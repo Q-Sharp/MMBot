@@ -1,8 +1,7 @@
-﻿namespace MMBot.Discord.Enums
+﻿namespace MMBot.Discord.Enums;
+
+public enum SortMode
 {
-    public enum SortMode
-    {
-        BySeasonHigh = 1,
-        ByAllTimeHigh
-    }
+    BySeasonHigh = 1,
+    ByAllTimeHigh
 }

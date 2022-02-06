@@ -1,21 +1,12 @@
-using System;
 using System.Net;
-using System.Threading.Tasks;
 using AspNet.Security.OAuth.Discord;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using MMBot.Blazor.Data;
 using MMBot.Blazor.Helpers;
 using MMBot.Blazor.Services;
@@ -73,17 +64,18 @@ public class Startup
             opt.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             opt.DefaultChallengeScheme = DiscordAuthenticationDefaults.AuthenticationScheme;
         })
-        .AddCookie(c =>
+        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, c =>
         {
             c.Cookie.SameSite = SameSiteMode.Strict;
             c.ExpireTimeSpan = TimeSpan.FromDays(30);
         })
-        .AddDiscord(x =>
+        .AddDiscord(DiscordAuthenticationDefaults.AuthenticationScheme, c =>
         {
-            x.ClientId = Configuration["Discord:AppId"];
-            x.ClientSecret = Configuration["Discord:AppSecret"];
+            c.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            c.ClientId = Configuration["Discord:AppId"];
+            c.ClientSecret = Configuration["Discord:AppSecret"];
 
-            x.Events = new OAuthEvents
+            c.Events = new OAuthEvents
             {
                 OnCreatingTicket = async context =>
                 {
@@ -98,8 +90,8 @@ public class Startup
                 }
             };
 
-            x.SaveTokens = true;
-            x.Validate();
+            c.SaveTokens = true;
+            c.Validate();
         });
 
         services.AddAuthorization(c =>

@@ -1,9 +1,8 @@
-﻿namespace MMBot.Data.Interfaces
+﻿namespace MMBot.Data.Interfaces;
+
+public interface IHaveIdentifier
 {
-    public interface IHaveIdentifier
-    {
-        string Identitfier { get; }
-        string Name { get; }
-        ulong GuildId { get; }
-    }
+    string Identitfier { get; }
+    string Name { get; }
+    ulong GuildId { get; }
 }

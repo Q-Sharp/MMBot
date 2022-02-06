@@ -1,11 +1,9 @@
-﻿using System.Threading.Tasks;
-using MMBot.Discord.Services.GoogleForms;
+﻿using MMBot.Discord.Services.GoogleForms;
 
-namespace MMBot.Discord.Services.Interfaces
+namespace MMBot.Discord.Services.Interfaces;
+
+public interface IGoogleFormsService
 {
-    public interface IGoogleFormsService
-    {
-        Task<GoogleFormsAnswers> LoadAsync(string url);
-        Task<bool> SubmitToGoogleFormAsync(GoogleFormsAnswers gfa);
-    }
+    Task<GoogleFormsAnswers> LoadAsync(string url);
+    Task<bool> SubmitToGoogleFormAsync(GoogleFormsAnswers gfa);
 }

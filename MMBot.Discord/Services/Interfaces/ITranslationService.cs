@@ -1,9 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿namespace MMBot.Discord.Services.Interfaces;
 
-namespace MMBot.Discord.Services.Interfaces
+public interface ITranslationService
 {
-    public interface ITranslationService
-    {
-        Task<string> TranslateTextAsync(string input);
-    }
+    Task<string> TranslateTextAsync(string input);
 }

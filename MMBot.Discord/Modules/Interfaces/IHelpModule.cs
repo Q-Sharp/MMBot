@@ -1,11 +1,9 @@
-﻿using System.Threading.Tasks;
-using Discord.Commands;
+﻿using Discord.Commands;
 
-namespace MMBot.Discord.Modules.Interfaces
+namespace MMBot.Discord.Modules.Interfaces;
+
+public interface IHelpModule
 {
-    public interface IHelpModule
-    {
-        Task<RuntimeResult> HelpAsync();
-        Task<RuntimeResult> HelpAsync([Remainder] string command);
-    } 
-}
+    Task<RuntimeResult> HelpAsync();
+    Task<RuntimeResult> HelpAsync([Remainder] string command);
+} 

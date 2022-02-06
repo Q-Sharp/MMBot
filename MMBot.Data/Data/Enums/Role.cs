@@ -1,11 +1,10 @@
-﻿namespace MMBot.Data.Enums
+﻿namespace MMBot.Data.Enums;
+
+public enum Role
 {
-    public enum Role
-    {
-        ExMember = -1,
-        Member = 1,
-        Elder = 2,
-        CoLeader = 3,
-        Leader = 4
-    }
+    ExMember = -1,
+    Member = 1,
+    Elder = 2,
+    CoLeader = 3,
+    Leader = 4
 }

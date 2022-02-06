@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace MMBot.Blazor.Services;
+﻿namespace MMBot.Blazor.Services;
 
 public class DCUser : IDCUser
 {

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿namespace MMBot.Discord.Services.Interfaces;
 
-namespace MMBot.Discord.Services.Interfaces
+public interface ICsvService
 {
-    public interface ICsvService
-    {
-        Task<Exception> ImportCsv(byte[] csv, ulong guildID);
-        Task<byte[]> ExportCsv(ulong guildID);
-    }
+    Task<Exception> ImportCsv(byte[] csv, ulong guildID);
+    Task<byte[]> ExportCsv(ulong guildID);
 }

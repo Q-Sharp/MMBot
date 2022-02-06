@@ -1,7 +1,6 @@
-﻿namespace MMBot.Data.Interfaces
+﻿namespace MMBot.Data.Interfaces;
+
+public interface IHaveGuildId
 {
-    public interface IHaveGuildId
-    {
-        ulong GuildId { get; set; }
-    }
+    ulong GuildId { get; set; }
 }

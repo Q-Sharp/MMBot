@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Discord.Webhook;
+﻿using Discord.Webhook;
 using Microsoft.Extensions.Hosting;
 
 namespace MMBot.Discord;

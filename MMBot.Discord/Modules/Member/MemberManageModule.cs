@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Discord;
+﻿using Discord;
 using Discord.Commands;
 using MMBot.Data.Entities;
-using MMBot.Helpers;
 using MMBot.Discord.Modules.Interfaces;
+using MMBot.Helpers;
 
 namespace MMBot.Discord.Modules.Member;
 

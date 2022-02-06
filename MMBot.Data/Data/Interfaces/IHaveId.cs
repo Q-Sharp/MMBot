@@ -1,8 +1,7 @@
-﻿namespace MMBot.Data.Interfaces
+﻿namespace MMBot.Data.Interfaces;
+
+public interface IHaveId
 {
-    public interface IHaveId
-    {
-        int Id { get; set; }
-        void Update(object HaveId);
-    }
+    int Id { get; set; }
+    void Update(object HaveId);
 }

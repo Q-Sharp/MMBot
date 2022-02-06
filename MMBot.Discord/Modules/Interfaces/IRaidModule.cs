@@ -1,7 +1,6 @@
-﻿namespace MMBot.Discord.Modules.Interfaces
-{
-    public interface IRaidModule
-    {
+﻿namespace MMBot.Discord.Modules.Interfaces;
 
-    }
+public interface IRaidModule
+{
+
 }

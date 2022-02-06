@@ -1,116 +1,110 @@
-﻿using Discord;
+﻿using System.IO.Compression;
+using Discord;
 using Discord.Commands;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using MMBot.Discord.Modules.Interfaces;
-using System;
 using MMBot.Discord.Services.CommandHandler;
 
-namespace MMBot.Discord.Modules.Admin
+namespace MMBot.Discord.Modules.Admin;
+
+public partial class AdminModule : MMBotModule, IAdminModule
 {
-    public partial class AdminModule : MMBotModule, IAdminModule
+    private readonly string _backupDir = Path.Combine(".", "backup");
+    private readonly string _export = "dataexport.zip";
+
+    [Command("ExportDb")]
+    [Summary("Exports db data as json files in zip archive")]
+    [RequireOwner()]
+    public async Task<RuntimeResult> ExportDb()
     {
-        private readonly string _backupDir = Path.Combine(".", "backup");
-        private readonly string _export = "dataexport.zip";
+        string ex = string.Empty;
 
-        [Command("ExportDb")]
-        [Summary("Exports db data as json files in zip archive")]
-        [RequireOwner()]
-        public async Task<RuntimeResult> ExportDb()
+        try
         {
-            string ex = string.Empty;
+            var json = await _jsonService.ExportDBToJson();
 
-            try
+            if (File.Exists(_export))
+                File.Delete(_export);
+
+            ex = await Task.Run(async () =>
             {
-                var json = await _jsonService.ExportDBToJson();
+                Directory.CreateDirectory(_backupDir);
 
-                if (File.Exists(_export))
-                    File.Delete(_export);
+                foreach (var entry in json)
+                    await File.WriteAllTextAsync(Path.Combine(_backupDir, $"{entry.Key}.json"), entry.Value);
 
-                ex = await Task.Run(async () =>
-                {
-                    Directory.CreateDirectory(_backupDir);
+                ZipFile.CreateFromDirectory(_backupDir, _export);
+                return _export;
+            });
 
-                    foreach (var entry in json)
-                        await File.WriteAllTextAsync(Path.Combine(_backupDir, $"{entry.Key}.json"), entry.Value);
+            var m = await Context.Channel.SendFileAsync(ex, "dbExport");
 
-                    ZipFile.CreateFromDirectory(_backupDir, _export);
-                    return _export;
-                });
-
-                var m = await Context.Channel.SendFileAsync(ex, "dbExport");
-
-                return FromSuccess(answer: m);
-            }
-            catch(Exception e)
-            {
-                 return FromError(CommandError.Unsuccessful, $"Export Exception. {e.Message}");
-            }
-            finally
-            {
-                 Directory.Delete(_backupDir, true);
-                 File.Delete(ex);
-            }
+            return FromSuccess(answer: m);
         }
-
-        [Command("ImportDb")]
-        [Summary("Imports the db with help of json files in zip archive")]
-        [RequireOwner()]
-        public async Task<RuntimeResult> ImportDb()
+        catch (Exception e)
         {
-            var csvFile = Context.Message.Attachments.OrderBy(c => c.Id).FirstOrDefault();
-            var myWebClient = _clientFactory.CreateClient();
-
-            if (csvFile is not null)
-            {
-                await ReplyAsync("Starting db import this can take a while...");
-
-                var zip = await myWebClient.GetAsync(csvFile.Url);
-                var zipByte = await zip.Content.ReadAsByteArrayAsync();
-
-                _adminService.Truncate();
-                await ReplyAsync($"db is empty now.");
-
-                await ReplyAsync("Importing data now....");
-                await _adminService.DataImport(zipByte);
-
-                return FromSuccess("Database import was successful.");
-            }
-
-            return FromErrorUnsuccessful("No attachment file found!");
+            return FromError(CommandError.Unsuccessful, $"Export Exception. {e.Message}");
         }
-
-
-        [Command("Restart")]
-        [Alias("restart")]
-        [Summary("Restarts the bot")]
-        [RequireOwner]
-        public async Task<RuntimeResult> Restart(bool saveRestart = true)
+        finally
         {
-            await ReplyAsync("Restarting.....");
-            await _adminService.Restart(saveRestart, Context.Guild.Id, Context.Channel.Id);
-            return FromSuccess();
+            Directory.Delete(_backupDir, true);
+            File.Delete(ex);
         }
+    }
 
-        [Command("TruncateDb")]
-        [Summary("Clears db")]
-        [RequireOwner]
-        public async Task<RuntimeResult> TruncateDb()
+    [Command("ImportDb")]
+    [Summary("Imports the db with help of json files in zip archive")]
+    [RequireOwner()]
+    public async Task<RuntimeResult> ImportDb()
+    {
+        var csvFile = Context.Message.Attachments.OrderBy(c => c.Id).FirstOrDefault();
+        var myWebClient = _clientFactory.CreateClient();
+
+        if (csvFile is not null)
         {
+            await ReplyAsync("Starting db import this can take a while...");
+
+            var zip = await myWebClient.GetAsync(csvFile.Url);
+            var zipByte = await zip.Content.ReadAsByteArrayAsync();
+
             _adminService.Truncate();
             await ReplyAsync($"db is empty now.");
-            return FromSuccess();
+
+            await ReplyAsync("Importing data now....");
+            await _adminService.DataImport(zipByte);
+
+            return FromSuccess("Database import was successful.");
         }
 
-        [Command("SetDeletedMessageChannel")]
-        [RequireOwner]
-        public async Task<RuntimeResult> SetDeletedMessageChannel(IGuildChannel channel)
-        {
-            await Task.Run(() => (_commandHandler as CommandHandler).SetDeletedMessagesChannel(channel));
-            return FromSuccess();
-        }
+        return FromErrorUnsuccessful("No attachment file found!");
+    }
+
+
+    [Command("Restart")]
+    [Alias("restart")]
+    [Summary("Restarts the bot")]
+    [RequireOwner]
+    public async Task<RuntimeResult> Restart(bool saveRestart = true)
+    {
+        await ReplyAsync("Restarting.....");
+        await _adminService.Restart(saveRestart, Context.Guild.Id, Context.Channel.Id);
+        return FromSuccess();
+    }
+
+    [Command("TruncateDb")]
+    [Summary("Clears db")]
+    [RequireOwner]
+    public async Task<RuntimeResult> TruncateDb()
+    {
+        _adminService.Truncate();
+        await ReplyAsync($"db is empty now.");
+        return FromSuccess();
+    }
+
+    [Command("SetDeletedMessageChannel")]
+    [RequireOwner]
+    public async Task<RuntimeResult> SetDeletedMessageChannel(IGuildChannel channel)
+    {
+        await Task.Run(() => (_commandHandler as CommandHandler).SetDeletedMessagesChannel(channel));
+        return FromSuccess();
     }
 }

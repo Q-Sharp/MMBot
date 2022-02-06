@@ -1,10 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿namespace MMBot.Discord.Services.Interfaces;
 
-namespace MMBot.Discord.Services.Interfaces
+public interface IRaidService
 {
-    public interface IRaidService
-    {
-        Task ConnectAsync();
-        Task<byte[]> GetTacticPicture();
-    }
+    Task ConnectAsync();
+    Task<byte[]> GetTacticPicture();
 }

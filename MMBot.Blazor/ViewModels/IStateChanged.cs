@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MMBot.Blazor.ViewModels;
+﻿namespace MMBot.Blazor.ViewModels;
 
 public interface IStateChanged
 {

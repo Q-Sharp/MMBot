@@ -1,13 +1,10 @@
 ﻿using Discord;
 using Discord.Commands;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using MMBot.Helpers;
-using MMBot.Discord.Modules.Interfaces;
-using MMBot.Discord.Services.Interfaces;
 using Discord.WebSocket;
 using MMBot.Data.Services.Interfaces;
+using MMBot.Discord.Modules.Interfaces;
+using MMBot.Discord.Services.Interfaces;
+using MMBot.Helpers;
 
 namespace MMBot.Discord.Modules.Timer;
 

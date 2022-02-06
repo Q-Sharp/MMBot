@@ -1,39 +1,34 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using System.Net.Http;
-using System.Text.Json;
 using MMBot.Discord.Services.Interfaces;
 using MMBot.Helpers;
 
-namespace MMBot.Discord.Services.Translation
+namespace MMBot.Discord.Services.Translation;
+
+public class TranslationService : MMBotService<TranslationService>, ITranslationService
 {
-    public class TranslationService : MMBotService<TranslationService>, ITranslationService
+    private readonly IHttpClientFactory _clientFactory;
+
+    public TranslationService(IHttpClientFactory clientFactory, ILogger<TranslationService> logger) : base(logger) => _clientFactory = clientFactory;
+
+    public async Task<string> TranslateTextAsync(string input)
     {
-        private readonly IHttpClientFactory _clientFactory;
-
-        public TranslationService(IHttpClientFactory clientFactory, ILogger<TranslationService> logger) : base(logger) => _clientFactory = clientFactory;
-
-        public async Task<string> TranslateTextAsync(string input)
+        try
         {
-            try
-            {
-                input = input.PrepareForTranslate();
+            input = input.PrepareForTranslate();
 
-                if (string.IsNullOrWhiteSpace(input))
-                    return input;
+            if (string.IsNullOrWhiteSpace(input))
+                return input;
 
-                var url = $"https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q={Uri.EscapeDataString(input)}";
-                var httpClient = _clientFactory.CreateClient();
-                var result = await httpClient.GetStringAsync(url);
+            var url = $"https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q={Uri.EscapeDataString(input)}";
+            var httpClient = _clientFactory.CreateClient();
+            var result = await httpClient.GetStringAsync(url);
 
-                return string.Join("", JsonDocument.Parse(result).RootElement[0].EnumerateArray().Select(y => y[0].GetString()));
-            }
-            catch
-            {
-                return string.Empty;
-            }
+            return string.Join("", JsonDocument.Parse(result).RootElement[0].EnumerateArray().Select(y => y[0].GetString()));
+        }
+        catch
+        {
+            return string.Empty;
         }
     }
 }

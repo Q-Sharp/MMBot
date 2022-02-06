@@ -1,11 +1,10 @@
-﻿namespace MMBot.Data.Enums
-{
-    public enum DiscordStatus
-    {
-        Left = -2,
-        NoIdea = -1,
+﻿namespace MMBot.Data.Enums;
 
-        Active = 0,
-        CertifiedBadass = 1
-    }
+public enum DiscordStatus
+{
+    Left = -2,
+    NoIdea = -1,
+
+    Active = 0,
+    CertifiedBadass = 1
 }

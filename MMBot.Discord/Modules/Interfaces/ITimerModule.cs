@@ -1,15 +1,13 @@
-﻿using System.Threading.Tasks;
-using Discord.Commands;
+﻿using Discord.Commands;
 
-namespace MMBot.Discord.Modules.Interfaces
+namespace MMBot.Discord.Modules.Interfaces;
+
+public interface ITimerModule
 {
-    public interface ITimerModule
-    {
-        Task<RuntimeResult> CreateTimer(string name, bool recurring);
-        Task<RuntimeResult> ListTimers();
-        Task<RuntimeResult> DeleteTimer(string name);
-        Task<RuntimeResult> StartTimer(string name, string timeToFirstRing, string timeInterval = null);
-        Task<RuntimeResult> StopTimer(string name);
-        Task<RuntimeResult> ShowTimeLeft(string name);
-    }
+    Task<RuntimeResult> CreateTimer(string name, bool recurring);
+    Task<RuntimeResult> ListTimers();
+    Task<RuntimeResult> DeleteTimer(string name);
+    Task<RuntimeResult> StartTimer(string name, string timeToFirstRing, string timeInterval = null);
+    Task<RuntimeResult> StopTimer(string name);
+    Task<RuntimeResult> ShowTimeLeft(string name);
 }

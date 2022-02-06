@@ -1,5 +1,4 @@
-﻿using System;
-using MMBot.Data.Interfaces;
+﻿using MMBot.Data.Interfaces;
 
 namespace MMBot.Data.Entities;
 

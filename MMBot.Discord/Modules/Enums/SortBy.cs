@@ -1,8 +1,7 @@
-﻿namespace MMBot.Discord.Modules.Énum
+﻿namespace MMBot.Discord.Modules.Énum;
+
+public enum SortBy
 {
-    public enum SortBy
-    {
-        SHigh = 1,
-        Name = 2
-    }
+    SHigh = 1,
+    Name = 2
 }
