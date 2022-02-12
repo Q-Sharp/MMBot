@@ -7,15 +7,16 @@ using MMBot.Data;
 using MMBot.Data.Entities;
 using MMBot.Data.Enums;
 using MMBot.Data.Helpers;
+using MMBot.Discord.Services.GuildSettings;
 using MMBot.Discord.Services.Interfaces;
 
 namespace MMBot.Discord.Services.IE;
 
 public class CsvService : ICsvService
 {
-    private Context _context;
-    private GuildSettingsService _settings;
-    private ILogger<CsvService> _logger;
+    private readonly Context _context;
+    private readonly GuildSettingsService _settings;
+    private readonly ILogger<CsvService> _logger;
 
     public CsvService(Context context, GuildSettingsService settings, ILogger<CsvService> logger)
     {

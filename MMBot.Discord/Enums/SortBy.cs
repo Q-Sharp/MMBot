@@ -1,4 +1,4 @@
-﻿namespace MMBot.Discord.Modules.Énum;
+﻿namespace MMBot.Discord.Enums;
 
 public enum SortBy
 {

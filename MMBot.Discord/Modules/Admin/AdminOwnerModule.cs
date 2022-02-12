@@ -1,8 +1,6 @@
 ﻿using System.IO.Compression;
-using Discord;
 using Discord.Commands;
 using MMBot.Discord.Modules.Interfaces;
-using MMBot.Discord.Services.CommandHandler;
 
 namespace MMBot.Discord.Modules.Admin;
 
@@ -16,7 +14,7 @@ public partial class AdminModule : MMBotModule, IAdminModule
     [RequireOwner()]
     public async Task<RuntimeResult> ExportDb()
     {
-        string ex = string.Empty;
+        var ex = string.Empty;
 
         try
         {
@@ -97,14 +95,6 @@ public partial class AdminModule : MMBotModule, IAdminModule
     {
         _adminService.Truncate();
         await ReplyAsync($"db is empty now.");
-        return FromSuccess();
-    }
-
-    [Command("SetDeletedMessageChannel")]
-    [RequireOwner]
-    public async Task<RuntimeResult> SetDeletedMessageChannel(IGuildChannel channel)
-    {
-        await Task.Run(() => (_commandHandler as CommandHandler).SetDeletedMessagesChannel(channel));
         return FromSuccess();
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using MMBot.Blazor.Data;
 using MMBot.Data.Interfaces;
-using MMBot.Services.Interfaces;
+using MMBot.Data.Services.Interfaces;
 
 namespace MMBot.Blazor.ViewModels;
 

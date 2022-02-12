@@ -57,17 +57,11 @@ public class GoogleSheetsService : MMBotService<GoogleSheetsService>, IGoogleShe
         var response = await request.ExecuteAsync();
         var values = response.Values;
         if (values != null && values.Count > 0)
-        {
             foreach (var row in values)
-            {
                 // Print columns A and E, which correspond to indices 0 and 4.
                 Console.WriteLine("{0}, {1}", row[0], row[4]);
-            }
-        }
         else
-        {
             Console.WriteLine("No data found.");
-        }
 
         return new byte[1];
     }

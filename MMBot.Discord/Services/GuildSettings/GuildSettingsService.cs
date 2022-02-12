@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MMBot.Data;
-using MMBot.Data.Entities;
 using MMBot.Discord.Services.Interfaces;
 
-namespace MMBot.Discord.Services;
+namespace MMBot.Discord.Services.GuildSettings;
 
 public class GuildSettingsService : IGuildSettingsService
 {
@@ -14,12 +13,12 @@ public class GuildSettingsService : IGuildSettingsService
         _dbcontext = dbcontext;
     }
 
-    public async Task<GuildSettings> GetGuildSettingsAsync(ulong guildId)
-        => await _dbcontext.GuildSettings.FirstOrDefaultAsync(x => x.GuildId == guildId) ?? (await CreateNewSettingsAsync(guildId));
+    public async Task<Data.Entities.GuildSettings> GetGuildSettingsAsync(ulong guildId)
+        => await _dbcontext.GuildSettings.FirstOrDefaultAsync(x => x.GuildId == guildId) ?? await CreateNewSettingsAsync(guildId);
 
-    private async Task<GuildSettings> CreateNewSettingsAsync(ulong id)
+    private async Task<Data.Entities.GuildSettings> CreateNewSettingsAsync(ulong id)
     {
-        var gs = (await _dbcontext.AddAsync(new GuildSettings()
+        var gs = (await _dbcontext.AddAsync(new Data.Entities.GuildSettings()
         {
             GuildId = id,
             Prefix = "m.",

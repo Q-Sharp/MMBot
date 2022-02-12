@@ -2,11 +2,11 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MMBot.Data.Entities;
 
-namespace MMBot.Data.Configuration;
+namespace MMBot.Data.Configurations;
 
-public class StrikeConfiguration : IEntityTypeConfiguration<Strike>
+public class RaidParticipationConfiguration : IEntityTypeConfiguration<RaidParticipation>
 {
-    public void Configure(EntityTypeBuilder<Strike> builder)
+    public void Configure(EntityTypeBuilder<RaidParticipation> builder)
     {
         builder.UseXminAsConcurrencyToken()
                .HasKey(c => c.Id);

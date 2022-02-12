@@ -2,11 +2,11 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MMBot.Data.Entities;
 
-namespace MMBot.Data.Configuration;
+namespace MMBot.Data.Configurations;
 
-public class GuildSettingsConfiguration : IEntityTypeConfiguration<GuildSettings>
+public class MMTimerConfiguration : IEntityTypeConfiguration<MMTimer>
 {
-    public void Configure(EntityTypeBuilder<GuildSettings> builder)
+    public void Configure(EntityTypeBuilder<MMTimer> builder)
     {
         builder.UseXminAsConcurrencyToken()
                .HasKey(c => c.Id);

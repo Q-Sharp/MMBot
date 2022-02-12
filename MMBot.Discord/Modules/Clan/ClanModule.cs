@@ -2,9 +2,9 @@
 using Discord.Commands;
 using Microsoft.Extensions.Logging;
 using MMBot.Data.Services.Interfaces;
+using MMBot.Discord.Helpers;
 using MMBot.Discord.Modules.Interfaces;
 using MMBot.Discord.Services.Interfaces;
-using MMBot.Helpers;
 
 namespace MMBot.Discord.Modules.Clan;
 
@@ -13,7 +13,7 @@ namespace MMBot.Discord.Modules.Clan;
 [Alias("C", "Clans")]
 public class ClanModule : MMBotModule, IClanModule
 {
-    private ILogger<ClanModule> _logger;
+    private readonly ILogger<ClanModule> _logger;
 
     public ClanModule(IDatabaseService databaseService, ILogger<ClanModule> logger, IGuildSettingsService guildSettings, ICommandHandler commandHandler)
         : base(databaseService, guildSettings, commandHandler)
@@ -32,14 +32,12 @@ public class ClanModule : MMBotModule, IClanModule
             var builder = new EmbedBuilder { Color = Color.DarkTeal, Title = "Clans" };
 
             foreach (var clan in clans)
-            {
                 builder.AddField(x =>
                 {
                     x.Name = clan.Tag;
                     x.Value = clan.Name;
                     x.IsInline = false;
                 });
-            }
 
             await ReplyAsync("", false, builder.Build());
         }

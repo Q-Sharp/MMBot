@@ -5,7 +5,7 @@ using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
 namespace MMBot.Blazor.Data;
 
-[Route("[controller]/[action]")] // Microsoft.AspNetCore.Mvc.Route
+[Route("[controller]/[action]")]
 public class AccountController : ControllerBase
 {
     public AccountController()

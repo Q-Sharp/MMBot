@@ -3,7 +3,7 @@ using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Modules.Member;
 using MMBot.Discord.Services.Interfaces;
 
-namespace MMBot.Discord.Tests.Modules;
+namespace MMBot.Modules;
 
 public class MemberModuleTests
 {

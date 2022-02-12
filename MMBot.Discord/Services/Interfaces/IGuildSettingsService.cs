@@ -1,8 +1,6 @@
-﻿using MMBot.Data.Entities;
-
-namespace MMBot.Discord.Services.Interfaces;
+﻿namespace MMBot.Discord.Services.Interfaces;
 
 public interface IGuildSettingsService
 {
-    Task<GuildSettings> GetGuildSettingsAsync(ulong guildId);
+    Task<Data.Entities.GuildSettings> GetGuildSettingsAsync(ulong guildId);
 }

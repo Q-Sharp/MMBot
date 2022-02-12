@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using MMBot.Data.Entities;
 using MMBot.Data.Enums;
+using MMBot.Data.Helpers;
 using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Enums;
 using MMBot.Discord.Services.Interfaces;
-using MMBot.Helpers;
 
 namespace MMBot.Discord.Services.MemberSort;
 
@@ -59,15 +59,15 @@ public class MemberSortService : MMBotService<MemberSortService>, IMemberSortSer
     private static async Task<List<MemberChanges>> GetSkipStepsMemberMovement(List<Member> allMembersOrdered, int moveQty, int chunkSize, int clanQty, bool useCurrent = false)
         => await Task.Run(() =>
         {
-                // get all members ordered
-                var mpool = allMembersOrdered;
+            // get all members ordered
+            var mpool = allMembersOrdered;
 
-                // get all members ordered in clans
-                var current = allMembersOrdered.OrderBy(x => x.Clan?.Tag)
-                .GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
-                .Select(x => x.Members.ToList() as IList<Member>)
-                .Select(x => x.OrderByDescending(y => useCurrent ? y.Current : y?.SHighLowest ?? y.SHigh).ToList())
-                .ToList();
+            // get all members ordered in clans
+            var current = allMembersOrdered.OrderBy(x => x.Clan?.Tag)
+            .GroupBy(x => x.ClanId, (x, y) => new { Clan = x, Members = y })
+            .Select(x => x.Members.ToList() as IList<Member>)
+            .Select(x => x.OrderByDescending(y => useCurrent ? y.Current : y?.SHighLowest ?? y.SHigh).ToList())
+            .ToList();
 
             var ListOfLists = new List<List<Member>>();
             for (var i = 1; i <= clanQty; i++)
@@ -88,34 +88,34 @@ public class MemberSortService : MMBotService<MemberSortService>, IMemberSortSer
                     mL.AddRange(addMissing);
                     removed += mpool.RemoveAll(x => mL.Contains(x));
 
-                        //var addMissing = current[i - 1].Where(x => mpool.Contains(x)).Take(chunkSize - removed);
-                        //mL.AddRange(addMissing);
-                        //removed += mpool.RemoveAll(x => mL.Contains(x));
-                    }
+                    //var addMissing = current[i - 1].Where(x => mpool.Contains(x)).Take(chunkSize - removed);
+                    //mL.AddRange(addMissing);
+                    //removed += mpool.RemoveAll(x => mL.Contains(x));
+                }
 
-                    //if(removed != chunkSize && mpool.Count > 0)
-                    //throw new Exception();
+                //if(removed != chunkSize && mpool.Count > 0)
+                //throw new Exception();
 
-                    ListOfLists.Add(mL);
+                ListOfLists.Add(mL);
             }
 
             return ListOfLists.Select((x, i) => new MemberChanges
             {
                 SortOrder = i + 1, // index starts at 0 so add 1
-                    NewMemberList = x,
+                NewMemberList = x,
 
                 Join = x.Where(y => !current[i].Contains(y)) // All new members which weren't in that clan before
                 .Select(y => new MemberMovement
                 {
                     Member = y,
-                    IsUp = y.Clan.SortOrder > (i + 1) // Is this join an up move?
-                    }).ToList(),
+                    IsUp = y.Clan.SortOrder > i + 1 // Is this join an up move?
+                }).ToList(),
                 Leave = current[i].Where(y => !x.Contains(y))
                 .Select(y => new MemberMovement
                 {
                     Member = y,
-                    IsUp = y.Clan.SortOrder > (i + 1) // Is this leave an up move?
-                    }).ToList()
+                    IsUp = y.Clan.SortOrder > i + 1 // Is this leave an up move?
+                }).ToList()
             })
             .ToList();
         });
@@ -129,12 +129,10 @@ public class MemberSortService : MMBotService<MemberSortService>, IMemberSortSer
                 break;
 
             if (clanSortNo < currentMember.Clan.SortOrder)
-            {
                 if (!useCurrent && currentMember.IgnoreOnMoveUp || currentMember.Role >= Role.CoLeader || CheckMemberGroup(currentMember, allMember, clanSortNo))
                     continue;
                 else
                     movedQty++;
-            }
 
             currentSize++;
             yield return currentMember;
@@ -184,7 +182,7 @@ public class MemberSortService : MMBotService<MemberSortService>, IMemberSortSer
             })
             .Select((x, i) => new
             {
-                ClanId = x.ClanId,
+                x.ClanId,
                 Leave = x.Curlow.Where(y => x.result is not null && !x.result.Contains(y)).ToList(),
                 Join = x.Nexthigh.Where(y => x.result.Contains(y)).ToList(),
             })
@@ -235,5 +233,5 @@ public class MemberSortService : MMBotService<MemberSortService>, IMemberSortSer
 
     public int GetSHighRank(IList<Member> allMembers, Member rankOf) => allMembers.OrderByDescending(x => x.SHigh).Select((m, i) => new { i, m }).FirstOrDefault(x => x.m == rankOf).i;
     public int GetFutureClan(IList<Member> allMembers, Member rankOf, int clanSize) => GetFutureClan(GetSHighRank(allMembers, rankOf), clanSize);
-    public int GetFutureClan(int rank, int clanSize) => (int)Math.Ceiling((double)rank / (double)clanSize);
+    public int GetFutureClan(int rank, int clanSize) => (int)Math.Ceiling(rank / (double)clanSize);
 }

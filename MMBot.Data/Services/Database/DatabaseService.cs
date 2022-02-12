@@ -2,11 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MMBot.Data.Entities;
+using MMBot.Data.Enums;
 using MMBot.Data.Helpers;
 using MMBot.Data.Services.Interfaces;
 using static MMBot.Data.Helpers.EFCoreHelpers;
 
-namespace MMBot.Data.Services;
+namespace MMBot.Data.Services.Database;
 
 public class DatabaseService : IDatabaseService
 {
@@ -83,7 +84,6 @@ public class DatabaseService : IDatabaseService
                         .ToList();
 
         foreach (var dbSet in dbSets)
-        {
             try
             {
                 _context.Database.ExecuteSqlRaw($"TRUNCATE TABLE public.\"{dbSet.Name.FirstCharToUpper()}\" CASCADE");
@@ -92,7 +92,6 @@ public class DatabaseService : IDatabaseService
             {
                 continue;
             }
-        }
 
         _context.ChangeTracker.DetectChanges();
     }
@@ -116,11 +115,11 @@ public class DatabaseService : IDatabaseService
         });
         await _context.SaveChangesAsync();
 
-        m.Where(x => !x.IsActive || x.ClanId == null || x.Role == Data.Enums.Role.ExMember).ForEach(x =>
+        m.Where(x => !x.IsActive || x.ClanId == null || x.Role == Role.ExMember).ForEach(x =>
         {
             x.IsActive = false;
             x.ClanId = null;
-            x.Role = Data.Enums.Role.ExMember;
+            x.Role = Role.ExMember;
         });
         await _context.SaveChangesAsync();
 
@@ -131,9 +130,7 @@ public class DatabaseService : IDatabaseService
         if (guilds is not null)
         {
             foreach (var g in guilds)
-            {
                 _logger?.LogInformation($"Name: {g.Name} IsConntected: {g.IsConnected}");
-            }
 
             var ch = await LoadChannelsAsync(loadAll: true);
             ch.Where(x => !guilds.Select(y => y.Id).Contains(x.GuildId)).ForEach(cha => _context.Remove(cha));

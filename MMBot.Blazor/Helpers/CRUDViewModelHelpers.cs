@@ -1,8 +1,9 @@
-﻿using MMBot.Blazor.ViewModels;
+﻿using MMBot.Blazor.BusinessModel;
+using MMBot.Blazor.ViewModels;
 using MMBot.Data;
 using MMBot.Data.Entities;
-using MMBot.Services.Database;
-using MMBot.Services.Interfaces;
+using MMBot.Data.Services.Database;
+using MMBot.Data.Services.Interfaces;
 
 namespace MMBot.Blazor.Helpers;
 

@@ -2,12 +2,12 @@
 using Discord.Commands;
 using Discord.Rest;
 using Discord.WebSocket;
+using MMBot.Data.Helpers;
 using MMBot.Data.Services.Interfaces;
-using MMBot.Discord.Modules;
+using MMBot.Discord.Helpers;
 using MMBot.Discord.Services.Interfaces;
-using MMBot.Helpers;
 
-namespace MMBot.Modules.PersonalRoom;
+namespace MMBot.Discord.Modules.PersonalRoom;
 
 [Name("PersonalRoom")]
 [Group("PersonalRoom")]
@@ -56,7 +56,7 @@ public class PersonalRoomModule : MMBotModule
 
         var rooms = Context.Guild.GetCategoryChannel(gs.CategoryId)?.Channels;
 
-        string cleanedUp = string.Empty;
+        var cleanedUp = string.Empty;
         dbRooms.Where(x => !rooms.Select(x => x.Id).Contains(x.RoomId)).ForEach(x =>
         {
             _databaseService.DeletePersonalRoom(x);

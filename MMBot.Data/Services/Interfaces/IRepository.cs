@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace MMBot.Services.Interfaces;
+namespace MMBot.Data.Services.Interfaces;
 
 public interface IRepository<TEntity> where TEntity : class
 {

@@ -22,7 +22,7 @@ public class SeasonResult : IHaveId, IHaveGuildId
 
     public void Update(object season)
     {
-        if (season is SeasonResult m && (Id == m.Id))
+        if (season is SeasonResult m && Id == m.Id)
         {
 
         }

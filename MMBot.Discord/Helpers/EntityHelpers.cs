@@ -2,7 +2,7 @@
 using MMBot.Data.Interfaces;
 using MMBot.Discord.Services.Interfaces;
 
-namespace MMBot.Helpers;
+namespace MMBot.Discord.Helpers;
 
 public static class EntityHelpers
 {

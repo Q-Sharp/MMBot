@@ -1,6 +1,5 @@
 ﻿using Discord;
 using Discord.WebSocket;
-using MMBot.Data.Entities;
 using MMBot.Discord.Services.Interfaces;
 using Nito.AsyncEx;
 
@@ -12,7 +11,7 @@ public partial class CommandHandler : ICommandHandler
     private static readonly AsyncLock _mutex = new();
     private static readonly AsyncMonitor _monitor = new();
 
-    private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
+    private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
         => await Task.Run(async () =>
         {
             using (await _mutex.LockAsync())
@@ -34,7 +33,7 @@ public partial class CommandHandler : ICommandHandler
 
         var dis = await _monitor.EnterAsync().ConfigureAwait(false);
 
-        var t1 = Task.Delay(GuildSettings.WaitForReaction);
+        var t1 = Task.Delay(Data.Entities.GuildSettings.WaitForReaction);
         var t2 = allowMultiple ? Task.Delay(-1) : _monitor.WaitAsync();
 
         await Task.WhenAny(t1, t2).ConfigureAwait(false);

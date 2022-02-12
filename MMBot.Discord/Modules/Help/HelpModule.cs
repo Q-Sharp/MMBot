@@ -52,14 +52,12 @@ public class HelpModule : MMBotModule, IHelpModule
             }
 
             if (!string.IsNullOrWhiteSpace(description))
-            {
                 builder.AddField(x =>
                 {
                     x.Name = module.Name;
                     x.Value = description;
                     x.IsInline = false;
                 });
-            }
         }
 
         await ReplyAsync("", false, builder.Build());

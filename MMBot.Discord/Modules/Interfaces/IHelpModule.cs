@@ -6,4 +6,4 @@ public interface IHelpModule
 {
     Task<RuntimeResult> HelpAsync();
     Task<RuntimeResult> HelpAsync([Remainder] string command);
-} 
+}

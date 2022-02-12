@@ -2,7 +2,7 @@
 using Discord;
 using Discord.Commands;
 
-namespace MMBot.Helpers;
+namespace MMBot.Discord.Helpers;
 
 public static class DiscordHelpers
 {

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using MMBot.Discord.Helpers;
 using MMBot.Discord.Services.Interfaces;
-using MMBot.Helpers;
 
 namespace MMBot.Discord.Services.Translation;
 

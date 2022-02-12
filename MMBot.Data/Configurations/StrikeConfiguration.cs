@@ -2,11 +2,11 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MMBot.Data.Entities;
 
-namespace MMBot.Data.Configuration;
+namespace MMBot.Data.Configurations;
 
-public class SeasonResultConfiguration : IEntityTypeConfiguration<SeasonResult>
+public class StrikeConfiguration : IEntityTypeConfiguration<Strike>
 {
-    public void Configure(EntityTypeBuilder<SeasonResult> builder)
+    public void Configure(EntityTypeBuilder<Strike> builder)
     {
         builder.UseXminAsConcurrencyToken()
                .HasKey(c => c.Id);

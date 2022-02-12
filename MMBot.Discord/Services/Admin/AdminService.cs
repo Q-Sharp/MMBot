@@ -5,7 +5,7 @@ using MMBot.Data.Entities;
 using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Services.Interfaces;
 
-namespace MMBot.Discord.Services;
+namespace MMBot.Discord.Services.Admin;
 
 public class AdminService : IAdminService
 {

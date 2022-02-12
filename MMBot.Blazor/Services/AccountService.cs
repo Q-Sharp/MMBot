@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using Discord;
 using Microsoft.AspNetCore.Components.Authorization;
 using MMBot.Blazor.Data;
-using MMBot.Services.Database;
+using MMBot.Data.Services.Database;
 
 namespace MMBot.Blazor.Services;
 

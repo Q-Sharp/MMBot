@@ -6,7 +6,7 @@ using Discord;
 using MMBot.Data.Enums;
 using MMBot.Data.Interfaces;
 
-namespace MMBot.Helpers;
+namespace MMBot.Discord.Helpers;
 
 public static class PropertyHelpers
 {
@@ -27,14 +27,12 @@ public static class PropertyHelpers
                 object safeValue = null;
 
                 if (t is not null)
-                {
                     if (Enum.TryParse(newValue.ToString(), out Role eNum))
                         safeValue = eNum;
                     else if (TimeSpan.TryParse(newValue.ToString(), out var tSpan))
                         safeValue = tSpan;
                     else
                         safeValue = Convert.ChangeType(newValue, t);
-                }
 
                 var val = Convert.ChangeType(safeValue, t);
                 var oldPropValue = m.GetType().GetProperty(propertyName, cisBF)?.GetValue(m, null);
@@ -59,7 +57,7 @@ public static class PropertyHelpers
         {
             foreach (var p in m.GetType().GetProperties().Where(x => x.Name != nameof(IHaveId.Id)
                  && !x.CustomAttributes.Any(x => x.AttributeType == typeof(JsonIgnoreAttribute))))
-                ChangeProperty(m, p.Name, updateWith.GetProperty(p.Name, false), false);
+                m.ChangeProperty(p.Name, updateWith.GetProperty(p.Name, false), false);
         }
         catch
         {
@@ -185,7 +183,7 @@ public static class PropertyHelpers
                 var pr = m.GetType().GetProperty(propertyName, cisBF);
 
                 var t = Nullable.GetUnderlyingType(pr.PropertyType) ?? pr.PropertyType;
-                var safeValue = (value is null) ? null : Enum.TryParse(value.ToString(), out Role eNum) ? eNum : Convert.ChangeType(value, t);
+                var safeValue = value is null ? null : Enum.TryParse(value.ToString(), out Role eNum) ? eNum : Convert.ChangeType(value, t);
                 var val = Convert.ChangeType(safeValue, t);
 
                 var actPropValue = m.GetType().GetProperty(propertyName, cisBF)?.GetValue(m, null);
@@ -212,7 +210,7 @@ public static class PropertyHelpers
             if (propName.Contains("."))
             {
                 var temp = propName.Split(new char[] { '.' }, 2);
-                return GetPropertyValue(GetPropertyValue(src, temp[0]), temp[1]);
+                return src.GetPropertyValue(temp[0]).GetPropertyValue(temp[1]);
             }
             else
             {

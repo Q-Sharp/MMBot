@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MMBot.Data.Entities;
 
-namespace MMBot.Data.Configuration;
+namespace MMBot.Data.Configurations;
 
 public class ClanConfiguration : IEntityTypeConfiguration<Clan>
 {

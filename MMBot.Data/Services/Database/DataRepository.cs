@@ -3,15 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MMBot.Data.Helpers;
 using MMBot.Data.Interfaces;
-using MMBot.Services.Interfaces;
+using MMBot.Data.Services.Interfaces;
 
-namespace MMBot.Services.Database;
+namespace MMBot.Data.Services.Database;
 
-/// <summary>
-/// 
-/// </summary>
-/// <typeparam name="TEntity"></typeparam>
-/// <typeparam name="TDataContext"></typeparam>
 public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
     where TEntity : class, IHaveId, new()
     where TDataContext : DbContext
@@ -101,7 +96,6 @@ public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
         }
 
         if (ex)
-        {
             try
             {
                 var db = dbSet.FirstOrDefault(x => x.Id == entityToUpdate.Id);
@@ -111,7 +105,6 @@ public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
             {
                 _logger.LogError(e, "Still couldn't update {0}", entityToUpdate.ToString());
             }
-        }
 
         await context.SaveChangesAsync();
         return entityToUpdate;

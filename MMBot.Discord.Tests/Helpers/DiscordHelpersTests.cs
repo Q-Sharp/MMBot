@@ -1,9 +1,9 @@
-﻿using MMBot.Helpers;
+﻿using MMBot.Discord.Helpers;
 using Xunit;
 
-using static MMBot.Helpers.DiscordHelpers;
+using static MMBot.Discord.Helpers.DiscordHelpers;
 
-namespace MMBot.Discord.Tests.Helpers;
+namespace MMBot.Helpers;
 
 public class DiscordHelpersTests
 {

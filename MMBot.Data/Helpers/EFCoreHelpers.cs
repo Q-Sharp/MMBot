@@ -9,5 +9,5 @@ public static class EFCoreHelpers
         => Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.FirstOrDefaultAsync(obj);
 
     public static IQueryable<TEntity> Where<TEntity>(this Microsoft.EntityFrameworkCore.DbSet<TEntity> obj, System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate) where TEntity : class
-        => System.Linq.Queryable.Where(obj, predicate);
+        => Queryable.Where(obj, predicate);
 }

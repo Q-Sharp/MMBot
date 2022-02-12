@@ -1,11 +1,16 @@
 ﻿@inject IAccountService AccountService
 @inject NavigationManager NavigationManager
 @inject StateContainer StateContainer
+
+<MudDialogProvider />
+<MudSnackbarProvider />
+
 @implements IDisposable
 
 @inherits LayoutComponentBase
 <MudThemeProvider Theme="currentTheme"/>
 
+<LayoutView>
 <MudLayout>
     <MudAppBar Elevation="2">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
@@ -74,6 +79,7 @@
         @Body
     </MudMainContent>
 </MudLayout>
+</LayoutView>
 
 @code
 {

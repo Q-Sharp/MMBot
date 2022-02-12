@@ -1,9 +1,9 @@
 using MMBot.Data.Entities;
 using MMBot.Data.Enums;
-using MMBot.Helpers;
+using MMBot.Discord.Helpers;
 using Xunit;
 
-namespace MMBot.Discord.Tests.Helpers;
+namespace MMBot.Helpers;
 
 public class EntityHelpersTests
 {

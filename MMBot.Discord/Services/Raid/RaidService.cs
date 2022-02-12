@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using MMBot.Data.Services.Interfaces;
-using MMBot.Discord.Services;
 using MMBot.Discord.Services.Interfaces;
-using MMBot.Discord.Services.Raid;
 
-namespace MMBot.Discord.Discord.Services.Raid;
+namespace MMBot.Discord.Services.Raid;
 
 public class RaidService : MMBotService<RaidService>, IRaidService
 {

@@ -1,7 +1,8 @@
 ﻿using System.Linq.Expressions;
+using MMBot.Blazor.BusinessModel;
 using MMBot.Blazor.Data;
 using MMBot.Data.Entities;
-using MMBot.Services.Interfaces;
+using MMBot.Data.Services.Interfaces;
 using MudBlazor;
 
 namespace MMBot.Blazor.ViewModels;

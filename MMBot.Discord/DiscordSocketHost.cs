@@ -7,11 +7,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MMBot.Data;
-using MMBot.Data.Services;
+using MMBot.Data.Services.Database;
 using MMBot.Data.Services.Interfaces;
-using MMBot.Discord.Services;
+using MMBot.Discord.Services.Admin;
 using MMBot.Discord.Services.CommandHandler;
-using MMBot.Discord.Services.GoogleForms;
+using MMBot.Discord.Services.GuildSettings;
 using MMBot.Discord.Services.IE;
 using MMBot.Discord.Services.Interfaces;
 using MMBot.Discord.Services.MemberSort;
@@ -35,8 +35,8 @@ public static class DiscordSocketHost
                }
                catch
                {
-                       // ignore
-                   }
+                   // ignore
+               }
            })
            .UseSerilog((h, l) => l.ReadFrom.Configuration(h.Configuration))
            .ConfigureServices((hostContext, services) =>
@@ -61,7 +61,6 @@ public static class DiscordSocketHost
                        DefaultRunMode = Enum.Parse<RunMode>(discordConfig.GetValue<string>("DefaultRunMode"), true),
                        SeparatorChar = discordConfig.GetValue<string>("SeparatorChar").FirstOrDefault(),
                    }))
-                   .AddScoped<IGoogleFormsService, GoogleFormsService>()
                    .AddSingleton<ICommandHandler, CommandHandler>()
                    .AddScoped<IGuildSettingsService, GuildSettingsService>()
                    .AddScoped<IDatabaseService, DatabaseService>()

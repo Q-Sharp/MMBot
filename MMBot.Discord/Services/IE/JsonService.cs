@@ -62,7 +62,7 @@ public class JsonService : IJsonService
 
             if (importJson.TryGetValue("GuildSettings", out var guild))
             {
-                var ac = JsonSerializer.Deserialize<IList<GuildSettings>>(guild, _jsonSerializerOptions);
+                var ac = JsonSerializer.Deserialize<IList<Data.Entities.GuildSettings>>(guild, _jsonSerializerOptions);
                 await context.GuildSettings.ImportOrUpgrade(ac);
                 await context.SaveChangesAsync();
             }

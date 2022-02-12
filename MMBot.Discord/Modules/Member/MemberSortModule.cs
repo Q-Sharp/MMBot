@@ -1,9 +1,9 @@
 ﻿using Discord;
 using Discord.Commands;
-using MMBot.Discord.Modules.Énum;
+using MMBot.Discord.Enums;
+using MMBot.Discord.Helpers;
 using MMBot.Discord.Modules.Interfaces;
 using MMBot.Discord.Services.MemberSort;
-using MMBot.Helpers;
 
 namespace MMBot.Discord.Modules.Member;
 

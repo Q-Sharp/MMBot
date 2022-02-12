@@ -11,9 +11,8 @@ using MMBot.Blazor.Data;
 using MMBot.Blazor.Helpers;
 using MMBot.Blazor.Services;
 using MMBot.Data;
-using MMBot.Data.Services;
+using MMBot.Data.Services.Database;
 using MMBot.Data.Services.Interfaces;
-using MMBot.Services.Database;
 using MudBlazor.Services;
 using Serilog;
 
@@ -27,6 +26,7 @@ public static class BlazorHost
                .ConfigureAppConfiguration((hostContext, configBuilder) =>
                {
                    configBuilder.AddEnvironmentVariables("MMBot_")
+                                .AddUserSecrets(typeof(BlazorHost).Assembly)
                                 .AddCommandLine(args);
                })
                .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())

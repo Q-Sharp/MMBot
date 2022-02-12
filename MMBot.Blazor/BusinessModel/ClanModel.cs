@@ -1,4 +1,6 @@
-﻿namespace MMBot.Data.Entities;
+﻿using MMBot.Data.Entities;
+
+namespace MMBot.Blazor.BusinessModel;
 
 public class ClanModel : Clan
 {

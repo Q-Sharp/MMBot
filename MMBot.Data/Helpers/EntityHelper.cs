@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 using Microsoft.EntityFrameworkCore;
+using MMBot.Data.Helpers;
 using MMBot.Data.Interfaces;
 
 namespace MMBot.Data.Helpers;
@@ -10,7 +11,7 @@ public static class EntityHelper
 {
     public async static Task ImportOrUpgradeWithIdentifier<T>(this DbSet<T> currentData, T updateWithData, ulong guildId)
         where T : class, IHaveId, IHaveIdentifier
-            => await ImportOrUpgradeWithIdentifier(currentData, new List<T> { updateWithData }, guildId);
+            => await currentData.ImportOrUpgradeWithIdentifier(new List<T> { updateWithData }, guildId);
 
     public async static Task ImportOrUpgradeWithIdentifier<T>(this DbSet<T> currentData, IList<T> updateWithData, ulong guildId)
         where T : class, IHaveId, IHaveIdentifier
@@ -63,7 +64,7 @@ public static class EntityHelper
             if (propName.Contains('.'))
             {
                 var temp = propName.Split(new char[] { '.' }, 2);
-                return GetPropertyValue(GetPropertyValue(src, temp[0]), temp[1]);
+                return src.GetPropertyValue(temp[0]).GetPropertyValue(temp[1]);
             }
             else
             {

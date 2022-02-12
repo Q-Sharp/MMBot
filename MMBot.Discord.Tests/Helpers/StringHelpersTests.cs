@@ -1,7 +1,7 @@
-﻿using MMBot.Helpers;
+﻿using MMBot.Discord.Helpers;
 using Xunit;
 
-namespace MMBot.Discord.Tests.Helpers;
+namespace MMBot.Helpers;
 
 public class StringHelpersTests
 {

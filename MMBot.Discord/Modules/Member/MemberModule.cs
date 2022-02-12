@@ -1,9 +1,9 @@
 ﻿using Discord;
 using Discord.Commands;
 using MMBot.Data.Services.Interfaces;
+using MMBot.Discord.Helpers;
 using MMBot.Discord.Modules.Interfaces;
 using MMBot.Discord.Services.Interfaces;
-using MMBot.Helpers;
 
 namespace MMBot.Discord.Modules.Member;
 

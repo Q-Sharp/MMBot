@@ -9,8 +9,8 @@
 
   <ItemGroup>
     <PackageReference Include="Discord.Addons.Interactive" Version="2.0.0" />
-    <PackageReference Include="Discord.Net" Version="2.4.0" />
-    <PackageReference Include="FakeItEasy" Version="7.2.0" />
+    <PackageReference Include="Discord.Net" Version="3.2.1" />
+    <PackageReference Include="FakeItEasy" Version="7.3.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
@@ -18,7 +18,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="3.1.0">
+    <PackageReference Include="coverlet.collector" Version="3.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

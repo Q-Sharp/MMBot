@@ -1,5 +1,5 @@
 ﻿using Discord.Commands;
-using MMBot.Discord.Modules.Énum;
+using MMBot.Discord.Enums;
 
 namespace MMBot.Discord.Modules.Interfaces;
 

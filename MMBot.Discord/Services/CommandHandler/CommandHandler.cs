@@ -5,10 +5,11 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MMBot.Data.Helpers;
 using MMBot.Data.Services.Interfaces;
+using MMBot.Discord.Helpers;
 using MMBot.Discord.Modules;
 using MMBot.Discord.Services.Interfaces;
-using MMBot.Helpers;
 
 namespace MMBot.Discord.Services.CommandHandler;
 
@@ -19,12 +20,10 @@ public partial class CommandHandler : ICommandHandler
     private readonly IServiceProvider _services;
     private readonly ILogger<CommandHandler> _logger;
     private readonly IList<Tuple<ISocketMessageChannel, ISocketMessageChannel>> _formsChannelList = new List<Tuple<ISocketMessageChannel, ISocketMessageChannel>>();
-    private ISocketMessageChannel _deletedMessagesChannel;
 
     private IGuildSettingsService _gs;
     private IDatabaseService _databaseService;
     private IAdminService _adminService;
-    private IGoogleFormsService _googleFormsSubmissionService;
     private InteractiveService _interactiveService;
     private ITimerService _timerService;
 
@@ -42,7 +41,6 @@ public partial class CommandHandler : ICommandHandler
 
         _databaseService = _services.GetService<IDatabaseService>();
         _gs = _services.GetService<IGuildSettingsService>();
-        _googleFormsSubmissionService = _services.GetService<IGoogleFormsService>();
         _interactiveService = _services.GetService<InteractiveService>();
         _timerService = _services.GetService<ITimerService>();
         _adminService = _services.GetService<IAdminService>();
@@ -56,13 +54,10 @@ public partial class CommandHandler : ICommandHandler
         _client.Log += LogAsync;
         _client.Disconnected += Client_Disconnected;
 
-        _client.MessageDeleted += Client_MessageDeleted;
-        _client.MessagesBulkDeleted += Client_MessagesBulkDeleted;
-
-        _client.ChannelDestroyed += _client_ChannelDestroyed;
+        _client.ChannelDestroyed += Client_ChannelDestroyed;
     }
 
-    private async Task _client_ChannelDestroyed(SocketChannel arg)
+    private async Task Client_ChannelDestroyed(SocketChannel arg)
     {
         if (arg is IGuildChannel gc)
         {
@@ -74,23 +69,6 @@ public partial class CommandHandler : ICommandHandler
             if (dc != null)
                 _databaseService.DeletePersonalRoom(dc);
         }
-    }
-
-    public void SetDeletedMessagesChannel(IGuildChannel channel) => _deletedMessagesChannel = channel as ISocketMessageChannel;
-
-    private Task Client_MessagesBulkDeleted(IReadOnlyCollection<Cacheable<IMessage, ulong>> arg1, ISocketMessageChannel arg2)
-    {
-        arg1.ForEach(async x => await Client_MessageDeleted(x, arg2));
-        return Task.CompletedTask;
-    }
-
-    private async Task Client_MessageDeleted(Cacheable<IMessage, ulong> arg1, ISocketMessageChannel arg2)
-    {
-        if (_deletedMessagesChannel is null)
-            return;
-
-        var m = await arg1.DownloadAsync() ?? arg1.Value;
-        await _deletedMessagesChannel.SendMessageAsync($"{m.Author.GetUserAndDiscriminator()} deleted in {m.Channel.Name}: {m.Content}");
     }
 
     public async Task LogAsync(LogMessage logMessage)

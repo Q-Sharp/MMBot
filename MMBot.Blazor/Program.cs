@@ -6,13 +6,12 @@ public class Program
 {
     private const string _logTemplate = "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
 
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         try
         {
             using var bh = BlazorHost.CreateHostBuilder(args)?.Build();
-            var t = bh.RunAsync();
-            t.Wait();
+            await bh.RunAsync();
         }
         catch (Exception e)
         {

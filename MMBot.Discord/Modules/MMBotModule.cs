@@ -13,7 +13,7 @@ public abstract class MMBotModule : InteractiveBase<SocketCommandContext>
     protected ICommandHandler _commandHandler;
     protected IGuildSettingsService _guildSettingsService;
 
-    private Task<GuildSettings> _guildSettings;
+    private readonly Task<GuildSettings> _guildSettings;
 
     public MMBotModule(IDatabaseService databaseService, IGuildSettingsService guildSettingsService, ICommandHandler commandHandler)
     {

@@ -1,4 +1,4 @@
-﻿namespace MMBot.Helpers;
+﻿namespace MMBot.Discord.Helpers;
 
 public static class StringHelpers
 {

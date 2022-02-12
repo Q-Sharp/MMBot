@@ -5,7 +5,7 @@ using MMBot.Discord.Services.Interfaces;
 using MMBot.Discord.Services.MemberSort;
 using Xunit;
 
-namespace MMBot.Discord.Tests.Services;
+namespace MMBot.Services;
 
 public class MemberSortServiceTests
 {

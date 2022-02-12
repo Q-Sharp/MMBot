@@ -1,6 +1,7 @@
-﻿using MMBot.Data.Enums;
+﻿using MMBot.Data.Entities;
+using MMBot.Data.Enums;
 
-namespace MMBot.Data.Entities;
+namespace MMBot.Blazor.BusinessModel;
 
 public class MemberModel : Member
 {

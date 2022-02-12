@@ -1,6 +1,4 @@
-﻿using MMBot.Data;
-
-namespace MMBot.Services.Database;
+﻿namespace MMBot.Data.Services.Database;
 
 public class BlazorDatabaseService
 {
