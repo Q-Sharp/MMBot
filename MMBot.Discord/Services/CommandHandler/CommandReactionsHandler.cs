@@ -11,18 +11,17 @@ public partial class CommandHandler : ICommandHandler
     private static readonly AsyncLock _mutex = new();
     private static readonly AsyncMonitor _monitor = new();
 
-    private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
-        => await Task.Run(async () =>
+    private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
+    {
+        using (await _mutex.LockAsync())
         {
-            using (await _mutex.LockAsync())
+            if (_messageIdWithReaction.Keys.Contains(arg3.MessageId) && arg3.UserId != _client.CurrentUser.Id)
             {
-                if (_messageIdWithReaction.Keys.Contains(arg3.MessageId) && arg3.UserId != _client.CurrentUser.Id)
-                {
-                    await _messageIdWithReaction[arg3.MessageId](arg3.Emote, arg3.User.IsSpecified ? arg3.User.Value : null);
-                    _monitor.Pulse();
-                }
+                await _messageIdWithReaction[arg3.MessageId](arg3.Emote, arg3.User.IsSpecified ? arg3.User.Value : null);
+                _monitor.Pulse();
             }
-        });
+        }
+    }
 
     public async Task AddToReactionList(ulong guildId, IUserMessage message, Func<IEmote, IUser, Task> fT, bool allowMultiple = true)
     {
