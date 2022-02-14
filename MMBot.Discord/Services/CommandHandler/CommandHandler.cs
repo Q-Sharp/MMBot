@@ -19,7 +19,6 @@ public partial class CommandHandler : ICommandHandler
     private readonly CommandService _commands;
     private readonly IServiceProvider _services;
     private readonly ILogger<CommandHandler> _logger;
-    private readonly IList<Tuple<ISocketMessageChannel, ISocketMessageChannel>> _formsChannelList = new List<Tuple<ISocketMessageChannel, ISocketMessageChannel>>();
 
     private IGuildSettingsService _gs;
     private IDatabaseService _databaseService;

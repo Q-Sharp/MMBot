@@ -1,4 +1,4 @@
-<Router AppAssembly="@typeof(BlazorHost).Assembly" PreferExactMatches="@true">
+<Router AppAssembly="@typeof(App).Assembly" PreferExactMatches="@true">
     <Found Context="routeData">
         <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
             <NotAuthorized>

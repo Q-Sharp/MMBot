@@ -5,7 +5,7 @@
     <OutputType>Exe</OutputType>
     <UserSecretsId>96119697-5939-4efb-bb02-96728fb50f9a</UserSecretsId>
 	<ImplicitUsings>enable</ImplicitUsings>
-	<StartupObject>MMBot.Blazor.Program</StartupObject>
+	<StartupObject></StartupObject>
     <RootNamespace>MMBot.Blazor</RootNamespace>
   </PropertyGroup>
 
