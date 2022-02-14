@@ -5,6 +5,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MMBot.Data.Entities;
 using MMBot.Data.Helpers;
 using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Helpers;
@@ -87,7 +88,7 @@ public partial class CommandHandler : ICommandHandler
         try
         {
             _logger.Log(LogLevel.Information, "Starting CleanUp");
-            await _databaseService.CleanDB(_client.Guilds);
+            await _databaseService.CleanDB(_client.Guilds.Select(x => new Guild(x.Id, x.Name)));
             _logger.Log(LogLevel.Information, "CleanUp finished!");
         }
         catch (Exception e)

@@ -1,5 +1,4 @@
-﻿using Discord.WebSocket;
-using MMBot.Data.Entities;
+﻿using MMBot.Data.Entities;
 
 namespace MMBot.Data.Services.Interfaces;
 
@@ -41,5 +40,5 @@ public interface IDatabaseService
     Task SaveDataAsync();
     Task MigrateAsync();
     void Truncate();
-    Task CleanDB(IEnumerable<SocketGuild> guilds = null);
+    Task CleanDB(IEnumerable<Guild> guilds = null);
 }

@@ -125,5 +125,6 @@ app.UseHttpsRedirection()
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+app.MapDefaultControllerRoute();
 
 await app.RunAsync();

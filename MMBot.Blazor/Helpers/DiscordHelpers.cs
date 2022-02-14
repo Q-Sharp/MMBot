@@ -1,8 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.OAuth;
-using Newtonsoft.Json.Linq;
-
 namespace MMBot.Blazor.Helpers;
 
 public class DiscordHelpers
@@ -15,13 +13,10 @@ public class DiscordHelpers
 
         var response = await context.Backchannel.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, CancellationToken.None);
         if (!response.IsSuccessStatusCode)
-        {
             throw new Exception("failed to get guilds");
-        }
 
-        var payload = JArray.Parse(await response.Content.ReadAsStringAsync());
-        //var claim = new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/guilds", payload.ToString(), ClaimValueTypes.String);
-        var claim = new Claim("guilds", payload.ToString(), ClaimValueTypes.String);
+        var payload = await response.Content.ReadAsStringAsync();
+        var claim = new Claim("guilds", payload, ClaimValueTypes.String);
         return claim;
     }
 }
