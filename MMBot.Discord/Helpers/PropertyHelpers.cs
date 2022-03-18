@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Discord;
-using MMBot.Data.Enums;
-using MMBot.Data.Interfaces;
+using MMBot.Data.Contracts;
+using MMBot.Data.Contracts.Enums;
 
 namespace MMBot.Discord.Helpers;
 

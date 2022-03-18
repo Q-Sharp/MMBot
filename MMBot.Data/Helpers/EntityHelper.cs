@@ -2,8 +2,8 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 using Microsoft.EntityFrameworkCore;
+using MMBot.Data.Contracts;
 using MMBot.Data.Helpers;
-using MMBot.Data.Interfaces;
 
 namespace MMBot.Data.Helpers;
 

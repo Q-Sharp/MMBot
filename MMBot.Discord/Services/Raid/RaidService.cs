@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using MMBot.Data.Services.Interfaces;
+using MMBot.Data.Contracts;
 using MMBot.Discord.Services.Interfaces;
 
 namespace MMBot.Discord.Services.Raid;

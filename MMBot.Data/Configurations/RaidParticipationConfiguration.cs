@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MMBot.Data.Entities;
+using MMBot.Data.Contracts.Entities;
 
 namespace MMBot.Data.Configurations;
 

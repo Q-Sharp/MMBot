@@ -1,6 +1,8 @@
-﻿namespace MMBot.Data.Services.Database;
+﻿using MMBot.Data.Contracts;
 
-public class BlazorDatabaseService
+namespace MMBot.Data.Services.Database;
+
+public class BlazorDatabaseService : IBlazorDatabaseService
 {
     private readonly Context _ctx;
 

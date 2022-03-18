@@ -1,5 +1,5 @@
 ﻿using Discord;
-using MMBot.Data.Interfaces;
+using MMBot.Data.Contracts;
 using MMBot.Discord.Services.Interfaces;
 
 namespace MMBot.Discord.Helpers;

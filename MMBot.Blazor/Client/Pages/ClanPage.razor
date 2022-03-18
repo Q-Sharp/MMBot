@@ -1,0 +1,80 @@
+﻿@page "/clans"
+@page "/clan"
+
+@inject IAuthorizedAntiForgeryClientFactory authorizedAntiForgeryClientFactory
+
+@inject ICRUDViewModel<ClanModel, Clan> ClanVM
+
+@attribute [Authorize]
+
+@if (ClanVM.Entities == null)
+{
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+    <MudTable FixedHeader="true" Items="@ClanVM.Entities" Dense="true" Hover="true" ReadOnly="false" Filter="new Func<ClanModel, bool>(FilterFunc)" @bind-SelectedItem="ClanVM.SelectedEntity" SortLabel="Sort By" 
+              CommitEditTooltip="Commit Edit" OnCommitEditClick="x => CommitEdit()">
+        <ToolBarContent>
+            <MudText Typo="Typo.h2">Clans</MudText>
+            <MudSpacer />
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Create" Color="Color.Default" OnClick="() => ClanVM.Add()">Create</MudButton>
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Default" Disabled="(ClanVM?.SelectedEntity?.Id ?? 0) == 0" OnClick="() => Delete()">Delete</MudButton>
+            <MudSpacer />
+            <MudTextField Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <ColGroup>
+            <col style="width:50px;"/>
+            <col style="width:80px;"/>
+            <col style="width:200px;"/>
+        </ColGroup>
+        <HeaderContent>
+            @*<MudTh><MudTableSortLabel SortBy="new Func<Clan, object>(x=>x.Id)">Id</MudTableSortLabel></MudTh>*@
+            <MudTh><MudTableSortLabel SortBy="new Func<ClanModel, object>(x => x.SortOrder)" InitialDirection="SortDirection.Ascending">SortOrder</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<ClanModel, object>(x => x.Tag)">Tag</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<ClanModel, object>(x => x.Name)">Name</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            @*<MudTd DataLabel="Id">@context.Id</MudTd>*@
+            <MudTd DataLabel="SortOrder">@context.SortOrder</MudTd>
+            <MudTd DataLabel="Tag">@context.Tag</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd></MudTd>
+        </RowTemplate>
+        <RowEditingTemplate>
+            @*<MudTd DataLabel="Id">@context.Id</MudTd>*@
+            <MudTd DataLabel="SortOrder">
+                <MudTextField @bind-Value="@context.SortOrder" Required />
+            </MudTd>
+            <MudTd DataLabel="Tag">
+                <MudTextField @bind-Value="@context.Tag" Required />
+            </MudTd>
+            <MudTd DataLabel="Name">
+                <MudTextField @bind-Value="@context.Name" Required />
+            </MudTd>
+        </RowEditingTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+    <MudText Inline="true">Selected: @ClanVM?.SelectedEntity?.Name</MudText>
+}
+
+@code {
+    private string searchString = "";
+
+    public async void CommitEdit() =>  await ClanVM.Update(ClanVM.SelectedEntity);
+
+    public async void Delete() => await ClanVM.Delete();
+
+    private bool FilterFunc(ClanModel clan)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (clan.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (clan.Tag.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+}

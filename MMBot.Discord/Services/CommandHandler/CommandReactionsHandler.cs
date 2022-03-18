@@ -32,7 +32,7 @@ public partial class CommandHandler : ICommandHandler
 
         var dis = await _monitor.EnterAsync().ConfigureAwait(false);
 
-        var t1 = Task.Delay(Data.Entities.GuildSettings.WaitForReaction);
+        var t1 = Task.Delay(Data.Contracts.Entities.GuildSettings.WaitForReaction);
         var t2 = allowMultiple ? Task.Delay(-1) : _monitor.WaitAsync();
 
         await Task.WhenAny(t1, t2).ConfigureAwait(false);

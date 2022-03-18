@@ -73,7 +73,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
         return FromSuccess();
     }
 
-    private async Task ShowMembers(IList<IList<Data.Entities.Member>> mm, SortBy sortBy = SortBy.SHigh)
+    private async Task ShowMembers(IList<IList<Data.Contracts.Entities.Member>> mm, SortBy sortBy = SortBy.SHigh)
     {
         var cQty = (await _databaseService.LoadClansAsync(Context.Guild.Id))?.Count;
 
@@ -103,7 +103,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
         });
     }
 
-    private static string GetCompactMemberChangesString(List<MemberChanges> changes, IList<Data.Entities.Clan> clans)
+    private static string GetCompactMemberChangesString(List<MemberChanges> changes, IList<Data.Contracts.Entities.Clan> clans)
     {
         var up = new Emoji("↗️");
         var down = new Emoji("↘️");
@@ -124,7 +124,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
         return r;
     }
 
-    private static string GetDetailedMemberChangesString(List<MemberChanges> changes, int index, IList<Data.Entities.Clan> clans)
+    private static string GetDetailedMemberChangesString(List<MemberChanges> changes, int index, IList<Data.Contracts.Entities.Clan> clans)
     {
         var up = new Emoji("⏫");
         var down = new Emoji("⏬");
@@ -145,7 +145,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
         return r;
     }
 
-    private string GetTable(IList<Data.Entities.Member> members, SortBy sortBy = SortBy.SHigh)
+    private string GetTable(IList<Data.Contracts.Entities.Member> members, SortBy sortBy = SortBy.SHigh)
     {
         if (members is null || members.Count <= 0)
             return default;
@@ -198,7 +198,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
         return l;
     }
 
-    private string GetValues(Data.Entities.Member m, IReadOnlyList<string> header)
+    private string GetValues(Data.Contracts.Entities.Member m, IReadOnlyList<string> header)
     {
         var l = "";
         var ac = header.Count;

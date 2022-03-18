@@ -1,5 +1,5 @@
 ﻿using FakeItEasy;
-using MMBot.Data.Services.Interfaces;
+using MMBot.Data.Contracts;
 using MMBot.Discord.Modules.Member;
 using MMBot.Discord.Services.Interfaces;
 

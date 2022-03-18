@@ -1,0 +1,15 @@
+{
+  "name": "MMBot.Blazor",
+  "short_name": "MMBot",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#03173d",
+  "icons": [
+    {
+      "src": "img/appicon.png",
+      "type": "image/png",
+      "sizes": "1600x1600"
+    }
+  ]
+}

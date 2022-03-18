@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
-using MMBot.Data.Entities;
+using MMBot.Data.Contracts.Entities;
+using MMBot.Data.Contracts.Helpers;
 using MMBot.Data.Helpers;
 using MMBot.Discord.Helpers;
 using MMBot.Discord.Modules.Interfaces;

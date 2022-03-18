@@ -13,12 +13,12 @@ public class GuildSettingsService : IGuildSettingsService
         _dbcontext = dbcontext;
     }
 
-    public async Task<Data.Entities.GuildSettings> GetGuildSettingsAsync(ulong guildId)
+    public async Task<Data.Contracts.Entities.GuildSettings> GetGuildSettingsAsync(ulong guildId)
         => await _dbcontext.GuildSettings.FirstOrDefaultAsync(x => x.GuildId == guildId) ?? await CreateNewSettingsAsync(guildId);
 
-    private async Task<Data.Entities.GuildSettings> CreateNewSettingsAsync(ulong id)
+    private async Task<Data.Contracts.Entities.GuildSettings> CreateNewSettingsAsync(ulong id)
     {
-        var gs = (await _dbcontext.AddAsync(new Data.Entities.GuildSettings()
+        var gs = (await _dbcontext.AddAsync(new Data.Contracts.Entities.GuildSettings()
         {
             GuildId = id,
             Prefix = "m.",

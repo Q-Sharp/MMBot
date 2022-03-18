@@ -1,0 +1,82 @@
+﻿using System.Linq.Expressions;
+using Blazored.SessionStorage;
+using MMBot.Blazor.Shared;
+using MMBot.Blazor.Shared.BusinessModel;
+using MMBot.Data.Contracts.Entities;
+using MudBlazor;
+
+namespace MMBot.Blazor.Client.ViewModels;
+
+public class ClanViewModel : ViewModelBase, ICRUDViewModel<ClanModel, Clan>
+{
+    public string Entity => "Clan";
+    public IRepository<Clan> Repo { get; set; }
+    public ClanModel SelectedEntity { get; set; }
+    public ICollection<ClanModel> Entities { get; set; }
+    public ulong GID { get; set; }
+
+    public ClanViewModel(IRepository<Clan> repo, ISessionStorageService sessionStorage, IDialogService dialogService)
+        : base(sessionStorage, dialogService)
+    {
+        Repo = repo;
+        sessionStorage.Changing += (x, y) => _ = Init();
+
+        Init().GetAwaiter().GetResult();
+    }
+
+    public async Task Init() => Entities = await Load(x => x.GuildId == GID, x => x.OrderBy(y => y.SortOrder));
+
+    public async Task Delete()
+    {
+        var confirm = await DialogService.ShowMessageBox("Warning", "Do you want to delete this record?", yesText: "Yes", noText: "No");
+
+        if (confirm ?? false)
+            try
+            {
+                var id = SelectedEntity.Id;
+                await Repo.Delete(id);
+                Entities.Remove(Entities.FirstOrDefault(x => x.Id == id));
+            }
+            catch
+            {
+                //
+            }
+    }
+
+    public async Task Create(ClanModel newEntity)
+    {
+        try
+        {
+            var c = await Repo.Insert(newEntity);
+            Entities.Add(c as ClanModel);
+            SelectedEntity = c as ClanModel;
+        }
+        catch
+        {
+
+        }
+    }
+
+    public async Task<ClanModel> Update(ClanModel clan)
+    {
+        if (clan.Id == 0)
+        {
+            clan.GuildId = GID;
+            return await Repo.Insert(clan) as ClanModel;
+        }
+
+        return await Repo.Update(clan) as ClanModel;
+    }
+
+    public async Task<IList<ClanModel>> Load(Expression<Func<Clan, bool>> filter = null, Func<IQueryable<Clan>, IOrderedQueryable<Clan>> orderBy = null)
+        => (await Repo.Get(filter, orderBy)).Select(x => ClanModel.Create(x)).ToList();
+
+    public ClanModel Add()
+    {
+        var nte = new ClanModel();
+        Entities.Add(nte);
+        SelectedEntity = nte;
+        OnPropertyChanged();
+        return nte;
+    }
+}

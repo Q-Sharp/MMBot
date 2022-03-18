@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MMBot.Data.Entities;
+using MMBot.Data.Contracts.Entities;
 
 namespace MMBot.Data;
 

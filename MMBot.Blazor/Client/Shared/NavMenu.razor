@@ -1,0 +1,35 @@
+﻿<div class="@NavMenuCssClass">
+	<ul class="nav">
+		<li class="nav-item">
+			<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+				<span class="oi oi-home" aria-hidden="true"></span>
+			</NavLink>
+		</li>
+		<li class="nav-item">
+			<NavLink class="nav-link" href="directApi">
+				<span class="oi oi-file" aria-hidden="true"></span>
+			</NavLink>
+		</li>
+		<li class="nav-item">
+			<NavLink class="nav-link" href="userinfos">
+				<span class="oi oi-people" aria-hidden="true"></span>
+			</NavLink>
+		</li>
+		<li class="nav-item">
+			<NavLink class="nav-link" href="benchmark">
+				<span class="oi oi-data-transfer-download" aria-hidden="true"></span>
+			</NavLink>
+		</li>
+	</ul>
+</div>
+
+@code {
+	private bool collapseNavMenu = true;
+
+	private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+	private void ToggleNavMenu()
+	{
+		collapseNavMenu = !collapseNavMenu;
+	}
+}

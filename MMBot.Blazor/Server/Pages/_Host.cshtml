@@ -1,0 +1,53 @@
+﻿@page "/"
+@namespace MMBot.Blazor.Server.Pages
+@using MMBot.Blazor.Client
+@using MMBot.Blazor.Shared.Defaults
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="description" content="@AppDefaults.AppDescription">
+
+    <title>@AppDefaults.AppName</title>
+    <base href="~/" />
+
+    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    <link href="css/app.css" rel="stylesheet" />
+    <link href="css/font.css" rel="stylesheet" />
+
+    <link href="manifest.json" rel="manifest" />
+</head>
+
+<body>
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="antiForgeryToken.js"></script>
+    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    @Html.AntiForgeryToken()
+
+    <div id="app">
+        @*<div class="loading-overlay">*@
+            <div class="loading-container">
+                <div class="spinner" />
+            </div>
+        @*</div>*@
+   </div>
+
+   <div id="blazor-error-ui">
+       <environment include="Staging,Production">
+           An error has occurred. This application may no longer respond until reloaded.
+       </environment>
+       <environment include="Development">
+           An unhandled exception has occurred. See browser dev tools for details.
+       </environment>
+       <a href="" class="reload">Reload</a>
+       <a class="dismiss">🗙</a>
+   </div>
+</body>
+</html>

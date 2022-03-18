@@ -2,8 +2,9 @@
 using Discord.Commands;
 using Discord.Rest;
 using Discord.WebSocket;
+using MMBot.Data.Contracts;
+using MMBot.Data.Contracts.Helpers;
 using MMBot.Data.Helpers;
-using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Helpers;
 using MMBot.Discord.Services.Interfaces;
 
