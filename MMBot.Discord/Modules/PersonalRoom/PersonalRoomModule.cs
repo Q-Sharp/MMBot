@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.Rest;
 using Discord.WebSocket;
+using MMBot.Data;
 using MMBot.Data.Contracts;
 using MMBot.Data.Contracts.Helpers;
 using MMBot.Data.Helpers;
@@ -82,7 +83,7 @@ public class PersonalRoomModule : MMBotModule
 
         var rooms = await _databaseService.LoadPersonalRooms(Context.Guild.Id);
         var roles = Context.Guild.Roles.Where(x => x.Members.Select(x => x.Id).Contains(Context.User.Id));
-        var isMember = roles.Any(x => x.Id == gs.MemberRoleId);
+        var isMember = roles.Any(x => x.Id == gs.MemberRoleId) || Context.User.IsOwner();
 
         if (!rooms.Any(x => x.UserId == Context.User.Id) && isMember)
         {
@@ -90,6 +91,14 @@ public class PersonalRoomModule : MMBotModule
             try
             {
                 c = await Context.Guild.CreateTextChannelAsync(roomName, f => f.CategoryId = gs.CategoryId);
+
+                if(c != null && Context.User.IsOwner())
+                {
+                    await c.AddPermissionOverwriteAsync(Context.User, 
+                        new OverwritePermissions(addReactions: PermValue.Allow, sendMessages: PermValue.Allow, readMessageHistory: PermValue.Allow, viewChannel: PermValue.Allow));
+
+                    return FromError(CommandError.Unsuccessful, "Every !member! can ONLY create ONE room....");
+                }
             }
             catch (Exception ex)
             {
@@ -104,7 +113,7 @@ public class PersonalRoomModule : MMBotModule
                 room.UserId = Context.User.Id;
                 await _databaseService.SaveDataAsync();
 
-                return FromSuccess($"Room: {c.Name} was created!");
+                return FromSuccess(Context.User.IsOwner() ? $"My father's room: {c.Name} was created!" : $"Room: {c.Name} was created!");
             }
         }
 
