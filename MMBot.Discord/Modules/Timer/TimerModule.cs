@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using MMBot.Data.Services.Interfaces;
+using MMBot.Discord.Filters;
 using MMBot.Discord.Helpers;
 using MMBot.Discord.Modules.Interfaces;
 using MMBot.Discord.Services.Interfaces;
@@ -24,7 +25,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
     [Command("Create")]
     [Alias("C")]
     [Summary("Creates a new timer with a [name] and optinal with recurring = true or false")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> CreateTimer(string name, bool recurring = true)
     {
         if ((await _databaseService.LoadTimerAsync(Context.Guild.Id)).FirstOrDefault(t => t.Name.ToLower() == name.ToLower()) is not null)
@@ -50,7 +51,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
     [Command("Delete")]
     [Alias("d")]
     [Summary("Delete a timer")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> DeleteTimer(string name)
     {
         var t = await _databaseService.GetTimerAsync(name, Context.Guild.Id);
@@ -71,7 +72,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
     [Command("List")]
     [Alias("l")]
     [Summary("Adds a Notification channel and a message to a existing timer")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> ListTimers()
     {
         var timer = (await _databaseService.LoadTimerAsync(Context.Guild.Id)).ToList();
@@ -82,7 +83,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
     [Command("AddNotification")]
     [Alias("AN")]
     [Summary("Adds a Notification channel and a message to a existing timer")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> AddNotification(string name, ISocketMessageChannel channel, [Remainder] string message)
     {
         var t = await _databaseService.GetTimerAsync(name, Context.Guild.Id);
@@ -104,7 +105,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
     [Command("RemoveNotification")]
     [Alias("RN")]
     [Summary("Removes a notification channel the message from a timer")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> RemoveNotification(ulong guildId, string name)
     {
         var t = await _databaseService.GetTimerAsync(name, guildId);
@@ -126,7 +127,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
     [Command("StartTimer")]
     [Alias("Start")]
     [Summary("Starts a timer, which rings once after timerspan and every timerspan")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> StartTimer(string name, string timeToFirstRing, string timeInterval = null)
     {
         var t = await _databaseService.GetTimerAsync(name, Context.Guild.Id);
@@ -157,7 +158,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
     [Command("StopTimer")]
     [Alias("Stop")]
     [Summary("Stops a timer")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> StopTimer(string name)
     {
         var t = await _databaseService.GetTimerAsync(name, Context.Guild.Id);
@@ -180,7 +181,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
     [Command("ShowTimeLeft")]
     [Alias("sc")]
     [Summary("Starts a countdown")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> ShowTimeLeft(string name)
     {
         var t = await _databaseService.GetTimerAsync(name, Context.Guild.Id);

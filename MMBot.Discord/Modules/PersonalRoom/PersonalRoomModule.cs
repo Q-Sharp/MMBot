@@ -4,6 +4,7 @@ using Discord.Rest;
 using Discord.WebSocket;
 using MMBot.Data.Helpers;
 using MMBot.Data.Services.Interfaces;
+using MMBot.Discord.Filters;
 using MMBot.Discord.Helpers;
 using MMBot.Discord.Services.Interfaces;
 
@@ -20,7 +21,7 @@ public class PersonalRoomModule : MMBotModule
 
     }
 
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     [Command("SetCategoryForMemberRooms")]
     [Summary("Sets category for rooms")]
     public async Task<RuntimeResult> SetCategoryForMemberRooms(ICategoryChannel category)
@@ -32,7 +33,7 @@ public class PersonalRoomModule : MMBotModule
         return FromSuccess("Category set!");
     }
 
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     [Command("SetMemberRoleForRooms")]
     [Alias("SetRoleForMemberRooms")]
     [Summary("Sets member role for creating rooms")]
@@ -45,7 +46,7 @@ public class PersonalRoomModule : MMBotModule
         return FromSuccess("Member role set");
     }
 
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     [Command("CleanUpMemberRooms")]
     [Alias("cumr")]
     [Summary("Sets member role for creating rooms")]

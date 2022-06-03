@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using MMBot.Discord.Enums;
+using MMBot.Discord.Filters;
 using MMBot.Discord.Helpers;
 using MMBot.Discord.Modules.Interfaces;
 using MMBot.Discord.Services.MemberSort;
@@ -25,7 +26,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
     [Command("Sort")]
     [Summary("Sort all members by season high.")]
     [Alias("S")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> Sort()
     {
         var m = (await _memberSortService.GetChanges(Context.Guild.Id)).Select(x => x.NewMemberList).ToList();
@@ -36,7 +37,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
     [Command("Changes")]
     [Summary("Lists the needed changes to clan memberships.")]
     [Alias("C")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> Changes(string compact = null, bool useCurrent = false)
     {
         var result = (await _memberSortService.GetChanges(Context.Guild.Id, useCurrent)).Where(x => x.Join.Count > 0 && x.Leave.Count > 0).ToList();
@@ -77,7 +78,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
     {
         var cQty = (await _databaseService.LoadClansAsync(Context.Guild.Id))?.Count;
 
-        if (!cQty.HasValue || cQty.Value == 0)
+        if (!cQty.HasValue || cQty.Value == 0 || mm.Count == 0)
         {
             await ReplyAsync($"No member data in db.");
             return;

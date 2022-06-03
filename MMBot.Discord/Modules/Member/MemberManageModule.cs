@@ -2,6 +2,7 @@
 using Discord.Commands;
 using MMBot.Data.Entities;
 using MMBot.Data.Helpers;
+using MMBot.Discord.Filters;
 using MMBot.Discord.Helpers;
 using MMBot.Discord.Modules.Interfaces;
 
@@ -15,7 +16,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
     [Command("Delete")]
     [Alias("D")]
     [Summary("Deletes member with given name.")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> Delete(string name)
     {
         var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
@@ -26,7 +27,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
 
     [Command("Set")]
     [Summary("Set [Username] [Property name] [Value]")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> Set(string name, string propertyName, [Remainder] string value)
     {
         var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
@@ -37,7 +38,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
 
     [Command("Get")]
     [Summary("Get [Username] [Property name]")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> Get(string name, string propertyName)
     {
         var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
@@ -47,7 +48,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
 
     [Command("Create")]
     [Summary("Creates a new member.")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> Create([Remainder] string name)
     {
         var m = _databaseService.CreateMember(Context.Guild.Id);
@@ -59,7 +60,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
 
     [Command("ShowAll")]
     [Summary("Show all member where propertyName has value")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> ShowAll(string propertyName, [Remainder] string value)
     {
         var m = await _databaseService.LoadMembersAsync(Context.Guild.Id);
@@ -70,7 +71,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
 
     [Command("AddStrike")]
     [Summary("Add a strike to a member")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> AddStrike(string name, [Remainder] string strikeReason)
     {
         var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
@@ -83,7 +84,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
 
     [Command("RemoveStrike")]
     [Summary("Removes a strike from a member.")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> RemoveStrike([Remainder] string name)
     {
         var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
@@ -96,7 +97,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
 
     [Command("ShowAllStrikes")]
     [Summary("Show all member with strikes")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> ShowAllStrikes()
     {
         var me = (await _databaseService.LoadMembersAsync(Context.Guild.Id)).Where(x => x.Strike?.Count > 0)?.ToList();
@@ -109,7 +110,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
 
     [Command("GroupMember")]
     [Summary("Groups all following members")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> GroupMember(params string[] memberNames)
     {
         var m = await _databaseService.LoadMembersAsync(Context.Guild.Id);
@@ -125,7 +126,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
 
     [Command("UnGroupMember")]
     [Summary("Ungroups all following members")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> UnGroupMember(params string[] memberNames)
     {
         var m = await _databaseService.LoadMembersAsync(Context.Guild.Id);
@@ -139,7 +140,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
     [Command("Profile")]
     [Alias("p")]
     [Summary("Shows all information of a member.")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> Profile([Remainder] string name)
     {
         var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);

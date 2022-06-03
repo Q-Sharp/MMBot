@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using Discord.Commands;
+using MMBot.Discord.Filters;
 using MMBot.Discord.Modules.Interfaces;
 
 namespace MMBot.Discord.Modules.Admin;
@@ -11,7 +12,7 @@ public partial class AdminModule : MMBotModule, IAdminModule
 
     [Command("ExportDb")]
     [Summary("Exports db data as json files in zip archive")]
-    [RequireOwner()]
+    [RequireOwnerv2]
     public async Task<RuntimeResult> ExportDb()
     {
         var ex = string.Empty;
@@ -51,7 +52,7 @@ public partial class AdminModule : MMBotModule, IAdminModule
 
     [Command("ImportDb")]
     [Summary("Imports the db with help of json files in zip archive")]
-    [RequireOwner()]
+    [RequireOwnerv2]
     public async Task<RuntimeResult> ImportDb()
     {
         var csvFile = Context.Message.Attachments.OrderBy(c => c.Id).FirstOrDefault();
