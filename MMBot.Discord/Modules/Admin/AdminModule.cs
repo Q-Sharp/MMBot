@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using MMBot.Data.Contracts;
+using MMBot.Discord.Filters;
 using MMBot.Discord.Helpers;
 using MMBot.Discord.Modules.Interfaces;
 using MMBot.Discord.Services.Interfaces;
@@ -31,7 +32,7 @@ public partial class AdminModule : MMBotModule, IAdminModule
     [Command("ImportCSV")]
     [Alias("import")]
     [Summary("Imports a notion csv export to update db")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> ImportCsv()
     {
         var csvFile = Context.Message.Attachments.FirstOrDefault();
@@ -68,7 +69,7 @@ public partial class AdminModule : MMBotModule, IAdminModule
     [Command("ExportCSV")]
     [Alias("export")]
     [Summary("Exports a csv file from db")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> ExportCsv()
     {
         var settings = await _guildSettingsService.GetGuildSettingsAsync(Context.Guild.Id);
@@ -84,7 +85,7 @@ public partial class AdminModule : MMBotModule, IAdminModule
     [Command("Reorder")]
     [Alias("reorder")]
     [Summary("Reorders member in db")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> ReorderJoin()
     {
         await Task.Run(() => _adminService.Reorder(Context.Guild.Id));
@@ -95,7 +96,7 @@ public partial class AdminModule : MMBotModule, IAdminModule
     [Command("FixRoles")]
     [Alias("FR")]
     [Summary("Checks and fixes discord roles of all clan members.")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> FixRoles()
     {
         IMessage answer = null;
@@ -163,7 +164,7 @@ public partial class AdminModule : MMBotModule, IAdminModule
 
     [Command("Show")]
     [Summary("Show guild settings")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> Show()
     {
         var gs = await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id);
@@ -174,7 +175,7 @@ public partial class AdminModule : MMBotModule, IAdminModule
 
     [Command("Set")]
     [Summary("Set guild settings")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> Set(string propertyName, [Remainder] string value)
     {
         var gs = await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id);
@@ -185,7 +186,7 @@ public partial class AdminModule : MMBotModule, IAdminModule
 
     [Command("Get")]
     [Summary("Get guild settings")]
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     public async Task<RuntimeResult> Get(string propertyName)
     {
         var gs = await _databaseService.LoadGuildSettingsAsync(Context.Guild.Id);

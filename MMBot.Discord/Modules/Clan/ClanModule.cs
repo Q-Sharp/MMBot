@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Microsoft.Extensions.Logging;
 using MMBot.Data.Contracts;
+using MMBot.Discord.Filters;
 using MMBot.Discord.Helpers;
 using MMBot.Discord.Modules.Interfaces;
 using MMBot.Discord.Services.Interfaces;
@@ -54,7 +55,7 @@ public class ClanModule : MMBotModule, IClanModule
         return FromSuccess();
     }
 
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     [Command("Delete")]
     [Alias("d")]
     [Summary("Deletes clan with given tag.")]
@@ -82,7 +83,7 @@ public class ClanModule : MMBotModule, IClanModule
         return FromSuccess($"The clan {c} was deleted");
     }
 
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     [Command("Set")]
     [Summary("Set [Clan tag] [Property name] [Value]")]
     public async Task<RuntimeResult> Set(string tag, string propertyName, [Remainder] string value)
@@ -109,7 +110,7 @@ public class ClanModule : MMBotModule, IClanModule
         return FromSuccess(m);
     }
 
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     [Command("Create")]
     [Summary("Creates a new clan")]
     public async Task<RuntimeResult> Create(string tag, [Remainder] string name)
@@ -135,7 +136,7 @@ public class ClanModule : MMBotModule, IClanModule
         return FromSuccess($"The clan {c} was added to database.");
     }
 
-    [RequireUserPermission(ChannelPermission.ManageRoles)]
+    [RequireUserPermissionOrBotOwner(ChannelPermission.ManageRoles)]
     [Command("AddMember")]
     [Summary("Adds a member with name to clan with tag")]
     public async Task<RuntimeResult> AddMember(string tag, [Remainder] string memberName)
