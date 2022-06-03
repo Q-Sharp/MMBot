@@ -88,7 +88,7 @@ public class UserController : ControllerBase
                 x.PermissionFlags.HasFlag(GuildPermission.ManageRoles)).ToList();
 
         dcUser.Guilds = dcUser.Guilds.Where(x => allGuildsInDb.Select(y => y.Id).Contains(x.Id)).ToList();
-        dcUser.CurrentGuildId = dcUser.Guilds.FirstOrDefault().Id;
+        dcUser.CurrentGuildId = dcUser.Guilds.FirstOrDefault()?.Id;
 
         return dcUser;
     }

@@ -60,12 +60,7 @@ public class DiscordWorker : BackgroundService
         _sp.GetRequiredService<CommandService>().Log += LogAsync;
         client.Log += LogAsync;
 
-        var token = _env.IsDevelopment() ? _config.GetSection("Discord").GetValue<string>("DevToken")
-            : _config.GetSection("Discord").GetValue<string>("Token");
-
-#if DEBUG
-        token = _config.GetSection("Discord").GetValue<string>("DevToken");
-#endif
+        var token = _env.IsDevelopment() ? _config["Discord:DevToken"] : _config["Discord:Token"];
 
         await client.LoginAsync(TokenType.Bot, token);
         await client.StartAsync();

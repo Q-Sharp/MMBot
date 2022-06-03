@@ -15,8 +15,6 @@ public class GuildSettings : IHaveId, IHaveGuildId
     [Display]
     public string Prefix { get; set; }
 
-    public static TimeSpan WaitForReaction { get; } = TimeSpan.FromMinutes(5);
-
     // Filesystem
     [Display]
     public string FileName { get; set; }
@@ -43,6 +41,8 @@ public class GuildSettings : IHaveId, IHaveGuildId
             FileName = gs.FileName;
             ClanSize = gs.ClanSize;
             MemberMovementQty = gs.MemberMovementQty;
+            CategoryId = gs.CategoryId;
+            MemberRoleId = gs.MemberRoleId;
         }
     }
 }

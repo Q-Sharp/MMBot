@@ -14,7 +14,11 @@ public class GuildSettingsService : IGuildSettingsService
     }
 
     public async Task<Data.Contracts.Entities.GuildSettings> GetGuildSettingsAsync(ulong guildId)
-        => await _dbcontext.GuildSettings.FirstOrDefaultAsync(x => x.GuildId == guildId) ?? await CreateNewSettingsAsync(guildId);
+    {
+        var settings = _dbcontext.GuildSettings.FirstOrDefault(x => x.GuildId == guildId) ?? await CreateNewSettingsAsync(guildId);
+
+        return settings;
+    }
 
     private async Task<Data.Contracts.Entities.GuildSettings> CreateNewSettingsAsync(ulong id)
     {
@@ -24,7 +28,7 @@ public class GuildSettingsService : IGuildSettingsService
             Prefix = "m.",
             FileName = "export.csv",
             ClanSize = 20,
-            MemberMovementQty = 3
+            MemberMovementQty = 3,
         }))
         .Entity;
 

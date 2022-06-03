@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 
 using MMBot.Blazor.Server.Auth;
@@ -31,15 +33,15 @@ Log.Logger = new LoggerConfiguration()
                 .CreateLogger();
 
 services.AddLogging(l => l.ClearProviders()
-                          .AddSerilog(Log.Logger)
-                          .AddSystemdConsole());
+                          .AddSerilog(Log.Logger));
 
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
 
 var connectionString = configuration.GetConnectionString("Context");
 
 services.AddDbContext<Context>(o => o.UseNpgsql(connectionString))
-        .AddScoped<IDatabaseService, DatabaseService>();
+        .AddScoped<IDatabaseService, DatabaseService>()
+        .AddScoped<IBlazorDatabaseService, BlazorDatabaseService>();
 
 services.AddSingleton<ITicketStore, MMBotTicketStore>();
 services.AddOptions<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -56,17 +58,16 @@ services.AddAntiforgery(options =>
 services.AddHttpClient();
 services.AddOptions();
 
-services.AddResponseCaching();
-
 services.AddAuthentication(opt =>
 {
     opt.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     opt.DefaultChallengeScheme = DiscordAuthenticationDefaults.AuthenticationScheme;
 })
-.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, c =>
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
 {
-    c.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict;
-    c.ExpireTimeSpan = TimeSpan.FromDays(30);
+    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+    options.Cookie.MaxAge = TimeSpan.FromDays(30);
+    options.Cookie.Name = ApiAuthDefaults.CookieName;
 })
 .AddDiscord(DiscordAuthenticationDefaults.AuthenticationScheme, c =>
 {
@@ -90,7 +91,6 @@ services.AddAuthentication(opt =>
     };
 
     c.SaveTokens = true;
-    c.Validate();
 });
 
 services.AddAuthorization();
@@ -100,8 +100,14 @@ services.AddRazorPages();
 services.AddMudServices();
 
 services.AddSession()
-        .AddHttpContextAccessor()
-        .AddScoped<IBlazorDatabaseService, BlazorDatabaseService>();
+        .AddHttpContextAccessor();
+
+services.AddResponseCompression(options =>
+{
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
+    options.EnableForHttps = true;
+});
 
 services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -131,17 +137,15 @@ app.UseSecurityHeaders(SecurityHeadersDefinitions.GetHeaderPolicyCollection(app.
 app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 
-app.UseStaticFiles(new StaticFileOptions()
+app.UseStaticFiles(new StaticFileOptions
 {
-    HttpsCompression = Microsoft.AspNetCore.Http.Features.HttpsCompressionMode.Compress,
-    OnPrepareResponse = (context) =>
+    OnPrepareResponse = context =>
     {
-        var headers = context.Context.Response.GetTypedHeaders();
-        headers.CacheControl = new CacheControlHeaderValue
+        if (context.File.Name == "service-worker-assets.js")
         {
-            Public = true,
-            MaxAge = TimeSpan.FromDays(30)
-        };
+            context.Context.Response.Headers.Add("Cache-Control", "no-cache, no-store");
+            context.Context.Response.Headers.Add("Expires", "-1");
+        }
     }
 });
 
@@ -154,5 +158,9 @@ app.UseResponseCaching();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToPage("/_Host");
+
+using var scope = app.Services.CreateScope();
+var ctx = scope.ServiceProvider.GetRequiredService<Context>();
+await ctx.MigrateAsync();
 
 app.Run();

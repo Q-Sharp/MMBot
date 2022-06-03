@@ -5,6 +5,8 @@
 
 @inject ICRUDViewModel<ClanModel, Clan> ClanVM
 
+@inject IRepository<Clan> clan;
+
 @attribute [Authorize]
 
 @if (ClanVM.Entities == null)
