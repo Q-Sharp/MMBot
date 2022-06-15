@@ -35,7 +35,7 @@ public class DataRepository<TEntity> : IRepository<TEntity>
             var http = await _clientFactory.CreateClient();
             var guildId = await GetGuildId();
 
-            var test = await http.GetAllEntities(guildId);
+
 
             var q = (await http.GetAllEntities<TEntity>(guildId)).AsQueryable();
 

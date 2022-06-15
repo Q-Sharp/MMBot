@@ -96,8 +96,6 @@ public class PersonalRoomModule : MMBotModule
                 {
                     await c.AddPermissionOverwriteAsync(Context.User, 
                         new OverwritePermissions(addReactions: PermValue.Allow, sendMessages: PermValue.Allow, readMessageHistory: PermValue.Allow, viewChannel: PermValue.Allow));
-
-                    return FromError(CommandError.Unsuccessful, "Every !member! can ONLY create ONE room....");
                 }
             }
             catch (Exception ex)
