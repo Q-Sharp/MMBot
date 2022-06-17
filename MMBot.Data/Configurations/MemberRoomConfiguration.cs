@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MMBot.Data.Contracts.Entities;
-
-namespace MMBot.Data.Configurations;
+﻿namespace MMBot.Data.Configurations;
 
 public class MemberRoomConfiguration : IEntityTypeConfiguration<MemberRoom>
 {

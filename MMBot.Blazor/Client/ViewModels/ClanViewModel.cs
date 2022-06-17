@@ -1,11 +1,4 @@
-﻿using System.Linq.Expressions;
-using Blazored.SessionStorage;
-using MMBot.Blazor.Shared;
-using MMBot.Blazor.Shared.BusinessModel;
-using MMBot.Data.Contracts.Entities;
-using MudBlazor;
-
-namespace MMBot.Blazor.Client.ViewModels;
+﻿namespace MMBot.Blazor.Client.ViewModels;
 
 public class ClanViewModel : ViewModelBase, ICRUDViewModel<ClanModel, Clan>
 {

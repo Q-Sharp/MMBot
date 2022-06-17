@@ -1,14 +1,6 @@
 ﻿@page "/clans"
 @page "/clan"
 
-@inject IAuthorizedAntiForgeryClientFactory authorizedAntiForgeryClientFactory
-
-@inject ICRUDViewModel<ClanModel, Clan> ClanVM
-
-@inject IRepository<Clan> clan;
-
-@attribute [Authorize]
-
 @if (ClanVM.Entities == null)
 {
     <MudProgressCircular Color="Color.Default" Indeterminate="true" />
@@ -60,23 +52,4 @@ else
         </PagerContent>
     </MudTable>
     <MudText Inline="true">Selected: @ClanVM?.SelectedEntity?.Name</MudText>
-}
-
-@code {
-    private string searchString = "";
-
-    public async void CommitEdit() =>  await ClanVM.Update(ClanVM.SelectedEntity);
-
-    public async void Delete() => await ClanVM.Delete();
-
-    private bool FilterFunc(ClanModel clan)
-    {
-        if (string.IsNullOrWhiteSpace(searchString))
-            return true;
-        if (clan.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        if (clan.Tag.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        return false;
-    }
 }

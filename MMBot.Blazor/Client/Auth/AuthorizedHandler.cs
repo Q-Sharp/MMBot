@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace MMBot.Blazor.Client.Auth;
+﻿namespace MMBot.Blazor.Client.Auth;
 
 public class AuthorizedHandler : DelegatingHandler
 {

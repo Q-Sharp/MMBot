@@ -1,17 +1,4 @@
-﻿using System.Security.Claims;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using AspNet.Security.OAuth.Discord;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using MMBot.Blazor.Shared.Auth;
-using MMBot.Blazor.Shared.Defaults;
-using MMBot.Blazor.Shared.Helpers;
-using MMBot.Data.Contracts;
-
-namespace MMBot.Blazor.Server.Controllers;
+﻿namespace MMBot.Blazor.Server.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

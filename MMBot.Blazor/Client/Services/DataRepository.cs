@@ -1,12 +1,4 @@
-﻿using System.Linq.Expressions;
-using Blazored.SessionStorage;
-using MMBot.Blazor.Client.Auth;
-using MMBot.Blazor.Client.Helpers;
-using MMBot.Blazor.Shared;
-using MMBot.Blazor.Shared.Defaults;
-using MMBot.Data.Contracts;
-
-namespace MMBot.Blazor.Client.Services;
+﻿namespace MMBot.Blazor.Client.Services;
 
 public class DataRepository<TEntity> : IRepository<TEntity>
     where TEntity : class, IHaveId, new()

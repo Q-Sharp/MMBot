@@ -1,9 +1,4 @@
-﻿
-using Microsoft.JSInterop;
-
-using MMBot.Blazor.Shared.Defaults;
-
-namespace MMBot.Blazor.Client.Auth;
+﻿namespace MMBot.Blazor.Client.Auth;
 
 public class AuthorizedAntiForgeryClientFactory : IAuthorizedAntiForgeryClientFactory
 {

@@ -1,6 +1,4 @@
-﻿using System.Net.Http.Json;
-
-namespace MMBot.Blazor.Client.Helpers;
+﻿namespace MMBot.Blazor.Client.Helpers;
 
 public static class HttpClientHelpers
 {

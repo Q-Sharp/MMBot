@@ -1,24 +1,4 @@
-﻿using System.Net;
-using AspNet.Security.OAuth.Discord;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
-
-using MMBot.Blazor.Server.Auth;
-using MMBot.Blazor.Shared.Defaults;
-using MMBot.Blazor.Shared.Helpers;
-using MMBot.Data;
-using MMBot.Data.Contracts;
-using MMBot.Data.Services.Database;
-using MudBlazor.Services;
-using Serilog;
-
-var builder = WebApplication.CreateBuilder(args);
+﻿var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 var services = builder.Services;
@@ -39,7 +19,8 @@ builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
 
 var connectionString = configuration.GetConnectionString("Context");
 
-services.AddDbContext<Context>(o => o.UseNpgsql(connectionString))
+services.AddDbContextFactory<Context>(o => o.UseLazyLoadingProxies()
+                                            .UseNpgsql(connectionString))
         .AddScoped<IDatabaseService, DatabaseService>()
         .AddScoped<IBlazorDatabaseService, BlazorDatabaseService>();
 

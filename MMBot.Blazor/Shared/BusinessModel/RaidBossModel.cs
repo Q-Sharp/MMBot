@@ -1,11 +1,4 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Collections.ObjectModel;
-//using MMBot.Data.Enums;
-//using MMBot.Data.Interfaces;
-
-//namespace MMBot.Data.Entities
-//{
+﻿//namespace MMBot.Data.Entities;
 //    public class RaidBossModel : RaidBoss
 //    {
 //        public event Action StateChanged;
@@ -24,4 +17,3 @@
 //        public virtual ICollection<RaidParticipationModel> RaidParticipation { get; set; } = new Collection<RaidParticipationModel>();
 //        public void Update(object guildSettings) => throw new NotImplementedException();
 //    }
-//}

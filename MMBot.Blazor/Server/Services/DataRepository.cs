@@ -1,11 +1,4 @@
-﻿using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
-using MMBot.Blazor.Shared;
-using MMBot.Data.Contracts;
-using MMBot.Data.Contracts.Helpers;
-using MMBot.Data.Helpers;
-
-namespace MMBot.Blazor.Server.Services;
+﻿namespace MMBot.Blazor.Server.Services;
 
 public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
     where TEntity : class, IHaveId, new()

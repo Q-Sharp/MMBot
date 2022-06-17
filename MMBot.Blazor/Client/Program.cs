@@ -1,15 +1,4 @@
-﻿using System.Net.Http.Headers;
-using Blazored.SessionStorage;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using MMBot.Blazor.Client;
-using MMBot.Blazor.Client.Auth;
-using MMBot.Blazor.Client.Helpers;
-using MudBlazor.Services;
-using Serilog;
-
-var builder = WebAssemblyHostBuilder.CreateDefault(args);
+﻿var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 Log.Logger = new LoggerConfiguration()
                 .WriteTo.BrowserConsole()

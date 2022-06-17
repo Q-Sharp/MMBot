@@ -1,12 +1,4 @@
-﻿using System.Net.Http.Json;
-using System.Security.Claims;
-
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
-using MMBot.Blazor.Shared.Auth;
-using MMBot.Blazor.Shared.Defaults;
-
-namespace MMBot.Blazor.Client.Auth;
+﻿namespace MMBot.Blazor.Client.Auth;
 
 public class MMBotAuthenticationStateProvider : AuthenticationStateProvider
 {

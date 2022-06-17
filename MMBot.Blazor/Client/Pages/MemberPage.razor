@@ -1,11 +1,6 @@
 ﻿@page "/members"
 @page "/member"
 
-@inject ICRUDViewModel<MemberModel, Member> MemberVM
-@inject ISnackbar Snackbar
-
-@attribute [Authorize]
-
 @if (MemberVM?.Entities == null)
 {
     <MudProgressCircular Color="Color.Default" Indeterminate="true" />
@@ -66,19 +61,4 @@ else
         </PagerContent>
     </MudTable>
     <MudText Inline="true">Selected: @MemberVM?.SelectedEntity?.Name</MudText>
-}
-
-@code {
-    private string searchString = "";
-
-    private bool FilterFunc(MemberModel Member)
-    {
-        if (string.IsNullOrWhiteSpace(searchString))
-            return true;
-        if (Member.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        //if (Member.Tag.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-        //    return true;
-        return false;
-    }
 }

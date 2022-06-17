@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace MMBot.Blazor.Shared;
+﻿namespace MMBot.Blazor.Shared;
 
 public interface IRepository<TEntity> where TEntity : class
 {

@@ -8,8 +8,8 @@ public class RaidParticipation : IHaveId, IHaveGuildId
     public int MemberId { get; set; }
     public int RaidBossId { get; set; }
 
-    public RaidBoss RaidBoss { get; set; }
-    public Member Member { get; set; }
+    public virtual RaidBoss RaidBoss { get; set; }
+    public virtual Member Member { get; set; }
 
     public ulong DamageDone { get; set; }
     public int HeartQty { get; set; }

@@ -16,8 +16,8 @@ public class SeasonResult : IHaveId, IHaveGuildId
     [Display]
     public int? Donations { get; set; }
 
-    public Member Member { get; set; }
-    public Season Season { get; set; }
+    public virtual Member Member { get; set; }
+    public virtual Season Season { get; set; }
 
     public void Update(object season)
     {

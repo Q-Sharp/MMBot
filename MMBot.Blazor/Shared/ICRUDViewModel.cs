@@ -1,9 +1,4 @@
-﻿using System.Linq.Expressions;
-using Blazored.SessionStorage;
-using MMBot.Blazor.Shared;
-using MMBot.Data.Contracts;
-
-namespace MMBot.Blazor.Client.ViewModels;
+﻿namespace MMBot.Blazor.Shared;
 
 public interface ICRUDViewModel<TEntityModel, TEntity>
     where TEntityModel : class, IHaveGuildId, IHaveId, new()

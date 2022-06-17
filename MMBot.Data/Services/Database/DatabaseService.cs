@@ -1,13 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using MMBot.Data.Contracts;
-using MMBot.Data.Contracts.Entities;
-using MMBot.Data.Contracts.Enums;
-using MMBot.Data.Contracts.Helpers;
-using MMBot.Data.Helpers;
-using static MMBot.Data.Helpers.EFCoreHelpers;
-
-namespace MMBot.Data.Services.Database;
+﻿namespace MMBot.Data.Services.Database;
 
 public class DatabaseService : IDatabaseService
 {

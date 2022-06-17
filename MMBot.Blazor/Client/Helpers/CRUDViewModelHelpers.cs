@@ -1,10 +1,4 @@
-﻿using MMBot.Blazor.Client.Services;
-using MMBot.Blazor.Client.ViewModels;
-using MMBot.Blazor.Shared;
-using MMBot.Blazor.Shared.BusinessModel;
-using MMBot.Data.Contracts.Entities;
-
-namespace MMBot.Blazor.Client.Helpers;
+﻿namespace MMBot.Blazor.Client.Helpers;
 
 public static class CRUDViewModelHelpers
 {

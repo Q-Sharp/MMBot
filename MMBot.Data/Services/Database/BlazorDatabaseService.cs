@@ -1,6 +1,4 @@
-﻿using MMBot.Data.Contracts;
-
-namespace MMBot.Data.Services.Database;
+﻿namespace MMBot.Data.Services.Database;
 
 public class BlazorDatabaseService : IBlazorDatabaseService
 {

@@ -13,7 +13,7 @@ public class Season : IHaveId
     public string Name => Identitfier;
 
     [JsonIgnore]
-    public ICollection<SeasonResult> SeasonResult { get; set; }
+    public virtual ICollection<SeasonResult> SeasonResult { get; set; }
 
     public void Update(object season)
     {

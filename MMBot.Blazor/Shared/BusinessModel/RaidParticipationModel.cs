@@ -1,8 +1,5 @@
-﻿//using System;
-//using MMBot.Data.Interfaces;
+﻿//namespace MMBot.Data.Entities;
 
-//namespace MMBot.Data.Entities
-//{
 //    public class RaidParticipationModel : RaidParticipation
 //    {
 //        public event Action StateChanged;
@@ -23,4 +20,3 @@
 
 //        public void Update(object bossRaider) => throw new NotImplementedException();
 //    }
-//}

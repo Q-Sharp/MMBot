@@ -1,9 +1,4 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using Blazored.SessionStorage;
-using MudBlazor;
-
-namespace MMBot.Blazor.Client.ViewModels;
+﻿namespace MMBot.Blazor.Client.ViewModels;
 
 public class ViewModelBase : INotifyPropertyChanged
 {

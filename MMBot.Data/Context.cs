@@ -1,14 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MMBot.Data.Contracts.Entities;
-
-namespace MMBot.Data;
+﻿namespace MMBot.Data;
 
 public class Context : DbContext
 {
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
         if (!options.IsConfigured)
+        {
+            options.UseLazyLoadingProxies();
             options.UseNpgsql($@"Server=127.0.0.1;Port=5433;Database=MMBotDB;Username=postgres;Password=P0stGresSQL2021");
+        }
     }
 
     public Context()

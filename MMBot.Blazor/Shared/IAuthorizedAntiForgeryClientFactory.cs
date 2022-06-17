@@ -1,4 +1,4 @@
-﻿namespace MMBot.Blazor.Client.Auth;
+﻿namespace MMBot.Blazor.Shared;
 
 public interface IAuthorizedAntiForgeryClientFactory
 {

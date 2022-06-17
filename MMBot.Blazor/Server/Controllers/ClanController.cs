@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MMBot.Blazor.Shared;
-using MMBot.Data.Contracts.Entities;
-
-namespace MMBot.Blazor.Server.Controllers;
+﻿namespace MMBot.Blazor.Server.Controllers;
 
 public class ClanController : ApiControllerBase<ClanController, Clan>
 {
