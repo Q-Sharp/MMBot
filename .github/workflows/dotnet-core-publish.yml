@@ -13,20 +13,27 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.100
+
     - name: add discord.net feed
       run: dotnet nuget add source https://www.myget.org/F/discord-net/api/v3/index.json
+
     - name: Install dependencies2
       run: dotnet restore
+
     - name: Build
       run: dotnet build --configuration Release
+
     - name: Test
       run: dotnet test --no-restore --verbosity normal
+
     - name: .NET Publish
-      run: dotnet publish ./MMBot.Discord/MMBot.Discord.csproj -c Release -r linux-x64 --no-self-contained /p:PublishReadyToRun=false
+      run: dotnet publish ./MMBot.Discord/MMBot.Discord.csproj -c Release -r linux-x64 --no-self-contained /p:PublishReadyToRun=false /p:DebugType=None /p:DebugSymbols=false
+
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v2.1.5
       env:
@@ -36,9 +43,11 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
-          TARGET: ${{ secrets.REMOTE_TARGET }}    
+          TARGET: ${{ secrets.REMOTE_TARGET }}
+          
     - name: .NET Publish
-      run: dotnet publish ./MMBot.Blazor/Server/MMBot.Blazor.Server.csproj -c Release -r linux-x64 --no-self-contained /p:PublishReadyToRun=false  
+      run: dotnet publish ./MMBot.Blazor/Server/MMBot.Blazor.Server.csproj -c Release -r linux-x64 --self-contained /p:PublishReadyToRun=false /p:DebugType=None /p:DebugSymbols=false  
+
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v2.1.5
       env:
