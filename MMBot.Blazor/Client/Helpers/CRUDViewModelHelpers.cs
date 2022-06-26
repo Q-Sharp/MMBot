@@ -6,8 +6,8 @@ public static class CRUDViewModelHelpers
     {
         serviceCollection.AddScoped<IRepository<Clan>, DataRepository<Clan>>()
                          .AddScoped<IRepository<Member>, DataRepository<Member>>()
-                         .AddTransient<ICRUDViewModel<ClanModel, Clan>, ViewModel<ClanModel, Clan>>()
-                         .AddTransient<ICRUDViewModel<MemberModel, Member>, ViewModel<MemberModel, Member>>();
+                         .AddTransient<ICRUDViewModel<ClanModel, Clan>, ClanViewModel>()
+                         .AddTransient<ICRUDViewModel<MemberModel, Member>, MemberViewModel>();
 
         return serviceCollection;
     }

@@ -35,6 +35,19 @@ public class ClanModel : Clan, ICreate
         }
     }
 
+    public static ClanModel Create(Clan c)
+    {
+        return new ClanModel()
+        {
+            Id = c.Id,
+            SortOrder = c.SortOrder,
+            Tag = c.Tag,
+            Name = c.Name,
+            DiscordRole = c.DiscordRole,
+            GuildId = c.GuildId,
+        };
+    }
+
     public ICreate Create(object from)
     {
         if (from is Clan c)
