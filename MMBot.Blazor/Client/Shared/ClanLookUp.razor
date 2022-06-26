@@ -1,0 +1,10 @@
+﻿@inherits ComponentBase
+
+<MudSelect T="int?" Label="Clan" Value="@SelectedId" Text="@SelectedClan" SelectedValuesChanged="ValueChanged" FullWidth="true" Strict="true" Variant="Variant.Outlined" Format="F2"
+          >
+    <MudSelectItem T="int?" value="@((int?)null)">None</MudSelectItem>
+    @foreach (var clan in ClanVM.Entities)
+    {
+        <MudSelectItem T="int?" value="@clan.Id">@clan.Name</MudSelectItem>
+    }
+</MudSelect>

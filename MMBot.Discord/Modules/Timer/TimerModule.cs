@@ -1,8 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Filters;
+using MMBot.Data.Contracts;
 using MMBot.Discord.Helpers;
 using MMBot.Discord.Modules.Interfaces;
 using MMBot.Discord.Services.Interfaces;

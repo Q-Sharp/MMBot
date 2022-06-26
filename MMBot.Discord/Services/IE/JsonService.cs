@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MMBot.Data;
-using MMBot.Data.Entities;
+using MMBot.Data.Contracts.Entities;
 using MMBot.Data.Helpers;
 using MMBot.Discord.Services.Interfaces;
 
@@ -62,7 +62,7 @@ public class JsonService : IJsonService
 
             if (importJson.TryGetValue("GuildSettings", out var guild))
             {
-                var ac = JsonSerializer.Deserialize<IList<Data.Entities.GuildSettings>>(guild, _jsonSerializerOptions);
+                var ac = JsonSerializer.Deserialize<IList<Data.Contracts.Entities.GuildSettings>>(guild, _jsonSerializerOptions);
                 await context.GuildSettings.ImportOrUpgrade(ac);
                 await context.SaveChangesAsync();
             }

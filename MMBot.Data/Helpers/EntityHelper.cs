@@ -1,11 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Reflection;
-using System.Runtime.Serialization;
-using Microsoft.EntityFrameworkCore;
-using MMBot.Data.Helpers;
-using MMBot.Data.Interfaces;
-
-namespace MMBot.Data.Helpers;
+﻿namespace MMBot.Data.Helpers;
 
 public static class EntityHelper
 {

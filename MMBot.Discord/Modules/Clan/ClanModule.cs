@@ -1,7 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Microsoft.Extensions.Logging;
-using MMBot.Data.Services.Interfaces;
+using MMBot.Data.Contracts;
 using MMBot.Discord.Filters;
 using MMBot.Discord.Helpers;
 using MMBot.Discord.Modules.Interfaces;
@@ -61,7 +61,7 @@ public class ClanModule : MMBotModule, IClanModule
     [Summary("Deletes clan with given tag.")]
     public async Task<RuntimeResult> Delete(string tag)
     {
-        Data.Entities.Clan c;
+        Data.Contracts.Entities.Clan c;
 
         try
         {
@@ -115,7 +115,7 @@ public class ClanModule : MMBotModule, IClanModule
     [Summary("Creates a new clan")]
     public async Task<RuntimeResult> Create(string tag, [Remainder] string name)
     {
-        Data.Entities.Clan c;
+        Data.Contracts.Entities.Clan c;
         var gs = await _databaseService.LoadClansAsync(Context.Guild.Id);
 
         try

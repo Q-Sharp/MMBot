@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using MMBot.Data.Entities;
-using MMBot.Data.Enums;
+using MMBot.Data.Contracts;
+using MMBot.Data.Contracts.Entities;
+using MMBot.Data.Contracts.Enums;
+using MMBot.Data.Contracts.Helpers;
 using MMBot.Data.Helpers;
-using MMBot.Data.Services.Interfaces;
 using MMBot.Discord.Enums;
 using MMBot.Discord.Services.Interfaces;
 

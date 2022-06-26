@@ -1,0 +1,132 @@
+﻿@inject NavigationManager NavigationManager
+@inject ISessionStorageService SessionStorage
+@inject MMBotAuthenticationStateProvider AuthProvider
+@inherits LayoutComponentBase
+
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudThemeProvider Theme="currentTheme"/>
+
+<LayoutView>
+<MudLayout>
+    <MudAppBar Elevation="2">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudText Typo="Typo.h5">MMBot</MudText>
+
+        <AuthorizeView>
+            <Authorized>
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudGrid Spacing="5" Justify="Justify.FlexEnd">
+                            <MudItem>
+                                <MudAvatar Image="@loggedUser.AvatarUrl"/>
+                            </MudItem>
+                            <MudItem>
+                                <MudText Typo="Typo.h6">Hello, @loggedUser.Name!</MudText>
+                            </MudItem>
+                            <MudItem Style="min-width: max-content">
+                                <MudSelect T="string" Label="Guild" @bind-Value="@SelectedGuildId" FullWidth="true">
+                                    @foreach (var guild in @loggedUser.Guilds)
+                                    {
+                                        <MudSelectItem T="string" value="@guild.Id">@guild.name</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem>
+                                <MudLink Typo="Typo.h6" Color="Color.Inherit" Href="@ApiAuthDefaults.LogOutPath">Log out</MudLink>
+                            </MudItem>
+                        </MudGrid>
+                    </MudItem>
+                </MudGrid>
+            </Authorized>
+            <NotAuthorized>
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudGrid Spacing="5" Justify="Justify.FlexEnd">
+                            <MudItem>
+                                <MudLink Typo="Typo.h6" Class="ml-3" Href="@ApiAuthDefaults.LogInPath">Log in</MudLink>
+                            </MudItem>
+                        </MudGrid>
+                    </MudItem>
+                </MudGrid>
+            </NotAuthorized>
+        </AuthorizeView>
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <MudPaper Width="Auto" Class="py-3" Square="true">
+            <MudNavMenu>
+                <MudNavLink Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
+                <MudNavGroup Title="Data" Expanded="@_dataExpanded">
+                    <MudNavLink Href="/clan">Clan</MudNavLink>
+                    <MudNavLink Href="/member">Member</MudNavLink>
+                    <MudNavGroup Title="Raids" @bind-Expanded="_raidsExpanded">
+                        <MudNavLink Href="/results">Add results</MudNavLink>
+                        <MudNavLink Href="/history">History</MudNavLink>
+                    </MudNavGroup>
+                </MudNavGroup>
+                <MudNavGroup Title="Discord bot" @bind-Expanded="_discordExpanded">
+                    <MudNavLink Href="/commands">Commands</MudNavLink>
+                    <MudNavLink Href="/help">Help</MudNavLink>
+                </MudNavGroup>
+                <MudNavLink Href="about">About</MudNavLink>
+            </MudNavMenu>
+        </MudPaper>
+    </MudDrawer>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+</LayoutView>
+
+@code
+{
+    private bool _dataExpanded = true;
+    private bool _raidsExpanded = true;
+    private bool _discordExpanded = true;
+    private bool _drawerOpen = true;
+
+    private MudTheme currentTheme = new MudTheme()
+    {
+        Palette = new Palette()
+        {
+            Black = "#27272f",
+            Background = "#32333d",
+            BackgroundGrey = "#27272f",
+            Surface = "#373740",
+            DrawerBackground = "#27272f",
+            DrawerText = "rgba(255,255,255, 0.50)",
+            DrawerIcon = "rgba(255,255,255, 0.50)",
+            AppbarBackground = "#27272f",
+            AppbarText = "rgba(255,255,255, 0.70)",
+            TextPrimary = "rgba(255,255,255, 0.70)",
+            TextSecondary = "rgba(255,255,255, 0.50)",
+            ActionDefault = "#adadb1",
+            ActionDisabled = "rgba(255,255,255, 0.26)",
+            ActionDisabledBackground = "rgba(255,255,255, 0.12)"
+        }
+    };
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    public IDCUser loggedUser { get; set; }
+
+    private string selectedGuildId;
+    public string SelectedGuildId 
+    {
+        get => selectedGuildId;
+        set
+        {
+            _ = SessionStorage.SetItemAsync<ulong>(SessionStoreDefaults.GuildId, ulong.Parse(value));
+            selectedGuildId = value;
+        }
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        loggedUser = await AuthProvider.GetCurrentUser();
+        SelectedGuildId = (await SessionStorage.GetItemAsync<ulong>(SessionStoreDefaults.GuildId)).ToString();
+    }
+}

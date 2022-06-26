@@ -1,5 +1,4 @@
-﻿using Discord;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 

@@ -1,0 +1,45 @@
+﻿.loading-container {
+	z-index: 5000;
+	width: 100vw;
+	height: 100vh;
+	background-color: #32333dff;
+}
+
+	.loading-container i {
+		color: #594ae2ff;
+		background-color: #32333dff;
+	}
+
+.loading-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	background: #594ae2ff;
+	z-index: 4000;
+	width: 100%;
+	height: 100%;
+	background-color: #32333dff;
+}
+
+.spinner {
+	border: 16px solid silver;
+	border-top: 16px solid #337AB7;
+	border-radius: 50%;
+	width: 80px;
+	height: 80px;
+	animation: spin 1400ms linear infinite;
+	top: 40%;
+	left: 55%;
+	position: absolute;
+	background-color: #32333dff;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg)
+	}
+
+	100% {
+		transform: rotate(360deg)
+	}
+}

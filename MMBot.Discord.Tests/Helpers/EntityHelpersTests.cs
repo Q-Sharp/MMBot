@@ -1,5 +1,5 @@
-using MMBot.Data.Entities;
-using MMBot.Data.Enums;
+using MMBot.Data.Contracts.Entities;
+using MMBot.Data.Contracts.Enums;
 using MMBot.Discord.Helpers;
 using Xunit;
 

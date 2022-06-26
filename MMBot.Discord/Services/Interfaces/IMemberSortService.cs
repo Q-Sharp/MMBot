@@ -1,4 +1,4 @@
-﻿using MMBot.Data.Entities;
+﻿using MMBot.Data.Contracts.Entities;
 using MMBot.Discord.Enums;
 using MMBot.Discord.Services.MemberSort;
 

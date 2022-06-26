@@ -1,6 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
-using MMBot.Data.Services.Interfaces;
+using MMBot.Data.Contracts;
 using MMBot.Discord.Filters;
 using MMBot.Discord.Helpers;
 using MMBot.Discord.Modules.Interfaces;

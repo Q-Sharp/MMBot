@@ -3,7 +3,7 @@
     "MMBot.Discord.Production": {
       "commandName": "Project",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Production"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": "true"
     },
@@ -16,7 +16,7 @@
     "WSL": {
       "commandName": "WSL2",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Production"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "distributionName": ""
     }

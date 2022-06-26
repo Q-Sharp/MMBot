@@ -1,8 +1,8 @@
 ﻿using Discord;
 using Discord.Addons.Interactive;
 using Discord.Commands;
-using MMBot.Data.Entities;
-using MMBot.Data.Services.Interfaces;
+using MMBot.Data.Contracts;
+using MMBot.Data.Contracts.Entities;
 using MMBot.Discord.Services.Interfaces;
 
 namespace MMBot.Discord.Modules;

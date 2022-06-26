@@ -2,5 +2,5 @@
 
 public interface IGuildSettingsService
 {
-    Task<Data.Entities.GuildSettings> GetGuildSettingsAsync(ulong guildId);
+    Task<Data.Contracts.Entities.GuildSettings> GetGuildSettingsAsync(ulong guildId);
 }
