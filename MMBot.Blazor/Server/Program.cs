@@ -77,7 +77,8 @@ services.AddAuthentication(opt =>
 });
 
 services.AddAuthorization();
-services.AddControllersWithViews(/*o => o.Filters.Add(new AutoValidateAntiforgeryTokenAttribute())*/);
+//services.AddControllersWithViews(/*o => o.Filters.Add(new AutoValidateAntiforgeryTokenAttribute())*/);
+services.AddControllers();
 services.AddRazorPages();
 
 services.AddMudServices();
@@ -110,14 +111,14 @@ else
     app.UseForwardedHeaders()
        .UseCertificateForwarding()
        .UseExceptionHandler("/Error")
-       //.UseHsts()
+       .UseHsts()
        .UseCookiePolicy();
 }
 
 //app.UseSecurityHeaders(SecurityHeadersDefinitions.GetHeaderPolicyCollection(app.Environment.IsDevelopment(),
 //                    configuration["Discord:Authority"]));
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 
 app.UseStaticFiles(new StaticFileOptions
@@ -135,8 +136,6 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseResponseCaching();
 
 app.MapRazorPages();
 app.MapControllers();
