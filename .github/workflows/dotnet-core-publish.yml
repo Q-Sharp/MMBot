@@ -38,13 +38,13 @@ jobs:
           REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
           TARGET: ${{ secrets.REMOTE_TARGET }}    
     - name: .NET Publish
-      run: dotnet publish ./MMBot.Blazor/MMBot.Blazor.csproj -c Release -r linux-x64 --no-self-contained /p:PublishReadyToRun=false  
+      run: dotnet publish ./MMBot.Blazor/MMBot.Blazor.Server/MMBot.Blazor.Server.csproj -c Release -r linux-x64 --no-self-contained /p:PublishReadyToRun=false  
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v2.1.5
       env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltgoDzvO --delete-excluded --filter 'protect *.db' --filter 'protect *.log' --filter 'protect *.json'"
-          SOURCE: MMBot.Blazor/bin/Release/net6.0/linux-x64/publish/
+          SOURCE: MMBot.Blazor/MMBot.Blazor.Server/bin/Release/net6.0/linux-x64/publish/
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
