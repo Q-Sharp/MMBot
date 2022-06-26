@@ -1,6 +1,6 @@
 ﻿namespace MMBot.Blazor.Shared.BusinessModel;
 
-public class ClanModel : Clan
+public class ClanModel : Clan, ICreate
 {
     public event Action StateChanged;
     private void NotifyStateChanged() => StateChanged?.Invoke();
@@ -35,16 +35,21 @@ public class ClanModel : Clan
         }
     }
 
-    public static ClanModel Create(Clan c)
+    public ICreate Create(object from)
     {
-        return new ClanModel
+        if (from is Clan c)
         {
-            Id = c.Id,
-            SortOrder = c.SortOrder,
-            Tag = c.Tag,
-            Name = c.Name,
-            DiscordRole = c.DiscordRole,
-            GuildId = c.GuildId,
-        };
+            return new ClanModel()
+            {
+                Id = c.Id,
+                SortOrder = c.SortOrder,
+                Tag = c.Tag,
+                Name = c.Name,
+                DiscordRole = c.DiscordRole,
+                GuildId = c.GuildId,
+            };
+        }
+
+        return null;
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace MMBot.Blazor.Shared.BusinessModel;
 
-public class MemberModel : Member
+public class MemberModel : Member, ICreate
 {
     public event Action StateChanged;
     private void NotifyStateChanged() => StateChanged?.Invoke();
@@ -95,25 +95,30 @@ public class MemberModel : Member
         }
     }
 
-    public static MemberModel Create(Member m)
+    public ICreate Create(object from)
     {
-        return new MemberModel
+        if(from is Member m)
         {
-            Id = m.Id,
-            Name = m.Name,
-            Discord = m.Discord,
-            AHigh = m.AHigh,
-            Role = m.Role,
-            DiscordStatus = m.DiscordStatus,
-            IsActive = m.IsActive,
-            ClanId = m.ClanId,
-            LastUpdated = m.LastUpdated,
-            Join = m.Join,
-            IgnoreOnMoveUp = m.IgnoreOnMoveUp,
-            PlayerTag = m.PlayerTag,
-            GuildId = m.GuildId,
-            MemberGroupId = m.MemberGroupId,
-            LocalTimeOffSet = m.LocalTimeOffSet,
-        };
+            return new MemberModel
+            {
+                Id = m.Id,
+                Name = m.Name,
+                Discord = m.Discord,
+                AHigh = m.AHigh,
+                Role = m.Role,
+                DiscordStatus = m.DiscordStatus,
+                IsActive = m.IsActive,
+                ClanId = m.ClanId,
+                LastUpdated = m.LastUpdated,
+                Join = m.Join,
+                IgnoreOnMoveUp = m.IgnoreOnMoveUp,
+                PlayerTag = m.PlayerTag,
+                GuildId = m.GuildId,
+                MemberGroupId = m.MemberGroupId,
+                LocalTimeOffSet = m.LocalTimeOffSet,
+            };
+        }
+
+        return null;
     }
 }

@@ -30,13 +30,13 @@ services.AddDbContextFactory<Context>(o => o.UseLazyLoadingProxies()
 //services.AddOptions<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme)
 //        .Configure<ITicketStore>((options, store) => options.SessionStore = store);
 
-services.AddAntiforgery(options =>
-{
-    options.HeaderName = AntiforgeryDefaults.Headername;
-    options.Cookie.Name = AntiforgeryDefaults.Cookiename;
-    options.Cookie.SameSite = SameSiteMode.Strict;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-});
+//services.AddAntiforgery(options =>
+//{
+//    options.HeaderName = AntiforgeryDefaults.Headername;
+//    options.Cookie.Name = AntiforgeryDefaults.Cookiename;
+//    options.Cookie.SameSite = SameSiteMode.Strict;
+//    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+//});
 
 services.AddHttpClient();
 services.AddOptions();
@@ -77,7 +77,7 @@ services.AddAuthentication(opt =>
 });
 
 services.AddAuthorization();
-services.AddControllersWithViews(o => o.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+services.AddControllersWithViews(/*o => o.Filters.Add(new AutoValidateAntiforgeryTokenAttribute())*/);
 services.AddRazorPages();
 
 services.AddMudServices();
@@ -114,8 +114,8 @@ else
        .UseCookiePolicy();
 }
 
-app.UseSecurityHeaders(SecurityHeadersDefinitions.GetHeaderPolicyCollection(app.Environment.IsDevelopment(),
-                    configuration["Discord:Authority"]));
+//app.UseSecurityHeaders(SecurityHeadersDefinitions.GetHeaderPolicyCollection(app.Environment.IsDevelopment(),
+//                    configuration["Discord:Authority"]));
 
 app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();

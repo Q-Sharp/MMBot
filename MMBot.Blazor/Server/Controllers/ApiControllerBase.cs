@@ -2,7 +2,7 @@
 
 [ApiController]
 [Route("api/[controller]")]
-[ValidateAntiForgeryToken]
+//[ValidateAntiForgeryToken]
 [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
 public class ApiControllerBase<TController, TEntity> : ControllerBase
     where TEntity : class
