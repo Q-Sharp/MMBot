@@ -9,12 +9,12 @@ public class MemberController : ApiControllerBase<MemberController, Member>
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetMember(ulong id)
+    public async Task<IActionResult> GetMember(string id)
         => Ok(await Repository.GetById(id));
 
     [HttpGet("getAll")]
-    public async Task<IActionResult> GetMembers(ulong guildId)
-        => Ok(await Repository.Get(c => c.GuildId == guildId));
+    public async Task<IActionResult> GetMembers(string guildId)
+        => Ok(await Repository.Get(c => c.GuildId.ToString() == guildId));
 
     [HttpPost]
     public async Task<IActionResult> CreateMember(Member member)
@@ -25,7 +25,7 @@ public class MemberController : ApiControllerBase<MemberController, Member>
         => Ok(await Repository.Update(member));
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteMember(ulong id)
+    public async Task<IActionResult> DeleteMember(string id)
         => Ok(await Repository.Delete(id));
 }
 

@@ -9,9 +9,9 @@ public partial class MemberPage
     [Inject]
     ICRUDViewModel<MemberModel, Member> MemberVM { get; set; }
 
-    [Inject] IRepository<Member> Member { get; set; }
-
     private string searchString = "";
+
+    protected override async Task OnInitializedAsync() => await MemberVM.Init();
 
     private bool FilterFunc(MemberModel Member)
     {

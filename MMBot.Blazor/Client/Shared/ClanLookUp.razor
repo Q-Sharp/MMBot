@@ -1,6 +1,4 @@
-﻿@inject ICRUDViewModel<ClanModel, Clan> ClanVM
-
-@inherits ComponentBase
+﻿@inherits ComponentBase
 
 <MudSelect T="int?" Label="Clan" Value="@SelectedId" Text="@SelectedClan" SelectedValuesChanged="ValueChanged" FullWidth="true" Strict="true" Variant="Variant.Outlined" Format="F2"
           >
@@ -10,31 +8,3 @@
         <MudSelectItem T="int?" value="@clan.Id">@clan.Name</MudSelectItem>
     }
 </MudSelect>
-
-@code
-{
-    protected override void OnInitialized()
-    {
-        ClanVM.SelectedEntity = ClanVM?.Entities.FirstOrDefault(x => x.Id == SelectedId);
-        StateHasChanged();
-    }
-
-    private async Task UpdateId(object changed)
-    {
-        await ValueChanged.InvokeAsync();
-    }
-
-    public void Dispose()
-    {
-        
-    }
-
-    [Parameter]
-    public int? SelectedId { get; set; }
-
-    [Parameter]
-    public string SelectedClan { get; set; }
-
-    [Parameter]
-    public EventCallback ValueChanged { get; set; }
-}

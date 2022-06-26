@@ -8,13 +8,13 @@ public class ClanController : ApiControllerBase<ClanController, Clan>
 
     }
 
-    [HttpGet("id={id}")]
-    public async Task<IActionResult> GetClan(ulong id)
+    [HttpGet]
+    public async Task<IActionResult> GetClan(string id)
         => Ok(await Repository.GetById(id));
 
     [HttpGet("getAll")]
-    public async Task<IActionResult> GetClans(ulong guildId)
-        => Ok(await Repository.Get(c => c.GuildId == guildId));
+    public async Task<IActionResult> GetClans(string guildId)
+        => Ok(await Repository.Get(c => c.GuildId.ToString() == guildId));
 
     [HttpPost]
     public async Task<IActionResult> CreateClan(Clan clan)
@@ -25,6 +25,6 @@ public class ClanController : ApiControllerBase<ClanController, Clan>
         => Ok(await Repository.Update(clan));
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteClan(ulong id)
+    public async Task<IActionResult> DeleteClan(string id)
         => Ok(await Repository.Delete(id));
 }

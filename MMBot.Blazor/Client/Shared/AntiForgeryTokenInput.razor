@@ -1,13 +1,2 @@
-﻿@inject IJSRuntime JSRuntime
-
-<input type="hidden" id="__RequestVerificationToken"
+﻿<input type="hidden" id="__RequestVerificationToken"
        name="__RequestVerificationToken" value="@GetToken()">
-
-@code {
-    private string token = "";
-
-    protected override async Task OnInitializedAsync()
-        =>  token = await JSRuntime.InvokeAsync<string>("getAntiForgeryToken");
-
-    public string GetToken() => token;
-}

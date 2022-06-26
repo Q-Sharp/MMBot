@@ -29,3 +29,4 @@ global using MMBot.Data.Helpers;
 global using MMBot.Data.Services.Database;
 global using MudBlazor.Services;
 global using Serilog;
+global using MMBot.Blazor.Server.Services;

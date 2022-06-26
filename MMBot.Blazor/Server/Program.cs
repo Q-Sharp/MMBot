@@ -22,17 +22,19 @@ var connectionString = configuration.GetConnectionString("Context");
 services.AddDbContextFactory<Context>(o => o.UseLazyLoadingProxies()
                                             .UseNpgsql(connectionString))
         .AddScoped<IDatabaseService, DatabaseService>()
-        .AddScoped<IBlazorDatabaseService, BlazorDatabaseService>();
+        .AddScoped<IBlazorDatabaseService, BlazorDatabaseService>()
+        .AddScoped<IRepository<Clan>, DataRepository<Clan, Context>>()
+        .AddScoped<IRepository<Member>, DataRepository<Member, Context>>();
 
-services.AddSingleton<ITicketStore, MMBotTicketStore>();
-services.AddOptions<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme)
-        .Configure<ITicketStore>((options, store) => options.SessionStore = store);
+//services.AddSingleton<ITicketStore, MMBotTicketStore>();
+//services.AddOptions<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme)
+//        .Configure<ITicketStore>((options, store) => options.SessionStore = store);
 
 services.AddAntiforgery(options =>
 {
     options.HeaderName = AntiforgeryDefaults.Headername;
     options.Cookie.Name = AntiforgeryDefaults.Cookiename;
-    options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict;
+    options.Cookie.SameSite = SameSiteMode.Strict;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 

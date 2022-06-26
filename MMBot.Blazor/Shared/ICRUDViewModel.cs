@@ -15,7 +15,7 @@ public interface ICRUDViewModel<TEntityModel, TEntity>
     TEntityModel SelectedEntity { get; set; }
 
     IRepository<TEntity> Repo { get; }
-    string Entity { get; }
+    string Entity => nameof(TEntity);
 
     ISessionStorageService SessionStorage { get; }
 

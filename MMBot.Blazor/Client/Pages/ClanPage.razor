@@ -8,12 +8,12 @@
 else
 {
     <MudTable FixedHeader="true" Items="@ClanVM.Entities" Dense="true" Hover="true" ReadOnly="false" Filter="new Func<ClanModel, bool>(FilterFunc)" @bind-SelectedItem="ClanVM.SelectedEntity" SortLabel="Sort By" 
-              CommitEditTooltip="Commit Edit" OnCommitEditClick="x => CommitEdit()">
+              CommitEditTooltip="Commit Edit" OnCommitEditClick="async x => await ClanVM.Update(ClanVM.SelectedEntity)">
         <ToolBarContent>
             <MudText Typo="Typo.h2">Clans</MudText>
             <MudSpacer />
             <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Create" Color="Color.Default" OnClick="() => ClanVM.Add()">Create</MudButton>
-            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Default" Disabled="(ClanVM?.SelectedEntity?.Id ?? 0) == 0" OnClick="() => Delete()">Delete</MudButton>
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Default" Disabled="(ClanVM?.SelectedEntity?.Id ?? 0) == 0" OnClick="async () => await ClanVM.Delete()">Delete</MudButton>
             <MudSpacer />
             <MudTextField Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         </ToolBarContent>

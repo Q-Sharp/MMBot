@@ -1,4 +1,8 @@
-﻿var builder = WebAssemblyHostBuilder.CreateDefault(args);
+﻿using Microsoft.AspNetCore.Components.Web;
+
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+var services = builder.Services;
 
 Log.Logger = new LoggerConfiguration()
                 .WriteTo.BrowserConsole()
@@ -9,34 +13,35 @@ builder.Logging.ClearProviders();
 if (builder.HostEnvironment.IsDevelopment())
     builder.Logging.AddSerilog(Log.Logger);
 
-builder.Services.AddOptions();
-builder.Services.AddAuthorizationCore();
+services.AddOptions();
+services.AddAuthorizationCore();
 
-builder.Services.TryAddSingleton<AuthenticationStateProvider, MMBotAuthenticationStateProvider>();
-builder.Services.TryAddSingleton(sp => (MMBotAuthenticationStateProvider)sp.GetRequiredService<AuthenticationStateProvider>());
-builder.Services.AddTransient<AuthorizedHandler>();
+services.TryAddSingleton<AuthenticationStateProvider, MMBotAuthenticationStateProvider>();
+services.TryAddSingleton(sp => (MMBotAuthenticationStateProvider)sp.GetRequiredService<AuthenticationStateProvider>());
+services.AddTransient<AuthorizedHandler>();
 
 builder.RootComponents.Add<App>("#app");
+builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddHttpClient("default", client =>
+services.AddHttpClient("default", client =>
 {
     client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 });
 
-builder.Services.AddHttpClient("authorizedClient", client =>
+services.AddHttpClient("authorizedClient", client =>
 {
     client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 }).AddHttpMessageHandler<AuthorizedHandler>();
 
-builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("default"));
+services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("default"));
 
-builder.Services.AddTransient<IAuthorizedAntiForgeryClientFactory, AuthorizedAntiForgeryClientFactory>();
+services.AddTransient<IAuthorizedAntiForgeryClientFactory, AuthorizedAntiForgeryClientFactory>();
 
-builder.Services.AddBlazoredSessionStorage();
-builder.Services.AddMudServices();
+services.AddBlazoredSessionStorage();
+services.AddMudServices();
 
-builder.Services.AddCRUDViewModels();
+services.AddCRUDViewModels();
 
 await builder.Build().RunAsync();

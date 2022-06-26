@@ -9,14 +9,9 @@ public partial class ClanPage
     [Inject]
     ICRUDViewModel<ClanModel, Clan> ClanVM { get; set; }
 
-    [Inject] IRepository<Clan> Clan { get; set; }
-
-
     private string searchString = "";
 
-    public async void CommitEdit() => await ClanVM.Update(ClanVM.SelectedEntity);
-
-    public async void Delete() => await ClanVM.Delete();
+    protected override async Task OnInitializedAsync() => await ClanVM.Init();
 
     private bool FilterFunc(ClanModel clan)
     {

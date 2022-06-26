@@ -2,7 +2,6 @@
 
 public class ClanViewModel : ViewModelBase, ICRUDViewModel<ClanModel, Clan>
 {
-    public string Entity => "Clan";
     public IRepository<Clan> Repo { get; set; }
     public ClanModel SelectedEntity { get; set; }
     public ICollection<ClanModel> Entities { get; set; }
@@ -12,9 +11,11 @@ public class ClanViewModel : ViewModelBase, ICRUDViewModel<ClanModel, Clan>
         : base(sessionStorage, dialogService)
     {
         Repo = repo;
-        sessionStorage.Changing += (x, y) => _ = Init();
-
-        Init().GetAwaiter().GetResult();
+        sessionStorage.Changing += async (x, y) =>
+        {
+            GID = await SessionStorage.GetItemAsync<ulong>(SessionStoreDefaults.GuildId);
+            await Init();
+        };
     }
 
     public async Task Init() => Entities = await Load(x => x.GuildId == GID, x => x.OrderBy(y => y.SortOrder));
@@ -62,7 +63,11 @@ public class ClanViewModel : ViewModelBase, ICRUDViewModel<ClanModel, Clan>
     }
 
     public async Task<IList<ClanModel>> Load(Expression<Func<Clan, bool>> filter = null, Func<IQueryable<Clan>, IOrderedQueryable<Clan>> orderBy = null)
-        => (await Repo.Get(filter, orderBy)).Select(x => ClanModel.Create(x)).ToList();
+    {
+        var fromAPI = await Repo.Get(filter, orderBy);
+
+        return fromAPI.Select(x => ClanModel.Create(x)).ToList();
+    }
 
     public ClanModel Add()
     {
