@@ -34,8 +34,17 @@ jobs:
     - name: .NET Publish
       run: dotnet publish ./MMBot.Discord/MMBot.Discord.csproj -c Release -r linux-x64 --no-self-contained /p:PublishReadyToRun=false /p:DebugType=None /p:DebugSymbols=false
 
+    - name: App Settings Variable Substitution
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: './MMBot.Discord/bin/Release/net6.0/linux-x64/publish/appsettings.json'
+      env:
+        DetailedErrors: false
+        Discord.DevToken: ${{ secrets.DISCORD_DEV_TOKEN }}
+        Discord.Token: ${{ secrets.DISCORD_TOKEN }}
+
     - name: Deploy to Server
-      uses: easingthemes/ssh-deploy@v2.1.5
+      uses: easingthemes/ssh-deploy@v2.2.11
       env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltgoDzvO --delete-excluded --filter 'protect *.db' --filter 'protect *.log' --filter 'protect *.json'"
@@ -46,10 +55,19 @@ jobs:
           TARGET: ${{ secrets.REMOTE_TARGET }}
           
     - name: .NET Publish
-      run: dotnet publish ./MMBot.Blazor/Server/MMBot.Blazor.Server.csproj -c Release -r linux-x64 --self-contained /p:PublishReadyToRun=false /p:DebugType=None /p:DebugSymbols=false  
+      run: dotnet publish ./MMBot.Blazor/Server/MMBot.Blazor.Server.csproj -c Release -r linux-x64 --self-contained /p:PublishReadyToRun=false /p:DebugType=None /p:DebugSymbols=false
+
+    - name: App Settings Variable Substitution
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: './MMBot.Blazor/Server/bin/Release/net6.0/linux-x64/publish/appsettings.json'
+      env:
+        DetailedErrors: false
+        Discord.AppId: ${{ secrets.DISCORD_APPID }}
+        Discord.AppSecret: ${{ secrets.DISCORD_APPSECRET }}
 
     - name: Deploy to Server
-      uses: easingthemes/ssh-deploy@v2.1.5
+      uses: easingthemes/ssh-deploy@v2.2.11
       env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltgoDzvO --delete-excluded --filter 'protect *.db' --filter 'protect *.log' --filter 'protect *.json'"

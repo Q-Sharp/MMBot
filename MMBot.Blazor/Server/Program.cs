@@ -110,14 +110,14 @@ else
     app.UseForwardedHeaders()
        .UseCertificateForwarding()
        .UseExceptionHandler("/Error")
-       .UseHsts()
+       //.UseHsts()
        .UseCookiePolicy();
 }
 
 //app.UseSecurityHeaders(SecurityHeadersDefinitions.GetHeaderPolicyCollection(app.Environment.IsDevelopment(),
 //                    configuration["Discord:Authority"]));
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 
 app.UseStaticFiles(new StaticFileOptions
