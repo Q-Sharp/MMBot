@@ -51,33 +51,40 @@ public class UserController : ControllerBase
         }
 
         dcUser.Name = claimsIdentity.Name;
-        dcUser.Id = ulong.Parse(claimsIdentity.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value ?? "0");
-        dcUser.AvatarUrl = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "urn:discord:avatar:url")?.Value;
-        var ids = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "guilds")?.Value;
 
-        var o = new JsonSerializerOptions
+        if (ulong.TryParse(claimsIdentity.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value ?? "0", out var id))
         {
-            WriteIndented = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            IgnoreReadOnlyProperties = true,
-        };
+            dcUser.Id = id;
 
-        var channel = JsonSerializer.Deserialize<IList<DCChannel>>(ids, o);
+            dcUser.AvatarUrl = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "urn:discord:avatar:url")?.Value;
+            var ids = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "guilds")?.Value;
 
-        var allGuildsInDb = _blazorDatabaseService?.GetAllGuilds().Select(x => new DCChannel { Id = x.Item1.ToString(), name = x.Item2 });
+            var o = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                IgnoreReadOnlyProperties = true,
+            };
 
-        dcUser.Guilds = dcUser.Id == 301764235887902727 ?
-                allGuildsInDb.ToList() :
-            channel.Where(x => x.owner ||
-                x.PermissionFlags.HasFlag(GuildPermission.Administrator) ||
-                x.PermissionFlags.HasFlag(GuildPermission.ManageChannels) ||
-                x.PermissionFlags.HasFlag(GuildPermission.ManageGuild) ||
-                x.PermissionFlags.HasFlag(GuildPermission.ManageRoles)).ToList();
+            var channel = JsonSerializer.Deserialize<IList<DCChannel>>(ids, o);
 
-        dcUser.Guilds = dcUser.Guilds.Where(x => allGuildsInDb.Select(y => y.Id).Contains(x.Id)).ToList();
-        dcUser.CurrentGuildId = dcUser.Guilds.FirstOrDefault()?.Id;
+            var allGuildsInDb = _blazorDatabaseService?.GetAllGuilds().Select(x => new DCChannel { Id = x.Item1.ToString(), name = x.Item2 });
 
-        return dcUser;
+            dcUser.Guilds = dcUser.Id == 301764235887902727 ?
+                    allGuildsInDb.ToList() :
+                channel.Where(x => x.owner ||
+                    x.PermissionFlags.HasFlag(GuildPermission.Administrator) ||
+                    x.PermissionFlags.HasFlag(GuildPermission.ManageChannels) ||
+                    x.PermissionFlags.HasFlag(GuildPermission.ManageGuild) ||
+                    x.PermissionFlags.HasFlag(GuildPermission.ManageRoles)).ToList();
+
+            dcUser.Guilds = dcUser.Guilds.Where(x => allGuildsInDb.Select(y => y.Id).Contains(x.Id)).ToList();
+            dcUser.CurrentGuildId = dcUser.Guilds.FirstOrDefault()?.Id;
+
+            return dcUser;
+        }
+
+        return DCUser.Anonymous;
     }
 
     [HttpGet(ApiAuthDefaults.LogIn)]
