@@ -1,5 +1,4 @@
 ﻿using Discord;
-using Discord.Addons.Interactive;
 using Discord.Commands;
 using MMBot.Data.Contracts;
 using MMBot.Data.Contracts.Entities;
@@ -7,7 +6,7 @@ using MMBot.Discord.Services.Interfaces;
 
 namespace MMBot.Discord.Modules;
 
-public abstract class MMBotModule : InteractiveBase<SocketCommandContext>
+public abstract class MMBotModule : ModuleBase<SocketCommandContext>
 {
     protected IDatabaseService _databaseService;
     protected ICommandHandler _commandHandler;

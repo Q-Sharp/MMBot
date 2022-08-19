@@ -1,5 +1,4 @@
 ﻿using Discord;
-using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
@@ -68,7 +67,6 @@ public static class DiscordSocketHost
                    .AddScoped<IJsonService, JsonService>()
                    .AddScoped<IAdminService, AdminService>()
                    .AddScoped<IMemberSortService, MemberSortService>()
-                   .AddSingleton<InteractiveService, InteractiveService>()
                    .AddSingleton<ITimerService, TimerService>()
                    .AddTransient<ITranslationService, TranslationService>()
                    .AddHttpClient()

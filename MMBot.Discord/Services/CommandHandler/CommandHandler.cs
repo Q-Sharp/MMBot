@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Discord;
-using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +24,6 @@ public partial class CommandHandler : ICommandHandler
     private IGuildSettingsService _gs;
     private IDatabaseService _databaseService;
     private IAdminService _adminService;
-    private InteractiveService _interactiveService;
     private ITimerService _timerService;
 
     public CommandHandler(IServiceProvider services, CommandService commands, DiscordSocketClient client, ILogger<CommandHandler> logger)
@@ -42,7 +40,6 @@ public partial class CommandHandler : ICommandHandler
 
         _databaseService = _services.GetService<IDatabaseService>();
         _gs = _services.GetService<IGuildSettingsService>();
-        _interactiveService = _services.GetService<InteractiveService>();
         _timerService = _services.GetService<ITimerService>();
         _adminService = _services.GetService<IAdminService>();
 

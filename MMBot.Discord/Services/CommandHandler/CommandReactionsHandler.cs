@@ -11,7 +11,7 @@ public partial class CommandHandler : ICommandHandler
     private static readonly AsyncLock _mutex = new();
     private static readonly AsyncMonitor _monitor = new();
 
-    private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
+    private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
     {
         using (await _mutex.LockAsync())
         {
