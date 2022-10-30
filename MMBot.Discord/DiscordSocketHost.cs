@@ -51,7 +51,8 @@ public static class DiscordSocketHost
                    .AddSingleton(o => new DiscordSocketClient(new DiscordSocketConfig
                    {
                        LogLevel = Enum.Parse<LogSeverity>(discordConfig.GetValue<string>("LogLevel"), true),
-                       MessageCacheSize = discordConfig.GetValue<int>("MessageCacheSize")
+                       MessageCacheSize = discordConfig.GetValue<int>("MessageCacheSize"),
+                       GatewayIntents = GatewayIntents.All
                    }))
                    .AddSingleton(s => new CommandService(new CommandServiceConfig
                    {
