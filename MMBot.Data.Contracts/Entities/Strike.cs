@@ -12,6 +12,8 @@ public class Strike : IHaveId
 
     public virtual Member Member { get; set; }
 
+    public byte[] Version { get; set; }
+
     public void Update(object strike)
     {
         if (strike is Strike m && Id == m.Id)

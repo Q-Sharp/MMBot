@@ -19,6 +19,8 @@ public class SeasonResult : IHaveId, IHaveGuildId
     public virtual Member Member { get; set; }
     public virtual Season Season { get; set; }
 
+    public byte[] Version { get; set; }
+
     public void Update(object season)
     {
         if (season is SeasonResult m && Id == m.Id)

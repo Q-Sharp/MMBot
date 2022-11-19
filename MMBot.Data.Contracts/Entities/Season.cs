@@ -15,6 +15,8 @@ public class Season : IHaveId
     [JsonIgnore]
     public virtual ICollection<SeasonResult> SeasonResult { get; set; }
 
+    public byte[] Version { get; set; }
+
     public void Update(object season)
     {
 

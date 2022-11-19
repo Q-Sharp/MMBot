@@ -27,6 +27,8 @@ public class Clan : IHaveId, IHaveIdentifier, IHaveGuildId
 
     public virtual ICollection<RaidBoss> RaidBoss { get; set; } = new Collection<RaidBoss>();
 
+    public byte[] Version { get; set; }
+
     public override string ToString() => $"[{Tag}]";
 
     public void Update(object clan)

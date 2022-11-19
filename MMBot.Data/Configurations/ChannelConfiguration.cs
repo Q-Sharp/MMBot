@@ -4,7 +4,6 @@ public class ChannelConfiguration : IEntityTypeConfiguration<Channel>
 {
     public void Configure(EntityTypeBuilder<Channel> builder)
     {
-        builder.UseXminAsConcurrencyToken()
-               .HasKey(c => c.Id);
+        builder.Property(x => x.Version).IsRowVersion();
     }
 }

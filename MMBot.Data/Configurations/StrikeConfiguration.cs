@@ -4,7 +4,7 @@ public class StrikeConfiguration : IEntityTypeConfiguration<Strike>
 {
     public void Configure(EntityTypeBuilder<Strike> builder)
     {
-        builder.UseXminAsConcurrencyToken()
-               .HasKey(c => c.Id);
+        builder.Property(x => x.Version).IsRowVersion();
+               
     }
 }

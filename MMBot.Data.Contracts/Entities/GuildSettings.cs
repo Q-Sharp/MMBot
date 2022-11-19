@@ -32,6 +32,8 @@ public class GuildSettings : IHaveId, IHaveGuildId
     [Display]
     public ulong MemberRoleId { get; set; }
 
+    public byte[] Version { get; set; }
+
     public void Update(object guildSettings)
     {
         if (guildSettings is GuildSettings gs && Id == gs.Id)

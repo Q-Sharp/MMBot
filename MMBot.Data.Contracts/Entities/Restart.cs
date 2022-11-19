@@ -9,6 +9,8 @@ public class Restart : IHaveId
 
     public bool DBImport { get; set; }
 
+    public byte[] Version { get; set; }
+
     public void Update(object restart)
     {
         if (restart is Restart r && Id == r.Id)

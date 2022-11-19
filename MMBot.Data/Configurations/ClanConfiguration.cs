@@ -4,8 +4,7 @@ public class ClanConfiguration : IEntityTypeConfiguration<Clan>
 {
     public void Configure(EntityTypeBuilder<Clan> builder)
     {
-        builder.UseXminAsConcurrencyToken()
-               .HasKey(c => c.Id);
+        builder.Property(x => x.Version).IsRowVersion();
 
         builder.HasIndex(c => new { c.Tag, c.Name, c.GuildId, c.SortOrder })
                .IsUnique();

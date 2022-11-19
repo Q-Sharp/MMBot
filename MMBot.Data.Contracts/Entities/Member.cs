@@ -1,10 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
-using MMBot.Data.Contracts.Enums;
-
-namespace MMBot.Data.Contracts.Entities;
+﻿namespace MMBot.Data.Contracts.Entities;
 
 public class Member : IHaveId, IHaveIdentifier, IHaveGuildId
 {
@@ -89,6 +83,7 @@ public class Member : IHaveId, IHaveIdentifier, IHaveGuildId
     public virtual ICollection<SeasonResult> SeasonResult { get; set; } = new Collection<SeasonResult>();
 
     public override string ToString() => Clan?.Tag is not null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
+    public byte[] Version { get; set; }
 
     public void Update(object member)
     {

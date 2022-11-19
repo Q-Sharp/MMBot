@@ -4,8 +4,8 @@ public class MemberGroupConfiguration : IEntityTypeConfiguration<MemberGroup>
 {
     public void Configure(EntityTypeBuilder<MemberGroup> builder)
     {
-        builder.UseXminAsConcurrencyToken()
-               .HasKey(c => c.Id);
+        builder.Property(x => x.Version).IsRowVersion();
+               
 
         builder.HasMany(m => m.Members)
             .WithOne(m => m.MemberGroup)

@@ -17,4 +17,6 @@ public class RaidParticipation : IHaveId, IHaveGuildId
     public ulong GuildId { get; set; }
 
     public void Update(object raidBoss) => throw new NotImplementedException();
+
+    public byte[] Version { get; set; }
 }

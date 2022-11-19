@@ -4,7 +4,7 @@ public class RaidParticipationConfiguration : IEntityTypeConfiguration<RaidParti
 {
     public void Configure(EntityTypeBuilder<RaidParticipation> builder)
     {
-        builder.UseXminAsConcurrencyToken()
-               .HasKey(c => c.Id);
+        builder.Property(x => x.Version).IsRowVersion();
+               
     }
 }
