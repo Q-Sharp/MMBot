@@ -6,8 +6,8 @@ public class Context : DbContext
     {
         if (!options.IsConfigured)
         {
-            options.UseLazyLoadingProxies();
-            options.UseNpgsql($@"Server=127.0.0.1;Port=5433;Database=MMBotDB;Username=postgres;Password=P0stGresSQL2021");
+            _ = options.UseLazyLoadingProxies();
+            _ = options.UseNpgsql($@"Server=127.0.0.1;Port=5433;Database=MMBotDB;Username=postgres;Password=P0stGresSQL2021");
         }
     }
 
@@ -33,11 +33,8 @@ public class Context : DbContext
     public DbSet<RaidBoss> RaidBoss { get; set; }
     public DbSet<RaidParticipation> RaidParticipation { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(Context).Assembly)
+    protected override void OnModelCreating(ModelBuilder modelBuilder) => modelBuilder.ApplyConfigurationsFromAssembly(typeof(Context).Assembly)
                     .UseIdentityByDefaultColumns();
-    }
 
     public async Task MigrateAsync() => await Database.MigrateAsync();
 }

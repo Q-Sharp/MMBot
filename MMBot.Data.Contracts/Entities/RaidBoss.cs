@@ -1,7 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using MMBot.Data.Contracts.Enums;
-
-namespace MMBot.Data.Contracts.Entities;
+﻿namespace MMBot.Data.Contracts.Entities;
 
 public class RaidBoss : IHaveId, IHaveIdentifier, IHaveGuildId
 {

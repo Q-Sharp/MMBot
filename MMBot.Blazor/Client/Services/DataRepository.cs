@@ -9,7 +9,7 @@ public class DataRepository<TEntity> : IRepository<TEntity>
 
     private string _typeName => GetType().GetGenericArguments()[0].Name;
 
-    private async Task<ulong> GetGuildId() 
+    private async Task<ulong> GetGuildId()
         => await _sessionStorage.GetItemAsync<ulong>(SessionStoreDefaults.GuildId);
 
     public DataRepository(IAuthorizedAntiForgeryClientFactory clientFactory, ILogger<IRepository<TEntity>> logger, ISessionStorageService sessionStorage)
@@ -19,7 +19,7 @@ public class DataRepository<TEntity> : IRepository<TEntity>
         _sessionStorage = sessionStorage;
     }
 
-    public async virtual Task<IEnumerable<TEntity>> Get(
+    public virtual async Task<IEnumerable<TEntity>> Get(
         Expression<Func<TEntity, bool>> filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
         string includeProperties = "")
@@ -34,7 +34,7 @@ public class DataRepository<TEntity> : IRepository<TEntity>
             if (filter != null)
                 q = q.Where(filter);
 
-            includeProperties.Split(",", StringSplitOptions.RemoveEmptyEntries);
+            _ = includeProperties.Split(",", StringSplitOptions.RemoveEmptyEntries);
 
             return orderBy != null ? orderBy(q).ToList() : q.ToList();
         }
@@ -45,16 +45,16 @@ public class DataRepository<TEntity> : IRepository<TEntity>
         }
     }
 
-    public async virtual Task<TEntity> GetById(object id)
+    public virtual async Task<TEntity> GetById(object id)
     {
         var http = await _clientFactory.CreateClient();
         return await http.GetEntity<TEntity>((ulong)id, _typeName);
     }
 
-    public async virtual Task<bool> Delete(TEntity entityToDelete) 
+    public virtual async Task<bool> Delete(TEntity entityToDelete)
         => await Delete(entityToDelete.Id);
 
-    public async virtual Task<bool> Delete(object id)
+    public virtual async Task<bool> Delete(object id)
     {
         var http = await _clientFactory.CreateClient();
         await http.DeleteEntity<TEntity>((ulong)id, _typeName);
@@ -62,7 +62,7 @@ public class DataRepository<TEntity> : IRepository<TEntity>
         return true;
     }
 
-    public async virtual Task<TEntity> Insert(TEntity entity)
+    public virtual async Task<TEntity> Insert(TEntity entity)
     {
         try
         {
@@ -77,7 +77,7 @@ public class DataRepository<TEntity> : IRepository<TEntity>
         return default;
     }
 
-    public async virtual Task<TEntity> Update(TEntity entityToUpdate)
+    public virtual async Task<TEntity> Update(TEntity entityToUpdate)
     {
         try
         {

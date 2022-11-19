@@ -13,10 +13,7 @@ public partial class TranslationModule : MMBotModule, ITranslationModule
     protected readonly ITranslationService _translationService;
 
     public TranslationModule(IDatabaseService databaseService, ICommandHandler commandHandler, ITranslationService translationService, IGuildSettingsService guildSettings)
-        : base(databaseService, guildSettings, commandHandler)
-    {
-        _translationService = translationService;
-    }
+        : base(databaseService, guildSettings, commandHandler) => _translationService = translationService;
 
     [Command]
     [Summary("Translates any text to english")]

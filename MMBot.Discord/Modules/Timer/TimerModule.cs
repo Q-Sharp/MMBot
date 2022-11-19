@@ -1,8 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using MMBot.Discord.Filters;
 using MMBot.Data.Contracts;
+using MMBot.Discord.Filters;
 using MMBot.Discord.Helpers;
 using MMBot.Discord.Modules.Interfaces;
 using MMBot.Discord.Services.Interfaces;
@@ -17,10 +17,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
     protected readonly ITimerService _timerService;
 
     public TimerModule(IDatabaseService databaseService, ICommandHandler commandHandler, ITimerService timerService, IGuildSettingsService guildSettings)
-        : base(databaseService, guildSettings, commandHandler)
-    {
-        _timerService = timerService;
-    }
+        : base(databaseService, guildSettings, commandHandler) => _timerService = timerService;
 
     [Command("Create")]
     [Alias("C")]
@@ -31,7 +28,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
         if ((await _databaseService.LoadTimerAsync(Context.Guild.Id)).FirstOrDefault(t => t.Name.ToLower() == name.ToLower()) is not null)
         {
             var es = $"A timer with that name already exists!";
-            await ReplyAsync(es);
+            _ = await ReplyAsync(es);
             return FromError(CommandError.Unsuccessful, es);
         }
 
@@ -42,7 +39,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
             t.IsRecurring = recurring;
             t.GuildId = Context.Guild.Id;
             await _databaseService.SaveDataAsync();
-            await ReplyAsync($"The timer {t} was added to database.");
+            _ = await ReplyAsync($"The timer {t} was added to database.");
         }
 
         return FromSuccess();
@@ -59,11 +56,11 @@ public partial class TimerModule : MMBotModule, ITimerModule
         if (t != null)
         {
             if (t.IsActive)
-                await StopTimer(name);
+                _ = await StopTimer(name);
 
             _databaseService.DeleteTimer(t);
             await _databaseService.SaveDataAsync();
-            await ReplyAsync($"The timer {name} was deleted");
+            _ = await ReplyAsync($"The timer {name} was deleted");
         }
 
         return FromErrorObjectNotFound("Timer", name);
@@ -76,7 +73,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
     public async Task<RuntimeResult> ListTimers()
     {
         var timer = (await _databaseService.LoadTimerAsync(Context.Guild.Id)).ToList();
-        await ReplyAsync(timer.Count > 0 ? timer.GetTablePropertiesWithValues() : "No timers");
+        _ = await ReplyAsync(timer.Count > 0 ? timer.GetTablePropertiesWithValues() : "No timers");
         return FromSuccess();
     }
 
@@ -90,13 +87,13 @@ public partial class TimerModule : MMBotModule, ITimerModule
         if (t is not null)
         {
             if (t.IsActive)
-                await StopTimer(name);
+                _ = await StopTimer(name);
 
             t.ChannelId = channel.Id;
             t.GuildId = Context.Guild.Id;
             t.Message = message;
             await _databaseService.SaveDataAsync();
-            await ReplyAsync($"A notification will be send to {channel.Name} for timer {t}.");
+            _ = await ReplyAsync($"A notification will be send to {channel.Name} for timer {t}.");
         }
 
         return FromErrorObjectNotFound("Timer", name);
@@ -112,12 +109,12 @@ public partial class TimerModule : MMBotModule, ITimerModule
         if (t is not null)
         {
             if (t.IsActive)
-                await StopTimer(name);
+                _ = await StopTimer(name);
 
             t.ChannelId = null;
             t.Message = null;
             await _databaseService.SaveDataAsync();
-            await ReplyAsync($"The notification for timer {t} is deleted.");
+            _ = await ReplyAsync($"The notification for timer {t} is deleted.");
             return FromSuccess();
         }
 
@@ -148,7 +145,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
             await _databaseService.SaveDataAsync();
 
             await _timerService?.Start(t, false, toFirstRingSpan);
-            await ReplyAsync($"Timer {t} is running.");
+            _ = await ReplyAsync($"Timer {t} is running.");
             return FromSuccess();
         }
 
@@ -170,7 +167,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
             t.RingSpan = null;
             t.EndTime = null;
             await _databaseService.SaveDataAsync();
-            await ReplyAsync($"Timer {t} stopped.");
+            _ = await ReplyAsync($"Timer {t} stopped.");
 
             return FromSuccess();
         }
@@ -189,7 +186,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
         if (t is not null)
         {
             var timeLeft = await _timerService?.GetCountDown(t);
-            await ReplyAsync($"Countdown for {t}: {timeLeft}");
+            _ = await ReplyAsync($"Countdown for {t}: {timeLeft}");
             return FromSuccess();
         }
 

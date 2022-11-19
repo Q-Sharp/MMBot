@@ -7,7 +7,7 @@ public partial class MemberPage
     public IAuthorizedAntiForgeryClientFactory AuthorizedAntiForgeryClientFactory { get; set; }
 
     [Inject]
-    ICRUDViewModel<MemberModel, Member> MemberVM { get; set; }
+    private ICRUDViewModel<MemberModel, Member> MemberVM { get; set; }
 
     private string searchString = "";
 

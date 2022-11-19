@@ -106,8 +106,8 @@ public partial class AdminModule : MMBotModule, IAdminModule
             if (Interlocked.Read(ref _commandIsRunning) > 0)
                 return FromError(CommandError.Unsuccessful, $"I can only run a single long running command at a time!");
 
-            Interlocked.Increment(ref _commandIsRunning);
-            await ReplyAsync($"Fixing roles of discord members accordingly to their clan membership....");
+            _ = Interlocked.Increment(ref _commandIsRunning);
+            _ = await ReplyAsync($"Fixing roles of discord members accordingly to their clan membership....");
 
             var c = await _databaseService.LoadClansAsync(Context.Guild.Id);
             var ar = Context.Guild.Roles.Where(x => c.Select(clan => clan.DiscordRole).Contains(x.Name)).ToArray();
@@ -136,7 +136,7 @@ public partial class AdminModule : MMBotModule, IAdminModule
                     }
                     catch (Exception e)
                     {
-                        await ReplyAsync($"{member.Name}'s role couldn't be fixed: {e.Message}");
+                        _ = await ReplyAsync($"{member.Name}'s role couldn't be fixed: {e.Message}");
                     }
                 }
             }
@@ -148,7 +148,7 @@ public partial class AdminModule : MMBotModule, IAdminModule
 
             //}
 
-            await ReplyAsync($"All roles have been fixed!");
+            _ = await ReplyAsync($"All roles have been fixed!");
         }
         catch
         {
@@ -156,7 +156,7 @@ public partial class AdminModule : MMBotModule, IAdminModule
         }
         finally
         {
-            Interlocked.Decrement(ref _commandIsRunning);
+            _ = Interlocked.Decrement(ref _commandIsRunning);
         }
 
         return FromSuccess(answer: answer);

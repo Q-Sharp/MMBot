@@ -25,7 +25,7 @@ public class DiscordWorker : BackgroundService
         _env = env;
     }
 
-    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -35,9 +35,9 @@ public class DiscordWorker : BackgroundService
         }
     }
 
-    public async override Task StartAsync(CancellationToken cancellationToken) => await base.StartAsync(cancellationToken);
+    public override async Task StartAsync(CancellationToken cancellationToken) => await base.StartAsync(cancellationToken);
 
-    public async override Task StopAsync(CancellationToken cancellationToken) => await Task.Run(() => Dispose(), cancellationToken);
+    public override async Task StopAsync(CancellationToken cancellationToken) => await Task.Run(Dispose, cancellationToken);
 
     public async Task InitAsync()
     {

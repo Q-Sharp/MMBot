@@ -53,7 +53,7 @@ public class TimerService : MMBotService<TimerService>, ITimerService
             var g = _dsc?.GetGuild(tc.TimerInfos.GuildId);
             var tch = g?.GetTextChannel(tc.TimerInfos.ChannelId.Value);
 
-            await tch?.SendMessageAsync(tc?.TimerInfos?.Message);
+            _ = await tch?.SendMessageAsync(tc?.TimerInfos?.Message);
 
             if (tc?.TimerInfos?.IsRecurring ?? false)
             {
@@ -77,7 +77,7 @@ public class TimerService : MMBotService<TimerService>, ITimerService
             if (container is not null)
             {
                 await container.Timer.DisposeAsync().AsTask();
-                _timerList.Remove(container);
+                _ = _timerList.Remove(container);
             }
         });
     }

@@ -7,7 +7,7 @@ public partial class v4 : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.CreateTable(
+        _ = migrationBuilder.CreateTable(
             name: "BossRaid",
             columns: table => new
             {
@@ -22,10 +22,10 @@ public partial class v4 : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_BossRaid", x => x.Id);
+                _ = table.PrimaryKey("PK_BossRaid", x => x.Id);
             });
 
-        migrationBuilder.CreateTable(
+        _ = migrationBuilder.CreateTable(
             name: "BossRaider",
             columns: table => new
             {
@@ -40,14 +40,14 @@ public partial class v4 : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_BossRaider", x => x.Id);
-                table.ForeignKey(
+                _ = table.PrimaryKey("PK_BossRaider", x => x.Id);
+                _ = table.ForeignKey(
                     name: "FK_BossRaider_BossRaid_RaidParticipationId",
                     column: x => x.RaidParticipationId,
                     principalTable: "BossRaid",
                     principalColumn: "Id",
                     onDelete: ReferentialAction.Cascade);
-                table.ForeignKey(
+                _ = table.ForeignKey(
                     name: "FK_BossRaider_Member_RaidParticipationId",
                     column: x => x.RaidParticipationId,
                     principalTable: "Member",
@@ -55,7 +55,7 @@ public partial class v4 : Migration
                     onDelete: ReferentialAction.Restrict);
             });
 
-        migrationBuilder.CreateIndex(
+        _ = migrationBuilder.CreateIndex(
             name: "IX_BossRaider_RaidParticipationId",
             table: "BossRaider",
             column: "RaidParticipationId");
@@ -63,10 +63,10 @@ public partial class v4 : Migration
 
     protected override void Down(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.DropTable(
+        _ = migrationBuilder.DropTable(
             name: "BossRaider");
 
-        migrationBuilder.DropTable(
+        _ = migrationBuilder.DropTable(
             name: "BossRaid");
     }
 }

@@ -7,20 +7,13 @@ public partial class ClanPage
     public IAuthorizedAntiForgeryClientFactory AuthorizedAntiForgeryClientFactory { get; set; }
 
     [Inject]
-    ICRUDViewModel<ClanModel, Clan> ClanVM { get; set; }
+    private ICRUDViewModel<ClanModel, Clan> ClanVM { get; set; }
 
-    private string searchString = "";
+    private readonly string searchString = "";
 
     protected override async Task OnInitializedAsync() => await ClanVM.Init();
 
-    private bool FilterFunc(ClanModel clan)
-    {
-        if (string.IsNullOrWhiteSpace(searchString))
-            return true;
-        if (clan.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        if (clan.Tag.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        return false;
-    }
+    private bool FilterFunc(ClanModel clan) => string.IsNullOrWhiteSpace(searchString)
+|| clan.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase)
+|| clan.Tag.Contains(searchString, StringComparison.OrdinalIgnoreCase);
 }

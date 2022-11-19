@@ -2,7 +2,6 @@
 using Discord.Commands;
 using Discord.Rest;
 using Discord.WebSocket;
-using MMBot.Data;
 using MMBot.Data.Contracts;
 using MMBot.Data.Contracts.Helpers;
 using MMBot.Data.Helpers;
@@ -92,9 +91,9 @@ public class PersonalRoomModule : MMBotModule
             {
                 c = await Context.Guild.CreateTextChannelAsync(roomName, f => f.CategoryId = gs.CategoryId);
 
-                if(c != null && Context.User.IsOwner())
+                if (c != null && Context.User.IsOwner())
                 {
-                    await c.AddPermissionOverwriteAsync(Context.User, 
+                    await c.AddPermissionOverwriteAsync(Context.User,
                         new OverwritePermissions(addReactions: PermValue.Allow, sendMessages: PermValue.Allow, readMessageHistory: PermValue.Allow, viewChannel: PermValue.Allow));
                 }
             }

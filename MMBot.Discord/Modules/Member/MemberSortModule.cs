@@ -49,7 +49,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
         var cQty = c?.Count;
 
         if (!string.IsNullOrWhiteSpace(compact))
-            await ReplyAsync(GetCompactMemberChangesString(result, c));
+            _ = await ReplyAsync(GetCompactMemberChangesString(result, c));
         else
         {
             var page = 0;
@@ -80,7 +80,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
 
         if (!cQty.HasValue || cQty.Value == 0 || mm.Count == 0)
         {
-            await ReplyAsync($"No member data in db.");
+            _ = await ReplyAsync($"No member data in db.");
             return;
         }
 
@@ -111,7 +111,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
 
         var r = $"```🔄 Sorting List 🔀 {Environment.NewLine}";
         changes.Select((c, i) => new { changes = c, newClan = clans.FirstOrDefault(x => x.SortOrder == (i + 1)) })
-            .SelectMany(x => x.changes.Join, (x, y) => new { Member = y.Member, IsUp = y.IsUp, NewClan = x.newClan, oldClan = y.Member.Clan })
+            .SelectMany(x => x.changes.Join, (x, y) => new { y.Member, y.IsUp, NewClan = x.newClan, oldClan = y.Member.Clan })
             .OrderBy(x => x.oldClan.SortOrder)
             .GroupBy(x => x.oldClan, (c, m) => m.ToList())
             .ToList()

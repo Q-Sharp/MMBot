@@ -27,12 +27,9 @@ public static class PropertyHelpers
                 object safeValue = null;
 
                 if (t is not null)
-                    if (Enum.TryParse(newValue.ToString(), out Role eNum))
-                        safeValue = eNum;
-                    else if (TimeSpan.TryParse(newValue.ToString(), out var tSpan))
-                        safeValue = tSpan;
-                    else
-                        safeValue = Convert.ChangeType(newValue, t);
+                    safeValue = Enum.TryParse(newValue.ToString(), out Role eNum)
+                        ? eNum
+                        : TimeSpan.TryParse(newValue.ToString(), out var tSpan) ? tSpan : Convert.ChangeType(newValue, t);
 
                 var val = Convert.ChangeType(safeValue, t);
                 var oldPropValue = m.GetType().GetProperty(propertyName, cisBF)?.GetValue(m, null);
@@ -57,7 +54,7 @@ public static class PropertyHelpers
         {
             foreach (var p in m.GetType().GetProperties().Where(x => x.Name != nameof(IHaveId.Id)
                  && !x.CustomAttributes.Any(x => x.AttributeType == typeof(JsonIgnoreAttribute))))
-                m.ChangeProperty(p.Name, updateWith.GetProperty(p.Name, false), false);
+                _ = m.ChangeProperty(p.Name, updateWith.GetProperty(p.Name, false), false);
         }
         catch
         {
@@ -112,7 +109,7 @@ public static class PropertyHelpers
                 var t = Nullable.GetUnderlyingType(p.PropertyType) ?? p.PropertyType;
                 var val = pVal is null ? null : Convert.ChangeType(pVal, t);
 
-                builder.AddField(x =>
+                _ = builder.AddField(x =>
                 {
                     x.Name = p?.Name?.ToSentence();
                     x.Value = (val?.ToString()) ?? "not set";

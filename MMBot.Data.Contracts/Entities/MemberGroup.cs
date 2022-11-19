@@ -1,7 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Text.Json.Serialization;
-
-namespace MMBot.Data.Contracts.Entities;
+﻿namespace MMBot.Data.Contracts.Entities;
 
 public class MemberGroup : IHaveId
 {

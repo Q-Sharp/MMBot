@@ -35,10 +35,10 @@ public partial class CommandHandler : ICommandHandler
         var t1 = Task.Delay(TimeSpan.FromMinutes(5));
         var t2 = allowMultiple ? Task.Delay(-1) : _monitor.WaitAsync();
 
-        await Task.WhenAny(t1, t2).ConfigureAwait(false);
+        _ = await Task.WhenAny(t1, t2).ConfigureAwait(false);
 
         using (await _mutex.LockAsync().ConfigureAwait(false))
-            _messageIdWithReaction.Remove(message.Id);
+            _ = _messageIdWithReaction.Remove(message.Id);
 
         dis.Dispose();
     }

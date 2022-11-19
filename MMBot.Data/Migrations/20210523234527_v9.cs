@@ -7,81 +7,81 @@ public partial class v9 : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.DropForeignKey(
+        _ = migrationBuilder.DropForeignKey(
             name: "FK_BossRaid_Clan_ClanId",
             table: "BossRaid");
 
-        migrationBuilder.DropForeignKey(
+        _ = migrationBuilder.DropForeignKey(
             name: "FK_BossRaider_BossRaid_RaidParticipationId",
             table: "BossRaider");
 
-        migrationBuilder.DropForeignKey(
+        _ = migrationBuilder.DropForeignKey(
             name: "FK_BossRaider_Member_RaidParticipationId",
             table: "BossRaider");
 
-        migrationBuilder.DropTable(
+        _ = migrationBuilder.DropTable(
             name: "MemberSeason");
 
-        migrationBuilder.DropIndex(
+        _ = migrationBuilder.DropIndex(
             name: "IX_GuildSettings_GuildId",
             table: "GuildSettings");
 
-        migrationBuilder.DropPrimaryKey(
+        _ = migrationBuilder.DropPrimaryKey(
             name: "PK_BossRaider",
             table: "BossRaider");
 
-        migrationBuilder.DropPrimaryKey(
+        _ = migrationBuilder.DropPrimaryKey(
             name: "PK_BossRaid",
             table: "BossRaid");
 
-        migrationBuilder.DropColumn(
+        _ = migrationBuilder.DropColumn(
             name: "Donations",
             table: "Season");
 
-        migrationBuilder.DropColumn(
+        _ = migrationBuilder.DropColumn(
             name: "GuildId",
             table: "Season");
 
-        migrationBuilder.DropColumn(
+        _ = migrationBuilder.DropColumn(
             name: "SHigh",
             table: "Season");
 
-        migrationBuilder.RenameTable(
+        _ = migrationBuilder.RenameTable(
             name: "BossRaider",
             newName: "RaidParticipation");
 
-        migrationBuilder.RenameTable(
+        _ = migrationBuilder.RenameTable(
             name: "BossRaid",
             newName: "RaidBoss");
 
-        migrationBuilder.RenameIndex(
+        _ = migrationBuilder.RenameIndex(
             name: "IX_BossRaider_RaidParticipationId",
             table: "RaidParticipation",
             newName: "IX_RaidParticipation_RaidParticipationId");
 
-        migrationBuilder.RenameIndex(
+        _ = migrationBuilder.RenameIndex(
             name: "IX_BossRaid_ClanId",
             table: "RaidBoss",
             newName: "IX_RaidBoss_ClanId");
 
-        migrationBuilder.AddColumn<int>(
+        _ = migrationBuilder.AddColumn<int>(
             name: "RaidBossId",
             table: "RaidParticipation",
             type: "integer",
             nullable: false,
             defaultValue: 0);
 
-        migrationBuilder.AddPrimaryKey(
+        _ = migrationBuilder.AddPrimaryKey(
             name: "PK_RaidParticipation",
             table: "RaidParticipation",
             column: "Id");
 
-        migrationBuilder.AddPrimaryKey(
+        _ = migrationBuilder.AddPrimaryKey(
             name: "PK_RaidBoss",
             table: "RaidBoss",
             column: "Id");
 
-        migrationBuilder.CreateTable(
+        _ = migrationBuilder.CreateTable(
             name: "SeasonResult",
             columns: table => new
             {
@@ -97,14 +97,14 @@ public partial class v9 : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_SeasonResult", x => x.Id);
-                table.ForeignKey(
+                _ = table.PrimaryKey("PK_SeasonResult", x => x.Id);
+                _ = table.ForeignKey(
                     name: "FK_SeasonResult_Member_MemberId",
                     column: x => x.MemberId,
                     principalTable: "Member",
                     principalColumn: "Id",
                     onDelete: ReferentialAction.Restrict);
-                table.ForeignKey(
+                _ = table.ForeignKey(
                     name: "FK_SeasonResult_Season_SeasonId",
                     column: x => x.SeasonId,
                     principalTable: "Season",
@@ -112,17 +112,17 @@ public partial class v9 : Migration
                     onDelete: ReferentialAction.Cascade);
             });
 
-        migrationBuilder.CreateIndex(
+        _ = migrationBuilder.CreateIndex(
             name: "IX_SeasonResult_MemberId",
             table: "SeasonResult",
             column: "MemberId");
 
-        migrationBuilder.CreateIndex(
+        _ = migrationBuilder.CreateIndex(
             name: "IX_SeasonResult_SeasonId",
             table: "SeasonResult",
             column: "SeasonId");
 
-        migrationBuilder.AddForeignKey(
+        _ = migrationBuilder.AddForeignKey(
             name: "FK_RaidBoss_Clan_ClanId",
             table: "RaidBoss",
             column: "ClanId",
@@ -130,7 +130,7 @@ public partial class v9 : Migration
             principalColumn: "Id",
             onDelete: ReferentialAction.Cascade);
 
-        migrationBuilder.AddForeignKey(
+        _ = migrationBuilder.AddForeignKey(
             name: "FK_RaidParticipation_Member_RaidParticipationId",
             table: "RaidParticipation",
             column: "RaidParticipationId",
@@ -138,7 +138,7 @@ public partial class v9 : Migration
             principalColumn: "Id",
             onDelete: ReferentialAction.Restrict);
 
-        migrationBuilder.AddForeignKey(
+        _ = migrationBuilder.AddForeignKey(
             name: "FK_RaidParticipation_RaidBoss_RaidParticipationId",
             table: "RaidParticipation",
             column: "RaidParticipationId",
@@ -149,81 +149,81 @@ public partial class v9 : Migration
 
     protected override void Down(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.DropForeignKey(
+        _ = migrationBuilder.DropForeignKey(
             name: "FK_RaidBoss_Clan_ClanId",
             table: "RaidBoss");
 
-        migrationBuilder.DropForeignKey(
+        _ = migrationBuilder.DropForeignKey(
             name: "FK_RaidParticipation_Member_RaidParticipationId",
             table: "RaidParticipation");
 
-        migrationBuilder.DropForeignKey(
+        _ = migrationBuilder.DropForeignKey(
             name: "FK_RaidParticipation_RaidBoss_RaidParticipationId",
             table: "RaidParticipation");
 
-        migrationBuilder.DropTable(
+        _ = migrationBuilder.DropTable(
             name: "SeasonResult");
 
-        migrationBuilder.DropPrimaryKey(
+        _ = migrationBuilder.DropPrimaryKey(
             name: "PK_RaidParticipation",
             table: "RaidParticipation");
 
-        migrationBuilder.DropPrimaryKey(
+        _ = migrationBuilder.DropPrimaryKey(
             name: "PK_RaidBoss",
             table: "RaidBoss");
 
-        migrationBuilder.DropColumn(
+        _ = migrationBuilder.DropColumn(
             name: "RaidBossId",
             table: "RaidParticipation");
 
-        migrationBuilder.RenameTable(
+        _ = migrationBuilder.RenameTable(
             name: "RaidParticipation",
             newName: "BossRaider");
 
-        migrationBuilder.RenameTable(
+        _ = migrationBuilder.RenameTable(
             name: "RaidBoss",
             newName: "BossRaid");
 
-        migrationBuilder.RenameIndex(
+        _ = migrationBuilder.RenameIndex(
             name: "IX_RaidParticipation_RaidParticipationId",
             table: "BossRaider",
             newName: "IX_BossRaider_RaidParticipationId");
 
-        migrationBuilder.RenameIndex(
+        _ = migrationBuilder.RenameIndex(
             name: "IX_RaidBoss_ClanId",
             table: "BossRaid",
             newName: "IX_BossRaid_ClanId");
 
-        migrationBuilder.AddColumn<int>(
+        _ = migrationBuilder.AddColumn<int>(
             name: "Donations",
             table: "Season",
             type: "integer",
             nullable: true);
 
-        migrationBuilder.AddColumn<decimal>(
+        _ = migrationBuilder.AddColumn<decimal>(
             name: "GuildId",
             table: "Season",
             type: "numeric(20,0)",
             nullable: false,
             defaultValue: 0m);
 
-        migrationBuilder.AddColumn<int>(
+        _ = migrationBuilder.AddColumn<int>(
             name: "SHigh",
             table: "Season",
             type: "integer",
             nullable: true);
 
-        migrationBuilder.AddPrimaryKey(
+        _ = migrationBuilder.AddPrimaryKey(
             name: "PK_BossRaider",
             table: "BossRaider",
             column: "Id");
 
-        migrationBuilder.AddPrimaryKey(
+        _ = migrationBuilder.AddPrimaryKey(
             name: "PK_BossRaid",
             table: "BossRaid",
             column: "Id");
 
-        migrationBuilder.CreateTable(
+        _ = migrationBuilder.CreateTable(
             name: "MemberSeason",
             columns: table => new
             {
@@ -232,14 +232,14 @@ public partial class v9 : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_MemberSeason", x => new { x.MemberId, x.SeasonId });
-                table.ForeignKey(
+                _ = table.PrimaryKey("PK_MemberSeason", x => new { x.MemberId, x.SeasonId });
+                _ = table.ForeignKey(
                     name: "FK_MemberSeason_Member_MemberId",
                     column: x => x.MemberId,
                     principalTable: "Member",
                     principalColumn: "Id",
                     onDelete: ReferentialAction.Cascade);
-                table.ForeignKey(
+                _ = table.ForeignKey(
                     name: "FK_MemberSeason_Season_SeasonId",
                     column: x => x.SeasonId,
                     principalTable: "Season",
@@ -247,18 +247,18 @@ public partial class v9 : Migration
                     onDelete: ReferentialAction.Cascade);
             });
 
-        migrationBuilder.CreateIndex(
+        _ = migrationBuilder.CreateIndex(
             name: "IX_GuildSettings_GuildId",
             table: "GuildSettings",
             column: "GuildId",
             unique: true);
 
-        migrationBuilder.CreateIndex(
+        _ = migrationBuilder.CreateIndex(
             name: "IX_MemberSeason_SeasonId",
             table: "MemberSeason",
             column: "SeasonId");
 
-        migrationBuilder.AddForeignKey(
+        _ = migrationBuilder.AddForeignKey(
             name: "FK_BossRaid_Clan_ClanId",
             table: "BossRaid",
             column: "ClanId",
@@ -266,7 +266,7 @@ public partial class v9 : Migration
             principalColumn: "Id",
             onDelete: ReferentialAction.Cascade);
 
-        migrationBuilder.AddForeignKey(
+        _ = migrationBuilder.AddForeignKey(
             name: "FK_BossRaider_BossRaid_RaidParticipationId",
             table: "BossRaider",
             column: "RaidParticipationId",
@@ -274,7 +274,7 @@ public partial class v9 : Migration
             principalColumn: "Id",
             onDelete: ReferentialAction.Cascade);
 
-        migrationBuilder.AddForeignKey(
+        _ = migrationBuilder.AddForeignKey(
             name: "FK_BossRaider_Member_RaidParticipationId",
             table: "BossRaider",
             column: "RaidParticipationId",

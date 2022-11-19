@@ -89,7 +89,7 @@ public class CsvService : ICsvService
                     };
 
                     await _context.Clan.ImportOrUpgradeWithIdentifier(clan, guildId);
-                    await _context.SaveChangesAsync();
+                    _ = await _context.SaveChangesAsync();
                 }
             }
         }
@@ -111,7 +111,7 @@ public class CsvService : ICsvService
                 if (me is null)
                 {
                     me = new Member();
-                    await _context.Member.AddAsync(me);
+                    _ = await _context.Member.AddAsync(me);
                 }
 
                 me.IsActive = true;
@@ -168,7 +168,7 @@ public class CsvService : ICsvService
                 me.LastUpdated = DateTime.UtcNow;
                 me.GuildId = guildId;
 
-                await _context.SaveChangesAsync();
+                _ = await _context.SaveChangesAsync();
             }
         }
         catch (Exception e)
@@ -179,20 +179,13 @@ public class CsvService : ICsvService
         return default;
     }
 
-    private string getName(string tag)
+    private string getName(string tag) => tag switch
     {
-        switch (tag)
-        {
-            case "TT":
-                return "The Tavern";
-            case "TT2":
-                return "The Tavern 2";
-            case "TT3":
-                return "The Tavern 3";
-            default:
-                return tag;
-        }
-    }
+        "TT" => "The Tavern",
+        "TT2" => "The Tavern 2",
+        "TT3" => "The Tavern 3",
+        _ => tag,
+    };
 
     public async Task<byte[]> ExportCsv(ulong guildID)
     {

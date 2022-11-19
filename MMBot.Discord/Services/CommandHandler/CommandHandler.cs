@@ -36,7 +36,7 @@ public partial class CommandHandler : ICommandHandler
 
     public async Task InitializeAsync()
     {
-        await _commands.AddModulesAsync(GetType().Assembly, _services);
+        _ = await _commands.AddModulesAsync(GetType().Assembly, _services);
 
         _databaseService = _services.GetService<IDatabaseService>();
         _gs = _services.GetService<IGuildSettingsService>();
@@ -73,7 +73,7 @@ public partial class CommandHandler : ICommandHandler
     {
         if (logMessage.Exception is CommandException cmdException)
         {
-            await cmdException.Context.Channel.SendMessageAsync("Something went catastrophically wrong!");
+            _ = await cmdException.Context.Channel.SendMessageAsync("Something went catastrophically wrong!");
             _logger.LogError($"{cmdException.Context.User} failed to execute '{cmdException.Command.Name}' in {cmdException.Context.Channel}.", logMessage.Exception);
         }
     }
@@ -100,10 +100,9 @@ public partial class CommandHandler : ICommandHandler
         {
             var dest = _client.GetGuild(r.Guild).GetTextChannel(r.Channel);
 
-            if (r.DBImport)
-                await dest.SendMessageAsync("Database imported!");
-            else
-                await dest.SendMessageAsync("Bot service has been restarted!");
+            _ = r.DBImport
+                ? await dest.SendMessageAsync("Database imported!")
+                : await dest.SendMessageAsync("Bot service has been restarted!");
         }
 
         // reinit timers
@@ -131,7 +130,7 @@ public partial class CommandHandler : ICommandHandler
 
         if (msg.HasStringPrefix(settings.Prefix, ref pos, StringComparison.OrdinalIgnoreCase) || msg.HasMentionPrefix(_client.CurrentUser, ref pos))
         {
-            await _commands.ExecuteAsync(context, pos, _services);
+            _ = await _commands.ExecuteAsync(context, pos, _services);
         }
     }
 
@@ -142,7 +141,7 @@ public partial class CommandHandler : ICommandHandler
         await Task.Run(() =>
         {
             var mmBot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppDomain.CurrentDomain.FriendlyName);
-            Process.Start(mmBot);
+            _ = Process.Start(mmBot);
             Environment.Exit(0);
         });
     }
@@ -152,7 +151,7 @@ public partial class CommandHandler : ICommandHandler
         // error happened
         if (!command.IsSpecified)
         {
-            await context.Channel.SendMessageAsync($"I don't know this command: {context.Message}");
+            _ = await context.Channel.SendMessageAsync($"I don't know this command: {context.Message}");
             return;
         }
 
@@ -211,7 +210,7 @@ public partial class CommandHandler : ICommandHandler
             //        break;
             //}
 
-            await context.Channel.SendMessageAsync($"{runTimeResult.Error}: {runTimeResult.Reason}");
+            _ = await context.Channel.SendMessageAsync($"{runTimeResult.Error}: {runTimeResult.Reason}");
 
             var member = context.User.GetUserAndDiscriminator();
             var moduleName = command.Value.Module.Name;
@@ -221,7 +220,7 @@ public partial class CommandHandler : ICommandHandler
         }
     }
 
-    private async static Task DeleteMessage(IMessage userMsg, IMessage answer)
+    private static async Task DeleteMessage(IMessage userMsg, IMessage answer)
     {
         await Task.Delay(TimeSpan.FromMinutes(2));
 

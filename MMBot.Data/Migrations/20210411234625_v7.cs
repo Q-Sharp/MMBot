@@ -6,19 +6,19 @@ public partial class v7 : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.AddColumn<int>(
+        _ = migrationBuilder.AddColumn<int>(
             name: "ClanId",
             table: "BossRaid",
             type: "integer",
             nullable: false,
             defaultValue: 0);
 
-        migrationBuilder.CreateIndex(
+        _ = migrationBuilder.CreateIndex(
             name: "IX_BossRaid_ClanId",
             table: "BossRaid",
             column: "ClanId");
 
-        migrationBuilder.AddForeignKey(
+        _ = migrationBuilder.AddForeignKey(
             name: "FK_BossRaid_Clan_ClanId",
             table: "BossRaid",
             column: "ClanId",
@@ -29,15 +29,15 @@ public partial class v7 : Migration
 
     protected override void Down(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.DropForeignKey(
+        _ = migrationBuilder.DropForeignKey(
             name: "FK_BossRaid_Clan_ClanId",
             table: "BossRaid");
 
-        migrationBuilder.DropIndex(
+        _ = migrationBuilder.DropIndex(
             name: "IX_BossRaid_ClanId",
             table: "BossRaid");
 
-        migrationBuilder.DropColumn(
+        _ = migrationBuilder.DropColumn(
             name: "ClanId",
             table: "BossRaid");
     }

@@ -2,9 +2,5 @@
 
 public class RaidParticipationConfiguration : IEntityTypeConfiguration<RaidParticipation>
 {
-    public void Configure(EntityTypeBuilder<RaidParticipation> builder)
-    {
-        builder.Property(x => x.Version).IsRowVersion();
-               
-    }
+    public void Configure(EntityTypeBuilder<RaidParticipation> builder) => builder.Property(x => x.Version).IsRowVersion();
 }

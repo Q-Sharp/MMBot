@@ -1,7 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using MMBot.Data.Contracts.Enums;
-
-namespace MMBot.Data.Contracts.Entities;
+﻿namespace MMBot.Data.Contracts.Entities;
 
 public class Season : IHaveId
 {

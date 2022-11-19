@@ -67,7 +67,7 @@ public class AdminService : IAdminService
                 x.ToList().ForEach(m => m.Join = i++);
             });
 
-        await _context?.SaveChangesAsync();
+        _ = await _context?.SaveChangesAsync();
     }
 
     public async Task<bool> DataImport(byte[] zipBytes)
@@ -76,7 +76,7 @@ public class AdminService : IAdminService
 
         var dict = await Task.Run(async () =>
         {
-            Directory.CreateDirectory(_backupDir);
+            _ = Directory.CreateDirectory(_backupDir);
 
             ZipFile.ExtractToDirectory(_import, _backupDir);
 
@@ -94,7 +94,6 @@ public class AdminService : IAdminService
 
         return result;
     }
-
 
     public void SetGuild(ulong id)
         => _guildId = id;

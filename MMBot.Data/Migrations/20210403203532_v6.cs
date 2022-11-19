@@ -7,15 +7,15 @@ public partial class v6 : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.DropColumn(
+        _ = migrationBuilder.DropColumn(
             name: "Donations",
             table: "Member");
 
-        migrationBuilder.DropColumn(
+        _ = migrationBuilder.DropColumn(
             name: "SHigh",
             table: "Member");
 
-        migrationBuilder.CreateTable(
+        _ = migrationBuilder.CreateTable(
             name: "Season",
             columns: table => new
             {
@@ -31,10 +31,10 @@ public partial class v6 : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_Season", x => x.Id);
+                _ = table.PrimaryKey("PK_Season", x => x.Id);
             });
 
-        migrationBuilder.CreateTable(
+        _ = migrationBuilder.CreateTable(
             name: "MemberSeason",
             columns: table => new
             {
@@ -43,14 +43,14 @@ public partial class v6 : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_MemberSeason", x => new { x.MemberId, x.SeasonId });
-                table.ForeignKey(
+                _ = table.PrimaryKey("PK_MemberSeason", x => new { x.MemberId, x.SeasonId });
+                _ = table.ForeignKey(
                     name: "FK_MemberSeason_Member_MemberId",
                     column: x => x.MemberId,
                     principalTable: "Member",
                     principalColumn: "Id",
                     onDelete: ReferentialAction.Cascade);
-                table.ForeignKey(
+                _ = table.ForeignKey(
                     name: "FK_MemberSeason_Season_SeasonId",
                     column: x => x.SeasonId,
                     principalTable: "Season",
@@ -58,7 +58,7 @@ public partial class v6 : Migration
                     onDelete: ReferentialAction.Cascade);
             });
 
-        migrationBuilder.CreateIndex(
+        _ = migrationBuilder.CreateIndex(
             name: "IX_MemberSeason_SeasonId",
             table: "MemberSeason",
             column: "SeasonId");
@@ -66,19 +66,19 @@ public partial class v6 : Migration
 
     protected override void Down(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.DropTable(
+        _ = migrationBuilder.DropTable(
             name: "MemberSeason");
 
-        migrationBuilder.DropTable(
+        _ = migrationBuilder.DropTable(
             name: "Season");
 
-        migrationBuilder.AddColumn<int>(
+        _ = migrationBuilder.AddColumn<int>(
             name: "Donations",
             table: "Member",
             type: "integer",
             nullable: true);
 
-        migrationBuilder.AddColumn<int>(
+        _ = migrationBuilder.AddColumn<int>(
             name: "SHigh",
             table: "Member",
             type: "integer",

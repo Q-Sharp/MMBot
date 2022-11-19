@@ -2,7 +2,7 @@
 
 public class DiscordHelpers
 {
-    public async static Task<Claim> GetGuildClaims(OAuthCreatingTicketContext context)
+    public static async Task<Claim> GetGuildClaims(OAuthCreatingTicketContext context)
     {
         var request = new HttpRequestMessage(HttpMethod.Get, "https://discordapp.com/api/users/@me/guilds");
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

@@ -7,7 +7,7 @@ public partial class InitialCreate : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.CreateTable(
+        _ = migrationBuilder.CreateTable(
             name: "Channel",
             columns: table => new
             {
@@ -19,10 +19,10 @@ public partial class InitialCreate : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_Channel", x => x.Id);
+                _ = table.PrimaryKey("PK_Channel", x => x.Id);
             });
 
-        migrationBuilder.CreateTable(
+        _ = migrationBuilder.CreateTable(
             name: "Clan",
             columns: table => new
             {
@@ -36,10 +36,10 @@ public partial class InitialCreate : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_Clan", x => x.Id);
+                _ = table.PrimaryKey("PK_Clan", x => x.Id);
             });
 
-        migrationBuilder.CreateTable(
+        _ = migrationBuilder.CreateTable(
             name: "GuildSettings",
             columns: table => new
             {
@@ -54,10 +54,10 @@ public partial class InitialCreate : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_GuildSettings", x => x.Id);
+                _ = table.PrimaryKey("PK_GuildSettings", x => x.Id);
             });
 
-        migrationBuilder.CreateTable(
+        _ = migrationBuilder.CreateTable(
             name: "MemberGroup",
             columns: table => new
             {
@@ -66,10 +66,10 @@ public partial class InitialCreate : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_MemberGroup", x => x.Id);
+                _ = table.PrimaryKey("PK_MemberGroup", x => x.Id);
             });
 
-        migrationBuilder.CreateTable(
+        _ = migrationBuilder.CreateTable(
             name: "Restart",
             columns: table => new
             {
@@ -81,10 +81,10 @@ public partial class InitialCreate : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_Restart", x => x.Id);
+                _ = table.PrimaryKey("PK_Restart", x => x.Id);
             });
 
-        migrationBuilder.CreateTable(
+        _ = migrationBuilder.CreateTable(
             name: "Timer",
             columns: table => new
             {
@@ -102,10 +102,10 @@ public partial class InitialCreate : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_Timer", x => x.Id);
+                _ = table.PrimaryKey("PK_Timer", x => x.Id);
             });
 
-        migrationBuilder.CreateTable(
+        _ = migrationBuilder.CreateTable(
             name: "Member",
             columns: table => new
             {
@@ -132,14 +132,14 @@ public partial class InitialCreate : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_Member", x => x.Id);
-                table.ForeignKey(
+                _ = table.PrimaryKey("PK_Member", x => x.Id);
+                _ = table.ForeignKey(
                     name: "FK_Member_Clan_ClanId",
                     column: x => x.ClanId,
                     principalTable: "Clan",
                     principalColumn: "Id",
                     onDelete: ReferentialAction.Restrict);
-                table.ForeignKey(
+                _ = table.ForeignKey(
                     name: "FK_Member_MemberGroup_MemberGroupId",
                     column: x => x.MemberGroupId,
                     principalTable: "MemberGroup",
@@ -147,7 +147,7 @@ public partial class InitialCreate : Migration
                     onDelete: ReferentialAction.Restrict);
             });
 
-        migrationBuilder.CreateTable(
+        _ = migrationBuilder.CreateTable(
             name: "Strike",
             columns: table => new
             {
@@ -159,8 +159,8 @@ public partial class InitialCreate : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_Strike", x => x.Id);
-                table.ForeignKey(
+                _ = table.PrimaryKey("PK_Strike", x => x.Id);
+                _ = table.ForeignKey(
                     name: "FK_Strike_Member_MemberId",
                     column: x => x.MemberId,
                     principalTable: "Member",
@@ -168,7 +168,7 @@ public partial class InitialCreate : Migration
                     onDelete: ReferentialAction.Restrict);
             });
 
-        migrationBuilder.CreateTable(
+        _ = migrationBuilder.CreateTable(
             name: "Vacation",
             columns: table => new
             {
@@ -180,8 +180,8 @@ public partial class InitialCreate : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_Vacation", x => x.Id);
-                table.ForeignKey(
+                _ = table.PrimaryKey("PK_Vacation", x => x.Id);
+                _ = table.ForeignKey(
                     name: "FK_Vacation_Member_MemberId",
                     column: x => x.MemberId,
                     principalTable: "Member",
@@ -189,34 +189,34 @@ public partial class InitialCreate : Migration
                     onDelete: ReferentialAction.Restrict);
             });
 
-        migrationBuilder.CreateIndex(
+        _ = migrationBuilder.CreateIndex(
             name: "IX_Clan_Tag_Name_GuildId_SortOrder",
             table: "Clan",
             columns: new[] { "Tag", "Name", "GuildId", "SortOrder" },
             unique: true);
 
-        migrationBuilder.CreateIndex(
+        _ = migrationBuilder.CreateIndex(
             name: "IX_GuildSettings_GuildId",
             table: "GuildSettings",
             column: "GuildId",
             unique: true);
 
-        migrationBuilder.CreateIndex(
+        _ = migrationBuilder.CreateIndex(
             name: "IX_Member_ClanId",
             table: "Member",
             column: "ClanId");
 
-        migrationBuilder.CreateIndex(
+        _ = migrationBuilder.CreateIndex(
             name: "IX_Member_MemberGroupId",
             table: "Member",
             column: "MemberGroupId");
 
-        migrationBuilder.CreateIndex(
+        _ = migrationBuilder.CreateIndex(
             name: "IX_Strike_MemberId",
             table: "Strike",
             column: "MemberId");
 
-        migrationBuilder.CreateIndex(
+        _ = migrationBuilder.CreateIndex(
             name: "IX_Vacation_MemberId",
             table: "Vacation",
             column: "MemberId");
@@ -224,31 +224,31 @@ public partial class InitialCreate : Migration
 
     protected override void Down(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.DropTable(
+        _ = migrationBuilder.DropTable(
             name: "Channel");
 
-        migrationBuilder.DropTable(
+        _ = migrationBuilder.DropTable(
             name: "GuildSettings");
 
-        migrationBuilder.DropTable(
+        _ = migrationBuilder.DropTable(
             name: "Restart");
 
-        migrationBuilder.DropTable(
+        _ = migrationBuilder.DropTable(
             name: "Strike");
 
-        migrationBuilder.DropTable(
+        _ = migrationBuilder.DropTable(
             name: "Timer");
 
-        migrationBuilder.DropTable(
+        _ = migrationBuilder.DropTable(
             name: "Vacation");
 
-        migrationBuilder.DropTable(
+        _ = migrationBuilder.DropTable(
             name: "Member");
 
-        migrationBuilder.DropTable(
+        _ = migrationBuilder.DropTable(
             name: "Clan");
 
-        migrationBuilder.DropTable(
+        _ = migrationBuilder.DropTable(
             name: "MemberGroup");
     }
 }

@@ -101,14 +101,14 @@ services.Configure<ForwardedHeadersOptions>(options =>
 
 var app = builder.Build();
 
-if(app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
-    app.UseDeveloperExceptionPage();
+    _ = app.UseDeveloperExceptionPage();
 }
 else
 {
-    app.UseForwardedHeaders()
+    _ = app.UseForwardedHeaders()
        .UseCertificateForwarding()
        .UseExceptionHandler("/Error")
        .UseHsts()
