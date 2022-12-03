@@ -90,7 +90,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
     {
         var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
 
-        _ = m.Strike.Remove(m.Strike.OrderBy(y => y.StrikeDate).FirstOrDefault());
+         m.Strike.Remove(m.Strike.OrderBy(y => y.StrikeDate).FirstOrDefault());
         await _databaseService?.SaveDataAsync();
 
         return FromSuccess($"{m} now has {m?.Strike?.Count ?? 0} strike(s)!");
@@ -150,7 +150,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
 
         var imageUrl = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => x.GetUserAndDiscriminator() == m.Discord)?.GetAvatarUrl());
         var e = m.GetEmbedPropertiesWithValues(imageUrl);
-        _ = await ReplyAsync("", false, e as Embed);
+         await ReplyAsync("", false, e as Embed);
         return FromSuccess();
     }
 }

@@ -28,7 +28,7 @@ public class GuildSettingsService : IGuildSettingsService
         }))
         .Entity;
 
-        _ = (_dbcontext?.SaveChanges());
+        _dbcontext?.SaveChanges();
         return gs;
     }
 }

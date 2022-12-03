@@ -13,7 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		.github\workflows\dotnet-core-publish.yml = .github\workflows\dotnet-core-publish.yml
-		.github\workflows\dotnet-core.yml = .github\workflows\dotnet-core.yml
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
@@ -32,7 +31,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Blazor.Server.Test", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MMBot.Blazor", "MMBot.Blazor", "{F9AF7569-ACA9-42DE-AB9C-DFA9A8E36F1F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMBot.Data.Contracts", "MMBot.Data.Contracts\MMBot.Data.Contracts.csproj", "{6E87C466-BB24-48F5-BC2E-6FF66D7E580B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Data.Contracts", "MMBot.Data.Contracts\MMBot.Data.Contracts.csproj", "{6E87C466-BB24-48F5-BC2E-6FF66D7E580B}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{74489E47-412A-4D51-99FA-660B90AC59E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,6 +77,10 @@ Global
 		{6E87C466-BB24-48F5-BC2E-6FF66D7E580B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E87C466-BB24-48F5-BC2E-6FF66D7E580B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E87C466-BB24-48F5-BC2E-6FF66D7E580B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74489E47-412A-4D51-99FA-660B90AC59E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74489E47-412A-4D51-99FA-660B90AC59E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74489E47-412A-4D51-99FA-660B90AC59E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74489E47-412A-4D51-99FA-660B90AC59E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

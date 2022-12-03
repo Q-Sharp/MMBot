@@ -12,7 +12,7 @@ public static class ControllerTestExtensions
     public static T WithIdentity<T>(this T controller, string nameIdentifier, string name)
         where T : ControllerBase
     {
-        _ = controller.EnsureHttpContext();
+         controller.EnsureHttpContext();
 
         var principal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
                         {
@@ -29,7 +29,7 @@ public static class ControllerTestExtensions
     public static T WithAnonymousIdentity<T>(this T controller)
         where T : ControllerBase
     {
-        _ = controller.EnsureHttpContext();
+         controller.EnsureHttpContext();
 
         var principal = new ClaimsPrincipal(new ClaimsIdentity());
 

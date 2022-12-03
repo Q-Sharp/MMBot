@@ -6,7 +6,7 @@ public partial class v1 : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
     {
-        _ = migrationBuilder.AddColumn<uint>(
+         migrationBuilder.AddColumn<uint>(
             name: "xmin",
             table: "Vacation",
             type: "xid",
@@ -14,7 +14,7 @@ public partial class v1 : Migration
             nullable: false,
             defaultValue: 0u);
 
-        _ = migrationBuilder.AddColumn<uint>(
+         migrationBuilder.AddColumn<uint>(
             name: "xmin",
             table: "Timer",
             type: "xid",
@@ -22,7 +22,7 @@ public partial class v1 : Migration
             nullable: false,
             defaultValue: 0u);
 
-        _ = migrationBuilder.AddColumn<uint>(
+         migrationBuilder.AddColumn<uint>(
             name: "xmin",
             table: "Strike",
             type: "xid",
@@ -30,7 +30,7 @@ public partial class v1 : Migration
             nullable: false,
             defaultValue: 0u);
 
-        _ = migrationBuilder.AddColumn<uint>(
+         migrationBuilder.AddColumn<uint>(
             name: "xmin",
             table: "Restart",
             type: "xid",
@@ -38,7 +38,7 @@ public partial class v1 : Migration
             nullable: false,
             defaultValue: 0u);
 
-        _ = migrationBuilder.AddColumn<uint>(
+         migrationBuilder.AddColumn<uint>(
             name: "xmin",
             table: "MemberGroup",
             type: "xid",
@@ -46,7 +46,7 @@ public partial class v1 : Migration
             nullable: false,
             defaultValue: 0u);
 
-        _ = migrationBuilder.AddColumn<uint>(
+         migrationBuilder.AddColumn<uint>(
             name: "xmin",
             table: "Member",
             type: "xid",
@@ -54,7 +54,7 @@ public partial class v1 : Migration
             nullable: false,
             defaultValue: 0u);
 
-        _ = migrationBuilder.AddColumn<uint>(
+         migrationBuilder.AddColumn<uint>(
             name: "xmin",
             table: "GuildSettings",
             type: "xid",
@@ -62,7 +62,7 @@ public partial class v1 : Migration
             nullable: false,
             defaultValue: 0u);
 
-        _ = migrationBuilder.AddColumn<uint>(
+         migrationBuilder.AddColumn<uint>(
             name: "xmin",
             table: "Clan",
             type: "xid",
@@ -70,7 +70,7 @@ public partial class v1 : Migration
             nullable: false,
             defaultValue: 0u);
 
-        _ = migrationBuilder.AddColumn<uint>(
+         migrationBuilder.AddColumn<uint>(
             name: "xmin",
             table: "Channel",
             type: "xid",
@@ -81,39 +81,39 @@ public partial class v1 : Migration
 
     protected override void Down(MigrationBuilder migrationBuilder)
     {
-        _ = migrationBuilder.DropColumn(
+         migrationBuilder.DropColumn(
             name: "xmin",
             table: "Vacation");
 
-        _ = migrationBuilder.DropColumn(
+         migrationBuilder.DropColumn(
             name: "xmin",
             table: "Timer");
 
-        _ = migrationBuilder.DropColumn(
+         migrationBuilder.DropColumn(
             name: "xmin",
             table: "Strike");
 
-        _ = migrationBuilder.DropColumn(
+         migrationBuilder.DropColumn(
             name: "xmin",
             table: "Restart");
 
-        _ = migrationBuilder.DropColumn(
+         migrationBuilder.DropColumn(
             name: "xmin",
             table: "MemberGroup");
 
-        _ = migrationBuilder.DropColumn(
+         migrationBuilder.DropColumn(
             name: "xmin",
             table: "Member");
 
-        _ = migrationBuilder.DropColumn(
+         migrationBuilder.DropColumn(
             name: "xmin",
             table: "GuildSettings");
 
-        _ = migrationBuilder.DropColumn(
+         migrationBuilder.DropColumn(
             name: "xmin",
             table: "Clan");
 
-        _ = migrationBuilder.DropColumn(
+         migrationBuilder.DropColumn(
             name: "xmin",
             table: "Channel");
     }

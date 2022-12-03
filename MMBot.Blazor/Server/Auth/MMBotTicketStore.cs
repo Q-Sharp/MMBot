@@ -26,18 +26,18 @@ public class MMBotTicketStore : ITicketStore
         var expiresUtc = ticket.Properties.ExpiresUtc;
 
         if (expiresUtc.HasValue)
-            _ = options.SetAbsoluteExpiration(expiresUtc.Value);
+             options.SetAbsoluteExpiration(expiresUtc.Value);
 
-        _ = options.SetSlidingExpiration(TimeSpan.FromMinutes(60));
+         options.SetSlidingExpiration(TimeSpan.FromMinutes(60));
 
-        _ = _cache.Set(key, ticket, options);
+         _cache.Set(key, ticket, options);
 
         return Task.FromResult(0);
     }
 
     public Task<AuthenticationTicket> RetrieveAsync(string key)
     {
-        _ = _cache.TryGetValue(key, out AuthenticationTicket ticket);
+         _cache.TryGetValue(key, out AuthenticationTicket ticket);
         return Task.FromResult(ticket);
     }
 

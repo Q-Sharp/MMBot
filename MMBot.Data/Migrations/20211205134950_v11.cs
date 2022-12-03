@@ -7,7 +7,7 @@ public partial class v11 : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
     {
-        _ = migrationBuilder.AlterColumn<DateTime>(
+         migrationBuilder.AlterColumn<DateTime>(
             name: "StartDate",
             table: "Vacation",
             type: "timestamp with time zone",
@@ -15,7 +15,7 @@ public partial class v11 : Migration
             oldClrType: typeof(DateTime),
             oldType: "timestamp without time zone");
 
-        _ = migrationBuilder.AlterColumn<DateTime>(
+         migrationBuilder.AlterColumn<DateTime>(
             name: "EndDate",
             table: "Vacation",
             type: "timestamp with time zone",
@@ -23,7 +23,7 @@ public partial class v11 : Migration
             oldClrType: typeof(DateTime),
             oldType: "timestamp without time zone");
 
-        _ = migrationBuilder.AlterColumn<DateTime>(
+         migrationBuilder.AlterColumn<DateTime>(
             name: "StartTime",
             table: "Timer",
             type: "timestamp with time zone",
@@ -32,7 +32,7 @@ public partial class v11 : Migration
             oldType: "timestamp without time zone",
             oldNullable: true);
 
-        _ = migrationBuilder.AlterColumn<DateTime>(
+         migrationBuilder.AlterColumn<DateTime>(
             name: "EndTime",
             table: "Timer",
             type: "timestamp with time zone",
@@ -41,7 +41,7 @@ public partial class v11 : Migration
             oldType: "timestamp without time zone",
             oldNullable: true);
 
-        _ = migrationBuilder.AlterColumn<DateTime>(
+         migrationBuilder.AlterColumn<DateTime>(
             name: "StrikeDate",
             table: "Strike",
             type: "timestamp with time zone",
@@ -50,7 +50,7 @@ public partial class v11 : Migration
             oldType: "timestamp without time zone",
             oldNullable: true);
 
-        _ = migrationBuilder.AlterColumn<DateTime>(
+         migrationBuilder.AlterColumn<DateTime>(
             name: "Start",
             table: "Season",
             type: "timestamp with time zone",
@@ -58,7 +58,7 @@ public partial class v11 : Migration
             oldClrType: typeof(DateTime),
             oldType: "timestamp without time zone");
 
-        _ = migrationBuilder.AlterColumn<DateTime>(
+         migrationBuilder.AlterColumn<DateTime>(
             name: "LastUpdated",
             table: "Member",
             type: "timestamp with time zone",
@@ -67,21 +67,21 @@ public partial class v11 : Migration
             oldType: "timestamp without time zone",
             oldNullable: true);
 
-        _ = migrationBuilder.AddColumn<decimal>(
+         migrationBuilder.AddColumn<decimal>(
             name: "CategoryId",
             table: "GuildSettings",
             type: "numeric(20,0)",
             nullable: false,
             defaultValue: 0m);
 
-        _ = migrationBuilder.AddColumn<decimal>(
+         migrationBuilder.AddColumn<decimal>(
             name: "MemberRoleId",
             table: "GuildSettings",
             type: "numeric(20,0)",
             nullable: false,
             defaultValue: 0m);
 
-        _ = migrationBuilder.CreateTable(
+         migrationBuilder.CreateTable(
             name: "MemberRoom",
             columns: table => new
             {
@@ -95,24 +95,24 @@ public partial class v11 : Migration
             },
             constraints: table =>
             {
-                _ = table.PrimaryKey("PK_MemberRoom", x => x.Id);
+                 table.PrimaryKey("PK_MemberRoom", x => x.Id);
             });
     }
 
     protected override void Down(MigrationBuilder migrationBuilder)
     {
-        _ = migrationBuilder.DropTable(
+         migrationBuilder.DropTable(
             name: "MemberRoom");
 
-        _ = migrationBuilder.DropColumn(
+         migrationBuilder.DropColumn(
             name: "CategoryId",
             table: "GuildSettings");
 
-        _ = migrationBuilder.DropColumn(
+         migrationBuilder.DropColumn(
             name: "MemberRoleId",
             table: "GuildSettings");
 
-        _ = migrationBuilder.AlterColumn<DateTime>(
+         migrationBuilder.AlterColumn<DateTime>(
             name: "StartDate",
             table: "Vacation",
             type: "timestamp without time zone",
@@ -120,7 +120,7 @@ public partial class v11 : Migration
             oldClrType: typeof(DateTime),
             oldType: "timestamp with time zone");
 
-        _ = migrationBuilder.AlterColumn<DateTime>(
+         migrationBuilder.AlterColumn<DateTime>(
             name: "EndDate",
             table: "Vacation",
             type: "timestamp without time zone",
@@ -128,7 +128,7 @@ public partial class v11 : Migration
             oldClrType: typeof(DateTime),
             oldType: "timestamp with time zone");
 
-        _ = migrationBuilder.AlterColumn<DateTime>(
+         migrationBuilder.AlterColumn<DateTime>(
             name: "StartTime",
             table: "Timer",
             type: "timestamp without time zone",
@@ -137,7 +137,7 @@ public partial class v11 : Migration
             oldType: "timestamp with time zone",
             oldNullable: true);
 
-        _ = migrationBuilder.AlterColumn<DateTime>(
+         migrationBuilder.AlterColumn<DateTime>(
             name: "EndTime",
             table: "Timer",
             type: "timestamp without time zone",
@@ -146,7 +146,7 @@ public partial class v11 : Migration
             oldType: "timestamp with time zone",
             oldNullable: true);
 
-        _ = migrationBuilder.AlterColumn<DateTime>(
+         migrationBuilder.AlterColumn<DateTime>(
             name: "StrikeDate",
             table: "Strike",
             type: "timestamp without time zone",
@@ -155,7 +155,7 @@ public partial class v11 : Migration
             oldType: "timestamp with time zone",
             oldNullable: true);
 
-        _ = migrationBuilder.AlterColumn<DateTime>(
+         migrationBuilder.AlterColumn<DateTime>(
             name: "Start",
             table: "Season",
             type: "timestamp without time zone",
@@ -163,7 +163,7 @@ public partial class v11 : Migration
             oldClrType: typeof(DateTime),
             oldType: "timestamp with time zone");
 
-        _ = migrationBuilder.AlterColumn<DateTime>(
+         migrationBuilder.AlterColumn<DateTime>(
             name: "LastUpdated",
             table: "Member",
             type: "timestamp without time zone",

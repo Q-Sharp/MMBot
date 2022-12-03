@@ -43,9 +43,9 @@ public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
     public virtual async Task<bool> Delete(TEntity entityToDelete)
     {
         if (context.Entry(entityToDelete).State == EntityState.Detached)
-            _ = dbSet.Attach(entityToDelete);
+             dbSet.Attach(entityToDelete);
 
-        _ = dbSet.Remove(entityToDelete);
+         dbSet.Remove(entityToDelete);
         return await context.SaveChangesAsync() >= 1;
     }
 
@@ -62,7 +62,7 @@ public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
             var e = dbSet.Add(entity);
             e.State = EntityState.Added;
 
-            _ = await context.SaveChangesAsync();
+             await context.SaveChangesAsync();
             return e.Entity;
         }
         catch (Exception e)
@@ -79,7 +79,7 @@ public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
 
         try
         {
-            _ = dbSet.Attach(entityToUpdate);
+             dbSet.Attach(entityToUpdate);
             context.Entry(entityToUpdate).State = EntityState.Modified;
         }
         catch (Exception e)
@@ -99,7 +99,7 @@ public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
                 _logger.LogError(e, "Still couldn't update {entityToUpdate}", entityToUpdate.ToString());
             }
 
-        _ = await context.SaveChangesAsync();
+         await context.SaveChangesAsync();
         return entityToUpdate;
     }
 }

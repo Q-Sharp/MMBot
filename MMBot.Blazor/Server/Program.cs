@@ -104,11 +104,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
-    _ = app.UseDeveloperExceptionPage();
+    app.UseDeveloperExceptionPage();
 }
 else
 {
-    _ = app.UseForwardedHeaders()
+    app.UseForwardedHeaders()
        .UseCertificateForwarding()
        .UseExceptionHandler("/Error")
        .UseHsts()

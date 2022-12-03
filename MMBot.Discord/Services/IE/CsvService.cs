@@ -89,7 +89,7 @@ public class CsvService : ICsvService
                     };
 
                     await _context.Clan.ImportOrUpgradeWithIdentifier(clan, guildId);
-                    _ = await _context.SaveChangesAsync();
+                     await _context.SaveChangesAsync();
                 }
             }
         }
@@ -111,7 +111,7 @@ public class CsvService : ICsvService
                 if (me is null)
                 {
                     me = new Member();
-                    _ = await _context.Member.AddAsync(me);
+                     await _context.Member.AddAsync(me);
                 }
 
                 me.IsActive = true;
@@ -168,7 +168,7 @@ public class CsvService : ICsvService
                 me.LastUpdated = DateTime.UtcNow;
                 me.GuildId = guildId;
 
-                _ = await _context.SaveChangesAsync();
+                 await _context.SaveChangesAsync();
             }
         }
         catch (Exception e)

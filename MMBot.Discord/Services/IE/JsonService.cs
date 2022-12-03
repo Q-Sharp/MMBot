@@ -57,80 +57,80 @@ public class JsonService : IJsonService
             {
                 var am = JsonSerializer.Deserialize<IList<Channel>>(channel, _jsonSerializerOptions);
                 await context.Channel.ImportOrUpgrade(am);
-                _ = await context.SaveChangesAsync();
+                 await context.SaveChangesAsync();
             }
 
             if (importJson.TryGetValue("GuildSettings", out var guild))
             {
                 var ac = JsonSerializer.Deserialize<IList<Data.Contracts.Entities.GuildSettings>>(guild, _jsonSerializerOptions);
                 await context.GuildSettings.ImportOrUpgrade(ac);
-                _ = await context.SaveChangesAsync();
+                 await context.SaveChangesAsync();
             }
 
             if (importJson.TryGetValue("Clan", out var clan))
             {
                 var ags = JsonSerializer.Deserialize<IList<Clan>>(clan, _jsonSerializerOptions);
                 await context.Clan.ImportOrUpgrade(ags);
-                _ = await context.SaveChangesAsync();
+                 await context.SaveChangesAsync();
             }
 
             if (importJson.TryGetValue("Season", out var season))
             {
                 var s = JsonSerializer.Deserialize<IList<Season>>(season, _jsonSerializerOptions);
                 await context.Season.ImportOrUpgrade(s);
-                _ = await context.SaveChangesAsync();
+                 await context.SaveChangesAsync();
             }
 
             if (importJson.TryGetValue("Vacation", out var vac))
             {
                 var av = JsonSerializer.Deserialize<IList<Vacation>>(vac, _jsonSerializerOptions);
                 await context.Vacation.ImportOrUpgrade(av);
-                _ = await context.SaveChangesAsync();
+                 await context.SaveChangesAsync();
             }
 
             if (importJson.TryGetValue("MemberGroup", out var mgroup))
             {
                 var amg = JsonSerializer.Deserialize<IList<MemberGroup>>(mgroup, _jsonSerializerOptions);
                 await context.MemberGroup.ImportOrUpgrade(amg);
-                _ = await context.SaveChangesAsync();
+                 await context.SaveChangesAsync();
             }
 
             if (importJson.TryGetValue("Member", out var member))
             {
                 var aca = JsonSerializer.Deserialize<IList<Member>>(member, _jsonSerializerOptions);
                 await context.Member.ImportOrUpgrade(aca);
-                _ = await context.SaveChangesAsync();
+                 await context.SaveChangesAsync();
             }
 
             if (importJson.TryGetValue("RaidBoss", out var raidBoss))
             {
                 var rb = JsonSerializer.Deserialize<IList<RaidBoss>>(raidBoss, _jsonSerializerOptions);
                 await context.RaidBoss.ImportOrUpgrade(rb);
-                _ = await context.SaveChangesAsync();
+                 await context.SaveChangesAsync();
             }
 
             if (importJson.TryGetValue("RaidParticipation", out var raidParticipation))
             {
                 var rp = JsonSerializer.Deserialize<IList<RaidParticipation>>(raidParticipation, _jsonSerializerOptions);
                 await context.RaidParticipation.ImportOrUpgrade(rp);
-                _ = await context.SaveChangesAsync();
+                 await context.SaveChangesAsync();
             }
 
             if (importJson.TryGetValue("MMTimer", out var timer))
             {
                 var mmt = JsonSerializer.Deserialize<IList<MMTimer>>(timer, _jsonSerializerOptions);
                 await context.Timer.ImportOrUpgrade(mmt);
-                _ = await context.SaveChangesAsync();
+                 await context.SaveChangesAsync();
             }
 
             if (importJson.TryGetValue("MemberRoom", out var mRoom))
             {
                 var mr = JsonSerializer.Deserialize<IList<MemberRoom>>(mRoom, _jsonSerializerOptions);
                 await context.MemberRoom.ImportOrUpgrade(mr);
-                _ = await context.SaveChangesAsync();
+                 await context.SaveChangesAsync();
             }
 
-            _ = await context.SaveChangesAsync();
+             await context.SaveChangesAsync();
             return true;
         }
         catch (Exception e)

@@ -34,7 +34,7 @@ public class DataRepository<TEntity> : IRepository<TEntity>
             if (filter != null)
                 q = q.Where(filter);
 
-            _ = includeProperties.Split(",", StringSplitOptions.RemoveEmptyEntries);
+             includeProperties.Split(",", StringSplitOptions.RemoveEmptyEntries);
 
             return orderBy != null ? orderBy(q).ToList() : q.ToList();
         }

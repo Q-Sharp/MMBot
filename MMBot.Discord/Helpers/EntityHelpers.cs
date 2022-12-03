@@ -21,13 +21,13 @@ public static class EntityHelpers
     {
         if (entities.Count() > 5)
         {
-            _ = await smc.SendMessageAsync("Be more precise with your input!");
+             await smc.SendMessageAsync("Be more precise with your input!");
             return default;
         }
 
         if (!entities.Any())
         {
-            _ = await smc.SendMessageAsync($"I couldn't find anyone/anything with your input!");
+             await smc.SendMessageAsync($"I couldn't find anyone/anything with your input!");
             return default;
         }
 

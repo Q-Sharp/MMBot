@@ -54,7 +54,7 @@ public static class PropertyHelpers
         {
             foreach (var p in m.GetType().GetProperties().Where(x => x.Name != nameof(IHaveId.Id)
                  && !x.CustomAttributes.Any(x => x.AttributeType == typeof(JsonIgnoreAttribute))))
-                _ = m.ChangeProperty(p.Name, updateWith.GetProperty(p.Name, false), false);
+                 m.ChangeProperty(p.Name, updateWith.GetProperty(p.Name, false), false);
         }
         catch
         {
@@ -109,7 +109,7 @@ public static class PropertyHelpers
                 var t = Nullable.GetUnderlyingType(p.PropertyType) ?? p.PropertyType;
                 var val = pVal is null ? null : Convert.ChangeType(pVal, t);
 
-                _ = builder.AddField(x =>
+                builder.AddField(x =>
                 {
                     x.Name = p?.Name?.ToSentence();
                     x.Value = (val?.ToString()) ?? "not set";

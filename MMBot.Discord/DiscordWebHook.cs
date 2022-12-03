@@ -12,7 +12,7 @@ public class DiscordWebHook
                    var client = new DiscordWebhookClient(id, token);
                    while (true)
                    {
-                       _ = await client.SendMessageAsync("Test Description https://forms.gle/CFZ92wrzqntYyemu9");
+                       await client.SendMessageAsync("Test Description https://forms.gle/CFZ92wrzqntYyemu9");
                        await Task.Delay(TimeSpan.FromSeconds(30));
                    }
                });

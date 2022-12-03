@@ -47,8 +47,8 @@ public class DatabaseService : IDatabaseService
 
             if (r != null)
             {
-                _ = _context.Restart.Remove(r);
-                _ = await _context.SaveChangesAsync(new CancellationToken());
+                 _context.Restart.Remove(r);
+                 await _context.SaveChangesAsync(new CancellationToken());
                 return r;
             }
             else
@@ -77,7 +77,7 @@ public class DatabaseService : IDatabaseService
         foreach (var dbSet in dbSets)
             try
             {
-                _ = _context.Database.ExecuteSqlRaw($"TRUNCATE TABLE public.\"{dbSet.Name.FirstCharToUpper()}\" CASCADE");
+                 _context.Database.ExecuteSqlRaw($"TRUNCATE TABLE public.\"{dbSet.Name.FirstCharToUpper()}\" CASCADE");
             }
             catch
             {
@@ -99,12 +99,12 @@ public class DatabaseService : IDatabaseService
         m.Where(x => x.ClanId == 0 || x.Name == string.Empty).ForEach(x =>
         {
             var id = x.ClanId;
-            _ = _context.Remove(x);
+             _context.Remove(x);
 
             if (id.HasValue)
-                _ = _context.Remove(c.FirstOrDefault(y => y.Id == id));
+                 _context.Remove(c.FirstOrDefault(y => y.Id == id));
         });
-        _ = await _context.SaveChangesAsync();
+         await _context.SaveChangesAsync();
 
         m.Where(x => !x.IsActive || x.ClanId == null || x.Role == Role.ExMember).ForEach(x =>
         {
@@ -112,25 +112,25 @@ public class DatabaseService : IDatabaseService
             x.ClanId = null;
             x.Role = Role.ExMember;
         });
-        _ = await _context.SaveChangesAsync();
+         await _context.SaveChangesAsync();
 
         m.Where(x => string.IsNullOrWhiteSpace(x.Name)).ForEach(x => _context.Remove(x));
-        _ = await _context.SaveChangesAsync();
+         await _context.SaveChangesAsync();
 
         // clean dead channel data
         if (guilds is not null)
         {
             var ch = await LoadChannelsAsync(loadAll: true);
             ch.Where(x => !guilds.Select(x => x.Id).Contains(x.GuildId)).ForEach(cha => _context.Remove(cha));
-            _ = await _context.SaveChangesAsync();
+             await _context.SaveChangesAsync();
 
             var gs = await LoadAllGuildSettingsAsync();
             gs.Where(x => !guilds.Select(x => x.Id).Contains(x.GuildId)).ForEach(gss => _context.Remove(gss));
-            _ = await _context.SaveChangesAsync();
+             await _context.SaveChangesAsync();
 
             gs = await LoadAllGuildSettingsAsync();
             gs.Where(x => x.GuildName == null).ForEach(gss => gss.GuildName = guilds.FirstOrDefault(y => y.Id == gss.GuildId).Name);
-            _ = await _context.SaveChangesAsync();
+             await _context.SaveChangesAsync();
         }
     }
 }

@@ -67,7 +67,7 @@ public class AdminService : IAdminService
                 x.ToList().ForEach(m => m.Join = i++);
             });
 
-        _ = await _context?.SaveChangesAsync();
+         await _context?.SaveChangesAsync();
     }
 
     public async Task<bool> DataImport(byte[] zipBytes)
@@ -76,7 +76,7 @@ public class AdminService : IAdminService
 
         var dict = await Task.Run(async () =>
         {
-            _ = Directory.CreateDirectory(_backupDir);
+             Directory.CreateDirectory(_backupDir);
 
             ZipFile.ExtractToDirectory(_import, _backupDir);
 

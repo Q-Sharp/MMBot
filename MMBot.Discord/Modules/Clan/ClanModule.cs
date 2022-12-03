@@ -30,14 +30,14 @@ public class ClanModule : MMBotModule, IClanModule
             var builder = new EmbedBuilder { Color = Color.DarkTeal, Title = "Clans" };
 
             foreach (var clan in clans)
-                _ = builder.AddField(x =>
+                builder.AddField(x =>
                 {
                     x.Name = clan.Tag;
                     x.Value = clan.Name;
                     x.IsInline = false;
                 });
 
-            _ = await ReplyAsync("", false, builder.Build());
+             await ReplyAsync("", false, builder.Build());
         }
         else
         {
@@ -46,7 +46,7 @@ public class ClanModule : MMBotModule, IClanModule
             if (c is null)
                 return FromErrorObjectNotFound("Clan", "tag");
             else
-                _ = await ReplyAsync("", false, c.GetEmbedPropertiesWithValues() as Embed);
+                 await ReplyAsync("", false, c.GetEmbedPropertiesWithValues() as Embed);
         }
 
         return FromSuccess();
@@ -149,7 +149,7 @@ public class ClanModule : MMBotModule, IClanModule
             m.ClanId = c.Id;
 
             await _databaseService.SaveDataAsync();
-            _ = await ReplyAsync($"The member {m} is now member of {c}.");
+             await ReplyAsync($"The member {m} is now member of {c}.");
             return FromSuccess();
         }
 

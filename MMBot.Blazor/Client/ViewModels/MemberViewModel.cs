@@ -30,8 +30,8 @@ public class MemberViewModel : ViewModelBase, ICRUDViewModel<MemberModel, Member
             try
             {
                 var id = SelectedEntity.Id;
-                _ = await Repo.Delete(id);
-                _ = Entities.Remove(Entities.FirstOrDefault(x => x.Id == id));
+                 await Repo.Delete(id);
+                 Entities.Remove(Entities.FirstOrDefault(x => x.Id == id));
             }
             catch
             {

@@ -49,7 +49,7 @@ public class HelpModule : MMBotModule, IHelpModule
             }
 
             if (!string.IsNullOrWhiteSpace(description))
-                _ = builder.AddField(x =>
+                builder.AddField(x =>
                 {
                     x.Name = module.Name;
                     x.Value = description;
@@ -57,7 +57,7 @@ public class HelpModule : MMBotModule, IHelpModule
                 });
         }
 
-        _ = await ReplyAsync("", false, builder.Build());
+         await ReplyAsync("", false, builder.Build());
         return FromSuccess();
     }
 
@@ -79,7 +79,7 @@ public class HelpModule : MMBotModule, IHelpModule
         {
             var cmd = match.Command;
 
-            _ = builder.AddField(x =>
+            builder.AddField(x =>
             {
                 x.Name = string.Join(", ", cmd.Aliases);
                 x.Value = $"Parameters: {string.Join(", ", cmd.Parameters.Select(p => p.Name))}\n" +
@@ -88,7 +88,7 @@ public class HelpModule : MMBotModule, IHelpModule
             });
         }
 
-        _ = await ReplyAsync("", false, builder.Build());
+         await ReplyAsync("", false, builder.Build());
         return FromSuccess();
     }
 }

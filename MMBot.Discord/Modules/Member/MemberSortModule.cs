@@ -49,7 +49,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
         var cQty = c?.Count;
 
         if (!string.IsNullOrWhiteSpace(compact))
-            _ = await ReplyAsync(GetCompactMemberChangesString(result, c));
+             await ReplyAsync(GetCompactMemberChangesString(result, c));
         else
         {
             var page = 0;
@@ -80,7 +80,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
 
         if (!cQty.HasValue || cQty.Value == 0 || mm.Count == 0)
         {
-            _ = await ReplyAsync($"No member data in db.");
+             await ReplyAsync($"No member data in db.");
             return;
         }
 

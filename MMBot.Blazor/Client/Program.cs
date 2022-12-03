@@ -11,7 +11,7 @@ Log.Logger = new LoggerConfiguration()
 builder.Logging.ClearProviders();
 
 if (builder.HostEnvironment.IsDevelopment())
-    _ = builder.Logging.AddSerilog(Log.Logger);
+    builder.Logging.AddSerilog(Log.Logger);
 
 services.AddOptions();
 services.AddAuthorizationCore();

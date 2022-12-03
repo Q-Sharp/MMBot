@@ -119,7 +119,7 @@
         get => selectedGuildId;
         set
         {
-            _ = SessionStorage.SetItemAsync<ulong>(SessionStoreDefaults.GuildId, ulong.Parse(value));
+            SessionStorage.SetItemAsync<ulong>(SessionStoreDefaults.GuildId, ulong.Parse(value));
             selectedGuildId = value;
         }
     }

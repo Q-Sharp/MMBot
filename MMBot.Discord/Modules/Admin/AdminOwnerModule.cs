@@ -26,7 +26,7 @@ public partial class AdminModule : MMBotModule, IAdminModule
 
             ex = await Task.Run(async () =>
             {
-                _ = Directory.CreateDirectory(_backupDir);
+                 Directory.CreateDirectory(_backupDir);
 
                 foreach (var entry in json)
                     await File.WriteAllTextAsync(Path.Combine(_backupDir, $"{entry.Key}.json"), entry.Value);
@@ -60,16 +60,16 @@ public partial class AdminModule : MMBotModule, IAdminModule
 
         if (csvFile is not null)
         {
-            _ = await ReplyAsync("Starting db import this can take a while...");
+             await ReplyAsync("Starting db import this can take a while...");
 
             var zip = await myWebClient.GetAsync(csvFile.Url);
             var zipByte = await zip.Content.ReadAsByteArrayAsync();
 
             _adminService.Truncate();
-            _ = await ReplyAsync($"db is empty now.");
+             await ReplyAsync($"db is empty now.");
 
-            _ = await ReplyAsync("Importing data now....");
-            _ = await _adminService.DataImport(zipByte);
+             await ReplyAsync("Importing data now....");
+             await _adminService.DataImport(zipByte);
 
             return FromSuccess("Database import was successful.");
         }
@@ -83,7 +83,7 @@ public partial class AdminModule : MMBotModule, IAdminModule
     [RequireOwner]
     public async Task<RuntimeResult> Restart(bool saveRestart = true)
     {
-        _ = await ReplyAsync("Restarting.....");
+         await ReplyAsync("Restarting.....");
         await _adminService.Restart(saveRestart, Context.Guild.Id, Context.Channel.Id);
         return FromSuccess();
     }
@@ -94,7 +94,7 @@ public partial class AdminModule : MMBotModule, IAdminModule
     public async Task<RuntimeResult> TruncateDb()
     {
         _adminService.Truncate();
-        _ = await ReplyAsync($"db is empty now.");
+         await ReplyAsync($"db is empty now.");
         return FromSuccess();
     }
 }

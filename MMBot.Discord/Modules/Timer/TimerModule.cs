@@ -28,7 +28,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
         if ((await _databaseService.LoadTimerAsync(Context.Guild.Id)).FirstOrDefault(t => t.Name.ToLower() == name.ToLower()) is not null)
         {
             var es = $"A timer with that name already exists!";
-            _ = await ReplyAsync(es);
+             await ReplyAsync(es);
             return FromError(CommandError.Unsuccessful, es);
         }
 
@@ -39,7 +39,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
             t.IsRecurring = recurring;
             t.GuildId = Context.Guild.Id;
             await _databaseService.SaveDataAsync();
-            _ = await ReplyAsync($"The timer {t} was added to database.");
+             await ReplyAsync($"The timer {t} was added to database.");
         }
 
         return FromSuccess();
@@ -56,11 +56,11 @@ public partial class TimerModule : MMBotModule, ITimerModule
         if (t != null)
         {
             if (t.IsActive)
-                _ = await StopTimer(name);
+                 await StopTimer(name);
 
             _databaseService.DeleteTimer(t);
             await _databaseService.SaveDataAsync();
-            _ = await ReplyAsync($"The timer {name} was deleted");
+             await ReplyAsync($"The timer {name} was deleted");
         }
 
         return FromErrorObjectNotFound("Timer", name);
@@ -73,7 +73,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
     public async Task<RuntimeResult> ListTimers()
     {
         var timer = (await _databaseService.LoadTimerAsync(Context.Guild.Id)).ToList();
-        _ = await ReplyAsync(timer.Count > 0 ? timer.GetTablePropertiesWithValues() : "No timers");
+         await ReplyAsync(timer.Count > 0 ? timer.GetTablePropertiesWithValues() : "No timers");
         return FromSuccess();
     }
 
@@ -87,13 +87,13 @@ public partial class TimerModule : MMBotModule, ITimerModule
         if (t is not null)
         {
             if (t.IsActive)
-                _ = await StopTimer(name);
+                 await StopTimer(name);
 
             t.ChannelId = channel.Id;
             t.GuildId = Context.Guild.Id;
             t.Message = message;
             await _databaseService.SaveDataAsync();
-            _ = await ReplyAsync($"A notification will be send to {channel.Name} for timer {t}.");
+             await ReplyAsync($"A notification will be send to {channel.Name} for timer {t}.");
         }
 
         return FromErrorObjectNotFound("Timer", name);
@@ -109,12 +109,12 @@ public partial class TimerModule : MMBotModule, ITimerModule
         if (t is not null)
         {
             if (t.IsActive)
-                _ = await StopTimer(name);
+                 await StopTimer(name);
 
             t.ChannelId = null;
             t.Message = null;
             await _databaseService.SaveDataAsync();
-            _ = await ReplyAsync($"The notification for timer {t} is deleted.");
+             await ReplyAsync($"The notification for timer {t} is deleted.");
             return FromSuccess();
         }
 
@@ -145,7 +145,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
             await _databaseService.SaveDataAsync();
 
             await _timerService?.Start(t, false, toFirstRingSpan);
-            _ = await ReplyAsync($"Timer {t} is running.");
+             await ReplyAsync($"Timer {t} is running.");
             return FromSuccess();
         }
 
@@ -167,7 +167,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
             t.RingSpan = null;
             t.EndTime = null;
             await _databaseService.SaveDataAsync();
-            _ = await ReplyAsync($"Timer {t} stopped.");
+             await ReplyAsync($"Timer {t} stopped.");
 
             return FromSuccess();
         }
@@ -186,7 +186,7 @@ public partial class TimerModule : MMBotModule, ITimerModule
         if (t is not null)
         {
             var timeLeft = await _timerService?.GetCountDown(t);
-            _ = await ReplyAsync($"Countdown for {t}: {timeLeft}");
+             await ReplyAsync($"Countdown for {t}: {timeLeft}");
             return FromSuccess();
         }
 

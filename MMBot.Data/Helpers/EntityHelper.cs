@@ -16,7 +16,7 @@ public static class EntityHelper
             if (found is not null)
                 found.Update(uwd);
             else
-                _ = await currentData.AddAsync(uwd);
+                 await currentData.AddAsync(uwd);
         }
     }
 
@@ -30,7 +30,7 @@ public static class EntityHelper
             if (found is not null)
                 found.Update(uwd);
             else
-                _ = await currentData.AddAsync(uwd);
+                 await currentData.AddAsync(uwd);
         }
     }
 
