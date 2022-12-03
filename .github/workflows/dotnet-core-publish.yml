@@ -23,7 +23,7 @@ jobs:
       run: dotnet nuget add source https://www.myget.org/F/discord-net/api/v3/index.json
 
     - name: Install dependencies2
-      run: dotnet restore
+      run: dotnet restore MMBot.sln
 
     - name: Build
       run: dotnet build --configuration Release
