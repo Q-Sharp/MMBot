@@ -37,7 +37,7 @@ jobs:
     - name: App Settings Variable Substitution
       uses: microsoft/variable-substitution@v1
       with:
-        files: './MMBot.Discord/bin/Release/net6.0/linux-x64/publish/appsettings.json'
+        files: './MMBot.Discord/bin/Release/net7.0/linux-x64/publish/appsettings.json'
       env:
         DetailedErrors: false
         Discord.DevToken: ${{ secrets.DISCORD_DEV_TOKEN }}
@@ -60,7 +60,7 @@ jobs:
     - name: App Settings Variable Substitution
       uses: microsoft/variable-substitution@v1
       with:
-        files: './MMBot.Blazor/Server/bin/Release/net6.0/linux-x64/publish/appsettings.json'
+        files: './MMBot.Blazor/Server/bin/Release/net7.0/linux-x64/publish/appsettings.json'
       env:
         DetailedErrors: false
         Discord.AppId: ${{ secrets.DISCORD_APPID }}
