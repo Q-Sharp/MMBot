@@ -26,10 +26,10 @@ jobs:
       run: dotnet restore MMBot.sln
 
     - name: Build
-      run: dotnet build --configuration Release
+      run: dotnet build MMBot.sln --configuration Release
 
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test MMBot.sln --no-restore --verbosity normal
 
     - name: .NET Publish
       run: dotnet publish ./MMBot.Discord/MMBot.Discord.csproj -c Release -r linux-x64 --no-self-contained /p:PublishReadyToRun=false /p:DebugType=None /p:DebugSymbols=false
