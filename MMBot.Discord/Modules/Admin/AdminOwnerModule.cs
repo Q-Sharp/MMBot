@@ -98,4 +98,13 @@ public partial class AdminModule : MMBotModule, IAdminModule
         await ReplyAsync($"db is empty now.");
         return FromSuccess();
     }
+
+    [Command("ShowServers")]
+    [Summary("Shows all servrs the bot is member of")]
+    [RequireOwner]
+    public async Task<RuntimeResult> ShowServers()
+    {
+        await ReplyAsync(string.Join(Environment.NewLine, Context.Client.Guilds.Select(x => x.Name)));
+        return FromSuccess();
+    }
 }
