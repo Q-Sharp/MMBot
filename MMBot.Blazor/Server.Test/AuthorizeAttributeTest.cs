@@ -22,6 +22,6 @@ public class AuthorizeAttributeTest
             .Where(t => t.Name != "UserController") // User is anonymous before using api auth!!
             .Select(t => Attribute.GetCustomAttribute(t, typeof(AuthorizeAttribute), true) as AuthorizeAttribute);
 
-        Assert.All(authA, a => Assert.NotNull(a));
+        Assert.All(authA, Assert.NotNull);
     }
 }

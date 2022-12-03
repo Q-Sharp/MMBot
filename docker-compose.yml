@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  mmbot.discord:
+    image: ${DOCKER_REGISTRY-}mmbotdiscord
+    build:
+      context: .
+      dockerfile: MMBot.Discord/Dockerfile

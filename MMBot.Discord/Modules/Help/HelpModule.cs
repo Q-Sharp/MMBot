@@ -12,10 +12,7 @@ public class HelpModule : MMBotModule, IHelpModule
     private readonly CommandService _service;
 
     public HelpModule(CommandService service, IDatabaseService databaseService, IGuildSettingsService guildSettings, ICommandHandler commandHandler)
-        : base(databaseService, guildSettings, commandHandler)
-    {
-        _service = service;
-    }
+        : base(databaseService, guildSettings, commandHandler) => _service = service;
 
     [Command("help")]
     public async Task<RuntimeResult> HelpAsync()
@@ -60,7 +57,7 @@ public class HelpModule : MMBotModule, IHelpModule
                 });
         }
 
-        await ReplyAsync("", false, builder.Build());
+         await ReplyAsync("", false, builder.Build());
         return FromSuccess();
     }
 
@@ -91,7 +88,7 @@ public class HelpModule : MMBotModule, IHelpModule
             });
         }
 
-        await ReplyAsync("", false, builder.Build());
+         await ReplyAsync("", false, builder.Build());
         return FromSuccess();
     }
 }

@@ -1,6 +1,8 @@
 ﻿global using System.ComponentModel;
+global using System.Linq;
 global using System.Linq.Expressions;
 global using System.Net;
+global using System.Net.Http;
 global using System.Net.Http.Headers;
 global using System.Net.Http.Json;
 global using System.Runtime.CompilerServices;
@@ -26,5 +28,3 @@ global using MMBot.Data.Contracts.Entities;
 global using MudBlazor;
 global using MudBlazor.Services;
 global using Serilog;
-global using System.Linq;
-global using System.Net.Http;

@@ -23,9 +23,7 @@ public static class ListHelpers
         while (n > 1)
         {
             var k = random.Next(n--);
-            var temp = retArray[n];
-            retArray[n] = retArray[k];
-            retArray[k] = temp;
+            (retArray[k], retArray[n]) = (retArray[n], retArray[k]);
         }
 
         return retArray.ToArray();

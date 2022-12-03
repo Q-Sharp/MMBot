@@ -12,10 +12,7 @@ public partial class ClanLookUp
         return base.OnAfterRenderAsync(firstRender);
     }
 
-    private async Task UpdateId(object changed)
-    {
-        await ValueChanged.InvokeAsync();
-    }
+    private async Task UpdateId(object changed) => await ValueChanged.InvokeAsync();
 
     [Parameter]
     public int? SelectedId { get; set; }

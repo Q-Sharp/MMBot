@@ -4,8 +4,7 @@ public class SeasonConfiguration : IEntityTypeConfiguration<Season>
 {
     public void Configure(EntityTypeBuilder<Season> builder)
     {
-        builder.UseXminAsConcurrencyToken()
-               .HasKey(c => c.Id);
+        builder.Property(x => x.Version).IsRowVersion();
 
         builder
            .HasMany(s => s.SeasonResult)

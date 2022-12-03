@@ -35,24 +35,18 @@ public class ClanModel : Clan, ICreate
         }
     }
 
-    public static ClanModel Create(Clan c)
+    public static ClanModel Create(Clan c) => new()
     {
-        return new ClanModel()
-        {
-            Id = c.Id,
-            SortOrder = c.SortOrder,
-            Tag = c.Tag,
-            Name = c.Name,
-            DiscordRole = c.DiscordRole,
-            GuildId = c.GuildId,
-        };
-    }
+        Id = c.Id,
+        SortOrder = c.SortOrder,
+        Tag = c.Tag,
+        Name = c.Name,
+        DiscordRole = c.DiscordRole,
+        GuildId = c.GuildId,
+    };
 
-    public ICreate Create(object from)
-    {
-        if (from is Clan c)
-        {
-            return new ClanModel()
+    public ICreate Create(object from) => from is Clan c
+            ? new ClanModel()
             {
                 Id = c.Id,
                 SortOrder = c.SortOrder,
@@ -60,9 +54,6 @@ public class ClanModel : Clan, ICreate
                 Name = c.Name,
                 DiscordRole = c.DiscordRole,
                 GuildId = c.GuildId,
-            };
-        }
-
-        return null;
-    }
+            }
+            : (ICreate)null;
 }

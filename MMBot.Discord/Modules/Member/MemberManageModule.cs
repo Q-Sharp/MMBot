@@ -90,7 +90,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
     {
         var m = await (await _databaseService.LoadMembersAsync(Context.Guild.Id)).FindAndAskForEntity(Context.Guild.Id, name, Context.Channel, _commandHandler);
 
-        m.Strike.Remove(m.Strike.OrderBy(y => y.StrikeDate).FirstOrDefault());
+         m.Strike.Remove(m.Strike.OrderBy(y => y.StrikeDate).FirstOrDefault());
         await _databaseService?.SaveDataAsync();
 
         return FromSuccess($"{m} now has {m?.Strike?.Count ?? 0} strike(s)!");
@@ -103,10 +103,9 @@ public partial class MemberModule : MMBotModule, IMemberModule
     {
         var me = (await _databaseService.LoadMembersAsync(Context.Guild.Id)).Where(x => x.Strike?.Count > 0)?.ToList();
 
-        if ((me?.Count ?? 0) <= 0)
-            return FromErrorUnsuccessful("No member with strikes found!");
-
-        return FromSuccess(me.GetTablePropertiesWithValues());
+        return (me?.Count ?? 0) <= 0
+            ? FromErrorUnsuccessful("No member with strikes found!")
+            : (RuntimeResult)FromSuccess(me.GetTablePropertiesWithValues());
     }
 
     [Command("GroupMember")]
@@ -151,7 +150,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
 
         var imageUrl = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => x.GetUserAndDiscriminator() == m.Discord)?.GetAvatarUrl());
         var e = m.GetEmbedPropertiesWithValues(imageUrl);
-        await ReplyAsync("", false, e as Embed);
+         await ReplyAsync("", false, e as Embed);
         return FromSuccess();
     }
 }

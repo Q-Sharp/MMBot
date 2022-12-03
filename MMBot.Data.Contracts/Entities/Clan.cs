@@ -1,8 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-
-namespace MMBot.Data.Contracts.Entities;
+﻿namespace MMBot.Data.Contracts.Entities;
 
 public class Clan : IHaveId, IHaveIdentifier, IHaveGuildId
 {
@@ -26,6 +22,8 @@ public class Clan : IHaveId, IHaveIdentifier, IHaveGuildId
     public virtual ICollection<Member> Member { get; set; } = new Collection<Member>();
 
     public virtual ICollection<RaidBoss> RaidBoss { get; set; } = new Collection<RaidBoss>();
+
+    public byte[] Version { get; set; }
 
     public override string ToString() => $"[{Tag}]";
 

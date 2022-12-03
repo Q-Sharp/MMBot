@@ -101,7 +101,7 @@ services.Configure<ForwardedHeadersOptions>(options =>
 
 var app = builder.Build();
 
-if(app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
     app.UseDeveloperExceptionPage();

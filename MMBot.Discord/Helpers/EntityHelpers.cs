@@ -6,7 +6,7 @@ namespace MMBot.Discord.Helpers;
 
 public static class EntityHelpers
 {
-    public async static Task<T> FindAndAskForEntity<T>(this IEnumerable<T> entities, ulong guildId, string search, IMessageChannel smc, ICommandHandler ch)
+    public static async Task<T> FindAndAskForEntity<T>(this IEnumerable<T> entities, ulong guildId, string search, IMessageChannel smc, ICommandHandler ch)
         where T : class, IHaveIdentifier
         => await entities
             .FindEntity(search)
@@ -16,18 +16,18 @@ public static class EntityHelpers
         where T : class, IHaveIdentifier
         => entities.Where(x => x.Identitfier.ToLower().Contains(search.ToLower()));
 
-    private async static Task<T> AskForEntityAsync<T>(this IEnumerable<T> entities, ulong guildId, IMessageChannel smc, ICommandHandler ch)
+    private static async Task<T> AskForEntityAsync<T>(this IEnumerable<T> entities, ulong guildId, IMessageChannel smc, ICommandHandler ch)
         where T : class, IHaveIdentifier
     {
         if (entities.Count() > 5)
         {
-            await smc.SendMessageAsync("Be more precise with your input!");
+             await smc.SendMessageAsync("Be more precise with your input!");
             return default;
         }
 
         if (!entities.Any())
         {
-            await smc.SendMessageAsync($"I couldn't find anyone/anything with your input!");
+             await smc.SendMessageAsync($"I couldn't find anyone/anything with your input!");
             return default;
         }
 

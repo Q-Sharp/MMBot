@@ -2,9 +2,5 @@
 
 public class MemberRoomConfiguration : IEntityTypeConfiguration<MemberRoom>
 {
-    public void Configure(EntityTypeBuilder<MemberRoom> builder)
-    {
-        builder.UseXminAsConcurrencyToken()
-               .HasKey(c => c.Id);
-    }
+    public void Configure(EntityTypeBuilder<MemberRoom> builder) => builder.Property(x => x.Version).IsRowVersion();
 }

@@ -10,6 +10,8 @@ public class Channel : IHaveId, IHaveGuildId
 
     public ulong AnswerTextChannelId { get; set; }
 
+    public byte[] Version { get; set; }
+
     public void Update(object channel)
     {
         if (channel is Channel c && Id == c.Id)

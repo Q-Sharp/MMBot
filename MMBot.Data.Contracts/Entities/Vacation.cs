@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace MMBot.Data.Contracts.Entities;
+﻿namespace MMBot.Data.Contracts.Entities;
 
 public class Vacation : IHaveId
 {
@@ -12,6 +10,8 @@ public class Vacation : IHaveId
 
     [JsonIgnore]
     public virtual Member Member { get; set; }
+
+    public byte[] Version { get; set; }
 
     public void Update(object vacation)
     {

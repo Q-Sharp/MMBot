@@ -17,19 +17,19 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.100
+        dotnet-version: 7.0.100
 
     - name: add discord.net feed
       run: dotnet nuget add source https://www.myget.org/F/discord-net/api/v3/index.json
 
     - name: Install dependencies2
-      run: dotnet restore
+      run: dotnet restore MMBot.sln
 
     - name: Build
-      run: dotnet build --configuration Release
+      run: dotnet build MMBot.sln --configuration Release
 
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test MMBot.sln --no-restore --verbosity normal
 
     - name: .NET Publish
       run: dotnet publish ./MMBot.Discord/MMBot.Discord.csproj -c Release -r linux-x64 --no-self-contained /p:PublishReadyToRun=false /p:DebugType=None /p:DebugSymbols=false
@@ -37,7 +37,7 @@ jobs:
     - name: App Settings Variable Substitution
       uses: microsoft/variable-substitution@v1
       with:
-        files: './MMBot.Discord/bin/Release/net6.0/linux-x64/publish/appsettings.json'
+        files: './MMBot.Discord/bin/Release/net7.0/linux-x64/publish/appsettings.json'
       env:
         DetailedErrors: false
         Discord.DevToken: ${{ secrets.DISCORD_DEV_TOKEN }}
@@ -48,7 +48,7 @@ jobs:
       env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltgoDzvO --delete-excluded --filter 'protect *.db' --filter 'protect *.log' --filter 'protect *.json'"
-          SOURCE: MMBot.Discord/bin/Release/net6.0/linux-x64/publish/
+          SOURCE: MMBot.Discord/bin/Release/net7.0/linux-x64/publish/
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
@@ -60,7 +60,7 @@ jobs:
     - name: App Settings Variable Substitution
       uses: microsoft/variable-substitution@v1
       with:
-        files: './MMBot.Blazor/Server/bin/Release/net6.0/linux-x64/publish/appsettings.json'
+        files: './MMBot.Blazor/Server/bin/Release/net7.0/linux-x64/publish/appsettings.json'
       env:
         DetailedErrors: false
         Discord.AppId: ${{ secrets.DISCORD_APPID }}
@@ -71,7 +71,7 @@ jobs:
       env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltgoDzvO --delete-excluded --filter 'protect *.db' --filter 'protect *.log' --filter 'protect *.json'"
-          SOURCE: MMBot.Blazor/Server/bin/Release/net6.0/linux-x64/publish/
+          SOURCE: MMBot.Blazor/Server/bin/Release/net7.0/linux-x64/publish/
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           REMOTE_PORT: ${{ secrets.REMOTE_PORT }}

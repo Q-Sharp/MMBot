@@ -1,7 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using MMBot.Data.Contracts.Enums;
-
-namespace MMBot.Data.Contracts.Entities;
+﻿namespace MMBot.Data.Contracts.Entities;
 
 public class RaidBoss : IHaveId, IHaveIdentifier, IHaveGuildId
 {
@@ -19,4 +16,6 @@ public class RaidBoss : IHaveId, IHaveIdentifier, IHaveGuildId
     public virtual Clan Clan { get; set; }
     public virtual ICollection<RaidParticipation> RaidParticipation { get; set; } = new Collection<RaidParticipation>();
     public void Update(object guildSettings) => throw new NotImplementedException();
+
+    public byte[] Version { get; set; }
 }

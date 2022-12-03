@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace MMBot.Data.Contracts.Entities;
+﻿namespace MMBot.Data.Contracts.Entities;
 
 public class MMTimer : IHaveId, IHaveGuildId
 {
@@ -31,6 +29,7 @@ public class MMTimer : IHaveId, IHaveGuildId
     [Display]
     public string Message { get; set; }
 
+    public byte[] Version { get; set; }
     public void Update(object timer)
     {
         if (timer is MMTimer t && Id == t.Id)

@@ -56,9 +56,9 @@ public static class SecurityHeadersDefinitions
 
         if (!isDev)
         {
-            policy.AddCrossOriginEmbedderPolicy(builder => builder.RequireCorp());
+             policy.AddCrossOriginEmbedderPolicy(builder => builder.RequireCorp());
             // maxage = one year in seconds
-            policy.AddStrictTransportSecurityMaxAgeIncludeSubDomains(maxAgeInSeconds: 60 * 60 * 24 * 365);
+             policy.AddStrictTransportSecurityMaxAgeIncludeSubDomains(maxAgeInSeconds: 60 * 60 * 24 * 365);
         }
 
         return policy;

@@ -95,11 +95,8 @@ public class MemberModel : Member, ICreate
         }
     }
 
-    public ICreate Create(object from)
-    {
-        if(from is Member m)
-        {
-            return new MemberModel
+    public ICreate Create(object from) => from is Member m
+            ? new MemberModel
             {
                 Id = m.Id,
                 Name = m.Name,
@@ -116,31 +113,25 @@ public class MemberModel : Member, ICreate
                 GuildId = m.GuildId,
                 MemberGroupId = m.MemberGroupId,
                 LocalTimeOffSet = m.LocalTimeOffSet,
-            };
-        }
+            }
+            : (ICreate)null;
 
-        return null;
-    }
-
-    public static MemberModel Create(Member m)
+    public static MemberModel Create(Member m) => new()
     {
-        return new MemberModel
-        {
-            Id = m.Id,
-            Name = m.Name,
-            Discord = m.Discord,
-            AHigh = m.AHigh,
-            Role = m.Role,
-            DiscordStatus = m.DiscordStatus,
-            IsActive = m.IsActive,
-            ClanId = m.ClanId,
-            LastUpdated = m.LastUpdated,
-            Join = m.Join,
-            IgnoreOnMoveUp = m.IgnoreOnMoveUp,
-            PlayerTag = m.PlayerTag,
-            GuildId = m.GuildId,
-            MemberGroupId = m.MemberGroupId,
-            LocalTimeOffSet = m.LocalTimeOffSet,
-        };
-    }
+        Id = m.Id,
+        Name = m.Name,
+        Discord = m.Discord,
+        AHigh = m.AHigh,
+        Role = m.Role,
+        DiscordStatus = m.DiscordStatus,
+        IsActive = m.IsActive,
+        ClanId = m.ClanId,
+        LastUpdated = m.LastUpdated,
+        Join = m.Join,
+        IgnoreOnMoveUp = m.IgnoreOnMoveUp,
+        PlayerTag = m.PlayerTag,
+        GuildId = m.GuildId,
+        MemberGroupId = m.MemberGroupId,
+        LocalTimeOffSet = m.LocalTimeOffSet,
+    };
 }

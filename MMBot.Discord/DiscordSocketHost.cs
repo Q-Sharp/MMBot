@@ -29,7 +29,7 @@ public static class DiscordSocketHost
            {
                try
                {
-                   configBuilder.AddEnvironmentVariables("MMBot_")
+                    configBuilder.AddEnvironmentVariables("MMBot_")
                                 .AddUserSecrets<DiscordWorker>();
                }
                catch
@@ -43,7 +43,7 @@ public static class DiscordSocketHost
                var config = hostContext.Configuration;
                var discordConfig = config.GetSection("Discord").GetSection("Settings");
 
-               services
+                services
                    .AddHostedService<DiscordWorker>()
                    .AddSingleton<GuildSettingsService>()
                    .AddDbContext<Context>(o => o.UseNpgsql(config.GetConnectionString("Context")))

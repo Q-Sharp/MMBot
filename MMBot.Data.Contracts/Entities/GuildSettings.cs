@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace MMBot.Data.Contracts.Entities;
+﻿namespace MMBot.Data.Contracts.Entities;
 
 public class GuildSettings : IHaveId, IHaveGuildId
 {
@@ -31,6 +29,8 @@ public class GuildSettings : IHaveId, IHaveGuildId
 
     [Display]
     public ulong MemberRoleId { get; set; }
+
+    public byte[] Version { get; set; }
 
     public void Update(object guildSettings)
     {

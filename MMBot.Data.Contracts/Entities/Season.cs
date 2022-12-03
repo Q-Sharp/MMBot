@@ -1,7 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using MMBot.Data.Contracts.Enums;
-
-namespace MMBot.Data.Contracts.Entities;
+﻿namespace MMBot.Data.Contracts.Entities;
 
 public class Season : IHaveId
 {
@@ -14,6 +11,8 @@ public class Season : IHaveId
 
     [JsonIgnore]
     public virtual ICollection<SeasonResult> SeasonResult { get; set; }
+
+    public byte[] Version { get; set; }
 
     public void Update(object season)
     {

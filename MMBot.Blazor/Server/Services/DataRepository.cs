@@ -15,7 +15,7 @@ public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
         _logger = logger;
     }
 
-    public async virtual Task<IEnumerable<TEntity>> Get(
+    public virtual async Task<IEnumerable<TEntity>> Get(
         Expression<Func<TEntity, bool>> filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
         string includeProperties = "")
@@ -38,31 +38,31 @@ public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
         }
     }
 
-    public async virtual Task<TEntity> GetById(object id) => await dbSet.FindAsync(id);
+    public virtual async Task<TEntity> GetById(object id) => await dbSet.FindAsync(id);
 
-    public async virtual Task<bool> Delete(TEntity entityToDelete)
+    public virtual async Task<bool> Delete(TEntity entityToDelete)
     {
         if (context.Entry(entityToDelete).State == EntityState.Detached)
-            dbSet.Attach(entityToDelete);
+             dbSet.Attach(entityToDelete);
 
-        dbSet.Remove(entityToDelete);
+         dbSet.Remove(entityToDelete);
         return await context.SaveChangesAsync() >= 1;
     }
 
-    public async virtual Task<bool> Delete(object id)
+    public virtual async Task<bool> Delete(object id)
     {
         var e = await dbSet.FindAsync(id);
         return await Delete(e);
     }
 
-    public async virtual Task<TEntity> Insert(TEntity entity)
+    public virtual async Task<TEntity> Insert(TEntity entity)
     {
         try
         {
             var e = dbSet.Add(entity);
             e.State = EntityState.Added;
 
-            await context.SaveChangesAsync();
+             await context.SaveChangesAsync();
             return e.Entity;
         }
         catch (Exception e)
@@ -73,13 +73,13 @@ public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
         return null;
     }
 
-    public async virtual Task<TEntity> Update(TEntity entityToUpdate)
+    public virtual async Task<TEntity> Update(TEntity entityToUpdate)
     {
         var ex = false;
 
         try
         {
-            dbSet.Attach(entityToUpdate);
+             dbSet.Attach(entityToUpdate);
             context.Entry(entityToUpdate).State = EntityState.Modified;
         }
         catch (Exception e)
@@ -99,7 +99,7 @@ public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
                 _logger.LogError(e, "Still couldn't update {entityToUpdate}", entityToUpdate.ToString());
             }
 
-        await context.SaveChangesAsync();
+         await context.SaveChangesAsync();
         return entityToUpdate;
     }
 }

@@ -130,7 +130,7 @@ public class MemberSortService : MMBotService<MemberSortService>, IMemberSortSer
                 break;
 
             if (clanSortNo < currentMember.Clan.SortOrder)
-                if (!useCurrent && currentMember.IgnoreOnMoveUp || currentMember.Role >= Role.CoLeader || CheckMemberGroup(currentMember, allMember, clanSortNo))
+                if ((!useCurrent && currentMember.IgnoreOnMoveUp) || currentMember.Role >= Role.CoLeader || CheckMemberGroup(currentMember, allMember, clanSortNo))
                     continue;
                 else
                     movedQty++;

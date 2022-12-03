@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MMBot.Data;
+﻿using MMBot.Data;
 using MMBot.Discord.Services.Interfaces;
 
 namespace MMBot.Discord.Services.GuildSettings;
@@ -8,10 +7,7 @@ public class GuildSettingsService : IGuildSettingsService
 {
     private readonly Context _dbcontext;
 
-    public GuildSettingsService(Context dbcontext)
-    {
-        _dbcontext = dbcontext;
-    }
+    public GuildSettingsService(Context dbcontext) => _dbcontext = dbcontext;
 
     public async Task<Data.Contracts.Entities.GuildSettings> GetGuildSettingsAsync(ulong guildId)
     {

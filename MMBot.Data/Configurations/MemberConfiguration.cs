@@ -4,8 +4,7 @@ public class MemberConfiguration : IEntityTypeConfiguration<Member>
 {
     public void Configure(EntityTypeBuilder<Member> builder)
     {
-        builder.UseXminAsConcurrencyToken()
-               .HasKey(c => c.Id);
+        builder.Property(x => x.Version).IsRowVersion();
 
         builder.HasMany(v => v.Vacation)
             .WithOne(m => m.Member)

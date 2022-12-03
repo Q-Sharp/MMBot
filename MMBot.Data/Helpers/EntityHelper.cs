@@ -2,11 +2,11 @@
 
 public static class EntityHelper
 {
-    public async static Task ImportOrUpgradeWithIdentifier<T>(this DbSet<T> currentData, T updateWithData, ulong guildId)
+    public static async Task ImportOrUpgradeWithIdentifier<T>(this DbSet<T> currentData, T updateWithData, ulong guildId)
         where T : class, IHaveId, IHaveIdentifier
             => await currentData.ImportOrUpgradeWithIdentifier(new List<T> { updateWithData }, guildId);
 
-    public async static Task ImportOrUpgradeWithIdentifier<T>(this DbSet<T> currentData, IList<T> updateWithData, ulong guildId)
+    public static async Task ImportOrUpgradeWithIdentifier<T>(this DbSet<T> currentData, IList<T> updateWithData, ulong guildId)
         where T : class, IHaveId, IHaveIdentifier
     {
         foreach (var uwd in updateWithData)
@@ -16,11 +16,11 @@ public static class EntityHelper
             if (found is not null)
                 found.Update(uwd);
             else
-                await currentData.AddAsync(uwd);
+                 await currentData.AddAsync(uwd);
         }
     }
 
-    public async static Task ImportOrUpgrade<T>(this DbSet<T> currentData, IList<T> updateWithData)
+    public static async Task ImportOrUpgrade<T>(this DbSet<T> currentData, IList<T> updateWithData)
         where T : class, IHaveId
     {
         foreach (var uwd in updateWithData)
@@ -30,7 +30,7 @@ public static class EntityHelper
             if (found is not null)
                 found.Update(uwd);
             else
-                await currentData.AddAsync(uwd);
+                 await currentData.AddAsync(uwd);
         }
     }
 

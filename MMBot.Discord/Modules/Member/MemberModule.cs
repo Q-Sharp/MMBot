@@ -15,10 +15,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
     protected readonly IMemberSortService _memberSortService;
 
     public MemberModule(IDatabaseService databaseService, ICommandHandler commandHandler, IMemberSortService memberSortService, IGuildSettingsService guildSettings)
-        : base(databaseService, guildSettings, commandHandler)
-    {
-        _memberSortService = memberSortService;
-    }
+        : base(databaseService, guildSettings, commandHandler) => _memberSortService = memberSortService;
 
     [Command("Profile")]
     [Alias("p")]
@@ -32,7 +29,7 @@ public partial class MemberModule : MMBotModule, IMemberModule
 
         var imageUrl = await Task.Run(() => Context.Guild.Users.FirstOrDefault(x => x.GetUserAndDiscriminator() == m.Discord)?.GetAvatarUrl());
         var e = m.GetEmbedPropertiesWithValues(imageUrl);
-        await ReplyAsync("", false, e as Embed);
+         await ReplyAsync("", false, e as Embed);
         return FromSuccess();
     }
 }

@@ -7,7 +7,7 @@ public partial class v3 : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "Vacation",
             type: "integer",
@@ -17,7 +17,7 @@ public partial class v3 : Migration
             .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
             .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "Timer",
             type: "integer",
@@ -27,7 +27,7 @@ public partial class v3 : Migration
             .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
             .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "Strike",
             type: "integer",
@@ -37,7 +37,7 @@ public partial class v3 : Migration
             .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
             .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "Restart",
             type: "integer",
@@ -47,7 +47,7 @@ public partial class v3 : Migration
             .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
             .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "MemberGroup",
             type: "integer",
@@ -57,7 +57,7 @@ public partial class v3 : Migration
             .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
             .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "Member",
             type: "integer",
@@ -67,7 +67,7 @@ public partial class v3 : Migration
             .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
             .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "GuildSettings",
             type: "integer",
@@ -77,7 +77,7 @@ public partial class v3 : Migration
             .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
             .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "Clan",
             type: "integer",
@@ -87,7 +87,7 @@ public partial class v3 : Migration
             .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
             .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "Channel",
             type: "integer",
@@ -100,7 +100,7 @@ public partial class v3 : Migration
 
     protected override void Down(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "Vacation",
             type: "integer",
@@ -110,7 +110,7 @@ public partial class v3 : Migration
             .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
             .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "Timer",
             type: "integer",
@@ -120,7 +120,7 @@ public partial class v3 : Migration
             .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
             .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "Strike",
             type: "integer",
@@ -130,7 +130,7 @@ public partial class v3 : Migration
             .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
             .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "Restart",
             type: "integer",
@@ -140,7 +140,7 @@ public partial class v3 : Migration
             .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
             .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "MemberGroup",
             type: "integer",
@@ -150,7 +150,7 @@ public partial class v3 : Migration
             .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
             .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "Member",
             type: "integer",
@@ -160,7 +160,7 @@ public partial class v3 : Migration
             .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
             .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "GuildSettings",
             type: "integer",
@@ -170,7 +170,7 @@ public partial class v3 : Migration
             .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
             .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "Clan",
             type: "integer",
@@ -180,7 +180,7 @@ public partial class v3 : Migration
             .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
             .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-        migrationBuilder.AlterColumn<int>(
+         migrationBuilder.AlterColumn<int>(
             name: "Id",
             table: "Channel",
             type: "integer",

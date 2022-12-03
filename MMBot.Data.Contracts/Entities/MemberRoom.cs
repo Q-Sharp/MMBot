@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace MMBot.Data.Contracts.Entities;
+﻿namespace MMBot.Data.Contracts.Entities;
 
 public class MemberRoom : IHaveId, IHaveGuildId
 {
@@ -18,6 +16,7 @@ public class MemberRoom : IHaveId, IHaveGuildId
 
     public ulong UserId { get; set; }
 
+    public byte[] Version { get; set; }
     public void Update(object mr)
     {
         if (mr is MemberRoom room && Id == room.Id)

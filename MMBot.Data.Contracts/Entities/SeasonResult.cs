@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace MMBot.Data.Contracts.Entities;
+﻿namespace MMBot.Data.Contracts.Entities;
 
 public class SeasonResult : IHaveId, IHaveGuildId
 {
@@ -18,6 +16,8 @@ public class SeasonResult : IHaveId, IHaveGuildId
 
     public virtual Member Member { get; set; }
     public virtual Season Season { get; set; }
+
+    public byte[] Version { get; set; }
 
     public void Update(object season)
     {

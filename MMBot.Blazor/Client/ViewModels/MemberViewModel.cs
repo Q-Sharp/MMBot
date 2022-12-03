@@ -16,7 +16,7 @@ public class MemberViewModel : ViewModelBase, ICRUDViewModel<MemberModel, Member
         {
             GID = await SessionStorage.GetItemAsync<ulong>(SessionStoreDefaults.GuildId);
             await Init();
-            
+
         };
     }
 
@@ -30,8 +30,8 @@ public class MemberViewModel : ViewModelBase, ICRUDViewModel<MemberModel, Member
             try
             {
                 var id = SelectedEntity.Id;
-                await Repo.Delete(id);
-                Entities.Remove(Entities.FirstOrDefault(x => x.Id == id));
+                 await Repo.Delete(id);
+                 Entities.Remove(Entities.FirstOrDefault(x => x.Id == id));
             }
             catch
             {

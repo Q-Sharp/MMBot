@@ -1,6 +1,4 @@
-﻿using MMBot.Data.Contracts.Entities;
-
-namespace MMBot.Data.Contracts;
+﻿namespace MMBot.Data.Contracts;
 
 public interface IDatabaseService
 {
