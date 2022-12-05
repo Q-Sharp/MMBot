@@ -13,7 +13,7 @@ namespace MMBot.Data.Migrations
 {
     [DbContext(typeof(Context))]
     [Migration("20221119125448_rowversion")]
-    partial class rowversion
+    partial class Rowversion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

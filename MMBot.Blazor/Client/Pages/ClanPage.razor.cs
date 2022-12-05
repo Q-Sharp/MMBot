@@ -13,7 +13,8 @@ public partial class ClanPage
 
     protected override async Task OnInitializedAsync() => await ClanVM.Init();
 
-    private bool FilterFunc(ClanModel clan) => string.IsNullOrWhiteSpace(searchString)
-|| clan.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase)
-|| clan.Tag.Contains(searchString, StringComparison.OrdinalIgnoreCase);
+    private bool FilterFunc(ClanModel clan) 
+        => string.IsNullOrWhiteSpace(searchString)
+            || clan.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase)
+            || clan.Tag.Contains(searchString, StringComparison.OrdinalIgnoreCase);
 }

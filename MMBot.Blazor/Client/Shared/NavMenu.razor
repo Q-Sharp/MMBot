@@ -1,35 +1,16 @@
-﻿<div class="@NavMenuCssClass">
-	<ul class="nav">
-		<li class="nav-item">
-			<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-				<span class="oi oi-home" aria-hidden="true"></span>
-			</NavLink>
-		</li>
-		<li class="nav-item">
-			<NavLink class="nav-link" href="directApi">
-				<span class="oi oi-file" aria-hidden="true"></span>
-			</NavLink>
-		</li>
-		<li class="nav-item">
-			<NavLink class="nav-link" href="userinfos">
-				<span class="oi oi-people" aria-hidden="true"></span>
-			</NavLink>
-		</li>
-		<li class="nav-item">
-			<NavLink class="nav-link" href="benchmark">
-				<span class="oi oi-data-transfer-download" aria-hidden="true"></span>
-			</NavLink>
-		</li>
-	</ul>
-</div>
-
-@code {
-	private bool collapseNavMenu = true;
-
-	private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-	private void ToggleNavMenu()
-	{
-		collapseNavMenu = !collapseNavMenu;
-	}
-}
+﻿<MudNavMenu>
+    <MudNavLink Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
+    <MudNavGroup Title="Data" Expanded="@_dataExpanded">
+        <MudNavLink Href="/clan">Clan</MudNavLink>
+        <MudNavLink Href="/member">Member</MudNavLink>
+        <MudNavGroup Title="Raids" @bind-Expanded="_raidsExpanded">
+            <MudNavLink Href="/results">Add results</MudNavLink>
+            <MudNavLink Href="/history">History</MudNavLink>
+        </MudNavGroup>
+    </MudNavGroup>
+    <MudNavGroup Title="Discord bot" @bind-Expanded="_discordExpanded">
+        <MudNavLink Href="/commands">Commands</MudNavLink>
+        <MudNavLink Href="/help">Help</MudNavLink>
+    </MudNavGroup>
+    <MudNavLink Href="about">About</MudNavLink>
+</MudNavMenu>

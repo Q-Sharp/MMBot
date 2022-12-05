@@ -2,5 +2,5 @@
 
 public interface IBlazorDatabaseService
 {
-    IList<Tuple<ulong, string>> GetAllGuilds();
+    IEnumerable<Guild> GetAllGuilds();
 }

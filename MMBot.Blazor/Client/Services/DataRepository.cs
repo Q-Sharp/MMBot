@@ -4,19 +4,19 @@ public class DataRepository<TEntity> : IRepository<TEntity>
     where TEntity : class, IHaveId, new()
 {
     private readonly ILogger<IRepository<TEntity>> _logger;
-    private readonly ISessionStorageService _sessionStorage;
+    private readonly ISelectedGuildService _selectedGuildService;
     private readonly IAuthorizedAntiForgeryClientFactory _clientFactory;
 
     private string _typeName => GetType().GetGenericArguments()[0].Name;
 
     private async Task<ulong> GetGuildId()
-        => await _sessionStorage.GetItemAsync<ulong>(SessionStoreDefaults.GuildId);
+        => await _selectedGuildService.GetSelectedGuildId();
 
-    public DataRepository(IAuthorizedAntiForgeryClientFactory clientFactory, ILogger<IRepository<TEntity>> logger, ISessionStorageService sessionStorage)
+    public DataRepository(IAuthorizedAntiForgeryClientFactory clientFactory, ILogger<IRepository<TEntity>> logger, ISelectedGuildService selectedGuildService)
     {
         _clientFactory = clientFactory;
         _logger = logger;
-        _sessionStorage = sessionStorage;
+        _selectedGuildService = selectedGuildService;
     }
 
     public virtual async Task<IEnumerable<TEntity>> Get(

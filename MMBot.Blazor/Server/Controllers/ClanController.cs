@@ -10,21 +10,21 @@ public class ClanController : ApiControllerBase<ClanController, Clan>
 
     [HttpGet]
     public async Task<IActionResult> GetClan(string id)
-        => Ok(await Repository.GetById(id));
+        => Ok(await _repository.GetById(id));
 
     [HttpGet("getAll")]
     public async Task<IActionResult> GetClans(string guildId)
-        => Ok(await Repository.Get(c => c.GuildId.ToString() == guildId));
+        => Ok(await _repository.Get(c => c.GuildId.ToString() == guildId));
 
     [HttpPost]
     public async Task<IActionResult> CreateClan(Clan clan)
-        => Ok(await Repository.Insert(clan));
+        => Ok(await _repository.Insert(clan));
 
     [HttpPut]
     public async Task<IActionResult> UpdateClan(Clan clan)
-        => Ok(await Repository.Update(clan));
+        => Ok(await _repository.Update(clan));
 
     [HttpDelete]
     public async Task<IActionResult> DeleteClan(string id)
-        => Ok(await Repository.Delete(id));
+        => Ok(await _repository.Delete(id));
 }

@@ -1,4 +1,7 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Microsoft.AspNetCore.Authentication.OAuth.Claims;
+using Microsoft.Extensions.Options;
+
+var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 var services = builder.Services;
@@ -15,31 +18,17 @@ Log.Logger = new LoggerConfiguration()
 services.AddLogging(l => l.ClearProviders()
                           .AddSerilog(Log.Logger));
 
-builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
-
 var connectionString = configuration.GetConnectionString("Context");
 
-services.AddDbContextFactory<Context>(o => o.UseLazyLoadingProxies()
-                                            .UseNpgsql(connectionString))
+services.AddDbContextFactory<Context>(o => o.UseLazyLoadingProxies().UseNpgsql(connectionString))
         .AddScoped<IDatabaseService, DatabaseService>()
         .AddScoped<IBlazorDatabaseService, BlazorDatabaseService>()
         .AddScoped<IRepository<Clan>, DataRepository<Clan, Context>>()
         .AddScoped<IRepository<Member>, DataRepository<Member, Context>>();
 
-//services.AddSingleton<ITicketStore, MMBotTicketStore>();
-//services.AddOptions<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme)
-//        .Configure<ITicketStore>((options, store) => options.SessionStore = store);
-
-//services.AddAntiforgery(options =>
-//{
-//    options.HeaderName = AntiforgeryDefaults.Headername;
-//    options.Cookie.Name = AntiforgeryDefaults.Cookiename;
-//    options.Cookie.SameSite = SameSiteMode.Strict;
-//    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-//});
-
 services.AddHttpClient();
 services.AddOptions();
+services.AddLocalization();
 
 services.AddAuthentication(opt =>
 {
@@ -52,13 +41,15 @@ services.AddAuthentication(opt =>
     options.Cookie.MaxAge = TimeSpan.FromDays(30);
     options.Cookie.Name = ApiAuthDefaults.CookieName;
 })
-.AddDiscord(DiscordAuthenticationDefaults.AuthenticationScheme, c =>
+.AddDiscord(DiscordAuthenticationDefaults.AuthenticationScheme, options =>
 {
-    c.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    c.ClientId = configuration["Discord:AppId"];
-    c.ClientSecret = configuration["Discord:AppSecret"];
+    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.ClientId = configuration["Discord:AppId"];
+    options.ClientSecret = configuration["Discord:AppSecret"];
 
-    c.Events = new OAuthEvents
+    options.Scope.Add("guilds");
+
+    options.Events = new OAuthEvents
     {
         OnCreatingTicket = async context =>
         {
@@ -73,11 +64,10 @@ services.AddAuthentication(opt =>
         }
     };
 
-    c.SaveTokens = true;
+    options.SaveTokens = true;
 });
 
 services.AddAuthorization();
-//services.AddControllersWithViews(/*o => o.Filters.Add(new AutoValidateAntiforgeryTokenAttribute())*/);
 services.AddControllers();
 services.AddRazorPages();
 
@@ -115,11 +105,9 @@ else
        .UseCookiePolicy();
 }
 
-//app.UseSecurityHeaders(SecurityHeadersDefinitions.GetHeaderPolicyCollection(app.Environment.IsDevelopment(),
-//                    configuration["Discord:Authority"]));
-
 app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
+app.UseRequestLocalization("en-US");
 
 app.UseStaticFiles(new StaticFileOptions
 {

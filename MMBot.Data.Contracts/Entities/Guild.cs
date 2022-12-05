@@ -10,6 +10,4 @@ public record Guild
 
     public ulong Id { get; }
     public string Name { get; }
-
-    public byte[] Version { get; set; }
 }

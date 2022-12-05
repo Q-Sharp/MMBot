@@ -6,9 +6,9 @@ public class BlazorDatabaseService : IBlazorDatabaseService
 
     public BlazorDatabaseService(Context dataContext) => _ctx = dataContext;
 
-    public IList<Tuple<ulong, string>> GetAllGuilds()
+    public IEnumerable<Guild> GetAllGuilds()
         => _ctx.GuildSettings.AsQueryable()
-            .Select(x => Tuple.Create(x.GuildId, x.GuildName))
+            .Select(x => new Guild(x.GuildId, x.GuildName))
             .Distinct()
             .ToList();
 }

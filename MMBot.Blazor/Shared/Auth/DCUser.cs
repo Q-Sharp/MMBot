@@ -1,13 +1,12 @@
 ﻿namespace MMBot.Blazor.Shared.Auth;
 
-public class DCUser : IDCUser
+public class DCUser
 {
     public static DCUser Anonymous => new();
 
-    public string CurrentGuildId { get; set; }
     public string Name { get; set; }
     public ulong Id { get; set; }
-    public IList<DCChannel> Guilds { get; set; } = new List<DCChannel>();
+    public ICollection<DCChannel> Guilds { get; set; } = new List<DCChannel>();
     public string AvatarUrl { get; set; }
 
     public bool IsAuthenticated { get; set; }

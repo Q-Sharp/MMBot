@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-
 var services = builder.Services;
 
 Log.Logger = new LoggerConfiguration()
@@ -18,7 +17,8 @@ services.AddAuthorizationCore();
 
 services.TryAddSingleton<AuthenticationStateProvider, MMBotAuthenticationStateProvider>();
 services.TryAddSingleton(sp => (MMBotAuthenticationStateProvider)sp.GetRequiredService<AuthenticationStateProvider>());
-services.AddTransient<AuthorizedHandler>();
+services.AddTransient<AuthorizedHandler>()
+        .AddScoped<ISelectedGuildService, SelectedGuildService>();
 
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");

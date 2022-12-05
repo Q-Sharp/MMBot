@@ -3,7 +3,7 @@
 namespace MMBot.Data.Migrations;
 
 /// <inheritdoc />
-public partial class rowversion : Migration
+public partial class Rowversion : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)

@@ -1,0 +1,10 @@
+﻿global using System.Security.Claims;
+global using FakeItEasy;
+global using Microsoft.AspNetCore.Authentication.Cookies;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Mvc;
+global using MMBot.Blazor.Server.Controllers;
+global using MMBot.Blazor.Shared.Auth;
+global using MMBot.Data.Contracts;
+global using Xunit;

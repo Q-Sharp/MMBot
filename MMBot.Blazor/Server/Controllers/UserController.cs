@@ -5,20 +5,17 @@
 public class UserController : ControllerBase
 {
     private readonly IBlazorDatabaseService _blazorDatabaseService;
-    private readonly IConfiguration _configuration;
 
-    public UserController(IConfiguration configuration, IBlazorDatabaseService blazorDatabaseService)
+    public UserController(IBlazorDatabaseService blazorDatabaseService)
     {
         _blazorDatabaseService = blazorDatabaseService;
-        _configuration = configuration;
     }
 
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult GetCurrentUser()
-        => Ok(User.Identity.IsAuthenticated ? CreateUserInfo(User) : DCUser.Anonymous);
+    public IActionResult GetCurrentUser() => Ok(User.Identity.IsAuthenticated ? CreateUserInfo(User) : DCUser.Anonymous);
 
-    private IDCUser CreateUserInfo(ClaimsPrincipal claimsPrincipal)
+    private DCUser CreateUserInfo(ClaimsPrincipal claimsPrincipal)
     {
         if (!claimsPrincipal.Identity.IsAuthenticated)
             return DCUser.Anonymous;
@@ -51,40 +48,47 @@ public class UserController : ControllerBase
         }
 
         dcUser.Name = claimsIdentity.Name;
+        dcUser.Id = ulong.Parse(claimsIdentity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "0");
+        var avaHash = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "urn:discord:avatar:hash")?.Value;
+        dcUser.AvatarUrl = @$"https://cdn.discordapp.com/avatars/{dcUser.Id}/{avaHash}.png";
 
-        if (ulong.TryParse(claimsIdentity.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value ?? "0", out var id))
+        var ids = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "guilds")?.Value;
+
+        if(ids is not null)
         {
-            dcUser.Id = id;
-
-            dcUser.AvatarUrl = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "urn:discord:avatar:url")?.Value;
-            var ids = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "guilds")?.Value;
-
             var o = new JsonSerializerOptions
             {
-                WriteIndented = true,
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                 IgnoreReadOnlyProperties = true,
             };
 
             var channel = JsonSerializer.Deserialize<IList<DCChannel>>(ids, o);
-
-            var allGuildsInDb = _blazorDatabaseService?.GetAllGuilds().Select(x => new DCChannel { Id = x.Item1.ToString(), name = x.Item2 });
+            var allGuildsInDb = _blazorDatabaseService?.GetAllGuilds().Select(x => new DCChannel { Id = x.Id.ToString(), Name = x.Name });
 
             dcUser.Guilds = dcUser.Id == 301764235887902727 ?
                     allGuildsInDb.ToList() :
-                channel.Where(x => x.owner ||
+                channel.Where(x => x.Owner ||
                     x.PermissionFlags.HasFlag(GuildPermission.Administrator) ||
                     x.PermissionFlags.HasFlag(GuildPermission.ManageChannels) ||
                     x.PermissionFlags.HasFlag(GuildPermission.ManageGuild) ||
                     x.PermissionFlags.HasFlag(GuildPermission.ManageRoles)).ToList();
 
             dcUser.Guilds = dcUser.Guilds.Where(x => allGuildsInDb.Select(y => y.Id).Contains(x.Id)).ToList();
-            dcUser.CurrentGuildId = dcUser.Guilds.FirstOrDefault()?.Id;
-
-            return dcUser;
         }
 
-        return DCUser.Anonymous;
+        if(dcUser.Guilds is null || dcUser.Guilds.Count is 0)
+        {
+            dcUser.Guilds = new DCChannel[]
+            {
+                new DCChannel
+                {
+                    Id = "0",
+                    Name = "No Guilds to manage",
+                }
+            };
+        }
+
+        return dcUser;
     }
 
     [HttpGet(ApiAuthDefaults.LogIn)]
@@ -97,7 +101,6 @@ public class UserController : ControllerBase
     public async Task<IActionResult> LogOut()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        await HttpContext.SignOutAsync(DiscordAuthenticationDefaults.AuthenticationScheme);
         return Redirect("/");
     }
 }

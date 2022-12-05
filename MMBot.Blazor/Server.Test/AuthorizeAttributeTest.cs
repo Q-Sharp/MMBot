@@ -1,12 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
-using MMBot.Blazor.Server.Controllers;
-
-using Xunit;
-
-namespace MMBot.Blazor.Server.Test;
+﻿namespace MMBot.Blazor.Server.Test;
 
 public class AuthorizeAttributeTest
 {

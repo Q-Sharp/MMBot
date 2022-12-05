@@ -1,11 +1,4 @@
-﻿using System.Security.Claims;
-
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
-
-using Microsoft.AspNetCore.Mvc;
-
-namespace MMBot.Blazor.Server.Test.Controllers;
+﻿namespace MMBot.Blazor.Server.Test.Controllers;
 
 public static class ControllerTestExtensions
 {

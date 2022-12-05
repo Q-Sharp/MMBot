@@ -21,9 +21,9 @@ public class MMBotAuthenticationStateProvider : AuthenticationStateProvider
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         => new AuthenticationState(await GetUser(true));
 
-    public async Task<IDCUser> GetCurrentUser()
+    public async Task<DCUser> GetCurrentUser()
     {
-        IDCUser user = null;
+        DCUser user = null;
 
         try
         {
@@ -63,7 +63,7 @@ public class MMBotAuthenticationStateProvider : AuthenticationStateProvider
 
     private async Task<ClaimsPrincipal> FetchUser()
     {
-        IDCUser user = null;
+        DCUser user = null;
 
         try
         {

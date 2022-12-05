@@ -24,12 +24,12 @@ public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
         {
             IQueryable<TEntity> q = dbSet;
 
-            if (filter != null)
+            if (filter is not null)
                 q = q.Where(filter);
 
             includeProperties.Split(",", StringSplitOptions.RemoveEmptyEntries).ForEach(x => q = q.Include(x));
 
-            return orderBy != null ? orderBy(q).ToList() : await q.ToListAsync();
+            return orderBy is not null ? orderBy(q).ToList() : await q.ToListAsync();
         }
         catch (Exception e)
         {
@@ -45,7 +45,7 @@ public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
         if (context.Entry(entityToDelete).State == EntityState.Detached)
              dbSet.Attach(entityToDelete);
 
-         dbSet.Remove(entityToDelete);
+        dbSet.Remove(entityToDelete);
         return await context.SaveChangesAsync() >= 1;
     }
 
@@ -62,7 +62,7 @@ public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
             var e = dbSet.Add(entity);
             e.State = EntityState.Added;
 
-             await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return e.Entity;
         }
         catch (Exception e)
@@ -79,7 +79,7 @@ public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
 
         try
         {
-             dbSet.Attach(entityToUpdate);
+            dbSet.Attach(entityToUpdate);
             context.Entry(entityToUpdate).State = EntityState.Modified;
         }
         catch (Exception e)
@@ -89,6 +89,7 @@ public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
         }
 
         if (ex)
+        {
             try
             {
                 var db = dbSet.FirstOrDefault(x => x.Id == entityToUpdate.Id);
@@ -98,8 +99,9 @@ public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
             {
                 _logger.LogError(e, "Still couldn't update {entityToUpdate}", entityToUpdate.ToString());
             }
+        }
 
-         await context.SaveChangesAsync();
+        await context.SaveChangesAsync();
         return entityToUpdate;
     }
 }
