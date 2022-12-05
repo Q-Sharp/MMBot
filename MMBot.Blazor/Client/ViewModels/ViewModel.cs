@@ -10,18 +10,18 @@ public class ViewModel<TEntityModel, TEntity> : ViewModelBase, ICRUDViewModel<TE
     public ICollection<TEntityModel> Entities { get; set; }
     public ulong GID { get; set; }
 
-    public ViewModel(IRepository<TEntity> repo, ISessionStorageService sessionStorage, IDialogService dialogService)
-        : base(sessionStorage, dialogService)
+    public ViewModel(IRepository<TEntity> repo, ISelectedGuildService selectedGuildService, IDialogService dialogService)
+        : base(selectedGuildService, dialogService)
     {
         Repo = repo;
-        sessionStorage.Changing += async (x, y) =>
-        {
-            GID = await SessionStorage.GetItemAsync<ulong>(SessionStoreDefaults.GuildId);
-            await Init();
-        };
+        selectedGuildService.Changed += async (_, _) => await Init();
     }
 
-    public async Task Init() => Entities = await Load(x => x.GuildId == GID, x => x.OrderBy(y => y.Id));
+    public async Task Init()
+    {
+        GID = await SelectedGuildService.GetSelectedGuildId();
+        Entities = await Load(x => x.GuildId == GID, x => x.OrderBy(y => y.Id));
+    }
 
     public async Task Delete()
     {
@@ -31,8 +31,8 @@ public class ViewModel<TEntityModel, TEntity> : ViewModelBase, ICRUDViewModel<TE
             try
             {
                 var id = SelectedEntity.Id;
-                 await Repo.Delete(id);
-                 Entities.Remove(Entities.FirstOrDefault(x => x.Id == id));
+                await Repo.Delete(id);
+                Entities.Remove(Entities.FirstOrDefault(x => x.Id == id));
             }
             catch
             {
@@ -76,5 +76,4 @@ public class ViewModel<TEntityModel, TEntity> : ViewModelBase, ICRUDViewModel<TE
 
     public async Task<IList<TEntityModel>> Load(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null)
         => (await Repo.Get(filter, orderBy)).Select(x => new TEntityModel()).ToList();
-
 }

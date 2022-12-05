@@ -8,6 +8,8 @@ public class SelectedGuildService : ISelectedGuildService
     public SelectedGuildService(MMBotAuthenticationStateProvider authenticationStateProvider, ISessionStorageService sessionStorage)
         => (_authenticationStateProvider, _sessionStorage) = (authenticationStateProvider, sessionStorage);
 
+    public event EventHandler<GuildEventArgs> Changed;
+
     public async Task<IEnumerable<DCChannel>> GetGuilds()
     {
         var loggedUser = await _authenticationStateProvider.GetCurrentUser();
@@ -23,9 +25,12 @@ public class SelectedGuildService : ISelectedGuildService
         return Enumerable.Empty<DCChannel>();
     }
 
-    public async Task<ulong> GetSelectedGuildId() 
+    public async Task<ulong> GetSelectedGuildId()
         => await _sessionStorage.GetItemAsync<ulong>(SessionStoreDefaults.GuildId);
 
     public async Task SetSelectedGuild(string id)
-        => await _sessionStorage.SetItemAsync(SessionStoreDefaults.GuildId, ulong.Parse(id));
+    {
+        await _sessionStorage.SetItemAsync(SessionStoreDefaults.GuildId, ulong.Parse(id));
+        Changed(this, new GuildEventArgs(id));
+    }
 }

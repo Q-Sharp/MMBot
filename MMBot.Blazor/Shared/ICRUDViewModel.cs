@@ -17,7 +17,7 @@ public interface ICRUDViewModel<TEntityModel, TEntity>
     IRepository<TEntity> Repo { get; }
     string Entity => nameof(TEntity);
 
-    ISessionStorageService SessionStorage { get; }
+    ISelectedGuildService SelectedGuildService { get; }
 
     ulong GID { get; }
 }

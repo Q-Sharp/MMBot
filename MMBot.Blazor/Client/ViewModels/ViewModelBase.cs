@@ -3,12 +3,12 @@
 public class ViewModelBase : INotifyPropertyChanged
 {
     public IDialogService DialogService { get; set; }
-    public ISessionStorageService SessionStorage { get; set; }
+    public ISelectedGuildService SelectedGuildService { get; set; }
 
-    public ViewModelBase(ISessionStorageService sessionStorage, IDialogService dialogService)
+    public ViewModelBase(ISelectedGuildService selectedGuildService, IDialogService dialogService)
     {
         DialogService = dialogService;
-        SessionStorage = sessionStorage;
+        SelectedGuildService = selectedGuildService;
     }
 
     public bool Initialized { get; set; }

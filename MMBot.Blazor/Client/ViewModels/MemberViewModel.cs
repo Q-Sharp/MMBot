@@ -1,4 +1,6 @@
-﻿namespace MMBot.Blazor.Client.ViewModels;
+﻿using MMBot.Blazor.Client.Services;
+
+namespace MMBot.Blazor.Client.ViewModels;
 
 public class MemberViewModel : ViewModelBase, ICRUDViewModel<MemberModel, Member>
 {
@@ -8,19 +10,18 @@ public class MemberViewModel : ViewModelBase, ICRUDViewModel<MemberModel, Member
     public ICollection<MemberModel> Entities { get; set; }
     public ulong GID { get; set; }
 
-    public MemberViewModel(IRepository<Member> repo, ISessionStorageService sessionStorage, IDialogService dialogService)
-        : base(sessionStorage, dialogService)
+    public MemberViewModel(IRepository<Member> repo, ISelectedGuildService selectedGuildService, IDialogService dialogService)
+        : base(selectedGuildService, dialogService)
     {
         Repo = repo;
-        sessionStorage.Changing += async (x, y) =>
-        {
-            GID = await SessionStorage.GetItemAsync<ulong>(SessionStoreDefaults.GuildId);
-            await Init();
-
-        };
+        selectedGuildService.Changed += async (_, _) => await Init();
     }
 
-    public async Task Init() => Entities = await Load(x => x.GuildId == GID, x => x.OrderBy(y => y.AHigh));
+    public async Task Init()
+    {
+        GID = await SelectedGuildService.GetSelectedGuildId();
+        Entities = await Load(x => x.GuildId == GID, x => x.OrderBy(y => y.AHigh));
+    }
 
     public async Task Delete()
     {
@@ -30,8 +31,8 @@ public class MemberViewModel : ViewModelBase, ICRUDViewModel<MemberModel, Member
             try
             {
                 var id = SelectedEntity.Id;
-                 await Repo.Delete(id);
-                 Entities.Remove(Entities.FirstOrDefault(x => x.Id == id));
+                await Repo.Delete(id);
+                Entities.Remove(Entities.FirstOrDefault(x => x.Id == id));
             }
             catch
             {

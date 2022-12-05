@@ -2,23 +2,24 @@
 
 public class ClanViewModel : ViewModelBase, ICRUDViewModel<ClanModel, Clan>
 {
+    public string Entity => "Clan";
     public IRepository<Clan> Repo { get; set; }
     public ClanModel SelectedEntity { get; set; }
     public ICollection<ClanModel> Entities { get; set; }
     public ulong GID { get; set; }
 
-    public ClanViewModel(IRepository<Clan> repo, ISessionStorageService sessionStorage, IDialogService dialogService)
-        : base(sessionStorage, dialogService)
+    public ClanViewModel(IRepository<Clan> repo, ISelectedGuildService selectedGuildService, IDialogService dialogService)
+        : base(selectedGuildService, dialogService)
     {
         Repo = repo;
-        sessionStorage.Changing += async (x, y) =>
-        {
-            GID = await SessionStorage.GetItemAsync<ulong>(SessionStoreDefaults.GuildId);
-            await Init();
-        };
+        selectedGuildService.Changed += async (_, _) => await Init();
     }
 
-    public async Task Init() => Entities = await Load(x => x.GuildId == GID, x => x.OrderBy(y => y.SortOrder));
+    public async Task Init()
+    {
+        GID = await SelectedGuildService.GetSelectedGuildId();
+        Entities = await Load(x => x.GuildId == GID, x => x.OrderBy(y => y.SortOrder));
+    }
 
     public async Task Delete()
     {
@@ -28,8 +29,8 @@ public class ClanViewModel : ViewModelBase, ICRUDViewModel<ClanModel, Clan>
             try
             {
                 var id = SelectedEntity.Id;
-                 await Repo.Delete(id);
-                 Entities.Remove(Entities.FirstOrDefault(x => x.Id == id));
+                await Repo.Delete(id);
+                Entities.Remove(Entities.FirstOrDefault(x => x.Id == id));
             }
             catch
             {
