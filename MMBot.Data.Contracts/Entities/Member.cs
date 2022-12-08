@@ -85,7 +85,7 @@ public class Member : IHaveId, IHaveIdentifier, IHaveGuildId
     public override string ToString() => Clan?.Tag is not null ? $"[{Clan?.Tag}] {Name}" : $"{Name}";
     public byte[] Version { get; set; }
 
-    public void Update(object member)
+    public object Update(object member)
     {
         if (member is Member m && (Id == m.Id || Name == m.Name))
         {
@@ -104,5 +104,6 @@ public class Member : IHaveId, IHaveIdentifier, IHaveGuildId
             MemberGroupId = m.MemberGroupId;
             LocalTimeOffSet = m.LocalTimeOffSet;
         }
+        return this;
     }
 }

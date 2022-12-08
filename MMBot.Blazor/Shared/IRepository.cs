@@ -1,6 +1,7 @@
 ﻿namespace MMBot.Blazor.Shared;
 
-public interface IRepository<TEntity> where TEntity : class
+public interface IRepository<TEntity> 
+    where TEntity : class
 {
     Task<bool> Delete(TEntity entityToDelete);
     Task<bool> Delete(object id);

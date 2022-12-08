@@ -57,7 +57,7 @@ public class HelpModule : MMBotModule, IHelpModule
                 });
         }
 
-         await ReplyAsync("", false, builder.Build());
+        await ReplyAsync("", false, builder.Build());
         return FromSuccess();
     }
 
@@ -88,7 +88,7 @@ public class HelpModule : MMBotModule, IHelpModule
             });
         }
 
-         await ReplyAsync("", false, builder.Build());
+        await ReplyAsync("", false, builder.Build());
         return FromSuccess();
     }
 }

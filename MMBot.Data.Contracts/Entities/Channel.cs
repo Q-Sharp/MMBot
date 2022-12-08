@@ -12,7 +12,7 @@ public class Channel : IHaveId, IHaveGuildId
 
     public byte[] Version { get; set; }
 
-    public void Update(object channel)
+    public object Update(object channel)
     {
         if (channel is Channel c && Id == c.Id)
         {
@@ -20,5 +20,6 @@ public class Channel : IHaveId, IHaveGuildId
             TextChannelId = c.TextChannelId;
             AnswerTextChannelId = c.AnswerTextChannelId;
         }
+        return this;
     }
 }

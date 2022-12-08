@@ -17,7 +17,7 @@ public class MemberRoom : IHaveId, IHaveGuildId
     public ulong UserId { get; set; }
 
     public byte[] Version { get; set; }
-    public void Update(object mr)
+    public object Update(object mr)
     {
         if (mr is MemberRoom room && Id == room.Id)
         {
@@ -26,5 +26,6 @@ public class MemberRoom : IHaveId, IHaveGuildId
             RoomId = room.RoomId;
             UserId = room.UserId;
         }
+        return this;
     }
 }

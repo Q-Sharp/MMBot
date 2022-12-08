@@ -27,7 +27,7 @@ public class Clan : IHaveId, IHaveIdentifier, IHaveGuildId
 
     public override string ToString() => $"[{Tag}]";
 
-    public void Update(object clan)
+    public object Update(object clan)
     {
         if (clan is Clan c && (Id == c.Id || Name == c.Name))
         {
@@ -37,5 +37,6 @@ public class Clan : IHaveId, IHaveIdentifier, IHaveGuildId
             DiscordRole = c.DiscordRole;
             GuildId = c.GuildId;
         }
+        return this;
     }
 }

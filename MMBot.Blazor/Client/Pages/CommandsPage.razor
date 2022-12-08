@@ -1,0 +1,30 @@
+﻿@page "/commands"
+@page "/command"
+
+@if(Commands == null)
+{
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+    <MudTable Items="@Commands" Dense="true" Hover="true" ReadOnly="false">
+        <ToolBarContent>
+            <MudText Typo="Typo.h2">Command</MudText>
+        </ToolBarContent>
+        <ColGroup>
+            <col style="width:120px;" />
+            <col style="width:500px;" />
+        </ColGroup>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortBy="new Func<Tuple<string, string>, object>(x => x.Item1)">Command</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Tuple<string, string>, object>(x => x.Item2)">Description</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Command">@context.Item1</MudTd>
+            <MudTd DataLabel="Description">@context.Item2</MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+}

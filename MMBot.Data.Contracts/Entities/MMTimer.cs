@@ -30,7 +30,7 @@ public class MMTimer : IHaveId, IHaveGuildId
     public string Message { get; set; }
 
     public byte[] Version { get; set; }
-    public void Update(object timer)
+    public object Update(object timer)
     {
         if (timer is MMTimer t && Id == t.Id)
         {
@@ -44,6 +44,7 @@ public class MMTimer : IHaveId, IHaveGuildId
             ChannelId = t.ChannelId;
             Message = t.Message;
         }
+        return this;
     }
 
     public override string ToString() => $"{Name}";

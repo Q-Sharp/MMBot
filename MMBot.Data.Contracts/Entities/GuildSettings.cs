@@ -32,7 +32,7 @@ public class GuildSettings : IHaveId, IHaveGuildId
 
     public byte[] Version { get; set; }
 
-    public void Update(object guildSettings)
+    public object Update(object guildSettings)
     {
         if (guildSettings is GuildSettings gs && Id == gs.Id)
         {
@@ -44,5 +44,6 @@ public class GuildSettings : IHaveId, IHaveGuildId
             CategoryId = gs.CategoryId;
             MemberRoleId = gs.MemberRoleId;
         }
+        return this;
     }
 }

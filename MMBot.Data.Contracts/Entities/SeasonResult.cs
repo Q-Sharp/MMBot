@@ -19,11 +19,13 @@ public class SeasonResult : IHaveId, IHaveGuildId
 
     public byte[] Version { get; set; }
 
-    public void Update(object season)
+    public object Update(object season)
     {
         if (season is SeasonResult m && Id == m.Id)
         {
 
         }
+
+        return this;
     }
 }

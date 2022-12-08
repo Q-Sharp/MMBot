@@ -1,8 +1,8 @@
 ﻿namespace MMBot.Blazor.Shared;
 
 public interface ICRUDViewModel<TEntityModel, TEntity>
-    where TEntityModel : class, IHaveGuildId, IHaveId, new()
-    where TEntity : class, IHaveGuildId, IHaveId, new()
+    where TEntityModel : class, IHaveId, IHaveGuildId, ICreate, TEntity, new()
+    where TEntity : class, IHaveId, IHaveGuildId, new()
 {
     Task Create(TEntityModel newEntity);
     Task Delete();

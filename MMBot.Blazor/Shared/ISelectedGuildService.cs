@@ -5,5 +5,5 @@ public interface ISelectedGuildService
     Task<IEnumerable<DCChannel>> GetGuilds();
     Task<ulong> GetSelectedGuildId();
     Task SetSelectedGuild(string id);
-    event EventHandler<GuildEventArgs> Changed;
+    event EventHandler<EventArgs> Changed;
 }

@@ -14,8 +14,8 @@ public class Season : IHaveId
 
     public byte[] Version { get; set; }
 
-    public void Update(object season)
+    public object Update(object season)
     {
-
+        return this;
     }
 }

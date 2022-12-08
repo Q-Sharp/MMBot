@@ -11,12 +11,13 @@ public class Restart : IHaveId
 
     public byte[] Version { get; set; }
 
-    public void Update(object restart)
+    public object Update(object restart)
     {
         if (restart is Restart r && Id == r.Id)
         {
             Guild = r.Guild;
             Channel = r.Channel;
         }
+        return this;
     }
 }

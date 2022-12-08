@@ -19,14 +19,8 @@ jobs:
       with:
         dotnet-version: 7.0.100
 
-    - name: add discord.net feed
-      run: dotnet nuget add source https://www.myget.org/F/discord-net/api/v3/index.json
-
-    - name: Install dependencies2
-      run: dotnet restore MMBot.sln
-
     - name: Build
-      run: dotnet build MMBot.sln --configuration Release
+      run: dotnet build MMBot.sln -c Release
 
     - name: Test
       run: dotnet test MMBot.sln --no-restore --verbosity normal

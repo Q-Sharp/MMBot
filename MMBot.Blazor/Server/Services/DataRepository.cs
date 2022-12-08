@@ -1,14 +1,13 @@
 ﻿namespace MMBot.Blazor.Server.Services;
 
-public class DataRepository<TEntity, TDataContext> : IRepository<TEntity>
+public class DataRepository<TEntity> : IRepository<TEntity>
     where TEntity : class, IHaveId, new()
-    where TDataContext : DbContext
 {
-    protected readonly TDataContext context;
+    protected readonly Context context;
     internal DbSet<TEntity> dbSet;
     private readonly ILogger<IRepository<TEntity>> _logger;
 
-    public DataRepository(TDataContext dataContext, ILogger<IRepository<TEntity>> logger)
+    public DataRepository(Context dataContext, ILogger<IRepository<TEntity>> logger)
     {
         context = dataContext;
         dbSet = context.Set<TEntity>();

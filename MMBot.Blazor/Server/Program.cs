@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.OAuth.Claims;
-using Microsoft.Extensions.Options;
+﻿using MMBot.Blazor.Server.Routing;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,12 +22,11 @@ var connectionString = configuration.GetConnectionString("Context");
 services.AddDbContextFactory<Context>(o => o.UseLazyLoadingProxies().UseNpgsql(connectionString))
         .AddScoped<IDatabaseService, DatabaseService>()
         .AddScoped<IBlazorDatabaseService, BlazorDatabaseService>()
-        .AddScoped<IRepository<Clan>, DataRepository<Clan, Context>>()
-        .AddScoped<IRepository<Member>, DataRepository<Member, Context>>();
+        .AddScoped(typeof(IRepository<>), typeof(DataRepository<>))
+        .AddTransient<IMiddleware, ExceptionHandlingMiddleware>();
 
 services.AddHttpClient();
 services.AddOptions();
-services.AddLocalization();
 
 services.AddAuthentication(opt =>
 {
@@ -68,26 +66,15 @@ services.AddAuthentication(opt =>
 });
 
 services.AddAuthorization();
-services.AddControllers();
+services.AddControllers(o => o.Conventions.Add(new GenericRouteConvention()))
+        .ConfigureApplicationPartManager(m => m.FeatureProviders.Add(new GenericFeatureProvider()));
+
 services.AddRazorPages();
 
 services.AddMudServices();
 
 services.AddSession()
         .AddHttpContextAccessor();
-
-services.AddResponseCompression(options =>
-{
-    options.Providers.Add<BrotliCompressionProvider>();
-    options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
-    options.EnableForHttps = true;
-});
-
-services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.KnownProxies.Add(IPAddress.Any);
-    options.ForwardedHeaders = ForwardedHeaders.All;
-});
 
 var app = builder.Build();
 
@@ -107,7 +94,10 @@ else
 
 app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
-app.UseRequestLocalization("en-US");
+
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseStaticFiles(new StaticFileOptions
 {
@@ -120,10 +110,6 @@ app.UseStaticFiles(new StaticFileOptions
         }
     }
 });
-
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();

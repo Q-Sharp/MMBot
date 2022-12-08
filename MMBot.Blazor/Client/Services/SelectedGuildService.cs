@@ -4,11 +4,12 @@ public class SelectedGuildService : ISelectedGuildService
 {
     private readonly MMBotAuthenticationStateProvider _authenticationStateProvider;
     private readonly ISessionStorageService _sessionStorage;
+    private readonly ILogger<SelectedGuildService> _logger;
 
-    public SelectedGuildService(MMBotAuthenticationStateProvider authenticationStateProvider, ISessionStorageService sessionStorage)
-        => (_authenticationStateProvider, _sessionStorage) = (authenticationStateProvider, sessionStorage);
+    public SelectedGuildService(MMBotAuthenticationStateProvider authenticationStateProvider, ISessionStorageService sessionStorage, ILogger<SelectedGuildService> logger)
+        => (_authenticationStateProvider, _sessionStorage, _logger) = (authenticationStateProvider, sessionStorage, logger);
 
-    public event EventHandler<GuildEventArgs> Changed;
+    public event EventHandler<EventArgs> Changed;
 
     public async Task<IEnumerable<DCChannel>> GetGuilds()
     {
@@ -30,7 +31,17 @@ public class SelectedGuildService : ISelectedGuildService
 
     public async Task SetSelectedGuild(string id)
     {
-        await _sessionStorage.SetItemAsync(SessionStoreDefaults.GuildId, ulong.Parse(id));
-        Changed(this, new GuildEventArgs(id));
+        try
+        {
+            if (ulong.TryParse(id, out var uid))
+            {
+                await _sessionStorage.SetItemAsync(SessionStoreDefaults.GuildId, uid);
+                Changed?.Invoke(this, EventArgs.Empty);
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "set selected guild problem");
+        }
     }
 }

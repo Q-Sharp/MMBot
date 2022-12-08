@@ -3,14 +3,14 @@
     <MudNavGroup Title="Data" Expanded="@_dataExpanded">
         <MudNavLink Href="/clan">Clan</MudNavLink>
         <MudNavLink Href="/member">Member</MudNavLink>
-        <MudNavGroup Title="Raids" @bind-Expanded="_raidsExpanded">
+       @* <MudNavGroup Title="Raids" @bind-Expanded="_raidsExpanded">
             <MudNavLink Href="/results">Add results</MudNavLink>
             <MudNavLink Href="/history">History</MudNavLink>
-        </MudNavGroup>
+        </MudNavGroup>*@
     </MudNavGroup>
     <MudNavGroup Title="Discord bot" @bind-Expanded="_discordExpanded">
         <MudNavLink Href="/commands">Commands</MudNavLink>
-        <MudNavLink Href="/help">Help</MudNavLink>
+        @*<MudNavLink Href="/help">Help</MudNavLink>*@
     </MudNavGroup>
     <MudNavLink Href="about">About</MudNavLink>
 </MudNavMenu>

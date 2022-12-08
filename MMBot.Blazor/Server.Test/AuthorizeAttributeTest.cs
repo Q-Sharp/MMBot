@@ -4,7 +4,7 @@ public class AuthorizeAttributeTest
 {
     private static IEnumerable<Type> GetChildTypes<TController, TEntitiy>()
         where TEntitiy : class
-        => typeof(ApiControllerBase<TController, TEntitiy>).Assembly.GetTypes()
+        => typeof(EntityController<TController, TEntitiy>).Assembly.GetTypes()
                 .Where(t => t.IsSubclassOf(typeof(TController)) && !t.IsAbstract);
 
     [Fact]

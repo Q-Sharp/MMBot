@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Web;
-
-var builder = WebAssemblyHostBuilder.CreateDefault(args);
+﻿var builder = WebAssemblyHostBuilder.CreateDefault(args);
 var services = builder.Services;
 
 Log.Logger = new LoggerConfiguration()
@@ -42,6 +40,7 @@ services.AddTransient<IAuthorizedAntiForgeryClientFactory, AuthorizedAntiForgery
 services.AddBlazoredSessionStorage();
 services.AddMudServices();
 
-services.AddCRUDViewModels();
+services.AddScoped(typeof(IRepository<>), typeof(DataRepository<>))
+        .AddScoped(typeof(ICRUDViewModel<,>), typeof(ViewModel<,>));
 
 await builder.Build().RunAsync();

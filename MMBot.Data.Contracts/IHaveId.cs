@@ -3,5 +3,5 @@
 public interface IHaveId
 {
     int Id { get; set; }
-    void Update(object HaveId);
+    object Update(object HaveId);
 }

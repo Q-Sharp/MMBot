@@ -13,7 +13,7 @@ public class Vacation : IHaveId
 
     public byte[] Version { get; set; }
 
-    public void Update(object vacation)
+    public object Update(object vacation)
     {
         if (vacation is Vacation v && Id == v.Id)
         {
@@ -21,5 +21,6 @@ public class Vacation : IHaveId
             EndDate = v.EndDate;
             MemberId = v.MemberId;
         }
+        return this;
     }
 }

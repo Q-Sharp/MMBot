@@ -14,7 +14,7 @@ public class Strike : IHaveId
 
     public byte[] Version { get; set; }
 
-    public void Update(object strike)
+    public object Update(object strike)
     {
         if (strike is Strike m && Id == m.Id)
         {
@@ -23,5 +23,7 @@ public class Strike : IHaveId
             MemberId = m.MemberId;
             Member = m.Member;
         }
+
+        return this;
     }
 }

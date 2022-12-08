@@ -2,7 +2,7 @@
 
 [ApiController]
 [Route("api/[controller]")]
-public class UserController : ControllerBase
+public class UserController : MMControllerBase
 {
     private readonly IBlazorDatabaseService _blazorDatabaseService;
 
