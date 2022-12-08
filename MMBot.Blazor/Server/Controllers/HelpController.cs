@@ -1,5 +1,8 @@
 ﻿namespace MMBot.Blazor.Server.Controllers;
 
-public class HelpController : MMControllerBase
-{
+[ApiController]
+[Route("api/[controller]")]
+[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+public class HelpController : ControllerBase
+{ 
 }

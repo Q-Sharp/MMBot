@@ -2,15 +2,15 @@
 
 public class AuthorizeAttributeTest
 {
-    private static IEnumerable<Type> GetChildTypes<TController, TEntitiy>()
+    private static IEnumerable<Type> GetChildTypes<TEntitiy>()
         where TEntitiy : class
-        => typeof(EntityController<TController, TEntitiy>).Assembly.GetTypes()
-                .Where(t => t.IsSubclassOf(typeof(TController)) && !t.IsAbstract);
+        => typeof(EntityController<>).Assembly.GetTypes()
+                .Where(t =>  !t.IsAbstract);
 
     [Fact]
     public void ApiAndMVCControllersShouldHaveAuthorizeAttribute()
     {
-        var authA = GetChildTypes<ControllerBase, object>()
+        var authA = GetChildTypes<object>()
             .Where(t => t.Name != "UserController") // User is anonymous before using api auth!!
             .Select(t => Attribute.GetCustomAttribute(t, typeof(AuthorizeAttribute), true) as AuthorizeAttribute);
 
