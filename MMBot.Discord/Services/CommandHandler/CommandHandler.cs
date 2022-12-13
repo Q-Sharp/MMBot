@@ -141,7 +141,7 @@ public partial class CommandHandler : ICommandHandler
         await Task.Run(() =>
         {
             var mmBot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppDomain.CurrentDomain.FriendlyName);
-             Process.Start(mmBot);
+            Process.Start(mmBot);
             Environment.Exit(0);
         });
     }
