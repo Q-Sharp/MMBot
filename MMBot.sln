@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Discord", "MMBot.Discord\MMBot.Discord.csproj", "{03161B12-D305-46C6-AC31-47A7027E6AA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Discord2", "MMBot.Discord\MMBot.Discord2.csproj", "{03161B12-D305-46C6-AC31-47A7027E6AA5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Data", "MMBot.Data\MMBot.Data.csproj", "{FD989D65-9C69-413E-867D-58851BBB771A}"
 EndProject
@@ -17,9 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Discord.Tests", "MMBot.Discord.Tests\MMBot.Discord.Tests.csproj", "{703A5FE2-88BC-4EF3-97D8-03D96C4759DA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Data.Tests", "MMBot.Data.Tests\MMBot.Data.Tests.csproj", "{9B23A18B-F3D3-4137-AA2B-A0BA7E563BD1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Discord2.Tests", "MMBot.Discord.Tests\MMBot.Discord2.Tests.csproj", "{703A5FE2-88BC-4EF3-97D8-03D96C4759DA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Blazor.Client", "MMBot.Blazor\Client\MMBot.Blazor.Client.csproj", "{42572833-0958-4D44-BA71-9E6B8470CA18}"
 EndProject
@@ -32,6 +30,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MMBot.Blazor", "MMBot.Blazor", "{F9AF7569-ACA9-42DE-AB9C-DFA9A8E36F1F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Data.Contracts", "MMBot.Data.Contracts\MMBot.Data.Contracts.csproj", "{6E87C466-BB24-48F5-BC2E-6FF66D7E580B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMBot.DSharp", "MMBot.DSharp\MMBot.DSharp.csproj", "{8DBFE5BC-546B-4A1B-93CA-C1DC171D9CF4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,10 +51,6 @@ Global
 		{703A5FE2-88BC-4EF3-97D8-03D96C4759DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{703A5FE2-88BC-4EF3-97D8-03D96C4759DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{703A5FE2-88BC-4EF3-97D8-03D96C4759DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9B23A18B-F3D3-4137-AA2B-A0BA7E563BD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9B23A18B-F3D3-4137-AA2B-A0BA7E563BD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9B23A18B-F3D3-4137-AA2B-A0BA7E563BD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9B23A18B-F3D3-4137-AA2B-A0BA7E563BD1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{42572833-0958-4D44-BA71-9E6B8470CA18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{42572833-0958-4D44-BA71-9E6B8470CA18}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42572833-0958-4D44-BA71-9E6B8470CA18}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -75,6 +71,10 @@ Global
 		{6E87C466-BB24-48F5-BC2E-6FF66D7E580B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E87C466-BB24-48F5-BC2E-6FF66D7E580B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E87C466-BB24-48F5-BC2E-6FF66D7E580B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DBFE5BC-546B-4A1B-93CA-C1DC171D9CF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DBFE5BC-546B-4A1B-93CA-C1DC171D9CF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DBFE5BC-546B-4A1B-93CA-C1DC171D9CF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DBFE5BC-546B-4A1B-93CA-C1DC171D9CF4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

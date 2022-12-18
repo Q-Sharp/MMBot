@@ -1,0 +1,17 @@
+﻿global using DSharpPlus;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Hosting;
+global using Microsoft.Extensions.Logging;
+global using MMBot.Data;
+global using MMBot.DSharp;
+global using Serilog;
+global using Serilog.Events;
+global using DSharpPlus.Interactivity.Enums;
+global using DSharpPlus.Interactivity.Extensions;
+global using DSharpPlus.Interactivity;
+global using DSharpPlus.CommandsNext;
+global using DSharpPlus.SlashCommands;
+global using DSharpPlus.Entities;
+global using System.Text.RegularExpressions;
