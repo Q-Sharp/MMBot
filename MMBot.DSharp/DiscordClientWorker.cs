@@ -1,5 +1,7 @@
 ﻿using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
+using MMBot.DSharp.Modules;
+using MMBot.DSharp.Modules.Translation;
 
 namespace MMBot.DSharp;
 
@@ -27,10 +29,10 @@ public class DiscordClientWorker : IHostedService
         {
             Services = _sp
         });
-        slash.RegisterCommands<SlashCommandHandler>();
+        slash.RegisterCommands<TranslationModule>();
 
         var da = new DiscordActivity("TEST", ActivityType.Watching);
-        var us = UserStatus.DoNotDisturb;
+        var us = UserStatus.Online;
 
         await _discordClient.ConnectAsync(da, us);
     }

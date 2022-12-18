@@ -1,4 +1,4 @@
-﻿namespace MMBot.Discord2.Helpers;
+﻿namespace MMBot.DSharp.Helpers;
 
 public static partial class DiscordHelpers
 {
@@ -10,11 +10,11 @@ public static partial class DiscordHelpers
         return Step2RegEx().Replace(newtext.Trim(), string.Empty).Trim();
     }
 
-    public static bool IsAdmin(this InteractionContext ctx)
-    {
-        var roles = ctx.Guild.Roles.Where(x => x.Members.Select(x => x.Id).Contains(ctx.User.Id));
-        return roles.Any(x => x.Permissions.Administrator) || ctx.User.Id == ctx.Guild.OwnerId;
-    }
+    //public static bool IsAdmin(this InteractionContext ctx)
+    //{
+    //    var roles = ctx.Guild.Roles.Where(x => x.Members.Select(x => x.Id).Contains(ctx.User.Id));
+    //    return roles.Any(x => x.Permissions.Administrator) || ctx.User.Id == ctx.Guild.OwnerId;
+    //}
 
     public static bool IsOwner(this DiscordUser sgu) => sgu.Id == 301764235887902727;
 

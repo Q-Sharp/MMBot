@@ -33,6 +33,7 @@ public static class DiscordClientHost
                       LoggerFactory = sp.GetRequiredService<ILoggerFactory>()
                   }))
                   .AddHttpClient()
+                  .AddTransient<ITranslationService, TranslationService>()
                   .BuildServiceProvider();
            });
 }

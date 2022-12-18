@@ -9,9 +9,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="..\MMBot.Discord\appsettings.json" Link="appsettings.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
+	  <None Remove="appsettings.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="appsettings.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -42,11 +46,16 @@
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
 		<PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
+	
+		<PackageReference Include="CsvHelper" Version="27.2.1" />
+		<PackageReference Include="Google.Apis.Sheets.v4" Version="1.55.0.2371" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.11.42" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\MMBot.Data.Contracts\MMBot.Data.Contracts.csproj" />
 		<ProjectReference Include="..\MMBot.Data\MMBot.Data.csproj" />
+		<ProjectReference Include="..\MMBot.DSharp.Contracts\MMBot.DSharp.Contracts.csproj" />
 	</ItemGroup>
 
 </Project>

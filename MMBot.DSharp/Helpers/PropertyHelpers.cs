@@ -1,12 +1,4 @@
-﻿using System.Collections;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection;
-using System.Text.Json.Serialization;
-using Discord;
-using MMBot.Data.Contracts;
-using MMBot.Data.Contracts.Enums;
-
-namespace MMBot.DSharp.Helpers;
+﻿namespace MMBot.DSharp.Helpers;
 
 public static class PropertyHelpers
 {
@@ -87,18 +79,18 @@ public static class PropertyHelpers
         return message;
     }
 
-    public static IEmbed GetEmbedPropertiesWithValues<T>(this T m, string imageUrl = null)
+    public static DiscordEmbed GetEmbedPropertiesWithValues<T>(this T m, string imageUrl = null)
         where T : class
     {
         var message = string.Empty;
 
         try
         {
-            var builder = new EmbedBuilder
+            var builder = new DiscordEmbedBuilder
             {
-                Color = Color.Purple,
+                Color = DiscordColor.Purple,
                 Title = typeof(T).ToString().Split('.').LastOrDefault(),
-                ThumbnailUrl = imageUrl,
+                ImageUrl = imageUrl
             };
 
             var pr = m.GetType().GetProperties(cisBF).Where(x => x.CustomAttributes.Any(x => x.AttributeType == typeof(DisplayAttribute))).ToArray();
@@ -109,12 +101,7 @@ public static class PropertyHelpers
                 var t = Nullable.GetUnderlyingType(p.PropertyType) ?? p.PropertyType;
                 var val = pVal is null ? null : Convert.ChangeType(pVal, t);
 
-                builder.AddField(x =>
-                {
-                    x.Name = p?.Name?.ToSentence();
-                    x.Value = (val?.ToString()) ?? "not set";
-                    x.IsInline = false;
-                });
+                builder.AddField(p?.Name?.ToSentence(), (val?.ToString()) ?? "not set", false);
             }
 
             return builder.WithTimestamp(DateTimeOffset.Now).Build();
