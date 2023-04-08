@@ -11,7 +11,7 @@ public class TranslationService : MMBotService<TranslationService>, ITranslation
 
     public TranslationService(IHttpClientFactory clientFactory, ILogger<TranslationService> logger) : base(logger) => _clientFactory = clientFactory;
 
-    public async Task<string> TranslateTextAsync(string input)
+    public async Task<string> TranslateTextAsync(string input, string langCode = "en")
     {
         try
         {
@@ -20,7 +20,7 @@ public class TranslationService : MMBotService<TranslationService>, ITranslation
             if (string.IsNullOrWhiteSpace(input))
                 return input;
 
-            var url = $"https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q={Uri.EscapeDataString(input)}";
+            var url = $"https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl={langCode}&dt=t&q={Uri.EscapeDataString(input)}";
             var httpClient = _clientFactory.CreateClient();
             var result = await httpClient.GetStringAsync(url);
 

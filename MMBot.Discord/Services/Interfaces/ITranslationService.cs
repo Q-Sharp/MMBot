@@ -2,5 +2,5 @@
 
 public interface ITranslationService
 {
-    Task<string> TranslateTextAsync(string input);
+    Task<string> TranslateTextAsync(string input, string langCode = "en");
 }
