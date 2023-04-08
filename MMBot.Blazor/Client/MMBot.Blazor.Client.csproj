@@ -22,11 +22,5 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Shared\MMBot.Blazor.Shared.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Update="Pages\CommandsPage.razor">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	  </Content>
-	</ItemGroup>
-
+	
 </Project>

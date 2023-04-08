@@ -1,4 +1,7 @@
-﻿using MMBot.Blazor.Server.Routing;
+﻿using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.ResponseCompression;
+using System.Net;
+using MMBot.Blazor.Server.Routing;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,6 +79,20 @@ services.AddMudServices();
 services.AddSession()
         .AddHttpContextAccessor();
 
+services.AddResponseCompression(options =>
+{
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
+    options.EnableForHttps = true;
+});
+
+services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.KnownProxies.Add(IPAddress.Any);
+    options.ForwardedHeaders = ForwardedHeaders.All;
+});
+
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -94,10 +111,7 @@ else
 
 app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
-
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseRequestLocalization("en-US");
 
 app.UseStaticFiles(new StaticFileOptions
 {
@@ -110,6 +124,10 @@ app.UseStaticFiles(new StaticFileOptions
         }
     }
 });
+
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();
