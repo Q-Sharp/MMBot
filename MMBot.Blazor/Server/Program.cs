@@ -9,7 +9,7 @@ var configuration = builder.Configuration;
 var services = builder.Services;
 var env = builder.Environment;
 
-configuration.AddEnvironmentVariables("MMBot_")
+configuration.AddEnvironmentVariables()
              .AddUserSecrets(typeof(Program).Assembly)
              .AddCommandLine(args);
 
@@ -20,7 +20,7 @@ Log.Logger = new LoggerConfiguration()
 services.AddLogging(l => l.ClearProviders()
                           .AddSerilog(Log.Logger));
 
-var connectionString = configuration.GetConnectionString("Context");
+var connectionString = configuration["ConnectionStrings:Context"];
 
 services.AddDbContextFactory<Context>(o => o.UseLazyLoadingProxies().UseNpgsql(connectionString))
         .AddScoped<IDatabaseService, DatabaseService>()

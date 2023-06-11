@@ -1,4 +1,6 @@
-﻿namespace MMBot.Blazor.Shared.Helpers;
+﻿using Microsoft.AspNetCore.Authentication.OAuth;
+
+namespace MMBot.Blazor.Shared.Helpers;
 
 public class DiscordHelpers
 {

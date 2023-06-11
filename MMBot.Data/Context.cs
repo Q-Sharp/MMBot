@@ -7,7 +7,7 @@ public class Context : DbContext
         if (!options.IsConfigured)
         {
             options.UseLazyLoadingProxies();
-            options.UseNpgsql($@"Server=127.0.0.1;Port=5433;Database=MMBotDB;Username=postgres;Password=P0stGresSQL2021");
+            //options.UseNpgsql($@"Server=127.0.0.1;Port=5433;Database=MMBotDB;Username=postgres;Password=P0stGresSQL2021");
         }
     }
 
