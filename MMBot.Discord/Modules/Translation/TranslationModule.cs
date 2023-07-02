@@ -47,6 +47,6 @@ public partial class TranslationModule : MMBotModule, ITranslationModule
     [Alias("trh")]
     public async Task<RuntimeResult> GetLangCodes()
     {
-        return FromSuccess("https://cloud.google.com/translate/docs/languages");
+        return await Task.Run(() => FromSuccess("https://cloud.google.com/translate/docs/languages"));
     }
 }

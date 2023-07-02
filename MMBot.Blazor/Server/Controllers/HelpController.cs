@@ -10,6 +10,6 @@ public class HelpController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetHelp([FromServices] IRepository<Member> repo)
     {
-        return Ok(repo.GetById(0)); 
+        return await Task.Run(() => Ok(repo.GetById(0))); 
     }
 }
