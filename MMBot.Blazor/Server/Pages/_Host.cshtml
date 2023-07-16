@@ -21,19 +21,18 @@
 
     <link rel="stylesheet" href="_content/MudBlazor/MudBlazor.min.css" />
     <link rel="stylesheet" href="css/app.css" />
-    <link rel="stylesheet" href="css/font.css" />
     <link rel="stylesheet" href="MMBot.Blazor.Client.styles.css" />
 
-    @*<link href="manifest.json" rel="manifest" />*@
-
-    <script src="_framework/blazor.webassembly.js"></script>
-    @*<script src="antiForgeryToken.js"></script>*@
-    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <link href="manifest.json" rel="manifest" />
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
 </head>
 
 <body>
-    @*@Html.AntiForgeryToken()*@
-
+    @Html.AntiForgeryToken()
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="antiForgeryToken.js"></script>
+    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    
    <div id="app">
        <div class="loading-container">
             <div class="spinner" />

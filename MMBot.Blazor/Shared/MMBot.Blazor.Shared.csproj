@@ -7,7 +7,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Blazored.SessionStorage" Version="2.3.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.OAuth" Version="2.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>

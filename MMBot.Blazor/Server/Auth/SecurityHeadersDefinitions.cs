@@ -15,20 +15,36 @@ public static class SecurityHeadersDefinitions
                 {
                     builder.AddObjectSrc().None();
                     builder.AddBlockAllMixedContent();
-                    builder.AddImgSrc().Self().From("data:");
+                    builder.AddImgSrc()
+                           .Self()
+                           .From("data:")
+                           .From("https://www.mmbot.xyz")
+                           .From("https://cdn.discordapp.com");
                     builder.AddFormAction().Self().From(idpHost);
-                    builder.AddFontSrc().Self().OverHttps();
-                    builder.AddBaseUri().Self();
+                    builder.AddFontSrc()
+                           .Self()
+                           .From("https://fonts.googleapis.com")
+                           .From("https://www.mmbot.xyz")
+                           .OverHttps();
+                    builder.AddBaseUri()
+                           .From("https://www.mmbot.xyz")
+                           .Self();
                     builder.AddFrameAncestors().None();
 
                     if (!isDev)
                     {
-                        builder.AddStyleSrc().Self();
+                        builder.AddStyleSrc()
+                               .Self()
+                               .From("https://static.cloudflareinsights.com")
+                               .From("https://www.mmbot.xyz");
 
                         // due to Blazor
                         builder.AddScriptSrc()
                                .Self()
                                .WithHash256("v8v3RKRPmN4odZ1CWM5gw80QKPCCWMcpNeOmimNL2AA=")
+                               .From("https://ajax.googleapis.com/")
+                               .From("https://static.cloudflareinsights.com/")
+                               .From("https://www.mmbot.xyz/")
                                .UnsafeEval();
                     }
 
@@ -60,6 +76,8 @@ public static class SecurityHeadersDefinitions
             // maxage = one year in seconds
              policy.AddStrictTransportSecurityMaxAgeIncludeSubDomains(maxAgeInSeconds: 60 * 60 * 24 * 365);
         }
+
+        policy.ApplyDocumentHeadersToAllResponses();
 
         return policy;
     }

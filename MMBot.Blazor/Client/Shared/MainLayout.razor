@@ -2,7 +2,7 @@
 
 <MudDialogProvider />
 <MudSnackbarProvider />
-<MudThemeProvider Theme="currentTheme"/>
+<MudThemeProvider Theme="currentTheme" />
 
 <MudLayout>
     <MudAppBar Elevation="2">
@@ -15,14 +15,16 @@
                     <MudItem xs="12">
                         <MudGrid Spacing="5" Justify="Justify.FlexEnd">
                             <MudItem>
-                                <MudAvatar Image="@LoggedUser.AvatarUrl"/>
+                                <MudAvatar>
+                                    <MudImage Src="@LoggedUser.AvatarUrl" />
+                                </MudAvatar>
                             </MudItem>
                             <MudItem>
                                 <MudText Typo="Typo.h6">Hello, @LoggedUser.Name!</MudText>
                             </MudItem>
                             <MudItem Style="min-width: max-content">
                                 <MudSelect T="DCChannel" Label="Guild" FullWidth="true" Value="@SelectedGuild" ValueChanged="GuildChanged" Text="@SelectedGuild.Name">
-                                    @foreach (var guild in Guilds)
+                                    @foreach(var guild in Guilds)
                                     {
                                         <MudSelectItem T="DCChannel" value="@guild">@guild.Name</MudSelectItem>
                                     }

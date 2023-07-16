@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.ResponseCompression;
-using System.Net;
-using MMBot.Blazor.Server.Routing;
+﻿using MMBot.Blazor.Server.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,7 +51,21 @@ services.AddAuthentication(opt =>
     {
         OnCreatingTicket = async context =>
         {
-            var guildClaim = await DiscordHelpers.GetGuildClaims(context);
+            var guildClaim = await Task.Run(async () =>
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, "https://discordapp.com/api/users/@me/guilds");
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
+
+                var response = await context.Backchannel.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, CancellationToken.None);
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("failed to get guilds");
+
+                var payload = await response.Content.ReadAsStringAsync();
+                var claim = new Claim("guilds", payload, ClaimValueTypes.String);
+                return claim;
+            });
+
             context.Identity.AddClaim(guildClaim);
         },
         OnAccessDenied = context =>
@@ -72,26 +83,22 @@ services.AddAuthorization();
 services.AddControllers(o => o.Conventions.Add(new GenericRouteConvention()))
         .ConfigureApplicationPartManager(m => m.FeatureProviders.Add(new GenericFeatureProvider()));
 
-services.AddRazorPages();
-
-services.AddMudServices();
+services.AddRazorPages().AddMvcOptions(options =>
+{
+    //var policy = new AuthorizationPolicyBuilder()
+    //    .RequireAuthenticatedUser()
+    //    .Build();
+    //options.Filters.Add(new AuthorizeFilter(policy));
+});
 
 services.AddSession()
         .AddHttpContextAccessor();
-
-services.AddResponseCompression(options =>
-{
-    options.Providers.Add<BrotliCompressionProvider>();
-    options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
-    options.EnableForHttps = true;
-});
 
 services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.KnownProxies.Add(IPAddress.Any);
     options.ForwardedHeaders = ForwardedHeaders.All;
 });
-
 
 var app = builder.Build();
 
@@ -109,21 +116,15 @@ else
        .UseCookiePolicy();
 }
 
+app.UseSecurityHeaders(
+    SecurityHeadersDefinitions.GetHeaderPolicyCollection(env.IsDevelopment(),
+        configuration["Discord:Authority"]!));
+
+
 app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
+app.UseStaticFiles();
 app.UseRequestLocalization("en-US");
-
-app.UseStaticFiles(new StaticFileOptions
-{
-    OnPrepareResponse = context =>
-    {
-        if (context.File.Name == "service-worker-assets.js")
-        {
-            context.Context.Response.Headers.Add("Cache-Control", "no-cache, no-store");
-            context.Context.Response.Headers.Add("Expires", "-1");
-        }
-    }
-});
 
 app.UseRouting();
 app.UseAuthentication();

@@ -14,7 +14,7 @@ public partial class MainLayout
     private bool _drawerOpen = true;
     private readonly MudTheme currentTheme = new MudTheme()
     {
-        Palette = new Palette()
+        Palette = new PaletteDark()
         {
             Black = "#27272f",
             Background = "#32333d",
