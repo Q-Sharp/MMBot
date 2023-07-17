@@ -17,7 +17,10 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 7.0.100
+        dotnet-version: 7.0.306
+    
+    - name: Install workload
+      run: dotnet workload install wasm-tools
 
     - name: Build
       run: dotnet build MMBot.sln -c Release
