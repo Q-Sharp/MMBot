@@ -26,7 +26,7 @@ jobs:
       run: dotnet test MMBot.sln --no-restore --verbosity normal
 
     - name: .NET Publish
-      run: dotnet publish ./MMBot.Discord/MMBot.Discord.csproj -c Release -r linux-x64 --no-self-contained /p:PublishReadyToRun=false /p:DebugType=None /p:DebugSymbols=false
+      run: dotnet publish ./MMBot.Discord/MMBot.Discord.csproj -c Release -r linux-x64 --framework net7.0 /p:DebugType=None /p:DebugSymbols=false
 
     - name: App Settings Variable Substitution
       uses: microsoft/variable-substitution@v1
@@ -49,7 +49,7 @@ jobs:
           TARGET: ${{ secrets.REMOTE_TARGET }}
           
     - name: .NET Publish
-      run: dotnet publish ./MMBot.Blazor/Server/MMBot.Blazor.Server.csproj -c Release -r linux-x64 --self-contained /p:PublishReadyToRun=false /p:DebugType=None /p:DebugSymbols=false
+      run: dotnet publish ./MMBot.Blazor/Server/MMBot.Blazor.Server.csproj -c Release -r linux-x64 --framework net7.0 /p:DebugType=None /p:DebugSymbols=false
 
     - name: App Settings Variable Substitution
       uses: microsoft/variable-substitution@v1

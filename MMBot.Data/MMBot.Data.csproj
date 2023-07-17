@@ -5,6 +5,7 @@
 		<RootNamespace>MMBot.Data</RootNamespace>
 		<PublishReadyToRun>true</PublishReadyToRun>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<RunAOTCompilation>true</RunAOTCompilation>
 	</PropertyGroup>
 
 	<ItemGroup>
