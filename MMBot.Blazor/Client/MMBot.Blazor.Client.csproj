@@ -5,6 +5,8 @@
 		<NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RunAOTCompilation>true</RunAOTCompilation>
+		<TrimMode>partial</TrimMode>
+		<OptimizationPreference>Speed</OptimizationPreference>
 	</PropertyGroup>
 
 	<ItemGroup>
