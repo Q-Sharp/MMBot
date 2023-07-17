@@ -36,7 +36,8 @@ public static class SecurityHeadersDefinitions
                         builder.AddStyleSrc()
                                .Self()
                                .From("https://static.cloudflareinsights.com")
-                               .From("https://www.mmbot.xyz");
+                               .From("https://www.mmbot.xyz")
+                               .UnsafeInline();
 
                         // due to Blazor
                         builder.AddScriptSrc()
@@ -45,6 +46,7 @@ public static class SecurityHeadersDefinitions
                                .From("https://ajax.googleapis.com/")
                                .From("https://static.cloudflareinsights.com/")
                                .From("https://www.mmbot.xyz/")
+                               .UnsafeInline()
                                .UnsafeEval();
                     }
 
