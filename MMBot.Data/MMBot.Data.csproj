@@ -3,9 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
 		<RootNamespace>MMBot.Data</RootNamespace>
-		<PublishReadyToRun>true</PublishReadyToRun>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<RunAOTCompilation>true</RunAOTCompilation>
 	</PropertyGroup>
 
 	<ItemGroup>

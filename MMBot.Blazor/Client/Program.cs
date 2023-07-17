@@ -40,7 +40,9 @@ services.AddTransient<IAuthorizedAntiForgeryClientFactory, AuthorizedAntiForgery
 services.AddBlazoredSessionStorage();
 services.AddMudServices();
 
-services.AddScoped(typeof(IRepository<>), typeof(DataRepository<>))
-        .AddScoped(typeof(ICRUDViewModel<,>), typeof(ViewModel<,>));
+services.AddScoped<IRepository<Clan>, DataRepository<Clan>>()
+        .AddScoped<IRepository<Member>, DataRepository<Member>>()
+        .AddScoped<ICRUDViewModel<MemberModel, Member>, ViewModel<MemberModel, Member>>()
+        .AddScoped<ICRUDViewModel<ClanModel, Clan>, ViewModel<ClanModel, Clan>>();
 
 await builder.Build().RunAsync();
