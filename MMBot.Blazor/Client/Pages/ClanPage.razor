@@ -13,7 +13,6 @@ else
             <MudText Typo="Typo.h2">Clans</MudText>
             <MudSpacer />
             <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Create" Color="Color.Default" OnClick="() => ClanVM.Add()">Create</MudButton>
-            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Default" Disabled="(ClanVM?.SelectedEntity?.Id ?? 0) == 0" OnClick="async () => await ClanVM.Delete()">Delete</MudButton>
             <MudSpacer />
             <MudTextField Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         </ToolBarContent>
@@ -24,12 +23,14 @@ else
         </ColGroup>
         <HeaderContent>
             @*<MudTh><MudTableSortLabel SortBy="new Func<Clan, object>(x=>x.Id)">Id</MudTableSortLabel></MudTh>*@
+            <MudTh><MudSpacer /></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<ClanModel, object>(x => x.SortOrder)" InitialDirection="SortDirection.Ascending">SortOrder</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<ClanModel, object>(x => x.Tag)">Tag</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<ClanModel, object>(x => x.Name)">Name</MudTableSortLabel></MudTh>
         </HeaderContent>
         <RowTemplate>
             @*<MudTd DataLabel="Id">@context.Id</MudTd>*@
+            <MudTd><MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" OnClick="async () => await ClanVM.Delete(context.Id)"></MudIconButton></MudTd>
             <MudTd DataLabel="SortOrder">@context.SortOrder</MudTd>
             <MudTd DataLabel="Tag">@context.Tag</MudTd>
             <MudTd DataLabel="Name">@context.Name</MudTd>
@@ -37,6 +38,7 @@ else
         </RowTemplate>
         <RowEditingTemplate>
             @*<MudTd DataLabel="Id">@context.Id</MudTd>*@
+            <MudTd><MudSpacer /></MudTd>
             <MudTd DataLabel="SortOrder">
                 <MudTextField @bind-Value="@context.SortOrder" Required />
             </MudTd>

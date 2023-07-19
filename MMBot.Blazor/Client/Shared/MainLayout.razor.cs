@@ -50,10 +50,10 @@ public partial class MainLayout
         {
             Guilds = await SelectedGuildService.GetGuilds();
             SelectedGuild = Guilds.FirstOrDefault(x => x.IsSelected) ?? Guilds.FirstOrDefault();
-            GuildChanged();
+            await GuildChanged();
         }
     }
 
-    private async void GuildChanged() 
+    private async Task GuildChanged() 
         => await SelectedGuildService.SetSelectedGuild(SelectedGuild.Id);
 }

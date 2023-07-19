@@ -5,11 +5,10 @@ public partial class ClanLookUp
     [Inject]
     public ICRUDViewModel<ClanModel, Clan> ClanVM { get; set; }
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         ClanVM.SelectedEntity = ClanVM?.Entities.FirstOrDefault(x => x.Id == SelectedId);
-        StateHasChanged();
-        return base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task UpdateId(object changed) => await ValueChanged.InvokeAsync();

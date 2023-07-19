@@ -16,17 +16,17 @@
                         <MudGrid Spacing="5" Justify="Justify.FlexEnd">
                             <MudItem>
                                 <MudAvatar>
-                                    <MudImage Src="@LoggedUser.AvatarUrl" />
+                                    <MudImage Src="@LoggedUser.AvatarUrl" crossorigin />
                                 </MudAvatar>
                             </MudItem>
                             <MudItem>
                                 <MudText Typo="Typo.h6">Hello, @LoggedUser.Name!</MudText>
                             </MudItem>
                             <MudItem Style="min-width: max-content">
-                                <MudSelect T="DCChannel" Label="Guild" FullWidth="true" Value="@SelectedGuild" ValueChanged="GuildChanged" Text="@SelectedGuild.Name">
+                                <MudSelect T="DCChannel" Label="Guild" FullWidth="true" @bind-Value="SelectedGuild" @bind-Value:after="GuildChanged">
                                     @foreach(var guild in Guilds)
                                     {
-                                        <MudSelectItem T="DCChannel" value="@guild">@guild.Name</MudSelectItem>
+                                        <MudSelectItem T="DCChannel" value="@guild"></MudSelectItem>
                                     }
                                 </MudSelect>
                             </MudItem>
@@ -56,6 +56,8 @@
         </MudPaper>
     </MudDrawer>
     <MudMainContent>
-        @Body
+        <CascadingValue Value="@SelectedGuild">
+            @Body
+        </CascadingValue>
     </MudMainContent>
 </MudLayout>

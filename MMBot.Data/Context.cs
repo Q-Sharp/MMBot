@@ -33,8 +33,7 @@ public class Context : DbContext
     public DbSet<RaidBoss> RaidBoss { get; set; }
     public DbSet<RaidParticipation> RaidParticipation { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder) => modelBuilder.ApplyConfigurationsFromAssembly(typeof(Context).Assembly)
-                    .UseIdentityByDefaultColumns();
+    protected override void OnModelCreating(ModelBuilder modelBuilder) => modelBuilder.ApplyConfigurationsFromAssembly(typeof(Context).Assembly);
 
     public async Task MigrateAsync() => await Database.MigrateAsync();
 }

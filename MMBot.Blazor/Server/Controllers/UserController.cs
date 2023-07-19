@@ -65,7 +65,7 @@ public class UserController : ControllerBase
             var channel = JsonSerializer.Deserialize<IList<DCChannel>>(ids, o);
             var allGuildsInDb = _blazorDatabaseService?.GetAllGuilds().Select(x => new DCChannel { Id = x.Id.ToString(), Name = x.Name });
 
-            dcUser.Guilds = dcUser.Id == 301764235887902727 ?
+            dcUser.Guilds = dcUser.IsOwner() ?
                     allGuildsInDb.ToList() :
                 channel.Where(x => x.Owner ||
                     x.PermissionFlags.HasFlag(GuildPermission.Administrator) ||

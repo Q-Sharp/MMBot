@@ -10,4 +10,10 @@ public class DCChannel
     public bool IsSelected { get; set; } = false;
 
     public GuildPermission PermissionFlags => (GuildPermission)Permissions;
+
+    public override bool Equals(object o)
+        => (o as DCChannel)?.Id == Id;
+
+    public override int GetHashCode() => Id?.GetHashCode() ?? 0;
+    public override string ToString() => Name;
 }

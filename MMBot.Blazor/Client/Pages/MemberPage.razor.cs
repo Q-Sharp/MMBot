@@ -9,9 +9,12 @@ public partial class MemberPage
     [Inject]
     private ICRUDViewModel<MemberModel, Member> MemberVM { get; set; }
 
+    [CascadingParameter]
+    public DCChannel SelectedGuild { get; set; } = new DCChannel();
+
     private string searchString = "";
 
-    protected override async Task OnInitializedAsync() => await MemberVM.Init();
+    protected override async Task OnParametersSetAsync() => await MemberVM.Load();
 
     private bool FilterFunc(MemberModel Member)
     {

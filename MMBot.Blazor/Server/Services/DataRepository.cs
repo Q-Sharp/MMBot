@@ -50,7 +50,7 @@ public class DataRepository<TEntity> : IRepository<TEntity>
 
     public virtual async Task<bool> Delete(object id)
     {
-        var e = await dbSet.FindAsync(id);
+        var e = await dbSet.FindAsync(int.Parse(id.ToString()));
         return await Delete(e);
     }
 
@@ -58,10 +58,8 @@ public class DataRepository<TEntity> : IRepository<TEntity>
     {
         try
         {
-            var e = dbSet.Add(entity);
-            e.State = EntityState.Added;
-
-            await context.SaveChangesAsync();
+            entity.Id = 0;
+            var e = context.Add(entity);
             return e.Entity;
         }
         catch (Exception e)

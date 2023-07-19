@@ -7,7 +7,7 @@ public class BlazorDatabaseService : IBlazorDatabaseService
     public BlazorDatabaseService(Context dataContext) => _ctx = dataContext;
 
     public IEnumerable<Guild> GetAllGuilds()
-        => _ctx.GuildSettings.AsQueryable()
+        => _ctx.GuildSettings
             .Select(x => new Guild(x.GuildId, x.GuildName))
             .Distinct()
             .ToList();

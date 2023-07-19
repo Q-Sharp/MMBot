@@ -1,4 +1,4 @@
-﻿namespace MMBot.Blazor.Server.Helpers;
+﻿namespace MMBot.Blazor.Shared.Helpers;
 
 public static class DiscordHelpers
 {

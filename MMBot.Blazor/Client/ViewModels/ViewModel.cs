@@ -17,16 +17,16 @@ public class ViewModel<TEntityModel, TEntity> : ViewModelBase, ICRUDViewModel<TE
     {
         Repo = repo;
         _logger = logger;
-        selectedGuildService.Changed += async (_, _) => await Init();
+        selectedGuildService.Changed += async (_, _) => await Load();
     }
 
-    public async Task Init()
+    public async Task Load()
     {
         GID = await SelectedGuildService.GetSelectedGuildId();
         Entities = await Load(x => x.GuildId == GID, x => x.OrderBy(y => y.Id));
     }
 
-    public async Task Delete()
+    public async Task Delete(int? id = null)
     {
         var confirm = await DialogService.ShowMessageBox("Warning", "Do you want to delete this record?", yesText: "Yes", noText: "No");
 
@@ -34,7 +34,7 @@ public class ViewModel<TEntityModel, TEntity> : ViewModelBase, ICRUDViewModel<TE
         {
             try
             {
-                var id = SelectedEntity.Id;
+                id ??= SelectedEntity.Id;
                 await Repo.Delete(id);
                 Entities.Remove(Entities.FirstOrDefault(x => x.Id == id));
             }

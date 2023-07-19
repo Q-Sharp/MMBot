@@ -1,6 +1,4 @@
-﻿using MMBot.Blazor.Server.Auth;
-
-var builder = WebApplication.CreateBuilder(args);
+﻿var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 var services = builder.Services;
@@ -36,7 +34,6 @@ services.AddAuthentication(opt =>
 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
 {
     options.ExpireTimeSpan = TimeSpan.FromDays(30);
-    options.Cookie.MaxAge = TimeSpan.FromDays(30);
     options.Cookie.Name = ApiAuthDefaults.CookieName;
 })
 .AddDiscord(DiscordAuthenticationDefaults.AuthenticationScheme, options =>
@@ -83,13 +80,7 @@ services.AddAuthorization();
 services.AddControllers(o => o.Conventions.Add(new GenericRouteConvention()))
         .ConfigureApplicationPartManager(m => m.FeatureProviders.Add(new GenericFeatureProvider()));
 
-services.AddRazorPages().AddMvcOptions(options =>
-{
-    //var policy = new AuthorizationPolicyBuilder()
-    //    .RequireAuthenticatedUser()
-    //    .Build();
-    //options.Filters.Add(new AuthorizeFilter(policy));
-});
+services.AddRazorPages();
 
 services.AddSession()
         .AddHttpContextAccessor();

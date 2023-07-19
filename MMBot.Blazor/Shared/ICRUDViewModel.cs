@@ -5,12 +5,12 @@ public interface ICRUDViewModel<TEntityModel, TEntity>
     where TEntity : class, IHaveId, IHaveGuildId, new()
 {
     Task Create(TEntityModel newEntity);
-    Task Delete();
+    Task Delete(int? id = null);
     Task<IList<TEntityModel>> Load(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null);
     Task<TEntityModel> Update(TEntityModel updated);
     TEntityModel Add();
 
-    Task Init();
+    Task Load();
     ICollection<TEntityModel> Entities { get; set; }
     TEntityModel SelectedEntity { get; set; }
 

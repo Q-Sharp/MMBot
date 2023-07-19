@@ -57,7 +57,7 @@ public class DataRepository<TEntity> : IRepository<TEntity>
     public virtual async Task<bool> Delete(object id)
     {
         var http = await _clientFactory.CreateClient();
-        await http.DeleteEntity<TEntity>((ulong)id, _typeName);
+        await http.DeleteEntity<TEntity>(ulong.Parse(id.ToString()), _typeName);
 
         return true;
     }
