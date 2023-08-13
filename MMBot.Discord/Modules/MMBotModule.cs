@@ -19,12 +19,9 @@ public abstract class MMBotModule : ModuleBase<SocketCommandContext>
         _databaseService = databaseService;
         _commandHandler = commandHandler;
         _guildSettingsService = guildSettingsService;
-
-        if (Context?.Guild?.Id is not null)
-            _guildSettings = guildSettingsService?.GetGuildSettingsAsync(Context.Guild.Id);
     }
 
-    public Task<GuildSettings> GetGuildSettings() => _guildSettings;
+    public Task<GuildSettings> GetGuildSettings() => _guildSettingsService?.GetGuildSettingsAsync(Context.Guild.Id);
 
     public static MMBotResult FromSuccess(string successMessage = null, IMessage answer = null)
         => MMBotResult.Create(null, successMessage, answer);
