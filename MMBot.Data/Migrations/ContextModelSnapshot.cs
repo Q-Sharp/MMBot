@@ -49,7 +49,7 @@ namespace MMBot.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Channel");
+                    b.ToTable("Channel", (string)null);
                 });
 
             modelBuilder.Entity("MMBot.Data.Contracts.Entities.Clan", b =>
@@ -86,7 +86,7 @@ namespace MMBot.Data.Migrations
                     b.HasIndex("Tag", "Name", "GuildId", "SortOrder")
                         .IsUnique();
 
-                    b.ToTable("Clan");
+                    b.ToTable("Clan", (string)null);
                 });
 
             modelBuilder.Entity("MMBot.Data.Contracts.Entities.GuildSettings", b =>
@@ -128,7 +128,7 @@ namespace MMBot.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GuildSettings");
+                    b.ToTable("GuildSettings", (string)null);
                 });
 
             modelBuilder.Entity("MMBot.Data.Contracts.Entities.MMTimer", b =>
@@ -174,7 +174,7 @@ namespace MMBot.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Timer");
+                    b.ToTable("Timer", (string)null);
                 });
 
             modelBuilder.Entity("MMBot.Data.Contracts.Entities.Member", b =>
@@ -242,7 +242,7 @@ namespace MMBot.Data.Migrations
 
                     b.HasIndex("MemberGroupId");
 
-                    b.ToTable("Member");
+                    b.ToTable("Member", (string)null);
                 });
 
             modelBuilder.Entity("MMBot.Data.Contracts.Entities.MemberGroup", b =>
@@ -260,7 +260,7 @@ namespace MMBot.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MemberGroup");
+                    b.ToTable("MemberGroup", (string)null);
                 });
 
             modelBuilder.Entity("MMBot.Data.Contracts.Entities.MemberRoom", b =>
@@ -291,7 +291,7 @@ namespace MMBot.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MemberRoom");
+                    b.ToTable("MemberRoom", (string)null);
                 });
 
             modelBuilder.Entity("MMBot.Data.Contracts.Entities.RaidBoss", b =>
@@ -329,7 +329,7 @@ namespace MMBot.Data.Migrations
 
                     b.HasIndex("ClanId");
 
-                    b.ToTable("RaidBoss");
+                    b.ToTable("RaidBoss", (string)null);
                 });
 
             modelBuilder.Entity("MMBot.Data.Contracts.Entities.RaidParticipation", b =>
@@ -370,7 +370,7 @@ namespace MMBot.Data.Migrations
 
                     b.HasIndex("RaidParticipationId");
 
-                    b.ToTable("RaidParticipation");
+                    b.ToTable("RaidParticipation", (string)null);
                 });
 
             modelBuilder.Entity("MMBot.Data.Contracts.Entities.Restart", b =>
@@ -397,7 +397,7 @@ namespace MMBot.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Restart");
+                    b.ToTable("Restart", (string)null);
                 });
 
             modelBuilder.Entity("MMBot.Data.Contracts.Entities.Season", b =>
@@ -424,7 +424,7 @@ namespace MMBot.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Season");
+                    b.ToTable("Season", (string)null);
                 });
 
             modelBuilder.Entity("MMBot.Data.Contracts.Entities.SeasonResult", b =>
@@ -464,7 +464,7 @@ namespace MMBot.Data.Migrations
 
                     b.HasIndex("SeasonId");
 
-                    b.ToTable("SeasonResult");
+                    b.ToTable("SeasonResult", (string)null);
                 });
 
             modelBuilder.Entity("MMBot.Data.Contracts.Entities.Strike", b =>
@@ -493,7 +493,7 @@ namespace MMBot.Data.Migrations
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("Strike");
+                    b.ToTable("Strike", (string)null);
                 });
 
             modelBuilder.Entity("MMBot.Data.Contracts.Entities.Vacation", b =>
@@ -522,7 +522,7 @@ namespace MMBot.Data.Migrations
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("Vacation");
+                    b.ToTable("Vacation", (string)null);
                 });
 
             modelBuilder.Entity("MMBot.Data.Contracts.Entities.Member", b =>
