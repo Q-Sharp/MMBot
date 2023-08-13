@@ -57,7 +57,9 @@
     </MudDrawer>
     <MudMainContent>
         <CascadingValue Value="@SelectedGuild">
-            @Body
+            <MudContainer MaxWidth="MaxWidth.Large" Class="my-8 pt-8">
+                @Body
+            </MudContainer>
         </CascadingValue>
     </MudMainContent>
 </MudLayout>
