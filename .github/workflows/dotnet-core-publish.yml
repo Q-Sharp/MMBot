@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
@@ -41,7 +41,7 @@ jobs:
         Discord.Token: ${{ secrets.DISCORD_TOKEN }}
 
     - name: Deploy to Server
-      uses: easingthemes/ssh-deploy@v2.2.11
+      uses: easingthemes/ssh-deploy@v4.1.9
       env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltgoDzvO --delete-excluded --filter 'protect *.db' --filter 'protect *.log' --filter 'protect *.json'"
@@ -64,7 +64,7 @@ jobs:
         Discord.AppSecret: ${{ secrets.DISCORD_APPSECRET }}
 
     - name: Deploy to Server
-      uses: easingthemes/ssh-deploy@v2.2.11
+      uses: easingthemes/ssh-deploy@v4.1.9
       env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltgoDzvO --delete-excluded --filter 'protect *.db' --filter 'protect *.log' --filter 'protect *.json'"
