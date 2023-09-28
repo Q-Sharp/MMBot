@@ -41,7 +41,7 @@ jobs:
         Discord.Token: ${{ secrets.DISCORD_TOKEN }}
 
     - name: Deploy to Server
-      uses: easingthemes/ssh-deploy@main
+      uses: easingthemes/ssh-deploy@v4.1.8
       env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltgoDzvc -i --delete-excluded --filter 'protect *.db' --filter 'protect *.log' --filter 'protect *.json'"
@@ -64,7 +64,7 @@ jobs:
         Discord.AppSecret: ${{ secrets.DISCORD_APPSECRET }}
 
     - name: Deploy to Server
-      uses: easingthemes/ssh-deploy@main
+      uses: easingthemes/ssh-deploy@v4.1.8
       env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltgoDzvc -i --delete-excluded --filter 'protect *.db' --filter 'protect *.log' --filter 'protect *.json'"
