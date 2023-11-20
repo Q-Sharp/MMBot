@@ -59,7 +59,7 @@ public class DataRepository<TEntity> : IRepository<TEntity>
         try
         {
             entity.Id = 0;
-            var e = context.Add(entity);
+            var e = await context.AddAsync(entity);
             return e.Entity;
         }
         catch (Exception e)
