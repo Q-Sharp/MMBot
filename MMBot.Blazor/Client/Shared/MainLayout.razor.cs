@@ -12,7 +12,7 @@ public partial class MainLayout
     public MMBotAuthenticationStateProvider AuthProvider { get; set; }
 
     private bool _drawerOpen = true;
-    private readonly MudTheme currentTheme = new MudTheme()
+    private readonly MudTheme currentTheme = new()
     {
         Palette = new PaletteDark()
         {

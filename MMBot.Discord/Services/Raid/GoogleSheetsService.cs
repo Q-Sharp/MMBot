@@ -11,7 +11,7 @@ namespace MMBot.Discord.Services.Raid;
 
 public class GoogleSheetsService : MMBotService<GoogleSheetsService>, IGoogleSheetsService
 {
-    private static readonly string[] Scopes = { SheetsService.Scope.SpreadsheetsReadonly };
+    private static readonly string[] Scopes = [SheetsService.Scope.SpreadsheetsReadonly];
     private static readonly string ApplicationName = "MMBot";
 
     private readonly IDatabaseService _databaseService;

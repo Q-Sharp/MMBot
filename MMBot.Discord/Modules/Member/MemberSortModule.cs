@@ -10,9 +10,9 @@ namespace MMBot.Discord.Modules.Member;
 
 public partial class MemberModule : MMBotModule, IMemberModule
 {
-    private readonly string[] _header = { "Name", "Clan", "SHigh", "Role" };
-    private readonly int[] _pad = { 16, 4, 5, 7 };
-    private readonly string[] _fields = { "Name", "Clan.Tag", "SHigh", "Role" };
+    private readonly string[] _header = ["Name", "Clan", "SHigh", "Role"];
+    private readonly int[] _pad = [16, 4, 5, 7];
+    private readonly string[] _fields = ["Name", "Clan.Tag", "SHigh", "Role"];
 
     [Command("List")]
     [Summary("Lists all members by current clan membership.")]

@@ -2,20 +2,19 @@
 
 [ApiController]
 [Route("api/[controller]")]
-public class UserController : ControllerBase
+public class UserController(IBlazorDatabaseService blazorDatabaseService) : ControllerBase
 {
-    private readonly IBlazorDatabaseService _blazorDatabaseService;
-
-    public UserController(IBlazorDatabaseService blazorDatabaseService)
-    {
-        _blazorDatabaseService = blazorDatabaseService;
-    }
-
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult GetCurrentUser() => Ok(User.Identity.IsAuthenticated ? CreateUserInfo(User) : DCUser.Anonymous);
+    public IActionResult GetCurrentUser() => Ok(User.Identity.IsAuthenticated ? CreateUserInfo(User, GetJsonSeriOptions()) : DCUser.Anonymous);
 
-    private DCUser CreateUserInfo(ClaimsPrincipal claimsPrincipal)
+    private static JsonSerializerOptions GetJsonSeriOptions() => new()
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        IgnoreReadOnlyProperties = true,
+    };
+
+    private DCUser CreateUserInfo(ClaimsPrincipal claimsPrincipal, JsonSerializerOptions o)
     {
         if (!claimsPrincipal.Identity.IsAuthenticated)
             return DCUser.Anonymous;
@@ -56,14 +55,8 @@ public class UserController : ControllerBase
 
         if(ids is not null)
         {
-            var o = new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                IgnoreReadOnlyProperties = true,
-            };
-
             var channel = JsonSerializer.Deserialize<IList<DCChannel>>(ids, o);
-            var allGuildsInDb = _blazorDatabaseService?.GetAllGuilds().Select(x => new DCChannel { Id = x.Id.ToString(), Name = x.Name });
+            var allGuildsInDb = blazorDatabaseService?.GetAllGuilds().Select(x => new DCChannel { Id = x.Id.ToString(), Name = x.Name });
 
             dcUser.Guilds = dcUser.IsOwner() ?
                     allGuildsInDb.ToList() :
@@ -80,8 +73,7 @@ public class UserController : ControllerBase
         {
             dcUser.Guilds = new DCChannel[]
             {
-                new DCChannel
-                {
+                new() {
                     Id = "0",
                     Name = "No Guilds to manage",
                 }

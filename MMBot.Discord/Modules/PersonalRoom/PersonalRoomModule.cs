@@ -65,7 +65,7 @@ public class PersonalRoomModule : MMBotModule
             cleanedUp += $"{x.Name}, ";
         });
 
-        cleanedUp = cleanedUp.TrimEnd(new char[] { ',', ' ' });
+        cleanedUp = cleanedUp.TrimEnd([',', ' ']);
 
         return FromSuccess($"These rooms were removed from db: {cleanedUp}");
     }

@@ -9,8 +9,8 @@ public static class ControllerTestExtensions
 
         var principal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
                         {
-                                new Claim(ClaimTypes.NameIdentifier, nameIdentifier),
-                                new Claim(ClaimTypes.Name, name)
+                                new(ClaimTypes.NameIdentifier, nameIdentifier),
+                                new(ClaimTypes.Name, name)
                                 // other required and custom claims
                         }, CookieAuthenticationDefaults.AuthenticationScheme));
 

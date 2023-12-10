@@ -56,7 +56,7 @@ public static class EntityHelper
 
             if (propName.Contains('.'))
             {
-                var temp = propName.Split(new char[] { '.' }, 2);
+                var temp = propName.Split(['.'], 2);
                 return src.GetPropertyValue(temp[0]).GetPropertyValue(temp[1]);
             }
             else
