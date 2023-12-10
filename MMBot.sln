@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MMBot.Blazor", "MMBot.Blazo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMBot.Data.Contracts", "MMBot.Data.Contracts\MMBot.Data.Contracts.csproj", "{6E87C466-BB24-48F5-BC2E-6FF66D7E580B}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{F2102E60-F44D-4E0E-A87B-351855B9A52D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{6E87C466-BB24-48F5-BC2E-6FF66D7E580B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E87C466-BB24-48F5-BC2E-6FF66D7E580B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E87C466-BB24-48F5-BC2E-6FF66D7E580B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2102E60-F44D-4E0E-A87B-351855B9A52D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2102E60-F44D-4E0E-A87B-351855B9A52D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2102E60-F44D-4E0E-A87B-351855B9A52D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2102E60-F44D-4E0E-A87B-351855B9A52D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,8 +1,38 @@
 version: '3.4'
 
 services:
-  mmbot.discord:
-    image: ${DOCKER_REGISTRY-}mmbotdiscord
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: P0stGresSQL2021
+      POSTGRES_DB: MMBotDB
+    networks:
+      - mmnet
+
+  mmbot-discord:
     build:
       context: .
-      dockerfile: MMBot.Discord/Dockerfile
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    ports:
+      - "8080:80"
+    environment:
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: P0stGresSQL2021
+      PGDATABASE: MMBotDB
+      MMBOT_CONNECTIONSTRINGS_CONTEXT: Server=postgres;Port=5432;Database=MMBotDB;Username=postgres;Password=P0stGresSQL2021
+      MMBOT_DISCORD_TOKEN: ${DISCORD_TOKEN}
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+    networks:
+      - mmnet
+
+networks:
+  mmnet:
+    external: true

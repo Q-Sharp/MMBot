@@ -29,8 +29,8 @@ public static class DiscordSocketHost
            {
                try
                {
-                    configBuilder.AddEnvironmentVariables("MMBot_")
-                                .AddUserSecrets<DiscordWorker>();
+                    configBuilder.AddEnvironmentVariables()
+                                 .AddUserSecrets<DiscordWorker>();
                }
                catch
                {
