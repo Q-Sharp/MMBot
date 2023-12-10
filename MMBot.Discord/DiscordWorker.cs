@@ -79,7 +79,7 @@ public class DiscordWorker : BackgroundService
                 break;
 
             case LogSeverity.Warning:
-                _logger.LogWarning(message.Message);
+                _logger.LogWarning(message: message.Message);
                 break;
 
             case LogSeverity.Info:

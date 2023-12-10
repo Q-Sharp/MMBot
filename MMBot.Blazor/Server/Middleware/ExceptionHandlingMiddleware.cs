@@ -1,15 +1,10 @@
 ﻿namespace MMBot.Blazor.Server.Middleware;
 
-public class ExceptionHandlingMiddleware : IMiddleware
+public class ExceptionHandlingMiddleware(ILoggerFactory loggerFactory) : IMiddleware
 {
-    private readonly ILoggerFactory _loggerFactory;
-
-    public ExceptionHandlingMiddleware(ILoggerFactory loggerFactory)
-        => _loggerFactory = loggerFactory;
-
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        var logger = _loggerFactory.CreateLogger(context.GetEndpoint().DisplayName);
+        var logger = loggerFactory.CreateLogger(context.GetEndpoint().DisplayName);
 
         try
         {

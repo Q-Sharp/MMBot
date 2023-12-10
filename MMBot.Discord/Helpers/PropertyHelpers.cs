@@ -151,7 +151,7 @@ public static class PropertyHelpers
                 values = p.pName.Select(x => p.m.GetProperty(x, false)).ToArray(),
                 header = p.pName.Select(x => x?.ToSentence() ?? "").ToArray(),
             })
-            .Select(x => new { header = string.Join(", ", x.header).TrimEnd(new char[] { ',', ' ' }), values = string.Join(", ", x.values).TrimEnd(new char[] { ',', ' ' }) })
+            .Select(x => new { header = string.Join(", ", x.header).TrimEnd([',', ' ']), values = string.Join(", ", x.values).TrimEnd([',', ' ']) })
             .ToArray();
 
             message += ss.FirstOrDefault().header;
@@ -206,7 +206,7 @@ public static class PropertyHelpers
 
             if (propName.Contains("."))
             {
-                var temp = propName.Split(new char[] { '.' }, 2);
+                var temp = propName.Split(['.'], 2);
                 return src.GetPropertyValue(temp[0]).GetPropertyValue(temp[1]);
             }
             else

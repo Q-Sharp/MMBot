@@ -1,12 +1,8 @@
 ﻿namespace MMBot.Blazor.Server.Auth;
 
-public class MMBotTicketStore : ITicketStore
+public class MMBotTicketStore(IMemoryCache cache) : ITicketStore
 {
     private const string _keyPrefix = "__AUTHTICKETSTORE";
-    private readonly IMemoryCache _cache;
-
-    public MMBotTicketStore(IMemoryCache cache)
-        => _cache = cache;
 
     public async Task<string> StoreAsync(AuthenticationTicket ticket)
     {
@@ -30,20 +26,20 @@ public class MMBotTicketStore : ITicketStore
 
          options.SetSlidingExpiration(TimeSpan.FromMinutes(60));
 
-         _cache.Set(key, ticket, options);
+         cache.Set(key, ticket, options);
 
         return Task.FromResult(0);
     }
 
     public Task<AuthenticationTicket> RetrieveAsync(string key)
     {
-         _cache.TryGetValue(key, out AuthenticationTicket ticket);
+         cache.TryGetValue(key, out AuthenticationTicket ticket);
         return Task.FromResult(ticket);
     }
 
     public Task RemoveAsync(string key)
     {
-        _cache.Remove(key);
+        cache.Remove(key);
         return Task.FromResult(0);
     }
 }
