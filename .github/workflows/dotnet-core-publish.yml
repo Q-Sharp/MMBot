@@ -1,7 +1,10 @@
 name: Compile
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   build:
@@ -39,7 +42,7 @@ jobs:
 
     - name: Create ZIP Archive
       run: |
-        cd MMBot.Discord/bin/Release/net8.0/linux-x64
+        cd ./published
         zip -r MMBot_Discord.zip publish/
 
     - name: Create GitHub Release
