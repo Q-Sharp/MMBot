@@ -62,7 +62,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: MMBot.Discord/bin/Release/net8.0/linux-x64/MMBot_Discord.zip
+        asset_path: ./published/MMBot_Discord.zip
         asset_name: MMBot_Discord.zip
         asset_content_type: application/zi
 
