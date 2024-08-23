@@ -45,14 +45,20 @@ jobs:
         cd ./published
         zip -r MMBot_Discord.zip . -i publish/
 
+    - name: Create Tag
+      id: create_tag
+      run: |
+        TAG_NAME=v$(date +'%Y%m%d%H%M%S')
+        echo "::set-output name=tag_name::$TAG_NAME"
+
     - name: Create GitHub Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.sha }}
-        release_name: "Release ${{ github.sha }}"
+        tag_name: ${{ steps.create_tag.outputs.tag_name }}
+        release_name: "Release ${{ steps.create_tag.outputs.tag_name }}"
         draft: false
         prerelease: false
 
