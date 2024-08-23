@@ -353,3 +353,7 @@ healthchecksdb
 # Local History for Visual Studio Code
 .history/
 .vscode/
+
+*.dll
+*.exe
+published/

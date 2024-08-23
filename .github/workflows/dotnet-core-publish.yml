@@ -43,7 +43,7 @@ jobs:
     - name: Create ZIP Archive
       run: |
         cd ./published
-        zip -r MMBot_Discord.zip . -i publish/
+        zip -r MMBot_Discord.zip .
 
     - name: Create Tag
       id: create_tag
