@@ -37,37 +37,29 @@ jobs:
         Discord.DevToken: ${{ secrets.DISCORD_DEV_TOKEN }}
         Discord.Token: ${{ secrets.DISCORD_TOKEN }}
 
-    - name: Deploy to Server
-      uses: easingthemes/ssh-deploy@v4.1.10
-      env:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          ARGS: "-rltgoDzvc -i --delete-excluded --filter 'protect *.db' --filter 'protect *.log' --filter 'protect *.json'"
-          SOURCE: ./published
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
-          TARGET: ${{ secrets.REMOTE_TARGET }}
-          
-    - name: .NET Publish
-      run: dotnet publish ./MMBot.Blazor/Server/MMBot.Blazor.Server.csproj -c Release -r linux-x64 --framework net8.0 /p:DebugType=None /p:DebugSymbols=false -o ./publish
+    - name: Create ZIP Archive
+      run: |
+        cd MMBot.Discord/bin/Release/net8.0/linux-x64
+        zip -r MMBot_Discord.zip publish/
 
-    - name: App Settings Variable Substitution
-      uses: microsoft/variable-substitution@v1
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        files: './publish/appsettings.json'
-      env:
-        DetailedErrors: false
-        Discord.AppId: ${{ secrets.DISCORD_APPID }}
-        Discord.AppSecret: ${{ secrets.DISCORD_APPSECRET }}
+        tag_name: ${{ github.sha }}
+        release_name: "Release ${{ github.sha }}"
+        draft: false
+        prerelease: false
 
-    - name: Deploy to Server
-      uses: easingthemes/ssh-deploy@v4.1.10
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
       env:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          ARGS: "-rltgoDzvc -i --delete-excluded --filter 'protect *.db' --filter 'protect *.log' --filter 'protect *.json'"
-          SOURCE: ./publish
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
-          TARGET: ${{ secrets.REMOTE_TARGET2 }}
-          SCRIPT_AFTER: "sudo systemctl restart kestrel-mmblazor"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: MMBot.Discord/bin/Release/net8.0/linux-x64/MMBot_Discord.zip
+        asset_name: MMBot_Discord.zip
+        asset_content_type: application/zi
+
